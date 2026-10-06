@@ -7,6 +7,9 @@ import { initSentry, flushSentry } from './infra/sentry.js';
 import { createDatabase } from './infra/db.js';
 import { createCache } from './infra/cache.js';
 import { createJobQueue } from './infra/queue.js';
+import { createTokenService } from './infra/tokens.js';
+import { createFieldCrypto } from './infra/crypto.js';
+import { createIdentityProviders } from './infra/identity-providers.js';
 import { createMetrics, startMetricsServer } from './infra/metrics.js';
 import { buildApp } from './app.js';
 
@@ -21,11 +24,14 @@ const metrics = config.metrics.enabled
   : undefined;
 const cache = createCache({ maxEntries: config.cache.maxEntries, metrics: metrics?.cache });
 const jobs = createJobQueue(db);
+const tokens = await createTokenService(config.auth);
+const crypto = createFieldCrypto(config.fieldEncryption);
+const identity = createIdentityProviders({ config: config.identity, logger });
 
 const app = await buildApp({
   config,
   logger,
-  deps: { db, cache, jobs, metrics },
+  deps: { db, cache, jobs, metrics, tokens, crypto, identity },
 });
 
 app.addHook('onClose', async () => {

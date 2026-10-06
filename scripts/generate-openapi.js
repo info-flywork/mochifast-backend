@@ -11,6 +11,10 @@ const config = loadConfig({
   DB_HOST: 'unused',
   DB_USER: 'unused',
   DB_NAME: 'unused',
+  JWT_PRIVATE_JWK: '{}',
+  JWT_PUBLIC_JWKS: '[]',
+  FIELD_ENCRYPTION_KEYS_JSON: '{}',
+  FIELD_ENCRYPTION_ACTIVE_KID: '1',
   PUBLIC_BASE_URL: process.env.PUBLIC_BASE_URL ?? 'https://api.mochifast.app',
 });
 

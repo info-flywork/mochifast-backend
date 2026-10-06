@@ -1,6 +1,16 @@
 import { randomBytes } from 'node:crypto';
+import { exportJWK, generateKeyPair } from 'jose';
 import mysql from 'mysql2/promise';
 import { loadConfig } from '../../src/config/index.js';
+
+/** Testlere özel, her çalıştırmada yeni üretilen anahtarlar. */
+const jwtPair = await generateKeyPair('EdDSA', { crv: 'Ed25519', extractable: true });
+export const TEST_SECRETS = {
+  JWT_PRIVATE_JWK: JSON.stringify({ ...(await exportJWK(jwtPair.privateKey)), kid: 'test-1' }),
+  JWT_PUBLIC_JWKS: JSON.stringify([{ ...(await exportJWK(jwtPair.publicKey)), kid: 'test-1' }]),
+  FIELD_ENCRYPTION_KEYS_JSON: JSON.stringify({ 1: randomBytes(32).toString('base64') }),
+  FIELD_ENCRYPTION_ACTIVE_KID: '1',
+};
 
 /**
  * Testler için doğrulanmış konfigürasyon. Altyapı adresleri verilmezse yer tutucu kullanılır
@@ -14,6 +24,7 @@ export function testConfig(overrides = {}) {
     DB_USER: 'root',
     DB_NAME: 'unused',
     METRICS_ENABLED: 'false',
+    ...TEST_SECRETS,
     ...overrides,
   });
 }

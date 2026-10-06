@@ -6,7 +6,15 @@ import { envSchema } from 'env-schema';
  */
 const schema = {
   type: 'object',
-  required: ['DB_HOST', 'DB_USER', 'DB_NAME'],
+  required: [
+    'DB_HOST',
+    'DB_USER',
+    'DB_NAME',
+    'JWT_PRIVATE_JWK',
+    'JWT_PUBLIC_JWKS',
+    'FIELD_ENCRYPTION_KEYS_JSON',
+    'FIELD_ENCRYPTION_ACTIVE_KID',
+  ],
   properties: {
     NODE_ENV: {
       type: 'string',
@@ -42,6 +50,22 @@ const schema = {
 
     WORKER_CONCURRENCY: { type: 'integer', minimum: 1, maximum: 50, default: 5 },
     WORKER_POLL_MS: { type: 'integer', minimum: 100, default: 1_000 },
+
+    JWT_PRIVATE_JWK: { type: 'string' },
+    JWT_PUBLIC_JWKS: { type: 'string' },
+    JWT_ISSUER: { type: 'string', default: 'api.mochifast.app' },
+    JWT_AUDIENCE: { type: 'string', default: 'mochifast-app' },
+    JWT_ACCESS_TTL_SEC: { type: 'integer', minimum: 60, maximum: 3600, default: 900 },
+    REFRESH_TTL_DAYS: { type: 'integer', minimum: 1, maximum: 365, default: 60 },
+
+    FIELD_ENCRYPTION_KEYS_JSON: { type: 'string' },
+    FIELD_ENCRYPTION_ACTIVE_KID: { type: 'integer', minimum: 1, maximum: 255 },
+
+    APPLE_AUDIENCES: { type: 'string', default: 'com.flywork.mochifast' },
+    APPLE_TEAM_ID: { type: 'string', default: '' },
+    APPLE_KEY_ID: { type: 'string', default: '' },
+    APPLE_PRIVATE_KEY_P8: { type: 'string', default: '' },
+    GOOGLE_CLIENT_IDS: { type: 'string', default: '' },
 
     CORS_ORIGINS: { type: 'string', default: '' },
     RATE_LIMIT_GLOBAL_MAX: { type: 'integer', minimum: 1, default: 600 },
@@ -114,6 +138,27 @@ export function loadConfig(env = process.env) {
     },
     cache: { maxEntries: e.CACHE_MAX_ENTRIES },
     worker: { concurrency: e.WORKER_CONCURRENCY, pollMs: e.WORKER_POLL_MS },
+    auth: {
+      privateJwk: parseJson('JWT_PRIVATE_JWK', e.JWT_PRIVATE_JWK),
+      publicJwks: parseJson('JWT_PUBLIC_JWKS', e.JWT_PUBLIC_JWKS),
+      issuer: e.JWT_ISSUER,
+      audience: e.JWT_AUDIENCE,
+      accessTtlSec: e.JWT_ACCESS_TTL_SEC,
+      refreshTtlDays: e.REFRESH_TTL_DAYS,
+    },
+    fieldEncryption: {
+      keys: parseJson('FIELD_ENCRYPTION_KEYS_JSON', e.FIELD_ENCRYPTION_KEYS_JSON),
+      activeKid: e.FIELD_ENCRYPTION_ACTIVE_KID,
+    },
+    identity: {
+      apple: {
+        audiences: splitList(e.APPLE_AUDIENCES),
+        teamId: e.APPLE_TEAM_ID,
+        keyId: e.APPLE_KEY_ID,
+        privateKeyP8: e.APPLE_PRIVATE_KEY_P8,
+      },
+      google: { clientIds: splitList(e.GOOGLE_CLIENT_IDS) },
+    },
     cors: { origins: splitList(e.CORS_ORIGINS) },
     rateLimit: { globalMax: e.RATE_LIMIT_GLOBAL_MAX, window: e.RATE_LIMIT_WINDOW },
     metrics: { enabled: e.METRICS_ENABLED, host: e.METRICS_HOST, port: e.METRICS_PORT },
@@ -129,6 +174,14 @@ function parseTrustProxy(value) {
   const hops = Number(value);
   if (Number.isInteger(hops) && hops >= 0) return hops;
   throw new Error(`TRUST_PROXY geçersiz: "${value}" (true | false | hop sayısı)`);
+}
+
+function parseJson(name, value) {
+  try {
+    return JSON.parse(value);
+  } catch {
+    throw new Error(`${name} geçerli JSON değil`);
+  }
 }
 
 function splitList(value) {

@@ -1,0 +1,415 @@
+import { createCache } from '../../infra/cache.js';
+import { hashRefreshToken, newRefreshToken } from '../../infra/tokens.js';
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '../../config/constants.js';
+import { AppError } from '../../shared/errors.js';
+import { newId } from '../../shared/ids.js';
+import { isValidTimezone } from '../../shared/time.js';
+import { createWindowLimiter } from '../../shared/window-limiter.js';
+import { sessionCachePrefix } from '../../plugins/auth.js';
+import { writeAudit } from '../audit/audit.repository.js';
+import { GUEST_MERGE_STEPS } from './guest-merge.js';
+import * as repo from './auth.repository.js';
+
+const ER_DUP_ENTRY = 1062;
+/** Aynı refresh token'la paralel gelen isteklere aynı yeni çift bu süre boyunca döner. */
+const REFRESH_GRACE_SEC = 10;
+
+/**
+ * Kimlik doğrulama iş kuralları (docs/backend/04-api.md §1, 06-guvenlik.md §2, 05-is-kurallari.md §11).
+ *
+ * `meta`: { ip, userAgent, locale, timezone, platform } — istek bağlamından.
+ */
+export function createAuthService({ db, cache, tokens, identity, crypto, config, logger }) {
+  const refreshTtlDays = config.auth.refreshTtlDays;
+  // Verilen çift yalnızca 10 sn bellekte tutulur (ADR 0005: API tek process).
+  const refreshGrace = createCache({ maxEntries: 10_000 });
+  const installLimiter = createWindowLimiter({ max: 5, windowMs: 3_600_000 });
+
+  async function openSession(conn, { userId, deviceId, familyId, meta }) {
+    const refreshToken = newRefreshToken();
+    const sessionId = newId();
+    await repo.insertSession(db, conn, {
+      id: sessionId,
+      userId,
+      deviceId,
+      familyId: familyId ?? newId(),
+      tokenHash: hashRefreshToken(refreshToken),
+      ttlDays: refreshTtlDays,
+      ip: meta.ip,
+      userAgent: meta.userAgent,
+    });
+    const access = await tokens.signAccess({ userId, sessionId });
+    return { accessToken: access.token, refreshToken, expiresIn: access.expiresIn };
+  }
+
+  function audit(conn, meta, action, userId, metadata) {
+    return writeAudit(
+      db,
+      {
+        actorType: 'user',
+        actorId: userId,
+        action,
+        entityType: 'user',
+        entityId: userId,
+        ip: meta.ip,
+        userAgent: meta.userAgent,
+        metadata,
+      },
+      conn,
+    );
+  }
+
+  /** Eşzamanlı ilk kayıt yarışında (aynı kimlik iki kez eklenmeye çalışılırsa) bir kez yeniden dener. */
+  async function withDuplicateRetry(fn) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (err?.errno !== ER_DUP_ENTRY) throw err;
+      return fn();
+    }
+  }
+
+  function localeOf(input, meta) {
+    const value = input.locale ?? meta.locale;
+    return SUPPORTED_LOCALES.includes(value) ? value : DEFAULT_LOCALE;
+  }
+
+  function timezoneOf(input, meta) {
+    const value = input.timezone ?? meta.timezone;
+    return isValidTimezone(value) ? value : 'UTC';
+  }
+
+  async function upsertDevice(conn, userId, input, meta) {
+    const platform = input.platform ?? meta.platform;
+    if (!input.installId || !platform) return null;
+    return repo.upsertDevice(db, conn, {
+      userId,
+      installId: input.installId,
+      platform,
+      appVersion: input.appVersion ?? meta.appVersion,
+      osVersion: input.osVersion,
+      deviceModel: input.deviceModel,
+      locale: localeOf(input, meta),
+      timezone: timezoneOf(input, meta),
+    });
+  }
+
+  /** Misafir/terk edilen hesabı kapatır: installId ile girilemez, oturumları iptal, 30 gün sonra silinir. */
+  async function retireGuest(conn, guestId) {
+    await repo.setUserStatus(db, conn, guestId, 'pending_deletion');
+    await repo.deleteGuestIdentities(db, conn, guestId);
+    await repo.revokeUserSessions(db, conn, guestId, 'account_switched');
+  }
+
+  const service = {
+    /**
+     * Misafir: aynı installId → aynı kullanıcıya yeni oturum; yoksa yeni misafir kullanıcı.
+     * @returns { created, token, user }
+     */
+    async guest(input, meta) {
+      const limit = installLimiter.hit(input.installId);
+      if (!limit.allowed) {
+        throw new AppError('RATE_LIMITED', {
+          details: { retryAfterSec: limit.retryAfterSec },
+          headers: { 'retry-after': String(limit.retryAfterSec) },
+        });
+      }
+
+      return withDuplicateRetry(() =>
+        db.withTransaction(async (conn) => {
+          const existing = await repo.findIdentity(db, conn, 'guest', input.installId);
+          let userId;
+          if (existing) {
+            assertUsable(existing.status);
+            userId = existing.userId;
+            await repo.touchIdentity(db, conn, existing.id);
+          } else {
+            userId = newId();
+            await repo.createUser(db, conn, {
+              id: userId,
+              isGuest: true,
+              locale: localeOf(input, meta),
+              timezone: timezoneOf(input, meta),
+            });
+            await repo.createIdentity(db, conn, {
+              userId,
+              provider: 'guest',
+              subject: input.installId,
+            });
+          }
+          const deviceId = await upsertDevice(conn, userId, input, meta);
+          const token = await openSession(conn, { userId, deviceId, meta });
+          await audit(conn, meta, existing ? 'auth.login' : 'auth.guest_created', userId, {
+            provider: 'guest',
+          });
+          return {
+            created: !existing,
+            token,
+            user: toUserDto(await repo.getUser(db, conn, userId)),
+          };
+        }),
+      );
+    },
+
+    /**
+     * Apple/Google ile giriş, kayıt ya da misafir yükseltme.
+     * @param currentUser geçerli misafir oturumu varsa request.user
+     * @returns { outcome, token, user } — outcome: created | login | upgraded | switched | merged
+     */
+    async register(input, meta, currentUser) {
+      if (input.provider === 'guest') {
+        if (!input.deviceId) throw validation('deviceId', 'required for guest');
+        const result = await service.guest({ ...input, installId: input.deviceId }, meta);
+        return {
+          outcome: result.created ? 'created' : 'login',
+          token: result.token,
+          user: result.user,
+        };
+      }
+      if (!input.idToken) throw validation('idToken', 'required');
+
+      let verified;
+      let appleRefreshToken = null;
+      if (input.provider === 'apple') {
+        if (!input.nonce) throw validation('nonce', 'required for apple');
+        verified = await identity.verifyApple({ idToken: input.idToken, rawNonce: input.nonce });
+        // Ağ çağrısı transaction DIŞINDA: kilit tutarken dış servisi beklemeyelim.
+        if (input.authorizationCode) {
+          appleRefreshToken = await identity.exchangeAppleCode(input.authorizationCode);
+        }
+      } else {
+        verified = await identity.verifyGoogle({ idToken: input.idToken });
+      }
+      const displayName =
+        input.provider === 'apple' ? joinName(input.fullName) : (verified.name ?? null);
+      const guestUser = currentUser?.isGuest ? currentUser : null;
+      const encryptAppleToken = (userId) =>
+        appleRefreshToken ? crypto.encrypt(appleRefreshToken, appleTokenContext(userId)) : null;
+
+      const result = await withDuplicateRetry(() =>
+        db.withTransaction(async (conn) => {
+          const existing = await repo.findIdentity(db, conn, input.provider, verified.subject);
+          let userId;
+          let outcome;
+
+          if (existing) {
+            assertUsable(existing.status);
+            userId = existing.userId;
+            outcome = 'login';
+            if (guestUser && guestUser.id !== userId) {
+              if (input.mergeGuest === undefined) {
+                throw new AppError('ACCOUNT_LINK_CONFLICT', {
+                  details: { options: ['switch_account', 'merge'] },
+                });
+              }
+              if (input.mergeGuest) {
+                for (const step of GUEST_MERGE_STEPS) {
+                  await step(conn, { db, fromUserId: guestUser.id, toUserId: userId });
+                }
+              }
+              await retireGuest(conn, guestUser.id);
+              outcome = input.mergeGuest ? 'merged' : 'switched';
+            }
+            await repo.touchIdentity(db, conn, existing.id, {
+              email: verified.email,
+              appleRefreshEnc: encryptAppleToken(userId),
+            });
+          } else if (guestUser) {
+            // Misafir yükseltme: aynı userId, veriler yerinde kalır.
+            userId = guestUser.id;
+            outcome = 'upgraded';
+            await repo.createIdentity(db, conn, {
+              userId,
+              provider: input.provider,
+              subject: verified.subject,
+              email: verified.email,
+              appleRefreshEnc: encryptAppleToken(userId),
+            });
+            await repo.upgradeGuest(db, conn, userId, {
+              displayName,
+              email: verified.email,
+              emailVerified: verified.emailVerified,
+            });
+            await repo.deleteGuestIdentities(db, conn, userId);
+            // Misafir token'ları yerine yeni çift verilir.
+            await repo.revokeUserSessions(db, conn, userId, 'account_switched');
+          } else {
+            userId = newId();
+            outcome = 'created';
+            await repo.createUser(db, conn, {
+              id: userId,
+              isGuest: false,
+              displayName,
+              email: verified.email,
+              emailVerified: verified.emailVerified,
+              locale: localeOf(input, meta),
+              timezone: timezoneOf(input, meta),
+            });
+            await repo.createIdentity(db, conn, {
+              userId,
+              provider: input.provider,
+              subject: verified.subject,
+              email: verified.email,
+              appleRefreshEnc: encryptAppleToken(userId),
+            });
+          }
+
+          const deviceId = await upsertDevice(
+            conn,
+            userId,
+            { ...input, installId: input.deviceId },
+            meta,
+          );
+          const token = await openSession(conn, { userId, deviceId, meta });
+          await audit(conn, meta, outcome === 'upgraded' ? 'auth.linked' : 'auth.login', userId, {
+            provider: input.provider,
+            outcome,
+            ...(guestUser && outcome !== 'login' ? { guestUserId: guestUser.id } : {}),
+          });
+          return { outcome, token, user: toUserDto(await repo.getUser(db, conn, userId)) };
+        }),
+      );
+
+      if (guestUser && result.outcome !== 'login' && result.outcome !== 'created') {
+        await cache.delPrefix(sessionCachePrefix(guestUser.id));
+      }
+      return result;
+    },
+
+    /**
+     * Refresh token rotasyonu + yeniden kullanım tespiti (docs/backend/06-guvenlik.md §2.2).
+     */
+    async refresh(refreshToken, meta) {
+      const tokenHash = hashRefreshToken(refreshToken);
+      const result = await db.withTransaction(async (conn) => {
+        const s = await repo.findSessionByHash(db, conn, tokenHash);
+        if (!s || !s.live) return { error: 'UNAUTHENTICATED' };
+
+        if (s.revoked) {
+          if (s.revokeReason === 'rotated' && s.rotatedRecently) {
+            // Paralel istek: ilk isteğin verdiği çifti döndür. Bellekte yoksa (ör. yeniden başlatma)
+            // aileyi iptal etmeden reddet; meşru istemciyi kilitlemeyelim.
+            const pair = await refreshGrace.get(tokenHash);
+            return pair ? { token: pair } : { error: 'UNAUTHENTICATED' };
+          }
+          if (s.revokeReason === 'rotated' || s.revokeReason === 'reuse_detected') {
+            // Kullanılmış token tekrar geldi → çalınmış olabilir: tüm aile iptal.
+            await repo.revokeFamily(db, conn, s, 'reuse_detected');
+            await audit(conn, meta, 'auth.reuse_detected', s.userId, { familyId: s.familyId });
+            return { error: 'REFRESH_REUSED', userId: s.userId };
+          }
+          return { error: 'UNAUTHENTICATED' };
+        }
+        if (s.userStatus !== 'active') return { error: 'UNAUTHENTICATED' };
+
+        const nextId = newId();
+        const nextToken = newRefreshToken();
+        await repo.insertSession(db, conn, {
+          id: nextId,
+          userId: s.userId,
+          deviceId: s.deviceId,
+          familyId: s.familyId,
+          tokenHash: hashRefreshToken(nextToken),
+          ttlDays: refreshTtlDays,
+          ip: meta.ip,
+          userAgent: meta.userAgent,
+        });
+        await repo.markRotated(db, conn, s.id, nextId);
+        const access = await tokens.signAccess({ userId: s.userId, sessionId: nextId });
+        const pair = {
+          accessToken: access.token,
+          refreshToken: nextToken,
+          expiresIn: access.expiresIn,
+        };
+        // Commit'ten ÖNCE yazılır: satır kilidini bekleyen paralel istek commit sonrası bunu görür.
+        await refreshGrace.set(tokenHash, pair, REFRESH_GRACE_SEC);
+        return { token: pair };
+      });
+
+      if (result.error === 'REFRESH_REUSED') {
+        await cache.delPrefix(sessionCachePrefix(result.userId));
+        logger?.warn(
+          { userId: result.userId },
+          'refresh token yeniden kullanımı: aile iptal edildi',
+        );
+      }
+      if (result.error) throw new AppError(result.error);
+      return result.token;
+    },
+
+    /** Mevcut oturum ailesini ya da tüm oturumları kapatır; ilgili push token'ları siler. */
+    async logout(user, { allDevices = false }, meta) {
+      await db.withTransaction(async (conn) => {
+        if (allDevices) {
+          await repo.revokeUserSessions(db, conn, user.id, 'logout');
+          await repo.clearPushTokens(db, conn, user.id, null);
+        } else {
+          const s = await repo.findSession(db, conn, user.id, user.sessionId);
+          if (s) {
+            await repo.revokeFamily(db, conn, { familyId: s.familyId, userId: user.id }, 'logout');
+            if (s.deviceId) await repo.clearPushTokens(db, conn, user.id, s.deviceId);
+          }
+        }
+        await audit(conn, meta, 'auth.logout', user.id, { allDevices });
+      });
+      await cache.delPrefix(sessionCachePrefix(user.id));
+    },
+
+    /** Aktif oturumlar; `id` = oturum ailesi (yenilemelerde değişmez). */
+    async listSessions(user) {
+      const current = await repo.findSession(db, undefined, user.id, user.sessionId);
+      const rows = await repo.listActiveSessions(db, user.id);
+      return rows.map((r) => ({
+        id: r.family_id,
+        platform: r.platform ?? null,
+        deviceModel: r.device_model ?? null,
+        appVersion: r.app_version ?? null,
+        signedInAt: r.signed_in_at.toISOString(),
+        lastUsedAt: r.last_used_at ? r.last_used_at.toISOString() : null,
+        current: r.family_id === current?.familyId,
+      }));
+    },
+
+    async revokeSession(user, familyId, meta) {
+      const affected = await db.withTransaction(async (conn) => {
+        const n = await repo.revokeFamily(db, conn, { familyId, userId: user.id }, 'logout');
+        if (n > 0) await audit(conn, meta, 'auth.session_revoked', user.id, { familyId });
+        return n;
+      });
+      if (affected === 0) throw new AppError('NOT_FOUND');
+      await cache.delPrefix(sessionCachePrefix(user.id));
+    },
+  };
+  return service;
+}
+
+/** API kullanıcı özeti (docs/backend/04-api.md §1). Premium F8'de bağlanır. */
+export function toUserDto(row) {
+  return {
+    id: row.id,
+    name: row.display_name ?? null,
+    email: row.email ?? null,
+    isGuest: Boolean(row.is_guest),
+    isPremium: false,
+    isAnsweredQuestions: row.onboarding_completed_at !== null,
+  };
+}
+
+/** Şifreli Apple refresh token'ı satıra bağlayan AAD. */
+export function appleTokenContext(userId) {
+  return `auth_identities.apple_refresh_token:${userId}`;
+}
+
+function assertUsable(status) {
+  if (status === 'banned') throw new AppError('FORBIDDEN');
+  if (status !== 'active') throw new AppError('GONE');
+}
+
+function joinName(fullName) {
+  const name = [fullName?.givenName, fullName?.familyName].filter(Boolean).join(' ').trim();
+  return name ? name.slice(0, 60) : null;
+}
+
+function validation(path, message) {
+  return new AppError('VALIDATION_FAILED', { details: { fields: [{ path, message }] } });
+}

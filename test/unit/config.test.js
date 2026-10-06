@@ -5,6 +5,10 @@ const base = {
   DB_HOST: 'localhost',
   DB_USER: 'app',
   DB_NAME: 'mochifast',
+  JWT_PRIVATE_JWK: '{}',
+  JWT_PUBLIC_JWKS: '[]',
+  FIELD_ENCRYPTION_KEYS_JSON: '{}',
+  FIELD_ENCRYPTION_ACTIVE_KID: '1',
 };
 
 describe('loadConfig', () => {

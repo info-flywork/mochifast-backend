@@ -3,11 +3,13 @@ import { API_PREFIX } from './config/constants.js';
 import requestContext, { generateRequestId } from './plugins/request-context.js';
 import security from './plugins/security.js';
 import rateLimit from './plugins/rate-limit.js';
+import auth from './plugins/auth.js';
 import envelope from './plugins/envelope.js';
 import errors from './plugins/errors.js';
 import docs from './plugins/docs.js';
 import httpMetrics from './plugins/http-metrics.js';
 import healthRoutes from './modules/health/health.routes.js';
+import authRoutes from './modules/auth/auth.routes.js';
 
 /**
  * Fastify uygulamasını kurar. Altyapıya bağlanmaz: bağımlılıklar (`deps`) dışarıdan verilir,
@@ -44,12 +46,13 @@ export async function buildApp({ config, deps, logger, registerV1 }) {
   app.decorate('deps', deps);
   app.decorate('isShuttingDown', false);
 
-  // Sıra önemli: bağlam → hata/zarf → güvenlik → rate limit → belgeler → metrik → route'lar
+  // Sıra önemli: bağlam → hata/zarf → güvenlik → rate limit → auth → belgeler → metrik → route'lar
   await app.register(requestContext);
   await app.register(errors);
   await app.register(envelope);
   await app.register(security);
   await app.register(rateLimit);
+  await app.register(auth);
   await app.register(docs);
   await app.register(httpMetrics);
 
@@ -57,7 +60,8 @@ export async function buildApp({ config, deps, logger, registerV1 }) {
 
   await app.register(
     async (v1) => {
-      // Domain modülleri fazlarla burada kaydedilir (F1: auth, users, devices …).
+      // Domain modülleri fazlarla burada kaydedilir.
+      await v1.register(authRoutes, { prefix: '/auth' });
       if (registerV1) await registerV1(v1);
     },
     { prefix: API_PREFIX },
