@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import mysql from 'mysql2/promise';
-import { sslOptions } from './db.js';
+import { SESSION_INIT_SQL, sslOptions } from './db.js';
 
 /**
  * mysql2 tabanlı, yalnızca İLERİ yönlü migration aracı (docs/backend/02-mimari.md §3.3).
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS schema_migrations (
   applied_at  DATETIME(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   duration_ms INT UNSIGNED NOT NULL,
   PRIMARY KEY (version)
-) ENGINE=InnoDB`;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`;
 
 export async function loadMigrationFiles(dir) {
   const entries = (await readdir(dir)).filter((f) => f.endsWith('.sql')).sort();
@@ -64,7 +64,7 @@ export async function migrate({ dbConfig, dir, dryRun = false, logger }) {
   });
 
   try {
-    await conn.query("SET time_zone = '+00:00'");
+    await conn.query(SESSION_INIT_SQL);
     await conn.query(SCHEMA_MIGRATIONS_DDL);
 
     const [[lock]] = await conn.query('SELECT GET_LOCK(?, ?) AS acquired', [

@@ -24,6 +24,22 @@ const typeCast = (field, next) => {
  * mysql2 TLS ayarı. `sslVerify=false` yalnızca geliştirmede, kendinden imzalı sertifikalı uzak
  * sunucu için: trafik şifrelenir ama sunucunun kimliği doğrulanmaz (config üretimde reddeder).
  */
+/**
+ * Her bağlantıda zorunlu oturum ayarları. Sunucu varsayılanına güvenilmez: ör. cPanel MariaDB
+ * strict modda gelmez ve geçersiz enum/aşırı uzun metni hata vermeden kırpıp yazar.
+ * Modlar MySQL 8 ve MariaDB 10.6+ ortak kümesidir.
+ */
+export const SESSION_SQL_MODE = [
+  'STRICT_TRANS_TABLES',
+  'STRICT_ALL_TABLES',
+  'ERROR_FOR_DIVISION_BY_ZERO',
+  'NO_ZERO_IN_DATE',
+  'NO_ZERO_DATE',
+  'NO_ENGINE_SUBSTITUTION',
+  'ONLY_FULL_GROUP_BY',
+].join(',');
+export const SESSION_INIT_SQL = `SET time_zone = '+00:00', sql_mode = '${SESSION_SQL_MODE}'`;
+
 export function sslOptions(dbConfig) {
   if (!dbConfig.ssl) return undefined;
   if (dbConfig.sslVerify === false) return { rejectUnauthorized: false };
@@ -53,9 +69,9 @@ export function createDatabase(dbConfig, { logger } = {}) {
     ssl: sslOptions(dbConfig),
   });
 
-  // Oturum saat dilimi de UTC olsun: NOW(3), CURRENT_TIMESTAMP(3) UTC üretir.
+  // UTC (NOW(3) UTC üretir) + strict sql_mode; bağlantıdaki ilk komuttan önce sıraya girer.
   pool.pool.on('connection', (conn) => {
-    conn.query("SET time_zone = '+00:00'");
+    conn.query(SESSION_INIT_SQL);
   });
 
   async function timed(target, sql, params) {
