@@ -1,0 +1,35 @@
+{
+  "common": {
+    "ok": "Tamam"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Bazı alanlar geçersiz. Lütfen kontrol edip tekrar dene.",
+    "INVALID_JSON": "İstek gövdesi okunamadı.",
+    "BAD_REQUEST": "İstek işlenemedi.",
+    "UNAUTHENTICATED": "Devam etmek için giriş yapmalısın.",
+    "TOKEN_EXPIRED": "Oturumunun süresi doldu.",
+    "REFRESH_REUSED": "Güvenliğin için lütfen tekrar giriş yap.",
+    "PREMIUM_REQUIRED": "Bu özellik Premium gerektiriyor.",
+    "FORBIDDEN": "Bu işlem için yetkin yok.",
+    "CONSENT_REQUIRED": "Önce gerekli onayı incelemen ve kabul etmen gerekiyor.",
+    "NOT_FOUND": "Aradığın şeyi bulamadık.",
+    "METHOD_NOT_ALLOWED": "Bu işlem desteklenmiyor.",
+    "CONFLICT": "Bu işlem mevcut verilerle çakışıyor.",
+    "ACTIVE_FAST_EXISTS": "Zaten devam eden bir orucun var.",
+    "FAST_OVERLAP": "Bu oruç başka bir orucunla çakışıyor.",
+    "IDEMPOTENCY_KEY_REUSED": "Bu istek daha önce farklı verilerle gönderilmiş.",
+    "ACCOUNT_LINK_CONFLICT": "Bu giriş yöntemi başka bir MochiFast hesabına bağlı.",
+    "REPLY_IN_PROGRESS": "Mochi hâlâ cevap yazıyor. Biraz bekle.",
+    "GONE": "Bu hesap artık kullanılamıyor.",
+    "PAYLOAD_TOO_LARGE": "Dosya veya istek çok büyük.",
+    "UNSUPPORTED_MEDIA_TYPE": "Bu dosya türü desteklenmiyor.",
+    "NOT_FOOD": "Bu bir yemeğe benzemiyor. Başka bir fotoğraf dene.",
+    "UNSAFE_REQUEST": "Güvenliğin için bu seçenek sana uygun değil.",
+    "SAFETY_ACK_REQUIRED": "Önce güvenlik notunu okuyup onaylaman gerekiyor.",
+    "APP_UPDATE_REQUIRED": "Devam etmek için MochiFast'i güncellemelisin.",
+    "QUOTA_EXCEEDED": "Bu özellik için bugünkü limitine ulaştın.",
+    "RATE_LIMITED": "Çok fazla istek gönderildi. Biraz sonra tekrar dene.",
+    "INTERNAL": "Bizim tarafımızda bir sorun oluştu. Lütfen tekrar dene.",
+    "UNAVAILABLE": "MochiFast şu an geçici olarak kullanılamıyor. Birazdan tekrar dene."
+  }
+}

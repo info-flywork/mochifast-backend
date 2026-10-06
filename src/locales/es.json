@@ -1,0 +1,35 @@
+{
+  "common": {
+    "ok": "OK"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Algunos campos no son válidos. Revísalos e inténtalo de nuevo.",
+    "INVALID_JSON": "No se pudo leer el cuerpo de la solicitud.",
+    "BAD_REQUEST": "No se pudo procesar la solicitud.",
+    "UNAUTHENTICATED": "Inicia sesión para continuar.",
+    "TOKEN_EXPIRED": "Tu sesión ha caducado.",
+    "REFRESH_REUSED": "Por tu seguridad, vuelve a iniciar sesión.",
+    "PREMIUM_REQUIRED": "Esta función requiere Premium.",
+    "FORBIDDEN": "No tienes permiso para hacer esto.",
+    "CONSENT_REQUIRED": "Primero revisa y acepta el consentimiento necesario.",
+    "NOT_FOUND": "No encontramos lo que buscabas.",
+    "METHOD_NOT_ALLOWED": "Esta acción no es compatible.",
+    "CONFLICT": "Esto entra en conflicto con datos existentes.",
+    "ACTIVE_FAST_EXISTS": "Ya tienes un ayuno activo.",
+    "FAST_OVERLAP": "Este ayuno se solapa con otro.",
+    "IDEMPOTENCY_KEY_REUSED": "Esta solicitud ya se envió con otros datos.",
+    "ACCOUNT_LINK_CONFLICT": "Este inicio de sesión ya está vinculado a otra cuenta de MochiFast.",
+    "REPLY_IN_PROGRESS": "Mochi todavía está respondiendo. Espera un momento.",
+    "GONE": "Esta cuenta ya no está disponible.",
+    "PAYLOAD_TOO_LARGE": "El archivo o la solicitud es demasiado grande.",
+    "UNSUPPORTED_MEDIA_TYPE": "Este tipo de archivo no es compatible.",
+    "NOT_FOOD": "Esto no parece una comida. Prueba con otra foto.",
+    "UNSAFE_REQUEST": "Por tu seguridad, esta opción no está disponible para ti.",
+    "SAFETY_ACK_REQUIRED": "Primero lee y confirma la nota de seguridad.",
+    "APP_UPDATE_REQUIRED": "Actualiza MochiFast para continuar.",
+    "QUOTA_EXCEEDED": "Has alcanzado el límite de hoy para esta función.",
+    "RATE_LIMITED": "Demasiadas solicitudes. Inténtalo de nuevo en breve.",
+    "INTERNAL": "Algo salió mal por nuestra parte. Inténtalo de nuevo.",
+    "UNAVAILABLE": "MochiFast no está disponible temporalmente. Inténtalo pronto."
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "common": {
+    "ok": "OK"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Certains champs sont invalides. Vérifie-les et réessaie.",
+    "INVALID_JSON": "Le corps de la requête est illisible.",
+    "BAD_REQUEST": "La requête n'a pas pu être traitée.",
+    "UNAUTHENTICATED": "Connecte-toi pour continuer.",
+    "TOKEN_EXPIRED": "Ta session a expiré.",
+    "REFRESH_REUSED": "Pour ta sécurité, reconnecte-toi.",
+    "PREMIUM_REQUIRED": "Cette fonctionnalité nécessite Premium.",
+    "FORBIDDEN": "Tu n'as pas l'autorisation de faire cela.",
+    "CONSENT_REQUIRED": "Merci de consulter et d'accepter d'abord le consentement requis.",
+    "NOT_FOUND": "Nous n'avons pas trouvé ce que tu cherchais.",
+    "METHOD_NOT_ALLOWED": "Cette action n'est pas prise en charge.",
+    "CONFLICT": "Cela entre en conflit avec des données existantes.",
+    "ACTIVE_FAST_EXISTS": "Tu as déjà un jeûne en cours.",
+    "FAST_OVERLAP": "Ce jeûne chevauche un autre jeûne.",
+    "IDEMPOTENCY_KEY_REUSED": "Cette requête a déjà été envoyée avec d'autres données.",
+    "ACCOUNT_LINK_CONFLICT": "Cette connexion est déjà liée à un autre compte MochiFast.",
+    "REPLY_IN_PROGRESS": "Mochi répond encore. Patiente un instant.",
+    "GONE": "Ce compte n'est plus disponible.",
+    "PAYLOAD_TOO_LARGE": "Le fichier ou la requête est trop volumineux.",
+    "UNSUPPORTED_MEDIA_TYPE": "Ce type de fichier n'est pas pris en charge.",
+    "NOT_FOOD": "Cela ne ressemble pas à un repas. Essaie une autre photo.",
+    "UNSAFE_REQUEST": "Pour ta sécurité, cette option n'est pas disponible pour toi.",
+    "SAFETY_ACK_REQUIRED": "Merci de lire et de confirmer d'abord la note de sécurité.",
+    "APP_UPDATE_REQUIRED": "Mets à jour MochiFast pour continuer.",
+    "QUOTA_EXCEEDED": "Tu as atteint la limite du jour pour cette fonctionnalité.",
+    "RATE_LIMITED": "Trop de requêtes. Réessaie dans un instant.",
+    "INTERNAL": "Un problème est survenu de notre côté. Réessaie.",
+    "UNAVAILABLE": "MochiFast est temporairement indisponible. Réessaie bientôt."
+  }
+}

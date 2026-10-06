@@ -1,0 +1,142 @@
+import { envSchema } from 'env-schema';
+
+/**
+ * Ortam değişkenlerinin şeması. Eksik/hatalı değer → process başlamaz (fail-fast).
+ * Açıklamalar için `.env.example` dosyasına bakın.
+ */
+const schema = {
+  type: 'object',
+  required: ['DB_HOST', 'DB_USER', 'DB_NAME', 'REDIS_CACHE_URL', 'REDIS_QUEUE_URL'],
+  properties: {
+    NODE_ENV: {
+      type: 'string',
+      enum: ['development', 'test', 'staging', 'production'],
+      default: 'development',
+    },
+    HOST: { type: 'string', default: '0.0.0.0' },
+    PORT: { type: 'integer', minimum: 1, maximum: 65535, default: 3000 },
+    PUBLIC_BASE_URL: { type: 'string', default: '' },
+    APP_RELEASE: { type: 'string', default: 'dev' },
+    LOG_LEVEL: {
+      type: 'string',
+      enum: ['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'],
+      default: 'info',
+    },
+    TRUST_PROXY: { type: 'string', default: 'false' },
+    BODY_LIMIT_BYTES: { type: 'integer', minimum: 1024, default: 65_536 },
+    SHUTDOWN_GRACE_MS: { type: 'integer', minimum: 1000, default: 25_000 },
+    SHUTDOWN_DRAIN_MS: { type: 'integer', minimum: 0, default: 0 },
+
+    DB_HOST: { type: 'string' },
+    DB_PORT: { type: 'integer', default: 3306 },
+    DB_USER: { type: 'string' },
+    DB_PASSWORD: { type: 'string', default: '' },
+    DB_NAME: { type: 'string' },
+    DB_SSL: { type: 'boolean', default: false },
+    DB_SSL_CA: { type: 'string', default: '' },
+    DB_POOL_SIZE: { type: 'integer', minimum: 1, maximum: 200, default: 20 },
+    DB_SLOW_QUERY_MS: { type: 'integer', minimum: 1, default: 200 },
+
+    REDIS_CACHE_URL: { type: 'string' },
+    REDIS_QUEUE_URL: { type: 'string' },
+    REDIS_KEY_PREFIX: { type: 'string', default: 'mf' },
+
+    CORS_ORIGINS: { type: 'string', default: '' },
+    RATE_LIMIT_GLOBAL_MAX: { type: 'integer', minimum: 1, default: 600 },
+    RATE_LIMIT_WINDOW: { type: 'string', default: '1 minute' },
+
+    METRICS_ENABLED: { type: 'boolean', default: true },
+    METRICS_HOST: { type: 'string', default: '0.0.0.0' },
+    METRICS_PORT: { type: 'integer', minimum: 1, maximum: 65535, default: 9464 },
+
+    DOCS_ENABLED: { type: 'boolean', default: false },
+    DOCS_USER: { type: 'string', default: '' },
+    DOCS_PASSWORD: { type: 'string', default: '' },
+
+    SENTRY_DSN: { type: 'string', default: '' },
+    SENTRY_TRACES_SAMPLE_RATE: { type: 'number', minimum: 0, maximum: 1, default: 0 },
+  },
+};
+
+const LOCAL_DB_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
+
+/**
+ * Ortam değişkenlerinden doğrulanmış, dondurulmuş konfigürasyon üretir.
+ * Saf fonksiyon: testlerde özel `env` ile çağrılabilir.
+ */
+export function loadConfig(env = process.env) {
+  // env:false → yalnızca verilen `env` doğrulanır (process.env ile birleştirilmez; saf fonksiyon).
+  const e = envSchema({ schema, data: env, dotenv: false, env: false });
+
+  if (e.DOCS_ENABLED && (!e.DOCS_USER || e.DOCS_PASSWORD.length < 12)) {
+    throw new Error(
+      'DOCS_ENABLED=true iken DOCS_USER ve en az 12 karakterlik DOCS_PASSWORD zorunlu.',
+    );
+  }
+  // Ağ üzerinden giden DB bağlantısı üretimde şifreli olmalı. Aynı makinedeki MySQL'e
+  // (localhost) bağlanırken trafik makineden çıkmadığı için SSL gerekmez.
+  if (e.NODE_ENV === 'production' && !e.DB_SSL && !LOCAL_DB_HOSTS.has(e.DB_HOST)) {
+    throw new Error('Üretimde uzak MySQL için DB_SSL=true zorunlu.');
+  }
+
+  const config = {
+    env: e.NODE_ENV,
+    isProduction: e.NODE_ENV === 'production',
+    release: e.APP_RELEASE,
+    server: {
+      host: e.HOST,
+      port: e.PORT,
+      publicBaseUrl: e.PUBLIC_BASE_URL,
+      trustProxy: parseTrustProxy(e.TRUST_PROXY),
+      bodyLimit: e.BODY_LIMIT_BYTES,
+      shutdownGraceMs: e.SHUTDOWN_GRACE_MS,
+      shutdownDrainMs: e.SHUTDOWN_DRAIN_MS,
+    },
+    log: { level: e.LOG_LEVEL, pretty: e.NODE_ENV === 'development' },
+    db: {
+      host: e.DB_HOST,
+      port: e.DB_PORT,
+      user: e.DB_USER,
+      password: e.DB_PASSWORD,
+      database: e.DB_NAME,
+      ssl: e.DB_SSL,
+      sslCa: e.DB_SSL_CA,
+      poolSize: e.DB_POOL_SIZE,
+      slowQueryMs: e.DB_SLOW_QUERY_MS,
+    },
+    redis: {
+      cacheUrl: e.REDIS_CACHE_URL,
+      queueUrl: e.REDIS_QUEUE_URL,
+      keyPrefix: e.REDIS_KEY_PREFIX,
+    },
+    cors: { origins: splitList(e.CORS_ORIGINS) },
+    rateLimit: { globalMax: e.RATE_LIMIT_GLOBAL_MAX, window: e.RATE_LIMIT_WINDOW },
+    metrics: { enabled: e.METRICS_ENABLED, host: e.METRICS_HOST, port: e.METRICS_PORT },
+    docs: { enabled: e.DOCS_ENABLED, user: e.DOCS_USER, password: e.DOCS_PASSWORD },
+    sentry: { dsn: e.SENTRY_DSN, tracesSampleRate: e.SENTRY_TRACES_SAMPLE_RATE },
+  };
+  return deepFreeze(config);
+}
+
+function parseTrustProxy(value) {
+  if (value === 'true') return true;
+  if (value === 'false' || value === '') return false;
+  const hops = Number(value);
+  if (Number.isInteger(hops) && hops >= 0) return hops;
+  throw new Error(`TRUST_PROXY geçersiz: "${value}" (true | false | hop sayısı)`);
+}
+
+function splitList(value) {
+  return value
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function deepFreeze(obj) {
+  if (obj && typeof obj === 'object') {
+    for (const v of Object.values(obj)) deepFreeze(v);
+    Object.freeze(obj);
+  }
+  return obj;
+}

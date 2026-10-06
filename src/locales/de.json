@@ -1,0 +1,35 @@
+{
+  "common": {
+    "ok": "OK"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Einige Felder sind ungültig. Bitte prüfe sie und versuche es erneut.",
+    "INVALID_JSON": "Der Anfrageinhalt konnte nicht gelesen werden.",
+    "BAD_REQUEST": "Die Anfrage konnte nicht verarbeitet werden.",
+    "UNAUTHENTICATED": "Bitte melde dich an, um fortzufahren.",
+    "TOKEN_EXPIRED": "Deine Sitzung ist abgelaufen.",
+    "REFRESH_REUSED": "Bitte melde dich zu deiner Sicherheit erneut an.",
+    "PREMIUM_REQUIRED": "Für diese Funktion brauchst du Premium.",
+    "FORBIDDEN": "Dafür fehlt dir die Berechtigung.",
+    "CONSENT_REQUIRED": "Bitte prüfe und bestätige zuerst die erforderliche Einwilligung.",
+    "NOT_FOUND": "Wir konnten das Gesuchte nicht finden.",
+    "METHOD_NOT_ALLOWED": "Diese Aktion wird nicht unterstützt.",
+    "CONFLICT": "Das steht im Konflikt mit vorhandenen Daten.",
+    "ACTIVE_FAST_EXISTS": "Du hast bereits ein aktives Fasten.",
+    "FAST_OVERLAP": "Dieses Fasten überschneidet sich mit einem anderen.",
+    "IDEMPOTENCY_KEY_REUSED": "Diese Anfrage wurde bereits mit anderen Daten gesendet.",
+    "ACCOUNT_LINK_CONFLICT": "Diese Anmeldung ist bereits mit einem anderen MochiFast-Konto verknüpft.",
+    "REPLY_IN_PROGRESS": "Mochi antwortet noch. Bitte warte kurz.",
+    "GONE": "Dieses Konto ist nicht mehr verfügbar.",
+    "PAYLOAD_TOO_LARGE": "Die Datei oder Anfrage ist zu groß.",
+    "UNSUPPORTED_MEDIA_TYPE": "Dieser Dateityp wird nicht unterstützt.",
+    "NOT_FOOD": "Das sieht nicht nach einer Mahlzeit aus. Versuch ein anderes Foto.",
+    "UNSAFE_REQUEST": "Zu deiner Sicherheit ist diese Option für dich nicht verfügbar.",
+    "SAFETY_ACK_REQUIRED": "Bitte lies und bestätige zuerst den Sicherheitshinweis.",
+    "APP_UPDATE_REQUIRED": "Bitte aktualisiere MochiFast, um fortzufahren.",
+    "QUOTA_EXCEEDED": "Du hast das heutige Limit für diese Funktion erreicht.",
+    "RATE_LIMITED": "Zu viele Anfragen. Bitte versuche es gleich noch einmal.",
+    "INTERNAL": "Bei uns ist etwas schiefgelaufen. Bitte versuche es erneut.",
+    "UNAVAILABLE": "MochiFast ist vorübergehend nicht verfügbar. Bitte versuche es bald erneut."
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "common": {
+    "ok": "OK"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Some fields are invalid. Please check and try again.",
+    "INVALID_JSON": "The request body could not be read.",
+    "BAD_REQUEST": "The request could not be processed.",
+    "UNAUTHENTICATED": "Please sign in to continue.",
+    "TOKEN_EXPIRED": "Your session has expired.",
+    "REFRESH_REUSED": "For your security, please sign in again.",
+    "PREMIUM_REQUIRED": "This feature requires Premium.",
+    "FORBIDDEN": "You don't have permission to do this.",
+    "CONSENT_REQUIRED": "Please review and accept the required consent first.",
+    "NOT_FOUND": "We couldn't find what you were looking for.",
+    "METHOD_NOT_ALLOWED": "This action is not supported.",
+    "CONFLICT": "This conflicts with existing data.",
+    "ACTIVE_FAST_EXISTS": "You already have an active fast.",
+    "FAST_OVERLAP": "This fast overlaps with another one.",
+    "IDEMPOTENCY_KEY_REUSED": "This request was already sent with different data.",
+    "ACCOUNT_LINK_CONFLICT": "This sign-in is already linked to another MochiFast account.",
+    "REPLY_IN_PROGRESS": "Mochi is still answering. Please wait a moment.",
+    "GONE": "This account is no longer available.",
+    "PAYLOAD_TOO_LARGE": "The file or request is too large.",
+    "UNSUPPORTED_MEDIA_TYPE": "This file type is not supported.",
+    "NOT_FOOD": "This doesn't look like a meal. Try another photo.",
+    "UNSAFE_REQUEST": "For your safety, this option isn't available for you.",
+    "SAFETY_ACK_REQUIRED": "Please read and confirm the safety note first.",
+    "APP_UPDATE_REQUIRED": "Please update MochiFast to continue.",
+    "QUOTA_EXCEEDED": "You've reached today's limit for this feature.",
+    "RATE_LIMITED": "Too many requests. Please try again shortly.",
+    "INTERNAL": "Something went wrong on our side. Please try again.",
+    "UNAVAILABLE": "MochiFast is temporarily unavailable. Please try again soon."
+  }
+}
