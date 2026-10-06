@@ -1,0 +1,2690 @@
+{
+  "stages": [
+    {
+      "type": "body",
+      "position": 1,
+      "startHour": 0,
+      "endHour": 2,
+      "imageKey": "a1",
+      "imageIdle": "assets/images/1.png",
+      "imageReached": "assets/images/1_light.png",
+      "translations": {
+        "en": {
+          "rangeLabel": "0h - 2h",
+          "title": "Blood Sugar Rises",
+          "body": "Your fast has just begun. In these first hours, your body is still digesting your last meal and using glucose from the food you ate.\n\nInsulin helps move glucose into your cells for energy, while any extra glucose is stored for later.\n\nAt this stage, it's normal to feel fairly steady."
+        },
+        "tr": {
+          "rangeLabel": "0 sa - 2 sa",
+          "title": "Kan şekeri yükseliyor",
+          "body": "Orucun yeni başladı. Bu ilk saatlerde vücudun hâlâ son öğününü sindiriyor ve yediğin besinlerdeki glikozu kullanıyor.\n\nİnsülin, glikozun enerji için hücrelerine geçmesine yardım eder; fazlası ise sonra kullanılmak üzere depolanır.\n\nBu aşamada kendini oldukça dengede hissetmen normal."
+        },
+        "de": {
+          "rangeLabel": "0 Std. - 2 Std.",
+          "title": "Blutzucker steigt",
+          "body": "Dein Fasten hat gerade begonnen. In diesen ersten Stunden verdaut dein Körper noch deine letzte Mahlzeit und nutzt Glukose aus dem Essen.\n\nInsulin hilft, Glukose als Energie in deine Zellen zu bringen, während überschüssige Glukose für später gespeichert wird.\n\nIn dieser Phase ist es normal, sich ziemlich stabil zu fühlen."
+        },
+        "es": {
+          "rangeLabel": "0h - 2h",
+          "title": "El nivel de azúcar en la sangre aumenta",
+          "body": "Tu ayuno acaba de comenzar. En estas primeras horas, tu cuerpo todavía está digiriendo tu última comida y utilizando la glucosa de los alimentos que ingeriste.\n\nLa insulina ayuda a mover la glucosa a las células para obtener energía, mientras que la glucosa adicional se almacena para más adelante.\n\nEn esta etapa, es normal sentirse bastante estable."
+        },
+        "fr": {
+          "rangeLabel": "0h - 2h",
+          "title": "La glycémie augmente",
+          "body": "Your fast has just begun. In these first hours, your body is still digesting your last meal and using glucose from the food you ate.\n\nInsulin helps move glucose into your cells for energy, while any extra glucose is stored for later.\n\nAt this stage, it's normal to feel fairly steady."
+        },
+        "it": {
+          "rangeLabel": "0 h - 2 h",
+          "title": "La glicemia aumenta",
+          "body": "Il tuo digiuno è appena iniziato. In queste prime ore il corpo sta ancora digerendo l’ultimo pasto e usando il glucosio degli alimenti che hai mangiato.\n\nL’insulina aiuta il glucosio a entrare nelle cellule per produrre energia, mentre quello in eccesso viene conservato per dopo.\n\nIn questa fase è normale sentirsi piuttosto stabili."
+        },
+        "ru": {
+          "rangeLabel": "0 ч - 2 ч",
+          "title": "Уровень сахара в крови растёт",
+          "body": "Твоё голодание только началось. В первые часы организм ещё переваривает последний приём пищи и использует глюкозу из съеденных продуктов.\n\nИнсулин помогает глюкозе попасть в клетки для получения энергии, а её избыток сохраняется на потом.\n\nНа этом этапе нормально чувствовать себя достаточно стабильно."
+        }
+      }
+    },
+    {
+      "type": "body",
+      "position": 2,
+      "startHour": 2,
+      "endHour": 5,
+      "imageKey": "a2",
+      "imageIdle": "assets/images/2.png",
+      "imageReached": "assets/images/2_light.png",
+      "translations": {
+        "en": {
+          "rangeLabel": "2h - 5h",
+          "title": "Blood Sugar Drops",
+          "body": "After the post-meal rise, your blood sugar starts moving back toward its normal range.\n\nAs digestion slows down, your body begins shifting away from incoming food and starts relying more on stored energy.\n\nYou may notice your hunger coming and going during this stage."
+        },
+        "tr": {
+          "rangeLabel": "2 sa - 5 sa",
+          "title": "Kan şekeri düşüyor",
+          "body": "Öğün sonrası yükselişin ardından kan şekerin olağan aralığına doğru iner.\n\nSindirim yavaşladıkça vücudun gelen besinden uzaklaşıp depolanmış enerjiye daha çok yaslanır.\n\nBu aşamada açlığın gelip gittiğini fark edebilirsin."
+        },
+        "de": {
+          "rangeLabel": "2 Std. - 5 Std.",
+          "title": "Blutzucker sinkt",
+          "body": "Nach dem Anstieg nach dem Essen bewegt sich dein Blutzucker zurück in seinen normalen Bereich.\n\nWährend die Verdauung langsamer wird, löst sich dein Körper vom zugeführten Essen und stützt sich mehr auf gespeicherte Energie.\n\nIn dieser Phase kann dein Hunger kommen und gehen."
+        },
+        "es": {
+          "rangeLabel": "2h - 5h",
+          "title": "Gotas de azúcar en la sangre",
+          "body": "Después del aumento posterior a las comidas, el nivel de azúcar en sangre comienza a regresar a su rango normal.\n\nA medida que la digestión se ralentiza, su cuerpo comienza a alejarse de los alimentos entrantes y comienza a depender más de la energía almacenada.\n\nEs posible que notes que tu hambre va y viene durante esta etapa."
+        },
+        "fr": {
+          "rangeLabel": "2h - 5h",
+          "title": "Blood Sugar Drops",
+          "body": "After the post-meal rise, your blood sugar starts moving back toward its normal range.\n\nAs digestion slows down, your body begins shifting away from incoming food and starts relying more on stored energy.\n\nYou may notice your hunger coming and going during this stage."
+        },
+        "it": {
+          "rangeLabel": "2 h - 5 h",
+          "title": "La glicemia diminuisce",
+          "body": "Dopo l’aumento successivo al pasto, la glicemia inizia a tornare verso i valori abituali.\n\nMentre la digestione rallenta, il corpo dipende meno dal cibo appena introdotto e inizia a usare maggiormente l’energia immagazzinata.\n\nIn questa fase potresti notare che la fame va e viene."
+        },
+        "ru": {
+          "rangeLabel": "2 ч - 5 ч",
+          "title": "Уровень сахара в крови снижается",
+          "body": "После повышения вслед за едой уровень сахара в крови начинает возвращаться к обычным значениям.\n\nПо мере замедления пищеварения организм всё меньше зависит от поступающей пищи и всё больше использует накопленную энергию.\n\nНа этом этапе чувство голода может то появляться, то исчезать."
+        }
+      }
+    },
+    {
+      "type": "body",
+      "position": 3,
+      "startHour": 5,
+      "endHour": 8,
+      "imageKey": "a3",
+      "imageIdle": "assets/images/3.png",
+      "imageReached": "assets/images/3_light.png",
+      "translations": {
+        "en": {
+          "rangeLabel": "5h - 8h",
+          "title": "Blood Sugar Stabilizes",
+          "body": "By now, your blood sugar is usually back in a more stable range.\n\nYou might start feeling hungry, but your body still has plenty of energy available. It continues using stored glucose while your digestion finishes up.\n\nThis is the stage where your body begins preparing for a deeper fast."
+        },
+        "tr": {
+          "rangeLabel": "5 sa - 8 sa",
+          "title": "Kan şekeri stabilleşiyor",
+          "body": "Bu saatte kan şekerin genellikle daha stabil bir aralığa dönmüş olur.\n\nAçlık hissetmeye başlayabilirsin ama vücudunda hâlâ bolca enerji vardır. Sindirimin tamamlanırken depolanmış glikozu kullanmaya devam eder.\n\nVücudun daha derin bir oruca bu aşamada hazırlanmaya başlar."
+        },
+        "de": {
+          "rangeLabel": "5 Std. - 8 Std.",
+          "title": "Blutzucker stabilisiert sich",
+          "body": "Inzwischen ist dein Blutzucker meist wieder in einem stabileren Bereich.\n\nDu kannst Hunger spüren, aber dein Körper hat noch reichlich Energie. Er nutzt weiter gespeicherte Glukose, während die Verdauung zu Ende geht.\n\nIn dieser Phase beginnt dein Körper, sich auf ein tieferes Fasten vorzubereiten."
+        },
+        "es": {
+          "rangeLabel": "5h - 8h",
+          "title": "El azúcar en sangre se estabiliza",
+          "body": "A estas alturas, su nivel de azúcar en sangre suele volver a estar en un rango más estable.\n\nPuede que empieces a sentir hambre, pero tu cuerpo todavía tiene mucha energía disponible. Continúa utilizando la glucosa almacenada mientras finaliza la digestión.\n\nEsta es la etapa en la que tu cuerpo comienza a prepararse para un ayuno más profundo."
+        },
+        "fr": {
+          "rangeLabel": "5h - 8h",
+          "title": "Blood Sugar Stabilizes",
+          "body": "By now, your blood sugar is usually back in a more stable range.\n\nYou might start feeling hungry, but your body still has plenty of energy available. It continues using stored glucose while your digestion finishes up.\n\nThis is the stage where your body begins preparing for a deeper fast."
+        },
+        "it": {
+          "rangeLabel": "5 h - 8 h",
+          "title": "La glicemia si stabilizza",
+          "body": "A questo punto, la glicemia è solitamente tornata a valori più stabili.\n\nPotresti iniziare ad avere fame, ma il corpo ha ancora molta energia disponibile. Continua a usare il glucosio immagazzinato mentre la digestione si conclude.\n\nÈ la fase in cui il corpo inizia a prepararsi a un digiuno più profondo."
+        },
+        "ru": {
+          "rangeLabel": "5 ч - 8 ч",
+          "title": "Уровень сахара в крови стабилизируется",
+          "body": "К этому моменту уровень сахара в крови обычно возвращается к более стабильным значениям.\n\nТы можешь начать чувствовать голод, но у организма ещё достаточно энергии. Он продолжает использовать запасённую глюкозу, пока пищеварение завершается.\n\nНа этом этапе организм начинает готовиться к более глубокому голоданию."
+        }
+      }
+    },
+    {
+      "type": "body",
+      "position": 4,
+      "startHour": 8,
+      "endHour": 12,
+      "imageKey": "a4",
+      "imageIdle": "assets/images/4.png",
+      "imageReached": "assets/images/4_light.png",
+      "translations": {
+        "en": {
+          "rangeLabel": "8h - 12h",
+          "title": "Entering Fasting Mode",
+          "body": "About 8 hours after your last meal, your liver begins using the last of its easily available glycogen stores.\n\nYour body may start a process called gluconeogenesis, where it creates glucose from non-carbohydrate sources to help keep your energy stable.\n\nThis is your transition into fasting mode."
+        },
+        "tr": {
+          "rangeLabel": "8 sa - 12 sa",
+          "title": "Oruç moduna geçiş",
+          "body": "Son öğününden yaklaşık 8 saat sonra karaciğerin, kolayca kullanılabilen glikojen depolarının sonunu tüketmeye başlar.\n\nVücudun glukoneogenez denen bir sürece girebilir. Bu süreçte enerjiyi dengede tutmak için karbonhidrat olmayan kaynaklardan glikoz üretir.\n\nOruç moduna geçişin bu."
+        },
+        "de": {
+          "rangeLabel": "8 Std. - 12 Std.",
+          "title": "Einstieg in den Fastenmodus",
+          "body": "Etwa 8 Stunden nach deiner letzten Mahlzeit beginnt deine Leber, die letzten leicht verfügbaren Glykogenspeicher zu nutzen.\n\nDein Körper kann die Glukoneogenese starten. Dabei entsteht Glukose aus Nicht-Kohlenhydraten, damit deine Energie stabil bleibt.\n\nDas ist dein Übergang in den Fastenmodus."
+        },
+        "es": {
+          "rangeLabel": "8h - 12h",
+          "title": "Entrar en modo de ayuno",
+          "body": "Aproximadamente 8 horas después de su última comida, su hígado comienza a utilizar las últimas reservas de glucógeno que tiene fácilmente disponibles.\n\nSu cuerpo puede iniciar un proceso llamado gluconeogénesis, donde crea glucosa a partir de fuentes distintas de los carbohidratos para ayudar a mantener su energía estable.\n\nEsta es tu transición al modo de ayuno."
+        },
+        "fr": {
+          "rangeLabel": "8h - 12h",
+          "title": "Entering Fasting Mode",
+          "body": "About 8 hours after your last meal, your liver begins using the last of its easily available glycogen stores.\n\nYour body may start a process called gluconeogenesis, where it creates glucose from non-carbohydrate sources to help keep your energy stable.\n\nThis is your transition into fasting mode."
+        },
+        "it": {
+          "rangeLabel": "8 h - 12 h",
+          "title": "Ingresso nella modalità digiuno",
+          "body": "Circa 8 ore dopo l’ultimo pasto, il fegato inizia a usare le ultime riserve di glicogeno facilmente disponibili.\n\nIl corpo può avviare un processo chiamato gluconeogenesi, in cui crea glucosio da fonti diverse dai carboidrati per mantenere stabile l’energia.\n\nÈ la tua transizione alla modalità digiuno."
+        },
+        "ru": {
+          "rangeLabel": "8 ч - 12 ч",
+          "title": "Переход в режим голодания",
+          "body": "Примерно через 8 часов после последнего приёма пищи печень начинает расходовать остатки доступных запасов гликогена.\n\nОрганизм может запустить процесс под названием глюконеогенез: он создаёт глюкозу из неуглеводных источников, чтобы поддерживать стабильную энергию.\n\nЭто твой переход в режим голодания."
+        }
+      }
+    },
+    {
+      "type": "body",
+      "position": 5,
+      "startHour": 12,
+      "endHour": 16,
+      "imageKey": "a5",
+      "imageIdle": "assets/images/5.png",
+      "imageReached": "assets/images/5_light.png",
+      "translations": {
+        "en": {
+          "rangeLabel": "12h - 16h",
+          "title": "Fat Burning Begins",
+          "body": "Your glycogen stores are running low.\nYou may feel a little hungry, low on energy, or slightly light-headed.\n\nThis can also be a sign that your body is starting to tap into fat for fuel.\n\nFat cells begin releasing fatty acids into the bloodstream, where they can be converted into energy."
+        },
+        "tr": {
+          "rangeLabel": "12 sa - 16 sa",
+          "title": "Yağ yakımı başlıyor",
+          "body": "Glikojen depoların azalıyor.\nBiraz aç, enerjisiz ya da hafif başın dönüyor gibi hissedebilirsin.\n\nBu, vücudunun yakıt için yağa yönelmeye başladığının da işareti olabilir.\n\nYağ hücreleri kan dolaşımına yağ asitleri bırakır; bunlar enerjiye dönüştürülebilir."
+        },
+        "de": {
+          "rangeLabel": "12 Std. - 16 Std.",
+          "title": "Fettverbrennung beginnt",
+          "body": "Deine Glykogenspeicher werden knapp.\nDu kannst etwas hungrig, energielos oder leicht benommen sein.\n\nDas kann auch ein Zeichen dafür sein, dass dein Körper beginnt, Fett als Brennstoff zu nutzen.\n\nFettzellen geben Fettsäuren ins Blut ab, die in Energie umgewandelt werden können."
+        },
+        "es": {
+          "rangeLabel": "12h - 16h",
+          "title": "Comienza la quema de grasa",
+          "body": "Tus reservas de glucógeno se están agotando.\nEs posible que se sienta un poco hambriento, con poca energía o ligeramente mareado.\n\nEsto también puede ser una señal de que su cuerpo está comenzando a aprovechar la grasa como combustible.\n\nLas células grasas comienzan a liberar ácidos grasos en el torrente sanguíneo, donde pueden convertirse en energía."
+        },
+        "fr": {
+          "rangeLabel": "12h - 16h",
+          "title": "Fat Burning Begins",
+          "body": "Your glycogen stores are running low.\nYou may feel a little hungry, low on energy, or slightly light-headed.\n\nThis can also be a sign that your body is starting to tap into fat for fuel.\n\nFat cells begin releasing fatty acids into the bloodstream, where they can be converted into energy."
+        },
+        "it": {
+          "rangeLabel": "12 h - 16 h",
+          "title": "Inizia la combustione dei grassi",
+          "body": "Le riserve di glicogeno stanno diminuendo.\nPotresti avvertire un po’ di fame, poca energia o un leggero capogiro.\n\nQuesto può anche indicare che il corpo sta iniziando a usare i grassi come carburante.\n\nLe cellule adipose iniziano a rilasciare acidi grassi nel sangue, dove possono essere convertiti in energia."
+        },
+        "ru": {
+          "rangeLabel": "12 ч - 16 ч",
+          "title": "Начинается сжигание жира",
+          "body": "Запасы гликогена истощаются.\nТы можешь ощущать небольшой голод, нехватку энергии или лёгкое головокружение.\n\nЭто также может означать, что организм начинает использовать жир как топливо.\n\nЖировые клетки начинают выделять жирные кислоты в кровь, где они могут превращаться в энергию."
+        }
+      }
+    },
+    {
+      "type": "body",
+      "position": 6,
+      "startHour": 16,
+      "endHour": 18,
+      "imageKey": "a6",
+      "imageIdle": "assets/images/6.png",
+      "imageReached": "assets/images/6_light.png",
+      "translations": {
+        "en": {
+          "rangeLabel": "16h - 18h",
+          "title": "You're in Ketosis",
+          "body": "Your body is now starting to use more fat as fuel.\n\nAs glycogen becomes limited, your liver begins producing ketones — an alternative energy source made from fat.\n\nThis stage is often called \"fat-burning mode,\" and some people may begin to feel clearer or more focused once their body adjusts."
+        },
+        "tr": {
+          "rangeLabel": "16 sa - 18 sa",
+          "title": "Ketozdasın",
+          "body": "Vücudun artık yakıt olarak daha çok yağ kullanmaya başlıyor.\n\nGlikojen sınırlanınca karaciğerin yağdan keton üretmeye başlar. Ketonlar, yağdan elde edilen alternatif bir enerji kaynağıdır.\n\nBu aşamaya çoğu zaman \"yağ yakma modu\" denir. Vücut alışınca bazı insanlar daha berrak ya da daha odaklı hissedebilir."
+        },
+        "de": {
+          "rangeLabel": "16 Std. - 18 Std.",
+          "title": "Du bist in der Ketose",
+          "body": "Dein Körper beginnt jetzt, mehr Fett als Brennstoff zu nutzen.\n\nWenn das Glykogen knapp wird, produziert deine Leber Ketone — eine alternative Energiequelle aus Fett.\n\nDiese Phase wird oft \"Fettverbrennungsmodus\" genannt. Manche fühlen sich klarer oder fokussierter, sobald sich der Körper daran gewöhnt."
+        },
+        "es": {
+          "rangeLabel": "16h - 18h",
+          "title": "Estas en cetosis",
+          "body": "Su cuerpo ahora está empezando a utilizar más grasa como combustible.\n\nA medida que el glucógeno se limita, el hígado comienza a producir cetonas, una fuente de energía alternativa elaborada a partir de grasa.\n\nEsta etapa a menudo se denomina \"modo de quema de grasa\" y algunas personas pueden comenzar a sentirse más claras o más concentradas una vez que su cuerpo se adapta."
+        },
+        "fr": {
+          "rangeLabel": "16h - 18h",
+          "title": "You're in Ketosis",
+          "body": "Your body is now starting to use more fat as fuel.\n\nAs glycogen becomes limited, your liver begins producing ketones — an alternative energy source made from fat.\n\nThis stage is often called \"fat-burning mode,\" and some people may begin to feel clearer or more focused once their body adjusts."
+        },
+        "it": {
+          "rangeLabel": "16 h - 18 h",
+          "title": "Sei in chetosi",
+          "body": "Il corpo sta iniziando a usare più grassi come carburante.\n\nQuando il glicogeno scarseggia, il fegato inizia a produrre chetoni — una fonte alternativa di energia ricavata dai grassi.\n\nQuesta fase viene spesso chiamata «modalità brucia-grassi» e alcune persone possono sentirsi più lucide o concentrate quando il corpo si adatta."
+        },
+        "ru": {
+          "rangeLabel": "16 ч - 18 ч",
+          "title": "Ты в кетозе",
+          "body": "Организм начинает использовать больше жира как топливо.\n\nКогда гликогена становится мало, печень начинает производить кетоны — альтернативный источник энергии из жира.\n\nЭтот этап часто называют «режимом сжигания жира». После адаптации некоторые люди замечают большую ясность мыслей и концентрацию."
+        }
+      }
+    },
+    {
+      "type": "body",
+      "position": 7,
+      "startHour": 18,
+      "endHour": 24,
+      "imageKey": "a7",
+      "imageIdle": "assets/images/7.png",
+      "imageReached": "assets/images/7_light.png",
+      "translations": {
+        "en": {
+          "rangeLabel": "18h - 24h",
+          "title": "Fat-Burning Mode Deepens",
+          "body": "The longer you fast, the deeper your body may move into ketosis.\n\nKetone levels rise, and your body becomes more efficient at using stored fat for energy.\n\nDuring this stage, your body may also begin activating repair and stress-response pathways that support cellular balance."
+        },
+        "tr": {
+          "rangeLabel": "18 sa - 24 sa",
+          "title": "Yağ yakımı derinleşiyor",
+          "body": "Oruç uzadıkça vücudun ketozun daha derinine inebilir.\n\nKeton düzeyi yükselir ve vücudun depolanmış yağı enerjiye çevirmekte daha verimli olur.\n\nBu aşamada vücudun, hücresel dengeyi destekleyen onarım ve stres yanıtı yollarını da devreye almaya başlayabilir."
+        },
+        "de": {
+          "rangeLabel": "18 Std. - 24 Std.",
+          "title": "Der Fettverbrennungsmodus vertieft sich",
+          "body": "Je länger du fastest, desto tiefer kann dein Körper in die Ketose gehen.\n\nDer Ketonspiegel steigt, und dein Körper nutzt gespeichertes Fett effizienter als Energie.\n\nIn dieser Phase kann dein Körper auch Reparatur- und Stressreaktionswege aktivieren, die das zelluläre Gleichgewicht unterstützen."
+        },
+        "es": {
+          "rangeLabel": "18h - 24h",
+          "title": "El modo de quema de grasa se intensifica",
+          "body": "Cuanto más ayunes, más profundamente entrará tu cuerpo en cetosis.\n\nLos niveles de cetonas aumentan y su cuerpo se vuelve más eficiente en el uso de la grasa almacenada para obtener energía.\n\nDurante esta etapa, su cuerpo también puede comenzar a activar vías de reparación y respuesta al estrés que respaldan el equilibrio celular."
+        },
+        "fr": {
+          "rangeLabel": "18h - 24h",
+          "title": "Fat-Burning Mode Deepens",
+          "body": "The longer you fast, the deeper your body may move into ketosis.\n\nKetone levels rise, and your body becomes more efficient at using stored fat for energy.\n\nDuring this stage, your body may also begin activating repair and stress-response pathways that support cellular balance."
+        },
+        "it": {
+          "rangeLabel": "18 h - 24 h",
+          "title": "La combustione dei grassi aumenta",
+          "body": "Più a lungo digiuni, più il corpo può entrare profondamente in chetosi.\n\nI livelli di chetoni aumentano e il corpo diventa più efficiente nell’usare i grassi immagazzinati come energia.\n\nIn questa fase, il corpo può anche iniziare ad attivare meccanismi di riparazione e risposta allo stress che favoriscono l’equilibrio cellulare."
+        },
+        "ru": {
+          "rangeLabel": "18 ч - 24 ч",
+          "title": "Сжигание жира усиливается",
+          "body": "Чем дольше ты голодаешь, тем глубже организм может погружаться в кетоз.\n\nУровень кетонов повышается, и организм эффективнее использует накопленный жир для получения энергии.\n\nНа этом этапе организм также может начать активировать механизмы восстановления и реакции на стресс, поддерживающие клеточный баланс."
+        }
+      }
+    },
+    {
+      "type": "body",
+      "position": 8,
+      "startHour": 24,
+      "endHour": 48,
+      "imageKey": "a8",
+      "imageIdle": "assets/images/8.png",
+      "imageReached": "assets/images/8_light.png",
+      "translations": {
+        "en": {
+          "rangeLabel": "24h - 48h",
+          "title": "Autophagy Begins",
+          "body": "At this stage, your body may begin increasing autophagy, its natural cellular clean-up process.\n\nThink of it as recycling: older or damaged cell components are broken down and reused.\n\nThis process may help support cellular renewal, metabolic health, and overall recovery."
+        },
+        "tr": {
+          "rangeLabel": "24 sa - 48 sa",
+          "title": "Otofaji başlıyor",
+          "body": "Bu aşamada vücudun, doğal hücre temizliği olan otofajiyi artırmaya başlayabilir.\n\nBunu geri dönüşüm gibi düşün: eski ya da hasarlı hücre parçaları parçalanıp yeniden kullanılır.\n\nBu süreç hücresel yenilenmeyi, metabolik sağlığı ve toparlanmayı destekleyebilir."
+        },
+        "de": {
+          "rangeLabel": "24 Std. - 48 Std.",
+          "title": "Autophagie beginnt",
+          "body": "In dieser Phase kann dein Körper die Autophagie verstärken, seinen natürlichen zellulären Aufräumprozess.\n\nStell es dir wie Recycling vor: ältere oder beschädigte Zellbestandteile werden abgebaut und wiederverwendet.\n\nDieser Prozess kann Zellerneuerung, Stoffwechselgesundheit und Erholung unterstützen."
+        },
+        "es": {
+          "rangeLabel": "24h - 48h",
+          "title": "Comienza la autofagia",
+          "body": "En esta etapa, su cuerpo puede comenzar a aumentar la autofagia, su proceso natural de limpieza celular.\n\nPiense en ello como reciclaje: los componentes celulares más viejos o dañados se descomponen y se reutilizan.\n\nEste proceso puede ayudar a respaldar la renovación celular, la salud metabólica y la recuperación general."
+        },
+        "fr": {
+          "rangeLabel": "24h - 48h",
+          "title": "Autophagy Begins",
+          "body": "At this stage, your body may begin increasing autophagy, its natural cellular clean-up process.\n\nThink of it as recycling: older or damaged cell components are broken down and reused.\n\nThis process may help support cellular renewal, metabolic health, and overall recovery."
+        },
+        "it": {
+          "rangeLabel": "24 h - 48 h",
+          "title": "Inizia l’autofagia",
+          "body": "In questa fase, il corpo può iniziare ad aumentare l’autofagia, il suo processo naturale di pulizia cellulare.\n\nPensala come un riciclo: i componenti cellulari vecchi o danneggiati vengono scomposti e riutilizzati.\n\nQuesto processo può favorire il rinnovamento cellulare, la salute metabolica e il recupero generale."
+        },
+        "ru": {
+          "rangeLabel": "24 ч - 48 ч",
+          "title": "Начинается аутофагия",
+          "body": "На этом этапе организм может начать усиливать аутофагию — естественный процесс клеточной очистки.\n\nПредставь переработку: старые или повреждённые компоненты клеток расщепляются и используются заново.\n\nЭтот процесс может поддерживать обновление клеток, здоровье обмена веществ и общее восстановление."
+        }
+      }
+    },
+    {
+      "type": "body",
+      "position": 9,
+      "startHour": 48,
+      "endHour": null,
+      "imageKey": "a9",
+      "imageIdle": "assets/images/9.png",
+      "imageReached": "assets/images/9_light.png",
+      "translations": {
+        "en": {
+          "rangeLabel": "48h+",
+          "title": "Mental Clarity",
+          "body": "Around the second day, many people notice their mind feels quieter and sharper.\n\nWith ketones fueling the brain, focus can come more easily and mental noise may drop.\n\nThis is a common point in a longer fast. Stay hydrated, and end the fast when your body has had enough."
+        },
+        "tr": {
+          "rangeLabel": "48 sa+",
+          "title": "Zihin netleşiyor",
+          "body": "İkinci güne yaklaşırken birçok kişi zihninin daha sakin ve keskin geldiğini fark eder.\n\nKetonlar beyni besledikçe odaklanmak kolaylaşabilir ve zihindeki dağınıklık azalabilir.\n\nUzun bir orucun sık görülen bir noktasıdır. Suyu aksatma ve vücudun yeter dediğinde orucu bitir."
+        },
+        "de": {
+          "rangeLabel": "48 Std.+",
+          "title": "Mentale Klarheit",
+          "body": "Gegen den zweiten Tag merken viele, dass ihr Kopf ruhiger und klarer wird.\n\nWenn Ketone das Gehirn versorgen, kann der Fokus leichter fallen und das mentale Rauschen nachlassen.\n\nDas ist ein häufiger Punkt bei einem längeren Fasten. Trink weiter Wasser und beende das Fasten, wenn dein Körper genug hat."
+        },
+        "es": {
+          "rangeLabel": "48h+",
+          "title": "Claridad mental",
+          "body": "Alrededor del segundo día, muchas personas notan que su mente se siente más tranquila y aguda.\n\nCon las cetonas alimentando el cerebro, la concentración puede ser más fácil y el ruido mental puede disminuir.\n\nEste es un punto común en un ayuno más largo. Manténgase hidratado y finalice el ayuno cuando su cuerpo haya tenido suficiente."
+        },
+        "fr": {
+          "rangeLabel": "48h+",
+          "title": "Mental Clarity",
+          "body": "Around the second day, many people notice their mind feels quieter and sharper.\n\nWith ketones fueling the brain, focus can come more easily and mental noise may drop.\n\nThis is a common point in a longer fast. Stay hydrated, and end the fast when your body has had enough."
+        },
+        "it": {
+          "rangeLabel": "48 h+",
+          "title": "Chiarezza mentale",
+          "body": "Intorno al secondo giorno, molte persone notano una mente più calma e lucida.\n\nCon i chetoni che alimentano il cervello, concentrarsi può diventare più facile e il rumore mentale può diminuire.\n\nÈ una fase comune di un digiuno prolungato. Mantieniti idratato e termina il digiuno quando il corpo ne ha abbastanza."
+        },
+        "ru": {
+          "rangeLabel": "48 ч+",
+          "title": "Ясность мыслей",
+          "body": "Примерно на второй день многие замечают, что мысли становятся спокойнее и яснее.\n\nКогда мозг получает энергию из кетонов, сосредоточиться может быть легче, а внутренний шум — слабее.\n\nЭто обычный этап длительного голодания. Пей достаточно воды и завершай голодание, когда организму уже хватит."
+        }
+      }
+    },
+    {
+      "type": "eating_window",
+      "position": 1,
+      "startHour": null,
+      "endHour": null,
+      "imageKey": "break",
+      "imageIdle": "assets/images/break_your_fast.png",
+      "imageReached": "assets/images/break_your_fast.png",
+      "translations": {
+        "en": {
+          "title": "Break Your Fast",
+          "body": "Your fast is complete. Now it's time to gently refuel your body with energy and nutrients.\n\nStart with easy-to-digest foods like **fruit, steamed vegetables, leafy greens, bone broth, or soup.** These can help your body ease back into eating and support stable blood sugar levels.\n\nAfter fasting, your digestive system may need a little time to adjust, so try not to overload it right away.\n\nTo help prevent bloating or discomfort, avoid fried, greasy, or overly heavy foods when breaking your fast."
+        },
+        "tr": {
+          "title": "Orucunu Boz",
+          "body": "Orucun tamamlandı. Şimdi vücudunu enerji ve besinlerle nazikçe yenileme zamanı.\n\n**Meyve, buharda sebze, yeşillik, kemik suyu veya çorba** gibi sindirimi kolay yiyeceklerle başla. Bunlar vücudunun yemeye alışmasına ve kan şekerinin dengede kalmasına yardım eder.\n\nOruçtan sonra sindirim sistemin uyum sağlamak için biraz zamana ihtiyaç duyabilir, bu yüzden hemen yüklenme.\n\nŞişkinliği veya rahatsızlığı önlemek için orucu bozarken kızartma, yağlı ya da çok ağır yiyeceklerden uzak dur."
+        },
+        "de": {
+          "title": "Beende dein Fasten",
+          "body": "Dein Fasten ist vorbei. Jetzt ist es Zeit, deinen Körper sanft mit Energie und Nährstoffen aufzutanken.\n\nBeginne mit leicht verdaulichen Lebensmitteln wie **Obst, gedünstetem Gemüse, Blattgemüse, Knochenbrühe oder Suppe.** So fällt deinem Körper der Übergang leichter und dein Blutzucker bleibt stabiler.\n\nNach dem Fasten braucht dein Verdauungssystem etwas Zeit. Belaste es deshalb nicht sofort.\n\nUm Blähungen oder Unwohlsein zu vermeiden, lass frittierte, fettige oder sehr schwere Speisen weg, wenn du das Fasten brichst."
+        },
+        "es": {
+          "title": "Rompe tu ayuno",
+          "body": "Your fast is complete. Now it's time to gently refuel your body with energy and nutrients.\n\nStart with easy-to-digest foods like **fruit, steamed vegetables, leafy greens, bone broth, or soup.** These can help your body ease back into eating and support stable blood sugar levels.\n\nAfter fasting, your digestive system may need a little time to adjust, so try not to overload it right away.\n\nTo help prevent bloating or discomfort, avoid fried, greasy, or overly heavy foods when breaking your fast."
+        },
+        "fr": {
+          "title": "Rompre votre jeûne",
+          "body": "Your fast is complete. Now it's time to gently refuel your body with energy and nutrients.\n\nStart with easy-to-digest foods like **fruit, steamed vegetables, leafy greens, bone broth, or soup.** These can help your body ease back into eating and support stable blood sugar levels.\n\nAfter fasting, your digestive system may need a little time to adjust, so try not to overload it right away.\n\nTo help prevent bloating or discomfort, avoid fried, greasy, or overly heavy foods when breaking your fast."
+        },
+        "it": {
+          "title": "Interrompi il digiuno",
+          "body": "Il tuo digiuno è terminato. È il momento di rifornire delicatamente il corpo di energia e nutrienti.\n\nInizia con alimenti facili da digerire, come **frutta, verdure al vapore, verdure a foglia, brodo di ossa o zuppa.** Possono aiutare il corpo a tornare gradualmente a mangiare e a mantenere stabile la glicemia.\n\nDopo il digiuno, l’apparato digerente può aver bisogno di un po’ di tempo per adattarsi, quindi cerca di non sovraccaricarlo subito.\n\nPer evitare gonfiore o fastidi, evita cibi fritti, grassi o troppo pesanti quando interrompi il digiuno."
+        },
+        "ru": {
+          "title": "Заверши голодание",
+          "body": "Твоё голодание завершено. Пора мягко восполнить энергию и питательные вещества.\n\nНачни с легко усваиваемых продуктов, например **фруктов, овощей на пару, листовой зелени, костного бульона или супа.** Они могут помочь организму мягко вернуться к питанию и поддержать стабильный уровень сахара в крови.\n\nПосле голодания пищеварительной системе может потребоваться время для адаптации, поэтому старайся не перегружать её сразу.\n\nЧтобы избежать вздутия и дискомфорта, не начинай с жареной, жирной или слишком тяжёлой пищи."
+        }
+      }
+    },
+    {
+      "type": "eating_window",
+      "position": 2,
+      "startHour": null,
+      "endHour": null,
+      "imageKey": "nourish",
+      "imageIdle": "assets/images/dark_norusih.png",
+      "imageReached": "assets/images/keep_noruish.png",
+      "translations": {
+        "en": {
+          "title": "Keep Nourishing Your Body",
+          "body": "Now you're free to enjoy your meal. For steady energy and longer-lasting fullness, try pairing carbs with **quality protein and healthy fats.**\n\nTo keep your blood sugar balanced after fasting, avoid loading up on highly processed foods or sugary drinks.\n\nChoose meals that feel satisfying, balanced, and easy on your body."
+        },
+        "tr": {
+          "title": "Vücudunu Beslemeye Devam Et",
+          "body": "Artık öğününün keyfini çıkarabilirsin. Daha dengeli enerji ve daha uzun süre tokluk için karbonhidratları **kaliteli protein ve sağlıklı yağlarla** birlikte al.\n\nOruçtan sonra kan şekerini dengede tutmak için aşırı işlenmiş gıdalardan ve şekerli içeceklerden kaçın.\n\nDoyurucu, dengeli ve vücuduna iyi gelen öğünler seç."
+        },
+        "de": {
+          "title": "Nähre deinen Körper weiter",
+          "body": "Jetzt kannst du deine Mahlzeit genießen. Für gleichmäßige Energie und länger anhaltende Sättigung kombiniere Kohlenhydrate mit **hochwertigem Protein und gesunden Fetten.**\n\nDamit dein Blutzucker nach dem Fasten stabil bleibt, meide stark verarbeitete Lebensmittel und zuckerhaltige Getränke.\n\nWähle Mahlzeiten, die sättigen, ausgewogen sind und deinem Körper guttun."
+        },
+        "es": {
+          "title": "Keep Nourishing Your Body",
+          "body": "Now you're free to enjoy your meal. For steady energy and longer-lasting fullness, try pairing carbs with **quality protein and healthy fats.**\n\nTo keep your blood sugar balanced after fasting, avoid loading up on highly processed foods or sugary drinks.\n\nChoose meals that feel satisfying, balanced, and easy on your body."
+        },
+        "fr": {
+          "title": "Keep Nourishing Your Body",
+          "body": "Now you're free to enjoy your meal. For steady energy and longer-lasting fullness, try pairing carbs with **quality protein and healthy fats.**\n\nTo keep your blood sugar balanced after fasting, avoid loading up on highly processed foods or sugary drinks.\n\nChoose meals that feel satisfying, balanced, and easy on your body."
+        },
+        "it": {
+          "title": "Continua a nutrire il tuo corpo",
+          "body": "Ora puoi goderti il pasto. Per un’energia stabile e una sazietà più duratura, prova ad abbinare i carboidrati a **proteine di qualità e grassi sani.**\n\nPer mantenere equilibrata la glicemia dopo il digiuno, evita di esagerare con alimenti altamente trasformati o bevande zuccherate.\n\nScegli pasti soddisfacenti, equilibrati e delicati per il corpo."
+        },
+        "ru": {
+          "title": "Продолжай питать свой организм",
+          "body": "Теперь можно наслаждаться едой. Для стабильной энергии и длительного насыщения сочетай углеводы с **качественным белком и полезными жирами.**\n\nЧтобы поддерживать баланс сахара в крови после голодания, избегай избытка сильно переработанных продуктов и сладких напитков.\n\nВыбирай сытные, сбалансированные блюда, которые комфортны для твоего организма."
+        }
+      }
+    },
+    {
+      "type": "eating_window",
+      "position": 3,
+      "startHour": null,
+      "endHour": null,
+      "imageKey": "next",
+      "imageIdle": "assets/images/dark_fast.png",
+      "imageReached": "assets/images/next_fast.png",
+      "translations": {
+        "en": {
+          "title": "Prepare for Your Next Fast",
+          "body": "Your eating window is almost over. A nourishing final meal can help keep you full and support your body during your next fast.\n\nFocus on foods rich in **protein and fiber**, such as meat, fish, tofu, fruit, vegetables, nuts, and legumes.\n\nThese choices can help you feel satisfied for longer and give your body steady energy as you move into your next fasting period."
+        },
+        "tr": {
+          "title": "Sonraki Oruca Hazırlan",
+          "body": "Öğün penceren bitmek üzere. Besleyici bir son öğün, sonraki oruçta tok kalmana ve vücudunu desteklemeye yardım eder.\n\n**Protein ve lif** açısından zengin yiyeceklere odaklan: et, balık, tofu, meyve, sebze, kuruyemiş ve baklagiller.\n\nBu seçimler daha uzun süre tok hissetmene ve bir sonraki oruç dönemine geçerken enerjinin dengeli kalmasına yardım eder."
+        },
+        "de": {
+          "title": "Bereite dich auf das nächste Fasten vor",
+          "body": "Dein Essensfenster ist fast vorbei. Eine nahrhafte letzte Mahlzeit hilft dir, satt zu bleiben und deinen Körper beim nächsten Fasten zu unterstützen.\n\nSetze auf Lebensmittel mit viel **Protein und Ballaststoffen**, zum Beispiel Fleisch, Fisch, Tofu, Obst, Gemüse, Nüsse und Hülsenfrüchte.\n\nSo bleibst du länger satt und gehst mit gleichmäßiger Energie in die nächste Fastenphase."
+        },
+        "es": {
+          "title": "Prepare for Your Next Fast",
+          "body": "Your eating window is almost over. A nourishing final meal can help keep you full and support your body during your next fast.\n\nFocus on foods rich in **protein and fiber**, such as meat, fish, tofu, fruit, vegetables, nuts, and legumes.\n\nThese choices can help you feel satisfied for longer and give your body steady energy as you move into your next fasting period."
+        },
+        "fr": {
+          "title": "Prepare for Your Next Fast",
+          "body": "Your eating window is almost over. A nourishing final meal can help keep you full and support your body during your next fast.\n\nFocus on foods rich in **protein and fiber**, such as meat, fish, tofu, fruit, vegetables, nuts, and legumes.\n\nThese choices can help you feel satisfied for longer and give your body steady energy as you move into your next fasting period."
+        },
+        "it": {
+          "title": "Preparati al prossimo digiuno",
+          "body": "La tua finestra alimentare sta per terminare. Un ultimo pasto nutriente può aiutarti a mantenere la sazietà e sostenere il corpo durante il prossimo digiuno.\n\nPreferisci alimenti ricchi di **proteine e fibre**, come carne, pesce, tofu, frutta, verdure, frutta a guscio e legumi.\n\nQueste scelte possono aiutarti a sentirti sazio più a lungo e a mantenere un’energia stabile mentre inizi il prossimo periodo di digiuno."
+        },
+        "ru": {
+          "title": "Подготовься к следующему голоданию",
+          "body": "Твоё пищевое окно скоро закончится. Питательный последний приём пищи поможет сохранить сытость и поддержать организм во время следующего голодания.\n\nВыбирай продукты, богатые **белком и клетчаткой**, например мясо, рыбу, тофу, фрукты, овощи, орехи и бобовые.\n\nОни помогут дольше чувствовать сытость и обеспечат стабильную энергию при переходе к следующему периоду голодания."
+        }
+      }
+    }
+  ],
+  "struggle": {
+    "intro": {
+      "en": {
+        "title": "Hey, squish",
+        "body": "It's okay to struggle. Tell me what's going on and I'll help you through it."
+      },
+      "tr": {
+        "title": "Selam, squish",
+        "body": "Zorlanman normal. Neler olduğunu söyle, birlikte atlatalım."
+      },
+      "de": {
+        "title": "Hey, Squish",
+        "body": "Es ist okay, dass es schwer ist. Sag mir, was los ist, und ich helfe dir durch."
+      },
+      "es": {
+        "title": "Oye, aplasta",
+        "body": "Está bien luchar. Cuéntame qué está pasando y te ayudaré a superarlo."
+      },
+      "fr": {
+        "title": "Hé, écrase",
+        "body": "C'est bien de lutter. Dites-moi ce qui se passe et je vous aiderai."
+      },
+      "it": {
+        "title": "Ciao, Squish",
+        "body": "È normale fare fatica. Dimmi cosa succede e ti aiuterò a superarlo."
+      },
+      "ru": {
+        "title": "Привет, сквиш",
+        "body": "Трудности — это нормально. Расскажи, что происходит, и я помогу тебе справиться."
+      }
+    },
+    "reasons": [
+      {
+        "code": "hungry",
+        "image": "assets/images/hungry.png",
+        "tips": [
+          "hydration",
+          "walk"
+        ],
+        "sortOrder": 1,
+        "translations": {
+          "en": {
+            "title": "Hungry",
+            "body": "That rumble is your body switching to fat-burn mode. It usually fades in 15–20 min."
+          },
+          "tr": {
+            "title": "Açım",
+            "body": "O gurultu, vücudunun yağ yakımına geçtiğinin işareti. Genelde 15–20 dakikada diner."
+          },
+          "de": {
+            "title": "Hungrig",
+            "body": "Dieses Knurren heißt, dein Körper stellt auf Fettverbrennung um. Es lässt meist in 15–20 Min. nach."
+          },
+          "es": {
+            "title": "Hambriento",
+            "body": "Ese estruendo es que tu cuerpo cambia al modo de quema de grasa. Suele desaparecer en 15 a 20 min."
+          },
+          "fr": {
+            "title": "Affamé",
+            "body": "Ce grondement signifie que votre corps passe en mode combustion des graisses. Il disparaît généralement en 15 à 20 minutes."
+          },
+          "it": {
+            "title": "Fame",
+            "body": "Quel brontolio è il corpo che passa alla modalità brucia-grassi. Di solito si attenua in 15–20 min."
+          },
+          "ru": {
+            "title": "Голод",
+            "body": "Это урчание означает, что организм переходит в режим сжигания жира. Обычно оно проходит за 15–20 мин."
+          }
+        }
+      },
+      {
+        "code": "craving",
+        "image": "assets/images/cravling.png",
+        "tips": [
+          "breathe"
+        ],
+        "sortOrder": 2,
+        "translations": {
+          "en": {
+            "title": "Craving",
+            "body": "Cravings are mental, not physical — and they peak for about 3 minutes. We got this."
+          },
+          "tr": {
+            "title": "Canım çekiyor",
+            "body": "Can çekme zihinseldir, fiziksel değil — ve yaklaşık 3 dakika sürer. Beraber hallederiz."
+          },
+          "de": {
+            "title": "Heißhunger",
+            "body": "Heißhunger ist mental, nicht körperlich — und er hält etwa 3 Minuten. Wir schaffen das."
+          },
+          "es": {
+            "title": "Antojo",
+            "body": "Los antojos son mentales, no físicos, y alcanzan su punto máximo durante unos 3 minutos. Tenemos esto."
+          },
+          "fr": {
+            "title": "Fringale",
+            "body": "Les envies sont mentales et non physiques – et elles culminent pendant environ 3 minutes. Nous avons ceci."
+          },
+          "it": {
+            "title": "Voglia di mangiare",
+            "body": "Le voglie sono mentali, non fisiche — e raggiungono il picco per circa 3 minuti. Ce la faremo."
+          },
+          "ru": {
+            "title": "Тяга к еде",
+            "body": "Тяга к еде связана с мыслями, а не с физическим голодом — её пик длится около 3 минут. Мы справимся."
+          }
+        }
+      },
+      {
+        "code": "energy",
+        "image": "assets/images/low_energiy.png",
+        "tips": [
+          "walk"
+        ],
+        "sortOrder": 3,
+        "translations": {
+          "en": {
+            "title": "Low Energy",
+            "body": "Your body is adjusting. A quick movement boost will wake up your energy stores."
+          },
+          "tr": {
+            "title": "Enerjim düşük",
+            "body": "Vücudun uyum sağlıyor. Kısa bir hareket enerji depolarını uyandırır."
+          },
+          "de": {
+            "title": "Wenig Energie",
+            "body": "Dein Körper gewöhnt sich um. Eine kurze Bewegung weckt deine Energiereserven."
+          },
+          "es": {
+            "title": "Energía baja",
+            "body": "Tu cuerpo se está adaptando. Un rápido impulso de movimiento despertará tus reservas de energía."
+          },
+          "fr": {
+            "title": "Faible consommation d'énergie",
+            "body": "Votre corps s'adapte. Un mouvement rapide réveillera vos réserves d’énergie."
+          },
+          "it": {
+            "title": "Poca energia",
+            "body": "Il corpo si sta adattando. Un po’ di movimento risveglierà le tue riserve di energia."
+          },
+          "ru": {
+            "title": "Мало энергии",
+            "body": "Твой организм адаптируется. Немного движения поможет активировать запасы энергии."
+          }
+        }
+      },
+      {
+        "code": "stressed",
+        "image": "assets/images/stressed.png",
+        "tips": [
+          "hydration",
+          "breathe"
+        ],
+        "sortOrder": 4,
+        "translations": {
+          "en": {
+            "title": "Stressed",
+            "body": "Stress + fasting can be intense. Let's lower the cortisol before deciding anything."
+          },
+          "tr": {
+            "title": "Stresliyim",
+            "body": "Stres ve oruç birlikte ağır gelebilir. Bir karar vermeden önce kortizolü düşürelim."
+          },
+          "de": {
+            "title": "Gestresst",
+            "body": "Stress und Fasten können heftig sein. Senken wir erst das Cortisol, bevor du etwas entscheidest."
+          },
+          "es": {
+            "title": "Estresado",
+            "body": "El estrés + el ayuno pueden ser intensos. Bajemos el cortisol antes de decidir nada."
+          },
+          "fr": {
+            "title": "Stressé",
+            "body": "Le stress + le jeûne peuvent être intenses. Baissons le cortisol avant de décider quoi que ce soit."
+          },
+          "it": {
+            "title": "Stress",
+            "body": "Stress e digiuno possono essere intensi. Abbassiamo il cortisolo prima di decidere."
+          },
+          "ru": {
+            "title": "Стресс",
+            "body": "Стресс и голодание могут даваться тяжело. Давай сначала снизим кортизол, а потом примем решение."
+          }
+        }
+      },
+      {
+        "code": "bored",
+        "image": "assets/images/bored.png",
+        "tips": [
+          "hydration",
+          "walk",
+          "breathe"
+        ],
+        "sortOrder": 5,
+        "translations": {
+          "en": {
+            "title": "Bored",
+            "body": "Boredom hunger is the sneakiest kind. Let's redirect that brain energy!"
+          },
+          "tr": {
+            "title": "Sıkıldım",
+            "body": "Sıkıntı açlığı en sinsi olanı. O beyin enerjisini başka yere çevirelim."
+          },
+          "de": {
+            "title": "Gelangweilt",
+            "body": "Langeweile-Hunger ist der heimtückischste. Lenken wir diese Energie um."
+          },
+          "es": {
+            "title": "Aburrido",
+            "body": "El hambre de aburrimiento es la más furtiva. ¡Redireccionemos esa energía cerebral!"
+          },
+          "fr": {
+            "title": "Ennuyé",
+            "body": "La faim et l’ennui sont les plus sournoises. Redirigeons cette énergie cérébrale !"
+          },
+          "it": {
+            "title": "Noia",
+            "body": "La fame da noia è la più insidiosa. Dirigiamo altrove quell’energia mentale!"
+          },
+          "ru": {
+            "title": "Скука",
+            "body": "Голод от скуки — самый незаметный. Давай направим энергию мозга на другое!"
+          }
+        }
+      }
+    ],
+    "tips": [
+      {
+        "code": "hydration",
+        "image": "assets/images/blob.png",
+        "activity": {
+          "type": "sips",
+          "sips": 8
+        },
+        "sortOrder": 1,
+        "translations": {
+          "en": {
+            "title": "Hydration Reset",
+            "body": "A tall glass of water can silence hunger for 20+ minutes.",
+            "sessionTitle": "Sip Challenge",
+            "sessionBody": "Tap after each sip",
+            "doneTitle": "You did it",
+            "doneBody": "Eight sips down. That hunger wave should be quieter now.",
+            "doneButton": "Back to fasting"
+          },
+          "tr": {
+            "title": "Su molası",
+            "body": "Büyük bir bardak su açlığı 20 dakikadan uzun süre susturabilir.",
+            "sessionTitle": "Yudum Görevi",
+            "sessionBody": "Her yudumdan sonra dokun",
+            "doneTitle": "Tebrikler",
+            "doneBody": "Sekiz yudum tamam. O açlık dalgası şimdi daha sakin olmalı.",
+            "doneButton": "Oruca dön"
+          },
+          "de": {
+            "title": "Wasser-Reset",
+            "body": "Ein großes Glas Wasser kann den Hunger für über 20 Minuten beruhigen.",
+            "sessionTitle": "Schluck-Challenge",
+            "sessionBody": "Tippe nach jedem Schluck",
+            "doneTitle": "Geschafft",
+            "doneBody": "Acht Schlucke geschafft. Die Hungerwelle sollte jetzt leiser sein.",
+            "doneButton": "Zurück zum Fasten"
+          },
+          "es": {
+            "title": "Restablecimiento de hidratación",
+            "body": "Un vaso grande de agua puede silenciar el hambre durante más de 20 minutos.",
+            "sessionTitle": "Desafío de sorbos",
+            "sessionBody": "Toca después de cada sorbo",
+            "doneTitle": "lo hiciste",
+            "doneBody": "Ocho sorbos. Esa ola de hambre debería ser más tranquila ahora.",
+            "doneButton": "Volver al ayuno"
+          },
+          "fr": {
+            "title": "Réinitialisation de l'hydratation",
+            "body": "Un grand verre d’eau peut faire taire la faim pendant plus de 20 minutes.",
+            "sessionTitle": "Sip Challenge",
+            "sessionBody": "Tap after each sip",
+            "doneTitle": "You did it",
+            "doneBody": "Eight sips down. That hunger wave should be quieter now.",
+            "doneButton": "Back to fasting"
+          },
+          "it": {
+            "title": "Pausa idratazione",
+            "body": "Un grande bicchiere d’acqua può calmare la fame per oltre 20 minuti.",
+            "sessionTitle": "Sfida dei sorsi",
+            "sessionBody": "Tocca dopo ogni sorso",
+            "doneTitle": "Ce l’hai fatta",
+            "doneBody": "Otto sorsi completati. Ora quell’ondata di fame dovrebbe essere più calma.",
+            "doneButton": "Torna al digiuno"
+          },
+          "ru": {
+            "title": "Пауза для воды",
+            "body": "Большой стакан воды может успокоить голод более чем на 20 минут.",
+            "sessionTitle": "Челлендж глотков",
+            "sessionBody": "Нажимай после каждого глотка",
+            "doneTitle": "Получилось!",
+            "doneBody": "Восемь глотков позади. Волна голода теперь должна быть спокойнее.",
+            "doneButton": "Вернуться к голоданию"
+          }
+        }
+      },
+      {
+        "code": "walk",
+        "image": "assets/images/quick_walk.png",
+        "activity": {
+          "type": "timer",
+          "seconds": 180
+        },
+        "sortOrder": 2,
+        "translations": {
+          "en": {
+            "title": "Quick Walk",
+            "body": "A short walk shifts your body from hunger mode to movement mode.",
+            "sessionTitle": "Quick walk",
+            "sessionBody": "3 minutes around the room, the block — anywhere",
+            "doneTitle": "Nice walk",
+            "doneBody": "Three minutes on your feet. Back to the fast when you're ready.",
+            "doneButton": "Back to fasting"
+          },
+          "tr": {
+            "title": "Kısa yürüyüş",
+            "body": "Kısa bir yürüyüş vücudunu açlık modundan hareket moduna geçirir.",
+            "sessionTitle": "Kısa yürüyüş",
+            "sessionBody": "Odada, sokakta — nerede olursa 3 dakika",
+            "doneTitle": "Güzel yürüyüş",
+            "doneBody": "Üç dakika hareket ettin. Hazırsan oruca dön.",
+            "doneButton": "Oruca dön"
+          },
+          "de": {
+            "title": "Kurzer Spaziergang",
+            "body": "Ein kurzer Spaziergang holt deinen Körper aus dem Hunger- in den Bewegungsmodus.",
+            "sessionTitle": "Kurzer Spaziergang",
+            "sessionBody": "3 Minuten im Zimmer, um den Block — irgendwo",
+            "doneTitle": "Schöner Spaziergang",
+            "doneBody": "Drei Minuten in Bewegung. Zurück zum Fasten, wenn du bereit bist.",
+            "doneButton": "Zurück zum Fasten"
+          },
+          "es": {
+            "title": "Caminata Rápida",
+            "body": "Una caminata corta hace que su cuerpo pase del modo de hambre al modo de movimiento.",
+            "sessionTitle": "Caminata rápida",
+            "sessionBody": "3 minutos alrededor de la habitación, la cuadra, en cualquier lugar",
+            "doneTitle": "Buen paseo",
+            "doneBody": "Tres minutos de pie. Vuelve al ayuno cuando estés listo.",
+            "doneButton": "Volver al ayuno"
+          },
+          "fr": {
+            "title": "Marche rapide",
+            "body": "Une courte marche fait passer votre corps du mode faim au mode mouvement.",
+            "sessionTitle": "Promenade rapide",
+            "sessionBody": "3 minutes autour de la pièce, le pâté de maisons — n'importe où",
+            "doneTitle": "Nice walk",
+            "doneBody": "Three minutes on your feet. Back to the fast when you're ready.",
+            "doneButton": "Back to fasting"
+          },
+          "it": {
+            "title": "Breve passeggiata",
+            "body": "Una breve passeggiata sposta il corpo dalla modalità fame alla modalità movimento.",
+            "sessionTitle": "Breve passeggiata",
+            "sessionBody": "3 minuti nella stanza, intorno all’isolato — dove vuoi",
+            "doneTitle": "Bella passeggiata",
+            "doneBody": "Tre minuti in movimento. Torna al digiuno quando vuoi.",
+            "doneButton": "Torna al digiuno"
+          },
+          "ru": {
+            "title": "Короткая прогулка",
+            "body": "Небольшая прогулка переключает организм с голода на движение.",
+            "sessionTitle": "Короткая прогулка",
+            "sessionBody": "3 минуты по комнате, вокруг дома — где угодно",
+            "doneTitle": "Отличная прогулка",
+            "doneBody": "Три минуты на ногах. Возвращайся к голоданию, когда захочешь.",
+            "doneButton": "Вернуться к голоданию"
+          }
+        }
+      },
+      {
+        "code": "breathe",
+        "image": "assets/images/breathe.png",
+        "activity": {
+          "type": "breathing",
+          "inhale": 4,
+          "hold": 7,
+          "exhale": 8,
+          "rounds": 4
+        },
+        "sortOrder": 3,
+        "translations": {
+          "en": {
+            "title": "Breathe with Mochi",
+            "body": "4-7-8 breathing melts cravings.",
+            "sessionTitle": "4-7-8 Breathing",
+            "sessionBody": "Inhale for 4s · Hold for 7s · Exhale for 8s\nWe'll do 4 rounds together",
+            "doneTitle": "Nice breath",
+            "doneBody": "Four rounds done. That craving should feel softer now.",
+            "doneButton": "Back to fasting"
+          },
+          "tr": {
+            "title": "Mochi ile nefes",
+            "body": "4-7-8 nefesi can çekmeyi eritir.",
+            "sessionTitle": "4-7-8 Nefes",
+            "sessionBody": "4 sn al · 7 sn tut · 8 sn ver\nBirlikte 4 tur yapacağız",
+            "doneTitle": "Güzel nefes",
+            "doneBody": "Dört tur bitti. Can çekme şimdi daha yumuşak olmalı.",
+            "doneButton": "Oruca dön"
+          },
+          "de": {
+            "title": "Atme mit Mochi",
+            "body": "4-7-8-Atmung lässt das Verlangen schmelzen.",
+            "sessionTitle": "4-7-8-Atmung",
+            "sessionBody": "4 s ein · 7 s halten · 8 s aus\nWir machen 4 Runden zusammen",
+            "doneTitle": "Schöner Atem",
+            "doneBody": "Vier Runden geschafft. Das Verlangen sollte jetzt weicher sein.",
+            "doneButton": "Zurück zum Fasten"
+          },
+          "es": {
+            "title": "Respira con Mochi",
+            "body": "La respiración 4-7-8 derrite los antojos.",
+            "sessionTitle": "4-7-8 Respiración",
+            "sessionBody": "Inhala durante 4 segundos · Mantén la posición durante 7 segundos · Exhala durante 8 segundos\nHaremos 4 rondas juntos.",
+            "doneTitle": "Buen aliento",
+            "doneBody": "Cuatro rondas hechas. Ese anhelo debería sentirse más suave ahora.",
+            "doneButton": "Volver al ayuno"
+          },
+          "fr": {
+            "title": "Breathe with Mochi",
+            "body": "4-7-8 breathing melts cravings.",
+            "sessionTitle": "4-7-8 Breathing",
+            "sessionBody": "Inhale for 4s · Hold for 7s · Exhale for 8s\nWe'll do 4 rounds together",
+            "doneTitle": "Nice breath",
+            "doneBody": "Four rounds done. That craving should feel softer now.",
+            "doneButton": "Back to fasting"
+          },
+          "it": {
+            "title": "Respira con Mochi",
+            "body": "La respirazione 4-7-8 calma le voglie.",
+            "sessionTitle": "Respirazione 4-7-8",
+            "sessionBody": "Inspira per 4 s · Trattieni per 7 s · Espira per 8 s\nFaremo 4 cicli insieme",
+            "doneTitle": "Ottima respirazione",
+            "doneBody": "Quattro cicli completati. Ora quella voglia dovrebbe essere più lieve.",
+            "doneButton": "Torna al digiuno"
+          },
+          "ru": {
+            "title": "Дыши с Мочи",
+            "body": "Дыхание 4-7-8 помогает успокоить тягу к еде.",
+            "sessionTitle": "Дыхание 4-7-8",
+            "sessionBody": "Вдох 4 с · Задержка 7 с · Выдох 8 с\nВместе сделаем 4 цикла",
+            "doneTitle": "Отлично подышали",
+            "doneBody": "Четыре цикла завершены. Тяга к еде теперь должна ощущаться слабее.",
+            "doneButton": "Вернуться к голоданию"
+          }
+        }
+      }
+    ]
+  },
+  "insights": {
+    "categories": [
+      {
+        "slug": "basics",
+        "icon": "tree",
+        "iconImage": "assets/images/tree.png",
+        "bgColor": "#96BD8F33",
+        "isPremium": false,
+        "sortOrder": 1,
+        "translations": {
+          "en": {
+            "title": "Fasting Basics",
+            "description": "Learn the fundamentals of intermittent fasting."
+          },
+          "tr": {
+            "title": "Oruç Temelleri",
+            "description": "Aralıklı orucun temellerini öğren."
+          },
+          "de": {
+            "title": "Fasten-Grundlagen",
+            "description": "Lerne die Grundlagen des Intervallfastens."
+          },
+          "es": {
+            "title": "Conceptos básicos del ayuno",
+            "description": "Conozca los fundamentos del ayuno intermitente."
+          },
+          "fr": {
+            "title": "Les bases du jeûne",
+            "description": "Apprenez les principes fondamentaux du jeûne intermittent."
+          },
+          "it": {
+            "title": "Le basi del digiuno",
+            "description": "Scopri i principi del digiuno intermittente."
+          },
+          "ru": {
+            "title": "Основы голодания",
+            "description": "Изучи основы интервального голодания."
+          }
+        }
+      },
+      {
+        "slug": "during",
+        "icon": "flame",
+        "iconImage": "assets/images/flame_calories.png",
+        "bgColor": "#FDEBE1",
+        "isPremium": false,
+        "sortOrder": 2,
+        "translations": {
+          "en": {
+            "title": "During Your Fast",
+            "description": "Tips, guidance and what to expect."
+          },
+          "tr": {
+            "title": "Oruç Sırasında",
+            "description": "İpuçları, rehberlik ve neler beklemelisin."
+          },
+          "de": {
+            "title": "Während des Fastens",
+            "description": "Tipps, Orientierung und was dich erwartet."
+          },
+          "es": {
+            "title": "Durante tu ayuno",
+            "description": "Consejos, orientación y qué esperar."
+          },
+          "fr": {
+            "title": "Pendant votre jeûne",
+            "description": "Conseils, conseils et à quoi s'attendre."
+          },
+          "it": {
+            "title": "Durante il digiuno",
+            "description": "Consigli, guida e cosa aspettarti."
+          },
+          "ru": {
+            "title": "Во время голодания",
+            "description": "Советы, поддержка и чего ожидать."
+          }
+        }
+      },
+      {
+        "slug": "eating",
+        "icon": "window",
+        "iconImage": "assets/images/eat_window.png",
+        "bgColor": "#FFF3D9",
+        "isPremium": false,
+        "sortOrder": 3,
+        "translations": {
+          "en": {
+            "title": "Eating Window",
+            "description": "Make the most of your meals."
+          },
+          "tr": {
+            "title": "Yeme Penceresi",
+            "description": "Öğünlerinden en iyi şekilde yararlan."
+          },
+          "de": {
+            "title": "Essensfenster",
+            "description": "Hol das Beste aus deinen Mahlzeiten."
+          },
+          "es": {
+            "title": "Eating Window",
+            "description": "Aprovecha al máximo tus comidas."
+          },
+          "fr": {
+            "title": "Eating Window",
+            "description": "Profitez au maximum de vos repas."
+          },
+          "it": {
+            "title": "Finestra alimentare",
+            "description": "Sfrutta al meglio i tuoi pasti."
+          },
+          "ru": {
+            "title": "Пищевое окно",
+            "description": "Получай максимум пользы от еды."
+          }
+        }
+      },
+      {
+        "slug": "health",
+        "icon": "heart",
+        "iconImage": "assets/images/blue_hearth.png",
+        "bgColor": "#E3F1FC",
+        "isPremium": false,
+        "sortOrder": 4,
+        "translations": {
+          "en": {
+            "title": "Health & Lifestyle",
+            "description": "Sleep, energy, mindset and more"
+          },
+          "tr": {
+            "title": "Sağlık ve Yaşam",
+            "description": "Uyku, enerji, zihin ve daha fazlası"
+          },
+          "de": {
+            "title": "Gesundheit & Lifestyle",
+            "description": "Schlaf, Energie, Mindset und mehr"
+          },
+          "es": {
+            "title": "Salud y estilo de vida",
+            "description": "Sueño, energía, mentalidad y más"
+          },
+          "fr": {
+            "title": "Santé et mode de vie",
+            "description": "Sommeil, énergie, état d'esprit et plus encore"
+          },
+          "it": {
+            "title": "Salute e stile di vita",
+            "description": "Sonno, energia, mentalità e altro"
+          },
+          "ru": {
+            "title": "Здоровье и образ жизни",
+            "description": "Сон, энергия, настрой и многое другое"
+          }
+        }
+      },
+      {
+        "slug": "tips",
+        "icon": "star",
+        "iconImage": "assets/images/purple_star.png",
+        "bgColor": "#EDE5FC",
+        "isPremium": false,
+        "sortOrder": 5,
+        "translations": {
+          "en": {
+            "title": "Mochi's Tips",
+            "description": "Quick advice from your fasting buddy."
+          },
+          "tr": {
+            "title": "Mochi'nin İpuçları",
+            "description": "Oruç arkadaşından kısa tavsiyeler."
+          },
+          "de": {
+            "title": "Mochis Tipps",
+            "description": "Kurze Ratschläge von deinem Fasten-Buddy."
+          },
+          "es": {
+            "title": "Los consejos de Mochi",
+            "description": "Consejos rápidos de tu compañero de ayuno."
+          },
+          "fr": {
+            "title": "Les conseils de Mochi",
+            "description": "Conseils rapides de votre copain de jeûne."
+          },
+          "it": {
+            "title": "I consigli di Mochi",
+            "description": "Consigli rapidi dal tuo compagno di digiuno."
+          },
+          "ru": {
+            "title": "Советы Мочи",
+            "description": "Короткие советы от твоего партнёра по голоданию."
+          }
+        }
+      }
+    ],
+    "articles": [
+      {
+        "slug": "what-is-intermittent-fasting",
+        "category": "basics",
+        "isPremium": false,
+        "sortOrder": 1,
+        "translations": {
+          "en": {
+            "kicker": "FASTING BASICS",
+            "title": "What is intermittent fasting?",
+            "subtitle": "Simple answers for a healthier, happier you.",
+            "quote": "It's not about eating less, it's about eating at the right time.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Start gently and find a plan that fits your lifestyle. Consistency matters more than perfection!"
+          },
+          "tr": {
+            "kicker": "ORUÇ TEMELLERİ",
+            "title": "Aralıklı oruç nedir?",
+            "subtitle": "Daha sağlıklı ve mutlu bir sen için sade cevaplar.",
+            "quote": "Mesele daha az yemek değil, doğru zamanda yemek.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Yavaş başla ve yaşamına uyan bir plan bul. Tutarlılık, kusursuzluktan daha önemli."
+          },
+          "de": {
+            "kicker": "FASTEN-GRUNDLAGEN",
+            "title": "Was ist Intervallfasten?",
+            "subtitle": "Einfache Antworten für ein gesünderes, glücklicheres Ich.",
+            "quote": "Es geht nicht darum, weniger zu essen, sondern zur richtigen Zeit.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Starte sanft und finde einen Plan, der zu deinem Leben passt. Beständigkeit zählt mehr als Perfektion."
+          },
+          "es": {
+            "kicker": "FUNDAMENTOS DEL AYUNO",
+            "title": "¿Qué es el ayuno intermitente?",
+            "subtitle": "Respuestas sencillas para una vida más saludable y feliz.",
+            "quote": "No se trata de comer menos, se trata de comer en el momento adecuado.",
+            "quoteAuthor": "-Mochi",
+            "tip": "Empiece con cuidado y encuentre un plan que se adapte a su estilo de vida. ¡La consistencia importa más que la perfección!"
+          },
+          "fr": {
+            "kicker": "LES BASES DU JEÛNE",
+            "title": "Qu’est-ce que le jeûne intermittent ?",
+            "subtitle": "Des réponses simples pour une vie en meilleure santé et plus heureuse.",
+            "quote": "Il ne s’agit pas de manger moins, mais de manger au bon moment.",
+            "quoteAuthor": "-Mochi",
+            "tip": "Commencez doucement et trouvez un plan qui correspond à votre style de vie. La cohérence compte plus que la perfection !"
+          },
+          "it": {
+            "kicker": "LE BASI DEL DIGIUNO",
+            "title": "Cos’è il digiuno intermittente?",
+            "subtitle": "Risposte semplici per più salute e felicità.",
+            "quote": "Non si tratta di mangiare meno, ma di mangiare al momento giusto.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Inizia con dolcezza e trova un piano adatto al tuo stile di vita. La costanza conta più della perfezione!"
+          },
+          "ru": {
+            "kicker": "ОСНОВЫ ГОЛОДАНИЯ",
+            "title": "Что такое интервальное голодание?",
+            "subtitle": "Простые ответы для здоровья и счастья.",
+            "quote": "Дело не в том, чтобы есть меньше, а в том, чтобы есть в правильное время.",
+            "quoteAuthor": "- Мочи",
+            "tip": "Начинай мягко и найди план под свой образ жизни. Регулярность важнее совершенства!"
+          }
+        },
+        "sections": [
+          {
+            "position": 1,
+            "icon": "tree",
+            "iconImage": "assets/images/tree.png",
+            "translations": {
+              "en": {
+                "title": "It's about when you eat",
+                "body": "Intermittent fasting cycles between periods of eating and fasting. It doesn't specify which foods to eat, but when to eat."
+              },
+              "tr": {
+                "title": "Ne zaman yediğin önemli",
+                "body": "Aralıklı oruç, yeme ve oruç dönemleri arasında döner. Hangi yiyecekleri yiyeceğini değil, ne zaman yiyeceğini söyler."
+              },
+              "de": {
+                "title": "Es kommt darauf an, wann du isst",
+                "body": "Intervallfasten wechselt zwischen Essens- und Fastenzeiten. Es sagt nicht, welche Lebensmittel, sondern wann du isst."
+              },
+              "es": {
+                "title": "Se trata de cuando comes",
+                "body": "Ciclos de ayuno intermitente entre períodos de comida y ayuno. No especifica qué alimentos comer, sino cuándo comerlos."
+              },
+              "fr": {
+                "title": "Il s'agit du moment où tu manges",
+                "body": "Cycles de jeûne intermittents entre les périodes de repas et de jeûne. Il ne précise pas quels aliments manger, mais quand manger."
+              },
+              "it": {
+                "title": "Conta quando mangi",
+                "body": "Il digiuno intermittente alterna periodi di alimentazione e digiuno. Non stabilisce quali alimenti mangiare, ma quando mangiare."
+              },
+              "ru": {
+                "title": "Важно, когда ты ешь",
+                "body": "Интервальное голодание чередует периоды приёма пищи и голодания. Оно определяет не то, какие продукты есть, а то, когда есть."
+              }
+            }
+          },
+          {
+            "position": 2,
+            "icon": "flame",
+            "iconImage": "assets/images/flame_calories.png",
+            "translations": {
+              "en": {
+                "title": "You still have an eating window",
+                "body": "You can enjoy your favorite foods during your eating window, while fasting gives your body time to rest and reset."
+              },
+              "tr": {
+                "title": "Yeme penceren duruyor",
+                "body": "Sevdiğin yiyecekleri yeme penceresinde yiyebilirsin. Oruç, bedenine dinlenip toparlanması için zaman verir."
+              },
+              "de": {
+                "title": "Dein Essensfenster bleibt",
+                "body": "Deine Lieblingsspeisen kannst du im Essensfenster genießen. Das Fasten gibt deinem Körper Zeit zum Ausruhen und Erholen."
+              },
+              "es": {
+                "title": "Todavía tienes una ventana para comer",
+                "body": "Puede disfrutar de sus comidas favoritas durante su período de alimentación, mientras que el ayuno le da a su cuerpo tiempo para descansar y restablecerse."
+              },
+              "fr": {
+                "title": "Tu as toujours une fenêtre pour manger",
+                "body": "Vous pouvez savourer vos aliments préférés pendant votre période de repas, tandis que le jeûne donne à votre corps le temps de se reposer et de se réinitialiser."
+              },
+              "it": {
+                "title": "Hai comunque una finestra alimentare",
+                "body": "Puoi gustare i tuoi alimenti preferiti durante la finestra alimentare, mentre il digiuno dà al corpo il tempo di riposare e riequilibrarsi."
+              },
+              "ru": {
+                "title": "У тебя по-прежнему есть пищевое окно",
+                "body": "Ты можешь наслаждаться любимыми продуктами во время пищевого окна, а голодание даёт организму время отдохнуть и восстановиться."
+              }
+            }
+          },
+          {
+            "position": 3,
+            "icon": "window",
+            "iconImage": "assets/images/eat_window.png",
+            "translations": {
+              "en": {
+                "title": "It can support your health",
+                "body": "Many people use intermittent fasting to feel more energetic, maintain a healthy weight, and support overall well-being."
+              },
+              "tr": {
+                "title": "Sağlığını destekleyebilir",
+                "body": "Birçok kişi daha enerjik hissetmek, sağlıklı kilosunu korumak ve genel iyiliğini desteklemek için aralıklı orucu kullanır."
+              },
+              "de": {
+                "title": "Es kann deine Gesundheit stützen",
+                "body": "Viele nutzen Intervallfasten, um sich energiegeladener zu fühlen, ein gesundes Gewicht zu halten und ihr Wohlbefinden zu stützen."
+              },
+              "es": {
+                "title": "Puede apoyar su salud",
+                "body": "Muchas personas utilizan el ayuno intermitente para sentirse con más energía, mantener un peso saludable y favorecer el bienestar general."
+              },
+              "fr": {
+                "title": "Cela peut soutenir votre santé",
+                "body": "De nombreuses personnes ont recours au jeûne intermittent pour se sentir plus énergiques, maintenir un poids santé et favoriser leur bien-être général."
+              },
+              "it": {
+                "title": "Può sostenere la tua salute",
+                "body": "Molte persone usano il digiuno intermittente per sentirsi più energiche, mantenere un peso sano e favorire il benessere generale."
+              },
+              "ru": {
+                "title": "Оно может поддерживать твоё здоровье",
+                "body": "Многие используют интервальное голодание, чтобы чувствовать больше энергии, поддерживать здоровый вес и улучшать общее самочувствие."
+              }
+            }
+          }
+        ],
+        "readMinutes": 1
+      },
+      {
+        "slug": "what-happens-while-you-fast",
+        "category": "during",
+        "isPremium": false,
+        "sortOrder": 2,
+        "translations": {
+          "en": {
+            "kicker": "DURING YOUR FAST",
+            "title": "What happens while you fast?",
+            "subtitle": "A calm guide for the hours between meals.",
+            "quote": "Hunger comes in waves. Most of them pass if you give them a little time.",
+            "quoteAuthor": "- Mochi",
+            "tip": "If you feel dizzy or unwell, end the fast and eat. A good plan is one you can repeat tomorrow."
+          },
+          "tr": {
+            "kicker": "ORUÇ SIRASINDA",
+            "title": "Oruç tutarken ne olur?",
+            "subtitle": "Öğünler arasındaki saatler için sakin bir rehber.",
+            "quote": "Açlık dalgalar halinde gelir. Çoğu, biraz zaman verirsen geçer.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Başın dönerse ya da kendini kötü hissedersen orucu bitir ve ye. İyi plan, yarın da tekrarlayabildiğin plandır."
+          },
+          "de": {
+            "kicker": "WÄHREND DES FASTENS",
+            "title": "Was passiert, während du fastest?",
+            "subtitle": "Ein ruhiger Leitfaden für die Stunden zwischen den Mahlzeiten.",
+            "quote": "Hunger kommt in Wellen. Die meisten gehen vorbei, wenn du ihnen etwas Zeit gibst.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Wenn dir schwindelig ist oder du dich unwohl fühlst, beende das Fasten und iss. Ein guter Plan ist einer, den du morgen wiederholen kannst."
+          },
+          "es": {
+            "kicker": "DURANTE TU AYUNO",
+            "title": "¿Qué pasa mientras ayunas?",
+            "subtitle": "Una guía tranquila para las horas entre comidas.",
+            "quote": "El hambre llega en oleadas. La mayoría pasan si les das un poco de tiempo.",
+            "quoteAuthor": "-Mochi",
+            "tip": "Si te sientes mareado o mal, finaliza el ayuno y come. Un buen plan es aquel que puedes repetir mañana."
+          },
+          "fr": {
+            "kicker": "DURING YOUR FAST",
+            "title": "Que se passe-t-il pendant que vous jeûnez ?",
+            "subtitle": "Un guide calme pour les heures entre les repas.",
+            "quote": "La faim arrive par vagues. La plupart d’entre eux réussissent si on leur laisse un peu de temps.",
+            "quoteAuthor": "-Mochi",
+            "tip": "Si vous vous sentez étourdi ou malade, mettez fin au jeûne et mangez. Un bon plan est celui que vous pouvez répéter demain."
+          },
+          "it": {
+            "kicker": "DURANTE IL DIGIUNO",
+            "title": "Cosa succede mentre digiuni?",
+            "subtitle": "Una guida tranquilla per le ore tra i pasti.",
+            "quote": "La fame arriva a ondate. La maggior parte passa se le dai un po’ di tempo.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Se hai capogiri o ti senti male, termina il digiuno e mangia. Un buon piano è uno che puoi ripetere domani."
+          },
+          "ru": {
+            "kicker": "ВО ВРЕМЯ ГОЛОДАНИЯ",
+            "title": "Что происходит, пока ты голодаешь?",
+            "subtitle": "Спокойный путеводитель по часам между приёмами пищи.",
+            "quote": "Голод приходит волнами. Большинство из них проходит, если дать им немного времени.",
+            "quoteAuthor": "- Мочи",
+            "tip": "Если кружится голова или ты чувствуешь себя плохо, заверши голодание и поешь. Хороший план — тот, который можно повторить завтра."
+          }
+        },
+        "sections": [
+          {
+            "position": 1,
+            "icon": "flame",
+            "iconImage": "assets/images/flame_calories.png",
+            "translations": {
+              "en": {
+                "title": "The first hours are the loudest",
+                "body": "Your body is used to a routine. Early hunger is often habit, not an emergency."
+              },
+              "tr": {
+                "title": "İlk saatler en gürültülü olanıdır",
+                "body": "Bedenin bir düzene alışkındır. Erken açlık çoğu zaman acil bir ihtiyaç değil, alışkanlıktır."
+              },
+              "de": {
+                "title": "Die ersten Stunden sind am lautesten",
+                "body": "Dein Körper ist eine Routine gewohnt. Früher Hunger ist oft Gewohnheit, kein Notfall."
+              },
+              "es": {
+                "title": "Las primeras horas son las más ruidosas.",
+                "body": "Tu cuerpo está acostumbrado a una rutina. El hambre temprana suele ser un hábito, no una emergencia."
+              },
+              "fr": {
+                "title": "Les premières heures sont les plus bruyantes",
+                "body": "Votre corps est habitué à une routine. La faim précoce est souvent une habitude et non une urgence."
+              },
+              "it": {
+                "title": "Le prime ore si fanno sentire di più",
+                "body": "Il corpo è abituato a una routine. La fame iniziale è spesso un’abitudine, non un’emergenza."
+              },
+              "ru": {
+                "title": "Первые часы ощущаются сильнее всего",
+                "body": "Организм привык к распорядку. Ранний голод часто связан с привычкой, а не с чрезвычайной ситуацией."
+              }
+            }
+          },
+          {
+            "position": 2,
+            "icon": "heart",
+            "iconImage": "assets/images/blue_hearth.png",
+            "translations": {
+              "en": {
+                "title": "Water is your easiest ally",
+                "body": "Sip water through the fast. It keeps you comfortable and gives your hands something to do."
+              },
+              "tr": {
+                "title": "Su en kolay yardımcın",
+                "body": "Oruç boyunca su iç. Rahat tutar ve ellerine bir iş verir."
+              },
+              "de": {
+                "title": "Wasser ist dein einfachster Helfer",
+                "body": "Trink während des Fastens Wasser. Es hält dich angenehm und gibt deinen Händen etwas zu tun."
+              },
+              "es": {
+                "title": "El agua es tu aliado más fácil",
+                "body": "Bebe agua durante el ayuno. Te mantiene cómodo y le da a tus manos algo que hacer."
+              },
+              "fr": {
+                "title": "L'eau est votre alliée la plus simple",
+                "body": "Sirotez de l’eau pendant le jeûne. Cela vous permet de rester à l'aise et donne à vos mains quelque chose à faire."
+              },
+              "it": {
+                "title": "L’acqua è la tua alleata più semplice",
+                "body": "Bevi a piccoli sorsi durante il digiuno. Ti aiuta a stare bene e dà alle mani qualcosa da fare."
+              },
+              "ru": {
+                "title": "Вода — твой самый простой союзник",
+                "body": "Пей воду понемногу во время голодания. Это помогает чувствовать себя комфортнее и даёт рукам занятие."
+              }
+            }
+          },
+          {
+            "position": 3,
+            "icon": "tree",
+            "iconImage": "assets/images/tree.png",
+            "translations": {
+              "en": {
+                "title": "Energy can dip, then steady",
+                "body": "A short walk or a few quiet minutes usually helps more than watching the clock."
+              },
+              "tr": {
+                "title": "Enerji düşer, sonra oturur",
+                "body": "Kısa bir yürüyüş ya da birkaç sessiz dakika, saati izlemekten daha çok işe yarar."
+              },
+              "de": {
+                "title": "Die Energie sinkt, dann wird sie ruhig",
+                "body": "Ein kurzer Spaziergang oder ein paar stille Minuten helfen meist mehr, als auf die Uhr zu sehen."
+              },
+              "es": {
+                "title": "La energía puede caer y luego estabilizarse",
+                "body": "Una caminata corta o unos minutos de tranquilidad suelen ayudar más que mirar el reloj."
+              },
+              "fr": {
+                "title": "L'énergie peut baisser, puis se stabiliser",
+                "body": "Une courte promenade ou quelques minutes tranquilles sont généralement plus utiles que de regarder l’horloge."
+              },
+              "it": {
+                "title": "L’energia può calare, poi stabilizzarsi",
+                "body": "Una breve passeggiata o qualche minuto di calma di solito aiutano più che guardare l’orologio."
+              },
+              "ru": {
+                "title": "Энергия может снизиться, а затем стабилизироваться",
+                "body": "Короткая прогулка или несколько минут тишины обычно помогают больше, чем постоянный взгляд на часы."
+              }
+            }
+          }
+        ],
+        "readMinutes": 1
+      },
+      {
+        "slug": "how-to-use-your-eating-window",
+        "category": "eating",
+        "isPremium": false,
+        "sortOrder": 3,
+        "translations": {
+          "en": {
+            "kicker": "EATING WINDOW",
+            "title": "How should you use your meals?",
+            "subtitle": "Make the hours you eat count.",
+            "quote": "The window is not a finish line. It is where you refuel with care.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Plan the first meal before the window opens. Deciding while hungry usually means grabbing whatever is closest."
+          },
+          "tr": {
+            "kicker": "YEME PENCERESİ",
+            "title": "Öğünleri nasıl kullanmalısın?",
+            "subtitle": "Yediğin saatleri değerli kıl.",
+            "quote": "Pencere bir bitiş çizgisi değil. Kendini özenle doldurduğun yer.",
+            "quoteAuthor": "- Mochi",
+            "tip": "İlk öğünü pencere açılmadan planla. Açken karar vermek, en yakındakini kapmak demektir."
+          },
+          "de": {
+            "kicker": "ESSENSFENSTER",
+            "title": "Wie nutzt du deine Mahlzeiten?",
+            "subtitle": "Mach die Stunden, in denen du isst, wertvoll.",
+            "quote": "Das Fenster ist keine Ziellinie. Es ist der Ort, an dem du dich mit Sorgfalt auftankst.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Plane die erste Mahlzeit, bevor das Fenster aufgeht. Hungrig zu entscheiden heißt meist, das Nächstbeste zu greifen."
+          },
+          "es": {
+            "kicker": "VENTANA PARA COMER",
+            "title": "¿Cómo debes utilizar tus comidas?",
+            "subtitle": "Haz que las horas que comes cuenten.",
+            "quote": "La ventana no es una línea de meta. Es donde repostar con cuidado.",
+            "quoteAuthor": "-Mochi",
+            "tip": "Planifique la primera comida antes de que se abra la ventana. Decidir con hambre normalmente significa agarrar lo que esté más cerca."
+          },
+          "fr": {
+            "kicker": "FENÊTRE À MANGER",
+            "title": "Comment utiliser vos repas ?",
+            "subtitle": "Faites en sorte que les heures que vous mangez comptent.",
+            "quote": "La fenêtre n'est pas une ligne d'arrivée. C'est là que l'on fait le plein avec précaution.",
+            "quoteAuthor": "-Mochi",
+            "tip": "Planifiez le premier repas avant que la fenêtre ne s'ouvre. Décider en ayant faim signifie généralement saisir ce qui est le plus proche."
+          },
+          "it": {
+            "kicker": "FINESTRA ALIMENTARE",
+            "title": "Come sfruttare i tuoi pasti?",
+            "subtitle": "Fai contare le ore in cui mangi.",
+            "quote": "La finestra non è un traguardo. È il momento di ricaricarti con cura.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Pianifica il primo pasto prima che la finestra si apra. Decidere quando hai fame spesso significa prendere ciò che è più vicino."
+          },
+          "ru": {
+            "kicker": "ПИЩЕВОЕ ОКНО",
+            "title": "Как лучше использовать приёмы пищи?",
+            "subtitle": "Пусть часы, когда ты ешь, приносят пользу.",
+            "quote": "Пищевое окно — не финишная черта. Это время бережно восполнить силы.",
+            "quoteAuthor": "- Мочи",
+            "tip": "Запланируй первый приём пищи до открытия окна. Решая на голодный желудок, мы часто берём то, что ближе всего."
+          }
+        },
+        "sections": [
+          {
+            "position": 1,
+            "icon": "window",
+            "iconImage": "assets/images/eat_window.png",
+            "translations": {
+              "en": {
+                "title": "Start with a real meal",
+                "body": "Open the window with protein, plants, and something you enjoy. Skipping straight to snacks leaves you hungrier."
+              },
+              "tr": {
+                "title": "Gerçek bir öğünle başla",
+                "body": "Pencereyi protein, sebze ve sevdiğin bir şeyle aç. Doğrudan atıştırmalığa geçmek daha aç bırakır."
+              },
+              "de": {
+                "title": "Beginne mit einer richtigen Mahlzeit",
+                "body": "Öffne das Fenster mit Protein, Gemüse und etwas, das du magst. Direkt zu Snacks zu springen macht dich hungriger."
+              },
+              "es": {
+                "title": "Comience con una comida real",
+                "body": "Abre la ventana con proteínas, plantas y algo que disfrutes. Pasar directamente a los bocadillos te deja con más hambre."
+              },
+              "fr": {
+                "title": "Commencez par un vrai repas",
+                "body": "Ouvrez la fenêtre avec des protéines, des plantes et quelque chose que vous appréciez. Passer directement aux collations vous laisse plus faim."
+              },
+              "it": {
+                "title": "Inizia con un vero pasto",
+                "body": "Apri la finestra con proteine, alimenti vegetali e qualcosa che ti piace. Passare subito agli spuntini ti lascia più fame."
+              },
+              "ru": {
+                "title": "Начни с полноценной еды",
+                "body": "Открой окно блюдом с белком, растительными продуктами и тем, что тебе нравится. Если сразу перейти к перекусам, голод может остаться сильнее."
+              }
+            }
+          },
+          {
+            "position": 2,
+            "icon": "flame",
+            "iconImage": "assets/images/flame_calories.png",
+            "translations": {
+              "en": {
+                "title": "You do not need to earn food",
+                "body": "Fasting is not a punishment. Eat enough to feel satisfied, not stuffed."
+              },
+              "tr": {
+                "title": "Yemeği hak etmek zorunda değilsin",
+                "body": "Oruç bir ceza değil. Tok hissedecek kadar ye, tıka basa değil."
+              },
+              "de": {
+                "title": "Du musst Essen nicht verdienen",
+                "body": "Fasten ist keine Strafe. Iss genug, um satt zu sein, nicht um vollgestopft zu sein."
+              },
+              "es": {
+                "title": "No necesitas ganarte la comida.",
+                "body": "El ayuno no es un castigo. Coma lo suficiente para sentirse satisfecho, no lleno."
+              },
+              "fr": {
+                "title": "Vous n'avez pas besoin de gagner de la nourriture",
+                "body": "Le jeûne n'est pas une punition. Mangez suffisamment pour vous sentir rassasié et non rassasié."
+              },
+              "it": {
+                "title": "Non devi meritarti il cibo",
+                "body": "Il digiuno non è una punizione. Mangia abbastanza da sentirti soddisfatto, senza riempirti troppo."
+              },
+              "ru": {
+                "title": "Еду не нужно заслуживать",
+                "body": "Голодание — не наказание. Ешь достаточно, чтобы насытиться, но не переедать."
+              }
+            }
+          },
+          {
+            "position": 3,
+            "icon": "tree",
+            "iconImage": "assets/images/tree.png",
+            "translations": {
+              "en": {
+                "title": "Leave a little space",
+                "body": "Stop when you are comfortably full. The next fast is easier when the last meal was kind."
+              },
+              "tr": {
+                "title": "Biraz boşluk bırak",
+                "body": "Rahatça doyduğunda dur. Son öğün nazikse sonraki oruç daha kolay olur."
+              },
+              "de": {
+                "title": "Lass ein wenig Platz",
+                "body": "Hör auf, wenn du angenehm satt bist. Das nächste Fasten ist leichter, wenn die letzte Mahlzeit freundlich war."
+              },
+              "es": {
+                "title": "Deja un poco de espacio",
+                "body": "Deténgase cuando esté cómodamente lleno. El próximo ayuno es más fácil cuando la última comida fue buena."
+              },
+              "fr": {
+                "title": "Laissez un peu d'espace",
+                "body": "Arrêtez-vous lorsque vous êtes confortablement rassasié. Le jeûne suivant est plus facile lorsque le dernier repas a été bon."
+              },
+              "it": {
+                "title": "Lascia un po’ di spazio",
+                "body": "Fermati quando ti senti comodamente sazio. Il prossimo digiuno è più facile se l’ultimo pasto è stato gentile con il corpo."
+              },
+              "ru": {
+                "title": "Оставь немного места",
+                "body": "Остановись, когда чувствуешь комфортную сытость. Следующее голодание легче, если последняя еда была бережной к организму."
+              }
+            }
+          }
+        ],
+        "readMinutes": 1
+      },
+      {
+        "slug": "fasting-and-everyday-life",
+        "category": "health",
+        "isPremium": false,
+        "sortOrder": 4,
+        "translations": {
+          "en": {
+            "kicker": "HEALTH & LIFESTYLE",
+            "title": "How does fasting fit a normal day?",
+            "subtitle": "Sleep, energy, and mood matter as much as the clock.",
+            "quote": "A fast works best on top of a life you can actually live.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Pair the fast with one steady habit, like a morning walk or a glass of water. One anchor beats a perfect schedule."
+          },
+          "tr": {
+            "kicker": "SAĞLIK VE YAŞAM",
+            "title": "Oruç normal bir güne nasıl oturur?",
+            "subtitle": "Uyku, enerji ve ruh hali saat kadar önemlidir.",
+            "quote": "Oruç, gerçekten yaşayabildiğin bir hayatın üstünde en iyi çalışır.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Orucu tek bir sabit alışkanlıkla eşle, sabah yürüyüşü ya da bir bardak su. Bir çıpa, kusursuz bir programdan iyidir."
+          },
+          "de": {
+            "kicker": "GESUNDHEIT & LIFESTYLE",
+            "title": "Wie passt Fasten in einen normalen Tag?",
+            "subtitle": "Schlaf, Energie und Stimmung zählen so viel wie die Uhr.",
+            "quote": "Fasten wirkt am besten auf einem Leben, das du wirklich leben kannst.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Kopple das Fasten an eine feste Gewohnheit, etwa einen Morgenspaziergang oder ein Glas Wasser. Ein Anker schlägt einen perfekten Plan."
+          },
+          "es": {
+            "kicker": "SALUD Y ESTILO DE VIDA",
+            "title": "¿Cómo encaja el ayuno en un día normal?",
+            "subtitle": "El sueño, la energía y el estado de ánimo son tan importantes como el reloj.",
+            "quote": "Un ayuno funciona mejor además de una vida que realmente puedes vivir.",
+            "quoteAuthor": "-Mochi",
+            "tip": "Combine el ayuno con un hábito constante, como una caminata matutina o un vaso de agua. Un presentador supera un horario perfecto."
+          },
+          "fr": {
+            "kicker": "SANTÉ & MODE DE VIE",
+            "title": "Comment le jeûne s’intègre-t-il dans une journée normale ?",
+            "subtitle": "Le sommeil, l’énergie et l’humeur comptent autant que l’horloge.",
+            "quote": "Un jeûne fonctionne mieux en plus d’une vie que vous pouvez réellement vivre.",
+            "quoteAuthor": "-Mochi",
+            "tip": "Associez le jeûne à une habitude régulière, comme une promenade matinale ou un verre d’eau. Un présentateur bat un emploi du temps parfait."
+          },
+          "it": {
+            "kicker": "SALUTE E STILE DI VITA",
+            "title": "Come si inserisce il digiuno nella tua giornata?",
+            "subtitle": "Sonno, energia e umore contano quanto l’orologio.",
+            "quote": "Il digiuno funziona meglio quando si inserisce in una vita che puoi vivere davvero.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Abbina il digiuno a un’abitudine costante, come una passeggiata mattutina o un bicchiere d’acqua. Un’ancora vale più di un programma perfetto."
+          },
+          "ru": {
+            "kicker": "ЗДОРОВЬЕ И ОБРАЗ ЖИЗНИ",
+            "title": "Как вписать голодание в обычный день?",
+            "subtitle": "Сон, энергия и настроение важны не меньше часов.",
+            "quote": "Голодание лучше работает, когда опирается на жизнь, которая тебе действительно подходит.",
+            "quoteAuthor": "- Мочи",
+            "tip": "Соедини голодание с одной постоянной привычкой, например утренней прогулкой или стаканом воды. Один якорь лучше идеального расписания."
+          }
+        },
+        "sections": [
+          {
+            "position": 1,
+            "icon": "heart",
+            "iconImage": "assets/images/blue_hearth.png",
+            "translations": {
+              "en": {
+                "title": "Sleep is part of the plan",
+                "body": "Short nights make hunger louder. Protect your bedtime the same way you protect your eating window."
+              },
+              "tr": {
+                "title": "Uyku planın parçası",
+                "body": "Kısa geceler açlığı yükseltir. Yatma saatini, yeme pencereni koruduğun gibi koru."
+              },
+              "de": {
+                "title": "Schlaf gehört zum Plan",
+                "body": "Kurze Nächte machen Hunger lauter. Schütze deine Schlafenszeit so, wie du dein Essensfenster schützt."
+              },
+              "es": {
+                "title": "Dormir es parte del plan",
+                "body": "Las noches cortas hacen que el hambre sea más fuerte. Proteja su hora de acostarse de la misma manera que protege su ventana para comer."
+              },
+              "fr": {
+                "title": "Le sommeil fait partie du plan",
+                "body": "Les nuits courtes accentuent la faim. Protégez votre heure de coucher de la même manière que vous protégez votre fenêtre pour manger."
+              },
+              "it": {
+                "title": "Il sonno fa parte del piano",
+                "body": "Le notti brevi aumentano la fame. Proteggi l’ora di coricarti come proteggi la finestra alimentare."
+              },
+              "ru": {
+                "title": "Сон — часть плана",
+                "body": "Короткие ночи усиливают голод. Береги время отхода ко сну так же, как пищевое окно."
+              }
+            }
+          },
+          {
+            "position": 2,
+            "icon": "flame",
+            "iconImage": "assets/images/flame_calories.png",
+            "translations": {
+              "en": {
+                "title": "Move, but do not force it",
+                "body": "Light movement on a fasting day is enough. Save hard workouts for when you have eaten."
+              },
+              "tr": {
+                "title": "Hareket et, zorlama",
+                "body": "Oruç gününde hafif hareket yeter. Zor antrenmanı yemek yedikten sonraya bırak."
+              },
+              "de": {
+                "title": "Beweg dich, aber zwing dich nicht",
+                "body": "Leichte Bewegung an einem Fastentag reicht. Harte Einheiten hebst du dir für die Zeit nach dem Essen auf."
+              },
+              "es": {
+                "title": "Muévete, pero no fuerces.",
+                "body": "Un movimiento ligero en un día de ayuno es suficiente. Guarde los entrenamientos duros para cuando haya comido."
+              },
+              "fr": {
+                "title": "Bougez, mais ne forcez pas",
+                "body": "Un mouvement léger un jour de jeûne suffit. Gardez les séances d’entraînement intenses lorsque vous avez mangé."
+              },
+              "it": {
+                "title": "Muoviti, senza forzarti",
+                "body": "Nei giorni di digiuno basta un movimento leggero. Tieni gli allenamenti intensi per quando hai mangiato."
+              },
+              "ru": {
+                "title": "Двигайся, но не заставляй себя",
+                "body": "В день голодания достаточно лёгкого движения. Интенсивные тренировки оставь на время после еды."
+              }
+            }
+          },
+          {
+            "position": 3,
+            "icon": "tree",
+            "iconImage": "assets/images/tree.png",
+            "translations": {
+              "en": {
+                "title": "Stress undoes the calm",
+                "body": "Fasting should not be another thing to worry about. If a day is already heavy, a shorter fast is still a win."
+              },
+              "tr": {
+                "title": "Stres sakinliği bozar",
+                "body": "Oruç yeni bir kaygı olmamalı. Gün zaten ağırsa daha kısa bir oruç da kazanımdır."
+              },
+              "de": {
+                "title": "Stress nimmt die Ruhe",
+                "body": "Fasten soll keine neue Sorge sein. Ist der Tag schon schwer, ist ein kürzeres Fasten trotzdem ein Gewinn."
+              },
+              "es": {
+                "title": "El estrés deshace la calma",
+                "body": "El ayuno no debería ser otra cosa de qué preocuparse. Si un día ya es pesado, un ayuno más corto sigue siendo una victoria."
+              },
+              "fr": {
+                "title": "Le stress détruit le calme",
+                "body": "Le jeûne ne devrait pas être une autre préoccupation. Si une journée est déjà chargée, un jeûne plus court reste une victoire."
+              },
+              "it": {
+                "title": "Lo stress rompe la calma",
+                "body": "Il digiuno non dovrebbe essere un’altra preoccupazione. Se la giornata è già pesante, un digiuno più breve è comunque un successo."
+              },
+              "ru": {
+                "title": "Стресс нарушает спокойствие",
+                "body": "Голодание не должно становиться ещё одним поводом для тревоги. Если день и так тяжёлый, более короткое голодание тоже победа."
+              }
+            }
+          }
+        ],
+        "readMinutes": 1
+      },
+      {
+        "slug": "mochis-tips",
+        "category": "tips",
+        "isPremium": false,
+        "sortOrder": 5,
+        "translations": {
+          "en": {
+            "kicker": "MOCHI'S TIPS",
+            "title": "What should you remember?",
+            "subtitle": "Short advice from your fasting buddy.",
+            "quote": "Small repeats beat a dramatic first week.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Keep the goal boring and kind. You are building a rhythm, not winning a race."
+          },
+          "tr": {
+            "kicker": "MOCHI'NİN İPUÇLARI",
+            "title": "Neyi hatırlamalısın?",
+            "subtitle": "Oruç arkadaşından kısa tavsiyeler.",
+            "quote": "Küçük tekrarlar, gösterişli bir ilk haftadan iyidir.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Hedefi sade ve nazik tut. Bir yarış kazanmıyorsun, bir ritim kuruyorsun."
+          },
+          "de": {
+            "kicker": "MOCHIS TIPPS",
+            "title": "Woran solltest du dich erinnern?",
+            "subtitle": "Kurze Ratschläge von deinem Fasten-Buddy.",
+            "quote": "Kleine Wiederholungen schlagen eine dramatische erste Woche.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Halt das Ziel schlicht und freundlich. Du baust einen Rhythmus, du gewinnst kein Rennen."
+          },
+          "es": {
+            "kicker": "CONSEJOS DE MOCHI",
+            "title": "¿Qué deberías recordar?",
+            "subtitle": "Breves consejos de tu compañero de ayuno.",
+            "quote": "Pequeñas repeticiones superaron una primera semana dramática.",
+            "quoteAuthor": "-Mochi",
+            "tip": "Mantenga la meta aburrida y amable. Estás construyendo un ritmo, no ganando una carrera."
+          },
+          "fr": {
+            "kicker": "LES CONSEILS DE MOCHI",
+            "title": "De quoi faut-il se souvenir ?",
+            "subtitle": "Petit conseil de votre compagnon de jeûne.",
+            "quote": "De petites répétitions ont battu une première semaine dramatique.",
+            "quoteAuthor": "-Mochi",
+            "tip": "Gardez l’objectif ennuyeux et gentil. Vous construisez un rythme, vous ne gagnez pas une course."
+          },
+          "it": {
+            "kicker": "I CONSIGLI DI MOCHI",
+            "title": "Cosa dovresti ricordare?",
+            "subtitle": "Brevi consigli dal tuo compagno di digiuno.",
+            "quote": "Piccoli gesti ripetuti valgono più di una prima settimana spettacolare.",
+            "quoteAuthor": "- Mochi",
+            "tip": "Mantieni l’obiettivo semplice e gentile. Stai costruendo un ritmo, non vincendo una gara."
+          },
+          "ru": {
+            "kicker": "СОВЕТЫ МОЧИ",
+            "title": "О чём стоит помнить?",
+            "subtitle": "Короткие советы от твоего партнёра по голоданию.",
+            "quote": "Маленькие повторяющиеся шаги лучше впечатляющей первой недели.",
+            "quoteAuthor": "- Мочи",
+            "tip": "Пусть цель будет простой и бережной. Ты создаёшь ритм, а не выигрываешь гонку."
+          }
+        },
+        "sections": [
+          {
+            "position": 1,
+            "icon": "star",
+            "iconImage": "assets/images/purple_star.png",
+            "translations": {
+              "en": {
+                "title": "Pick a window you already like",
+                "body": "The best plan is close to how you already eat. Shift it a little, not all at once."
+              },
+              "tr": {
+                "title": "Zaten sevdiğin bir pencere seç",
+                "body": "En iyi plan, şimdiki yeme düzenine yakındır. Bir anda değil, azıcık kaydır."
+              },
+              "de": {
+                "title": "Wähle ein Fenster, das du schon magst",
+                "body": "Der beste Plan liegt nah an dem, wie du jetzt isst. Verschiebe ihn ein wenig, nicht alles auf einmal."
+              },
+              "es": {
+                "title": "Elige una ventana que ya te guste",
+                "body": "El mejor plan se acerca a lo que ya comes. Muévelo un poco, no todo a la vez."
+              },
+              "fr": {
+                "title": "Choisissez une fenêtre que vous aimez déjà",
+                "body": "Le meilleur plan est proche de la façon dont vous mangez déjà. Déplacez-le un peu, pas d'un seul coup."
+              },
+              "it": {
+                "title": "Scegli una finestra che ti piace già",
+                "body": "Il piano migliore è vicino alle tue abitudini alimentari attuali. Cambialo un poco, non tutto insieme."
+              },
+              "ru": {
+                "title": "Выбери окно, которое тебе уже подходит",
+                "body": "Лучший план близок к твоему нынешнему питанию. Меняй его понемногу, а не целиком сразу."
+              }
+            }
+          },
+          {
+            "position": 2,
+            "icon": "tree",
+            "iconImage": "assets/images/tree.png",
+            "translations": {
+              "en": {
+                "title": "Tell someone, or tell Mochi",
+                "body": "A plan you say out loud is easier to keep. Check in with yourself at the same time each day."
+              },
+              "tr": {
+                "title": "Birine söyle, ya da Mochi'ye",
+                "body": "Sesli söylediğin planı tutmak daha kolay. Her gün aynı saatte kendine bak."
+              },
+              "de": {
+                "title": "Sag es jemandem, oder Mochi",
+                "body": "Ein Plan, den du laut aussprichst, ist leichter zu halten. Schau jeden Tag zur gleichen Zeit nach dir."
+              },
+              "es": {
+                "title": "Cuéntaselo a alguien, o cuéntaselo a Mochi.",
+                "body": "Un plan que dices en voz alta es más fácil de cumplir. Consulta contigo mismo a la misma hora todos los días."
+              },
+              "fr": {
+                "title": "Parle-en à quelqu'un ou dis-le à Mochi",
+                "body": "Un plan que vous dites à voix haute est plus facile à respecter. Enregistrez-vous avec vous-même à la même heure chaque jour."
+              },
+              "it": {
+                "title": "Parlane con qualcuno, o con Mochi",
+                "body": "Un piano detto ad alta voce è più facile da seguire. Fai il punto con te stesso alla stessa ora ogni giorno."
+              },
+              "ru": {
+                "title": "Расскажи кому-нибудь или Мочи",
+                "body": "План, произнесённый вслух, легче соблюдать. Сверяйся со своими ощущениями в одно и то же время каждый день."
+              }
+            }
+          },
+          {
+            "position": 3,
+            "icon": "flame",
+            "iconImage": "assets/images/flame_calories.png",
+            "translations": {
+              "en": {
+                "title": "Miss a day, then continue",
+                "body": "One broken fast does not reset you. Eat, rest, and start the next window without a speech."
+              },
+              "tr": {
+                "title": "Bir gün kaçar, sonra devam et",
+                "body": "Bozulan bir oruç seni sıfırlamaz. Ye, dinlen ve sonraki pencereyi nutuk çekmeden aç."
+              },
+              "de": {
+                "title": "Ein Tag entfällt, dann geht es weiter",
+                "body": "Ein unterbrochenes Fasten setzt dich nicht zurück. Iss, ruh dich aus und öffne das nächste Fenster ohne Rede."
+              },
+              "es": {
+                "title": "Pierde un día, luego continúa",
+                "body": "Un ayuno roto no te reinicia. Come, descansa y comienza la siguiente ventana sin pronunciar palabra."
+              },
+              "fr": {
+                "title": "Manque une journée, puis continue",
+                "body": "Un jeûne rompu ne vous réinitialise pas. Mangez, reposez-vous et démarrez la fenêtre suivante sans parler."
+              },
+              "it": {
+                "title": "Salti un giorno? Poi continua",
+                "body": "Un digiuno interrotto non cancella i progressi. Mangia, riposa e riprendi la prossima finestra senza rimproverarti."
+              },
+              "ru": {
+                "title": "Пропустил день — продолжай дальше",
+                "body": "Один прерванный сеанс голодания не обнуляет твой прогресс. Поешь, отдохни и начни следующее окно без упрёков."
+              }
+            }
+          }
+        ],
+        "readMinutes": 1
+      }
+    ]
+  },
+  "faq": [
+    {
+      "code": "what",
+      "sortOrder": 1,
+      "translations": {
+        "en": {
+          "question": "What is MochiFast?",
+          "answer": "MochiFast is a friendly intermittent fasting coach that helps you build sustainable fasting habits with plans, reminders, and gentle progress tracking."
+        },
+        "tr": {
+          "question": "MochiFast nedir?",
+          "answer": "MochiFast, aralıklı orucu sürdürülebilir hale getirmen için planlar, hatırlatmalar ve nazik ilerleme takibi sunan dostane bir oruç koçudur."
+        },
+        "de": {
+          "question": "Was ist MochiFast?",
+          "answer": "MochiFast ist ein freundlicher Intervallfasten-Coach mit Plänen, Erinnerungen und behutsamem Fortschrittstracking."
+        },
+        "es": {
+          "question": "¿Qué es MochiFast?",
+          "answer": "MochiFast es un amigable entrenador de ayuno intermitente que lo ayuda a desarrollar hábitos de ayuno sostenibles con planes, recordatorios y un seguimiento suave del progreso."
+        },
+        "fr": {
+          "question": "Qu’est-ce que MochiFast ?",
+          "answer": "MochiFast est un coach de jeûne intermittent convivial qui vous aide à développer des habitudes de jeûne durables avec des plans, des rappels et un suivi en douceur des progrès."
+        },
+        "it": {
+          "question": "Cos’è MochiFast?",
+          "answer": "MochiFast è un coach amichevole di digiuno intermittente che ti aiuta a creare abitudini sostenibili con piani, promemoria e un monitoraggio delicato dei progressi."
+        },
+        "ru": {
+          "question": "Что такое MochiFast?",
+          "answer": "MochiFast — дружелюбный тренер по интервальному голоданию, который помогает создавать устойчивые привычки с помощью планов, напоминаний и бережного отслеживания прогресса."
+        }
+      }
+    },
+    {
+      "code": "start",
+      "sortOrder": 2,
+      "translations": {
+        "en": {
+          "question": "How do I start a fasting?",
+          "answer": "Pick a fasting plan that fits your lifestyle, set your meal window, then tap start when you're ready. We'll guide you through each phase."
+        },
+        "tr": {
+          "question": "Oruca nasıl başlarım?",
+          "answer": "Yaşam tarzına uyan bir oruç planı seç, yemek pencereni ayarla ve hazır olunca başlat’a dokun. Her aşamada seni yönlendireceğiz."
+        },
+        "de": {
+          "question": "Wie starte ich ein Fasten?",
+          "answer": "Wähle einen passenden Fastenplan, lege dein Essfenster fest und tippe auf Start. Wir begleiten dich durch jede Phase."
+        },
+        "es": {
+          "question": "¿Cómo comienzo un ayuno?",
+          "answer": "Elija un plan de ayuno que se adapte a su estilo de vida, establezca su ventana de comidas y luego toque Iniciar cuando esté listo. Te guiaremos a través de cada fase."
+        },
+        "fr": {
+          "question": "Comment commencer un jeûne ?",
+          "answer": "Choisissez un programme de jeûne adapté à votre style de vie, définissez votre fenêtre de repas, puis appuyez sur Démarrer lorsque vous êtes prêt. Nous vous guiderons à travers chaque phase."
+        },
+        "it": {
+          "question": "Come inizio un digiuno?",
+          "answer": "Scegli un piano adatto al tuo stile di vita, imposta la finestra alimentare e tocca Inizia quando vuoi. Ti guideremo in ogni fase."
+        },
+        "ru": {
+          "question": "Как начать голодание?",
+          "answer": "Выбери план голодания под свой образ жизни, настрой пищевое окно и нажми «Начать», когда захочешь. Мы проведём тебя через каждый этап."
+        }
+      }
+    },
+    {
+      "code": "beginner",
+      "sortOrder": 3,
+      "translations": {
+        "en": {
+          "question": "Are fasting plans beginner-friendly?",
+          "answer": "Yes. We recommend gentler schedules like 12:12 or 14:10 first, then you can step up when it feels comfortable."
+        },
+        "tr": {
+          "question": "Planlar yeni başlayanlar için uygun mu?",
+          "answer": "Evet. Önce 12:12 veya 14:10 gibi daha yumuşak programlarla başlamanı öneririz; rahat ettikçe yükseltebilirsin."
+        },
+        "de": {
+          "question": "Sind die Pläne anfängerfreundlich?",
+          "answer": "Ja. Wir empfehlen zuerst sanftere Modelle wie 12:12 oder 14:10 – steigern kannst du später."
+        },
+        "es": {
+          "question": "¿Los planes de ayuno son aptos para principiantes?",
+          "answer": "Sí. Recomendamos horarios más suaves como 12:12 o 14:10 primero, luego puedes intensificar cuando te sientas cómodo."
+        },
+        "fr": {
+          "question": "Les plans de jeûne sont-ils adaptés aux débutants ?",
+          "answer": "Oui. Nous recommandons d'abord des horaires plus doux comme 12h12 ou 14h10, puis vous pourrez intensifier lorsque vous vous sentez à l'aise."
+        },
+        "it": {
+          "question": "I piani di digiuno sono adatti ai principianti?",
+          "answer": "Sì. Consigliamo di iniziare con orari più delicati, come 12:12 o 14:10, per poi aumentare quando ti senti a tuo agio."
+        },
+        "ru": {
+          "question": "Подходят ли планы голодания начинающим?",
+          "answer": "Да. Мы рекомендуем сначала более мягкие режимы, например 12:12 или 14:10, а затем постепенно усложнять, когда тебе станет комфортно."
+        }
+      }
+    },
+    {
+      "code": "premium",
+      "sortOrder": 4,
+      "translations": {
+        "en": {
+          "question": "What's included in Free vs Premium?",
+          "answer": "Free covers core fasting timers and basic tracking. Premium unlocks AI chat, all fasting plans, deeper insights, and extra coaching tools."
+        },
+        "tr": {
+          "question": "Ücretsiz ve Premium’da ne var?",
+          "answer": "Ücretsiz sürüm temel zamanlayıcı ve takibi kapsar. Premium; AI sohbet, tüm oruç planları, derin içgörüler ve ekstra koçluk araçlarını açar."
+        },
+        "de": {
+          "question": "Was ist in Free vs Premium enthalten?",
+          "answer": "Free bietet Kern-Timer und Basis-Tracking. Premium schaltet KI-Chat, alle Pläne, tiefere Insights und Extra-Coaching frei."
+        },
+        "es": {
+          "question": "¿Qué incluye Free vs Premium?",
+          "answer": "Gratis cubre los temporizadores de ayuno básicos y el seguimiento básico. Premium desbloquea el chat de IA, todos los planes de ayuno, información más profunda y herramientas de entrenamiento adicionales."
+        },
+        "fr": {
+          "question": "Qu'est-ce qui est inclus dans Free vs Premium ?",
+          "answer": "Gratuit couvre les minuteries de jeûne de base et le suivi de base. Premium débloque le chat IA, tous les plans de jeûne, des informations plus approfondies et des outils de coaching supplémentaires."
+        },
+        "it": {
+          "question": "Cosa includono la versione gratuita e Premium?",
+          "answer": "La versione gratuita include i timer essenziali del digiuno e il monitoraggio di base. Premium sblocca la chat IA, tutti i piani di digiuno, approfondimenti più dettagliati e strumenti aggiuntivi di coaching."
+        },
+        "ru": {
+          "question": "Что входит в бесплатную версию и Premium?",
+          "answer": "Бесплатная версия включает основные таймеры голодания и базовое отслеживание. Premium открывает ИИ-чат, все планы голодания, подробную аналитику и дополнительные инструменты поддержки."
+        }
+      }
+    },
+    {
+      "code": "history",
+      "sortOrder": 5,
+      "translations": {
+        "en": {
+          "question": "Can I see my history?",
+          "answer": "Yes. Open Fasting History from your profile to review past sessions, streaks, and how your consistency has grown."
+        },
+        "tr": {
+          "question": "Geçmişimi görebilir miyim?",
+          "answer": "Evet. Profilindeki Oruç Geçmişi’nden geçmiş seanslarını, streak’lerini ve tutarlılığını inceleyebilirsin."
+        },
+        "de": {
+          "question": "Kann ich meine Historie sehen?",
+          "answer": "Ja. Unter Fastenverlauf im Profil siehst du vergangene Sessions, Streaks und deine Konstanz."
+        },
+        "es": {
+          "question": "¿Puedo ver mi historial?",
+          "answer": "Sí. Abra Historial de ayuno desde su perfil para revisar sesiones pasadas, rachas y cómo ha crecido su constancia."
+        },
+        "fr": {
+          "question": "Puis-je voir mon historique ?",
+          "answer": "Oui. Ouvrez l'historique du jeûne depuis votre profil pour consulter les sessions passées, les séquences et l'évolution de votre cohérence."
+        },
+        "it": {
+          "question": "Posso vedere la mia cronologia?",
+          "answer": "Sì. Apri la cronologia dei digiuni dal profilo per rivedere le sessioni passate, le serie e come è cresciuta la tua costanza."
+        },
+        "ru": {
+          "question": "Можно ли посмотреть мою историю?",
+          "answer": "Да. Открой историю голоданий в профиле, чтобы посмотреть прошлые сеансы, серии и изменения своей регулярности."
+        }
+      }
+    },
+    {
+      "code": "cancel",
+      "sortOrder": 6,
+      "translations": {
+        "en": {
+          "question": "How do I cancel a subscription?",
+          "answer": "Manage or cancel Premium anytime in your App Store or Google Play subscriptions. Access stays active until the current period ends."
+        },
+        "tr": {
+          "question": "Aboneliği nasıl iptal ederim?",
+          "answer": "Premium’u App Store veya Google Play aboneliklerinden istediğin zaman yönetip iptal edebilirsin. Erişim mevcut dönem bitene kadar sürer."
+        },
+        "de": {
+          "question": "Wie kündige ich ein Abo?",
+          "answer": "Premium kannst du jederzeit in den Abos von App Store oder Google Play verwalten und kündigen. Der Zugang bleibt bis Periodenende."
+        },
+        "es": {
+          "question": "¿Cómo cancelo una suscripción?",
+          "answer": "Administre o cancele Premium en cualquier momento en sus suscripciones de App Store o Google Play. El acceso permanece activo hasta que finalice el período actual."
+        },
+        "fr": {
+          "question": "Comment résilier un abonnement ?",
+          "answer": "Gérez ou annulez Premium à tout moment dans vos abonnements App Store ou Google Play. L'accès reste actif jusqu'à la fin de la période en cours."
+        },
+        "it": {
+          "question": "Come annullo un abbonamento?",
+          "answer": "Puoi gestire o annullare Premium in qualsiasi momento dagli abbonamenti dell’App Store o di Google Play. L’accesso resta attivo fino alla fine del periodo corrente."
+        },
+        "ru": {
+          "question": "Как отменить подписку?",
+          "answer": "Управлять Premium или отменить его можно в любой момент в подписках App Store или Google Play. Доступ сохранится до конца текущего периода."
+        }
+      }
+    }
+  ],
+  "items": {
+    "goal": [
+      {
+        "code": "lose_weight",
+        "sortOrder": 1,
+        "data": {
+          "image": "assets/images/weigher.png"
+        }
+      },
+      {
+        "code": "build_habit",
+        "sortOrder": 2,
+        "data": {
+          "image": "assets/images/plant.png"
+        }
+      },
+      {
+        "code": "more_energy",
+        "sortOrder": 3,
+        "data": {
+          "image": "assets/images/green_apple.png"
+        }
+      },
+      {
+        "code": "gut_reset",
+        "sortOrder": 4,
+        "data": {
+          "image": "assets/images/bowel.png"
+        }
+      }
+    ],
+    "gender": [
+      {
+        "code": "woman",
+        "sortOrder": 1,
+        "data": {
+          "image": "assets/images/woman.png"
+        }
+      },
+      {
+        "code": "man",
+        "sortOrder": 2,
+        "data": {
+          "image": "assets/images/man.png"
+        }
+      },
+      {
+        "code": "non_binary",
+        "sortOrder": 3,
+        "data": {
+          "image": "assets/images/non-binary.png"
+        }
+      },
+      {
+        "code": "prefer_not_to_say",
+        "sortOrder": 4,
+        "data": {
+          "image": "assets/images/prefer-not.png"
+        }
+      }
+    ],
+    "diet": [
+      {
+        "code": "everything",
+        "sortOrder": 1,
+        "data": {
+          "image": "assets/images/everything.png"
+        }
+      },
+      {
+        "code": "vegetarian",
+        "sortOrder": 2,
+        "data": {
+          "image": "assets/images/vegetarian.png"
+        }
+      },
+      {
+        "code": "pescatarian",
+        "sortOrder": 3,
+        "data": {
+          "image": "assets/images/pescatarian.png"
+        }
+      },
+      {
+        "code": "vegan",
+        "sortOrder": 4,
+        "data": {
+          "image": "assets/images/plant.png"
+        }
+      },
+      {
+        "code": "low_carb",
+        "sortOrder": 5,
+        "data": {
+          "image": "assets/images/law-carb.png"
+        }
+      },
+      {
+        "code": "mediterranean",
+        "sortOrder": 6,
+        "data": {
+          "image": "assets/images/mediterrian.png"
+        }
+      }
+    ],
+    "food_love": [
+      {
+        "code": "chicken",
+        "sortOrder": 1,
+        "data": {
+          "image": "assets/images/chicken.png"
+        }
+      },
+      {
+        "code": "fish",
+        "sortOrder": 2,
+        "data": {
+          "image": "assets/images/fish.png"
+        }
+      },
+      {
+        "code": "rice",
+        "sortOrder": 3,
+        "data": {
+          "image": "assets/images/rice.png"
+        }
+      },
+      {
+        "code": "red_meat",
+        "sortOrder": 4,
+        "data": {
+          "image": "assets/images/meat.png"
+        }
+      },
+      {
+        "code": "pasta",
+        "sortOrder": 5,
+        "data": {
+          "image": "assets/images/pasta.png"
+        }
+      },
+      {
+        "code": "salads",
+        "sortOrder": 6,
+        "data": {
+          "image": "assets/images/salata.png"
+        }
+      },
+      {
+        "code": "cheese",
+        "sortOrder": 7,
+        "data": {
+          "image": "assets/images/cheese.png"
+        }
+      },
+      {
+        "code": "eggs",
+        "sortOrder": 8,
+        "data": {
+          "image": "assets/images/eggs.png"
+        }
+      },
+      {
+        "code": "spicy",
+        "sortOrder": 9,
+        "data": {
+          "image": "assets/images/spicy.png"
+        }
+      },
+      {
+        "code": "noodles",
+        "sortOrder": 10,
+        "data": {
+          "image": "assets/images/noodles.png"
+        }
+      },
+      {
+        "code": "fruit",
+        "sortOrder": 11,
+        "data": {
+          "image": "assets/images/fruit.png"
+        }
+      },
+      {
+        "code": "avocado",
+        "sortOrder": 12,
+        "data": {
+          "image": "assets/images/avacado.png"
+        }
+      },
+      {
+        "code": "sweets",
+        "sortOrder": 13,
+        "data": {
+          "image": "assets/images/sweethies.png"
+        }
+      }
+    ],
+    "food_skip": [
+      {
+        "code": "mushrooms",
+        "sortOrder": 1,
+        "data": {
+          "image": "assets/images/mushroom.png"
+        }
+      },
+      {
+        "code": "olives",
+        "sortOrder": 2,
+        "data": {
+          "image": "assets/images/olives.png"
+        }
+      },
+      {
+        "code": "seafood",
+        "sortOrder": 3,
+        "data": {
+          "image": "assets/images/seefood.png"
+        }
+      },
+      {
+        "code": "onions",
+        "sortOrder": 4,
+        "data": {
+          "image": "assets/images/onion.png"
+        }
+      },
+      {
+        "code": "broccoli",
+        "sortOrder": 5,
+        "data": {
+          "image": "assets/images/brocolies.png"
+        }
+      },
+      {
+        "code": "too_spicy",
+        "sortOrder": 6,
+        "data": {
+          "image": "assets/images/toospicy.png"
+        }
+      },
+      {
+        "code": "dairy",
+        "sortOrder": 7,
+        "data": {
+          "image": "assets/images/dairy.png"
+        }
+      },
+      {
+        "code": "nuts",
+        "sortOrder": 8,
+        "data": {
+          "image": "assets/images/nuts.png"
+        }
+      },
+      {
+        "code": "beans",
+        "sortOrder": 9,
+        "data": {
+          "image": "assets/images/beans.png"
+        }
+      },
+      {
+        "code": "eggplant",
+        "sortOrder": 10,
+        "data": {
+          "image": "assets/images/eggplant.png"
+        }
+      }
+    ],
+    "weight_history": [
+      {
+        "code": "many_times",
+        "sortOrder": 1,
+        "data": {
+          "image": "assets/images/weigher.png"
+        }
+      },
+      {
+        "code": "once_or_twice",
+        "sortOrder": 2,
+        "data": {
+          "image": "assets/images/1-or-2.png"
+        }
+      },
+      {
+        "code": "first_time",
+        "sortOrder": 3,
+        "data": {
+          "image": "assets/images/plant.png"
+        }
+      }
+    ],
+    "obstacle": [
+      {
+        "code": "too_restrictive",
+        "sortOrder": 1,
+        "data": {
+          "image": "assets/images/restrictive.png"
+        }
+      },
+      {
+        "code": "lost_motivation",
+        "sortOrder": 2,
+        "data": {
+          "image": "assets/images/motivation.png"
+        }
+      },
+      {
+        "code": "no_time_to_cook",
+        "sortOrder": 3,
+        "data": {
+          "image": "assets/images/time-cook.png"
+        }
+      },
+      {
+        "code": "too_confusing",
+        "sortOrder": 4,
+        "data": {
+          "image": "assets/images/confusing.png"
+        }
+      },
+      {
+        "code": "life_got_busy",
+        "sortOrder": 5,
+        "data": {
+          "image": "assets/images/busy.png"
+        }
+      },
+      {
+        "code": "hit_plateau",
+        "sortOrder": 6,
+        "data": {
+          "image": "assets/images/pleteu.png"
+        }
+      }
+    ],
+    "fasting_reason": [
+      {
+        "code": "special_date",
+        "sortOrder": 1,
+        "data": {
+          "image": "assets/images/date.png",
+          "days": 45
+        }
+      },
+      {
+        "code": "trip",
+        "sortOrder": 2,
+        "data": {
+          "image": "assets/images/trip.png",
+          "days": 90
+        }
+      },
+      {
+        "code": "health_longevity",
+        "sortOrder": 3,
+        "data": {
+          "image": "assets/images/healty.png",
+          "days": 180
+        }
+      },
+      {
+        "code": "confidence",
+        "sortOrder": 4,
+        "data": {
+          "image": "assets/images/confidence.png",
+          "days": 120
+        }
+      }
+    ],
+    "onboarding_plan": [
+      {
+        "code": "16_8",
+        "sortOrder": 1,
+        "data": {
+          "badgeColor": "#96BD8F"
+        }
+      },
+      {
+        "code": "14_10",
+        "sortOrder": 2,
+        "data": {
+          "badgeColor": "#7673B6"
+        }
+      },
+      {
+        "code": "18_6",
+        "sortOrder": 3,
+        "data": {
+          "badgeColor": "#58A2AC"
+        }
+      },
+      {
+        "code": "20_4",
+        "sortOrder": 4,
+        "data": {
+          "badgeColor": "#C78131"
+        }
+      },
+      {
+        "code": "omad",
+        "sortOrder": 5,
+        "data": {
+          "badgeColor": "#F0BC11"
+        }
+      },
+      {
+        "code": "5_2",
+        "sortOrder": 6,
+        "data": {
+          "badgeColor": "#C73156"
+        }
+      }
+    ],
+    "chat_suggestion": [
+      {
+        "code": "hungry",
+        "sortOrder": 1,
+        "data": null
+      },
+      {
+        "code": "coffee",
+        "sortOrder": 2,
+        "data": null
+      },
+      {
+        "code": "weight",
+        "sortOrder": 3,
+        "data": null
+      },
+      {
+        "code": "eat",
+        "sortOrder": 4,
+        "data": null
+      }
+    ]
+  }
+}

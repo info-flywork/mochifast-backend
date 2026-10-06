@@ -3,3 +3,6 @@ coverage
 package-lock.json
 openapi.json
 migrations/*.sql
+
+# Script çıktısı (extract-translations.js, seed üreticileri)
+seeds/*.json

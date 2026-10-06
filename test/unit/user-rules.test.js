@@ -36,50 +36,118 @@ describe('enum dönüşümü', () => {
   });
 });
 
+/** Katalogdaki plan kuralları (seeds/plans.json ile aynı değerler). */
+const PLANS = {
+  '12_12': {
+    code: '12_12',
+    category: 'beginner',
+    scheduleType: 'daily',
+    fastHours: 12,
+    eatHours: 12,
+    minAge: 13,
+  },
+  '13_11': {
+    code: '13_11',
+    category: 'beginner',
+    scheduleType: 'daily',
+    fastHours: 13,
+    eatHours: 11,
+    minAge: 13,
+  },
+  '14_10': {
+    code: '14_10',
+    category: 'beginner',
+    scheduleType: 'daily',
+    fastHours: 14,
+    eatHours: 10,
+    minAge: 13,
+  },
+  '16_8': {
+    code: '16_8',
+    category: 'popular',
+    scheduleType: 'daily',
+    fastHours: 16,
+    eatHours: 8,
+    minAge: 18,
+  },
+  '18_6': {
+    code: '18_6',
+    category: 'intermediate',
+    scheduleType: 'daily',
+    fastHours: 18,
+    eatHours: 6,
+    minAge: 18,
+  },
+  omad: {
+    code: 'omad',
+    category: 'advanced',
+    scheduleType: 'daily',
+    fastHours: 23,
+    eatHours: 1,
+    minAge: 18,
+  },
+  '5_2': {
+    code: '5_2',
+    category: 'weekly',
+    scheduleType: 'weekly_reduced',
+    fastHours: null,
+    eatHours: null,
+    minAge: 18,
+  },
+  early_tre: {
+    code: 'early_tre',
+    category: 'flexible',
+    scheduleType: 'custom_daily',
+    fastHours: 16,
+    eatHours: 8,
+    minAge: 18,
+  },
+};
+
 describe('sağlık güvenliği (05 §2.6)', () => {
   const base = { age: 30, healthFlags: [], heightCm: 170, goalWeightKg: 60 };
 
   it('18 yaş altı: yalnızca min_age ≤ yaş planlar', () => {
-    expect(evaluateSafety({ ...base, age: 16, planCode: 'omad' }).error).toEqual({
+    expect(evaluateSafety({ ...base, age: 16, plan: PLANS['omad'] }).error).toEqual({
       code: 'UNSAFE_REQUEST',
       reason: 'plan_min_age',
     });
-    expect(evaluateSafety({ ...base, age: 16, planCode: '14_10' }).error).toBeNull();
+    expect(evaluateSafety({ ...base, age: 16, plan: PLANS['14_10'] }).error).toBeNull();
   });
 
   it('hamilelik/emzirme: yalnızca 12:12 ve 13:11', () => {
     const flags = ['breastfeeding'];
-    expect(evaluateSafety({ ...base, healthFlags: flags, planCode: '16_8' }).error?.reason).toBe(
+    expect(evaluateSafety({ ...base, healthFlags: flags, plan: PLANS['16_8'] }).error?.reason).toBe(
       'plan_pregnancy',
     );
-    expect(evaluateSafety({ ...base, healthFlags: flags, planCode: '13_11' }).error).toBeNull();
+    expect(evaluateSafety({ ...base, healthFlags: flags, plan: PLANS['13_11'] }).error).toBeNull();
   });
 
   it('yeme bozukluğu geçmişi: advanced/weekly kapalı', () => {
     const flags = ['eating_disorder_history'];
-    expect(evaluateSafety({ ...base, healthFlags: flags, planCode: '5_2' }).error?.code).toBe(
+    expect(evaluateSafety({ ...base, healthFlags: flags, plan: PLANS['5_2'] }).error?.code).toBe(
       'UNSAFE_REQUEST',
     );
-    expect(evaluateSafety({ ...base, healthFlags: flags, planCode: '18_6' }).error).toBeNull();
+    expect(evaluateSafety({ ...base, healthFlags: flags, plan: PLANS['18_6'] }).error).toBeNull();
   });
 
   it('diyabet/ilaç/kalp: >14 sa planda güvenlik onayı', () => {
     const flags = ['diabetes'];
-    expect(evaluateSafety({ ...base, healthFlags: flags, planCode: '16_8' }).error?.code).toBe(
+    expect(evaluateSafety({ ...base, healthFlags: flags, plan: PLANS['16_8'] }).error?.code).toBe(
       'SAFETY_ACK_REQUIRED',
     );
     expect(
-      evaluateSafety({ ...base, healthFlags: flags, planCode: '16_8', safetyAcknowledged: true })
+      evaluateSafety({ ...base, healthFlags: flags, plan: PLANS['16_8'], safetyAcknowledged: true })
         .error,
     ).toBeNull();
-    expect(evaluateSafety({ ...base, healthFlags: flags, planCode: '14_10' }).error).toBeNull();
+    expect(evaluateSafety({ ...base, healthFlags: flags, plan: PLANS['14_10'] }).error).toBeNull();
   });
 
   it('hedef BMI: < 18.5 uyarı, < 17.5 red', () => {
-    expect(evaluateSafety({ ...base, goalWeightKg: 52, planCode: '16_8' }).warnings).toEqual([
+    expect(evaluateSafety({ ...base, goalWeightKg: 52, plan: PLANS['16_8'] }).warnings).toEqual([
       'GOAL_BMI_BELOW_18_5',
     ]);
-    expect(evaluateSafety({ ...base, goalWeightKg: 50, planCode: '16_8' }).error?.reason).toBe(
+    expect(evaluateSafety({ ...base, goalWeightKg: 50, plan: PLANS['16_8'] }).error?.reason).toBe(
       'goal_bmi',
     );
     expect(bmi(74, 172)).toBe(25);
@@ -88,16 +156,20 @@ describe('sağlık güvenliği (05 §2.6)', () => {
 
 describe('plan özeti ve projeksiyon', () => {
   it('yeme penceresi öğün penceresinin sonunda biter; gece yarısını geçebilir', () => {
-    expect(planSummary('16_8', { start: '07:00', end: '19:00' })).toEqual({
+    expect(planSummary(PLANS['16_8'], { start: '07:00', end: '19:00' })).toEqual({
       planCode: '16_8',
       fastMinutes: 960,
       eatWindow: { start: '11:00', end: '19:00' },
     });
-    expect(planSummary('16_8', { start: '15:00', end: '01:00' }).eatWindow).toEqual({
+    expect(planSummary(PLANS['16_8'], { start: '15:00', end: '01:00' }).eatWindow).toEqual({
       start: '17:00',
       end: '01:00',
     });
-    expect(planSummary('5_2', { start: '07:00', end: '19:00' })).toEqual({
+    expect(planSummary(PLANS.early_tre, { start: '07:00', end: '15:00' }).eatWindow).toEqual({
+      start: '07:00',
+      end: '15:00',
+    });
+    expect(planSummary(PLANS['5_2'], { start: '07:00', end: '19:00' })).toEqual({
       planCode: '5_2',
       fastMinutes: null,
       eatWindow: null,
@@ -106,10 +178,10 @@ describe('plan özeti ve projeksiyon', () => {
 
   it('pencere süresi ve plan uyarısı', () => {
     expect(windowMinutes('22:00', '02:00')).toBe(240);
-    expect(mealWindowWarnings('16_8', { start: '12:00', end: '18:00' })).toEqual([
+    expect(mealWindowWarnings(PLANS['16_8'], { start: '12:00', end: '18:00' })).toEqual([
       'MEAL_WINDOW_SHORTER_THAN_PLAN',
     ]);
-    expect(mealWindowWarnings('16_8', { start: '07:00', end: '19:00' })).toEqual([]);
+    expect(mealWindowWarnings(PLANS['16_8'], { start: '07:00', end: '19:00' })).toEqual([]);
   });
 
   it('projeksiyon: 74 → 64 kg, haftada 0.4 → 25 hafta', () => {

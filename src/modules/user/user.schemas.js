@@ -13,7 +13,6 @@ import {
   WEIGHT_HISTORIES,
 } from '../../config/constants.js';
 import { envelope, localDateSchema, uuidSchema } from '../../shared/schemas.js';
-import { PLAN_CODES } from './plans.js';
 
 const bearer = [{ bearerAuth: [] }];
 const enumOf = (values) => ({ type: 'string', enum: values });
@@ -25,6 +24,8 @@ const listOf = (values, extra = {}) => ({
   maxItems: values.length,
   ...extra,
 });
+// Katalogdaki kod (fasting_plans.code); varlığı serviste doğrulanır.
+const planCodeSchema = { type: 'string', pattern: '^[a-z0-9_]{2,32}$' };
 const hhmm = { type: 'string', pattern: '^([01]\\d|2[0-3]):[0-5]\\d$' };
 const timeWindow = {
   type: 'object',
@@ -140,7 +141,7 @@ export const onboardingSchema = {
       weightHistory: enumOf(WEIGHT_HISTORIES),
       obstacles: listOf(OBSTACLES),
       fastingReason: enumOf(FASTING_REASONS),
-      planCode: enumOf(PLAN_CODES),
+      planCode: planCodeSchema,
       mealWindow: timeWindow,
       healthFlags: listOf(HEALTH_FLAGS),
       safetyAcknowledged: { type: 'boolean' },
@@ -250,7 +251,7 @@ export const patchProfileSchema = {
       weightHistory: enumOf(WEIGHT_HISTORIES),
       fastingReason: enumOf(FASTING_REASONS),
       mealWindow: timeWindow,
-      planCode: enumOf(PLAN_CODES),
+      planCode: planCodeSchema,
       healthFlags: listOf(HEALTH_FLAGS),
       foodLoves: listOf(FOOD_LOVES, { minItems: 1 }),
       foodSkips: listOf(FOOD_SKIPS),

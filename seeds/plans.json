@@ -1,0 +1,1332 @@
+[
+  {
+    "code": "12_12",
+    "category": "beginner",
+    "scheduleType": "daily",
+    "fastHours": 12,
+    "eatHours": 12,
+    "intensity": 1,
+    "isPremium": false,
+    "isFeatured": false,
+    "minAge": 13,
+    "requiresSafetyAck": false,
+    "defaultTiming": "skip_breakfast",
+    "defaultEatStart": "12:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "beginner"
+    ],
+    "sortOrder": 10,
+    "translations": {
+      "en": {
+        "displayName": "12:12",
+        "cardLabel": "Easy Start",
+        "shortDescription": "The easiest way to start fasting"
+      },
+      "tr": {
+        "displayName": "12:12",
+        "cardLabel": "Kolay Başlangıç",
+        "shortDescription": "Oruca başlamanın en kolay yolu"
+      },
+      "de": {
+        "displayName": "12:12",
+        "cardLabel": "Leichter Einstieg",
+        "shortDescription": "Der einfachste Einstieg ins Fasten"
+      },
+      "es": {
+        "displayName": "12:12",
+        "cardLabel": "Inicio fácil",
+        "shortDescription": "La forma más fácil de empezar a ayunar"
+      },
+      "fr": {
+        "displayName": "12:12",
+        "cardLabel": "Départ facile",
+        "shortDescription": "La façon la plus simple de commencer le jeûne"
+      },
+      "it": {
+        "displayName": "12:12",
+        "cardLabel": "Inizio facile",
+        "shortDescription": "Il modo più semplice per iniziare a digiunare"
+      },
+      "ru": {
+        "displayName": "12:12",
+        "cardLabel": "Лёгкий старт",
+        "shortDescription": "Самый простой способ начать голодание"
+      }
+    }
+  },
+  {
+    "code": "13_11",
+    "category": "beginner",
+    "scheduleType": "daily",
+    "fastHours": 13,
+    "eatHours": 11,
+    "intensity": 1,
+    "isPremium": false,
+    "isFeatured": false,
+    "minAge": 13,
+    "requiresSafetyAck": false,
+    "defaultTiming": "skip_breakfast",
+    "defaultEatStart": "12:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "beginner"
+    ],
+    "sortOrder": 20,
+    "translations": {
+      "en": {
+        "displayName": "13:11",
+        "cardLabel": "Gentle Start",
+        "shortDescription": "Ease into a longer fasting window"
+      },
+      "tr": {
+        "displayName": "13:11",
+        "cardLabel": "Yumuşak Başlangıç",
+        "shortDescription": "Daha uzun bir oruç penceresine yavaşça geç"
+      },
+      "de": {
+        "displayName": "13:11",
+        "cardLabel": "Sanfter Einstieg",
+        "shortDescription": "Gewöhne dich langsam an ein längeres Fastenfenster"
+      },
+      "es": {
+        "displayName": "13:11",
+        "cardLabel": "Inicio suave",
+        "shortDescription": "Pasa poco a poco a una ventana de ayuno más larga"
+      },
+      "fr": {
+        "displayName": "13:11",
+        "cardLabel": "Départ en douceur",
+        "shortDescription": "Passe en douceur à une fenêtre de jeûne plus longue"
+      },
+      "it": {
+        "displayName": "13:11",
+        "cardLabel": "Inizio dolce",
+        "shortDescription": "Passa gradualmente a una finestra di digiuno più lunga"
+      },
+      "ru": {
+        "displayName": "13:11",
+        "cardLabel": "Мягкий старт",
+        "shortDescription": "Плавно переходи к более длинному окну голодания"
+      }
+    }
+  },
+  {
+    "code": "14_10",
+    "category": "beginner",
+    "scheduleType": "daily",
+    "fastHours": 14,
+    "eatHours": 10,
+    "intensity": 1,
+    "isPremium": false,
+    "isFeatured": false,
+    "minAge": 13,
+    "requiresSafetyAck": false,
+    "defaultTiming": "skip_breakfast",
+    "defaultEatStart": "12:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "beginner"
+    ],
+    "sortOrder": 30,
+    "translations": {
+      "en": {
+        "displayName": "14:10",
+        "cardLabel": "Habit Builder",
+        "shortDescription": "Build a simple daily fasting habit"
+      },
+      "tr": {
+        "displayName": "14:10",
+        "cardLabel": "Alışkanlık Kurucu",
+        "shortDescription": "Basit bir günlük oruç alışkanlığı edin"
+      },
+      "de": {
+        "displayName": "14:10",
+        "cardLabel": "Gewohnheitsbildner",
+        "shortDescription": "Baue eine einfache tägliche Fastengewohnheit auf"
+      },
+      "es": {
+        "displayName": "14:10",
+        "cardLabel": "Crea el hábito",
+        "shortDescription": "Crea un hábito diario de ayuno sencillo"
+      },
+      "fr": {
+        "displayName": "14:10",
+        "cardLabel": "Créer l'habitude",
+        "shortDescription": "Installe une habitude de jeûne quotidienne simple"
+      },
+      "it": {
+        "displayName": "14:10",
+        "cardLabel": "Crea l'abitudine",
+        "shortDescription": "Costruisci una semplice abitudine quotidiana di digiuno"
+      },
+      "ru": {
+        "displayName": "14:10",
+        "cardLabel": "Формируем привычку",
+        "shortDescription": "Сформируй простую ежедневную привычку голодания"
+      }
+    }
+  },
+  {
+    "code": "15_9",
+    "category": "beginner",
+    "scheduleType": "daily",
+    "fastHours": 15,
+    "eatHours": 9,
+    "intensity": 2,
+    "isPremium": false,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": false,
+    "defaultTiming": "skip_breakfast",
+    "defaultEatStart": "12:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "beginner"
+    ],
+    "sortOrder": 40,
+    "translations": {
+      "en": {
+        "displayName": "15:9",
+        "cardLabel": "Balanced Start",
+        "shortDescription": "A gentle step toward classic fasting"
+      },
+      "tr": {
+        "displayName": "15:9",
+        "cardLabel": "Dengeli Başlangıç",
+        "shortDescription": "Klasik oruca doğru yumuşak bir adım"
+      },
+      "de": {
+        "displayName": "15:9",
+        "cardLabel": "Ausgewogener Einstieg",
+        "shortDescription": "Ein sanfter Schritt zum klassischen Fasten"
+      },
+      "es": {
+        "displayName": "15:9",
+        "cardLabel": "Inicio equilibrado",
+        "shortDescription": "Un paso suave hacia el ayuno clásico"
+      },
+      "fr": {
+        "displayName": "15:9",
+        "cardLabel": "Départ équilibré",
+        "shortDescription": "Un pas en douceur vers le jeûne classique"
+      },
+      "it": {
+        "displayName": "15:9",
+        "cardLabel": "Inizio equilibrato",
+        "shortDescription": "Un passo dolce verso il digiuno classico"
+      },
+      "ru": {
+        "displayName": "15:9",
+        "cardLabel": "Сбалансированный старт",
+        "shortDescription": "Мягкий шаг к классическому голоданию"
+      }
+    }
+  },
+  {
+    "code": "16_8",
+    "category": "popular",
+    "scheduleType": "daily",
+    "fastHours": 16,
+    "eatHours": 8,
+    "intensity": 2,
+    "isPremium": false,
+    "isFeatured": true,
+    "minAge": 18,
+    "requiresSafetyAck": false,
+    "defaultTiming": "skip_breakfast",
+    "defaultEatStart": "12:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "popular"
+    ],
+    "sortOrder": 50,
+    "translations": {
+      "en": {
+        "displayName": "16:8",
+        "cardLabel": "Most Popular",
+        "shortDescription": "The classic intermittent fasting schedule"
+      },
+      "tr": {
+        "displayName": "16:8",
+        "cardLabel": "En Popüler",
+        "shortDescription": "Klasik aralıklı oruç programı"
+      },
+      "de": {
+        "displayName": "16:8",
+        "cardLabel": "Beliebteste",
+        "shortDescription": "Der klassische Plan für Intervallfasten"
+      },
+      "es": {
+        "displayName": "16:8",
+        "cardLabel": "El más popular",
+        "shortDescription": "El plan clásico de ayuno intermitente"
+      },
+      "fr": {
+        "displayName": "16:8",
+        "cardLabel": "Le plus populaire",
+        "shortDescription": "Le programme classique de jeûne intermittent"
+      },
+      "it": {
+        "displayName": "16:8",
+        "cardLabel": "Il più popolare",
+        "shortDescription": "Il programma classico di digiuno intermittente"
+      },
+      "ru": {
+        "displayName": "16:8",
+        "cardLabel": "Самый популярный",
+        "shortDescription": "Классический режим интервального голодания"
+      }
+    }
+  },
+  {
+    "code": "17_7",
+    "category": "intermediate",
+    "scheduleType": "daily",
+    "fastHours": 17,
+    "eatHours": 7,
+    "intensity": 2,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": false,
+    "defaultTiming": "skip_breakfast",
+    "defaultEatStart": "12:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "intermediate"
+    ],
+    "sortOrder": 60,
+    "translations": {
+      "en": {
+        "displayName": "17:7",
+        "cardLabel": "Step Up",
+        "shortDescription": "Extend your fasting window gradually"
+      },
+      "tr": {
+        "displayName": "17:7",
+        "cardLabel": "Bir Adım Öte",
+        "shortDescription": "Oruç pencereni kademeli olarak uzat"
+      },
+      "de": {
+        "displayName": "17:7",
+        "cardLabel": "Nächste Stufe",
+        "shortDescription": "Verlängere dein Fastenfenster schrittweise"
+      },
+      "es": {
+        "displayName": "17:7",
+        "cardLabel": "Sube un nivel",
+        "shortDescription": "Alarga tu ventana de ayuno poco a poco"
+      },
+      "fr": {
+        "displayName": "17:7",
+        "cardLabel": "Niveau supérieur",
+        "shortDescription": "Allonge ta fenêtre de jeûne progressivement"
+      },
+      "it": {
+        "displayName": "17:7",
+        "cardLabel": "Un passo avanti",
+        "shortDescription": "Allunga gradualmente la finestra di digiuno"
+      },
+      "ru": {
+        "displayName": "17:7",
+        "cardLabel": "Шаг вперёд",
+        "shortDescription": "Постепенно увеличивай окно голодания"
+      }
+    }
+  },
+  {
+    "code": "18_6",
+    "category": "intermediate",
+    "scheduleType": "daily",
+    "fastHours": 18,
+    "eatHours": 6,
+    "intensity": 3,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": false,
+    "defaultTiming": "skip_breakfast",
+    "defaultEatStart": "12:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "popular",
+      "intermediate"
+    ],
+    "sortOrder": 70,
+    "translations": {
+      "en": {
+        "displayName": "18:6",
+        "cardLabel": "Daily Challenge",
+        "shortDescription": "A longer daily fasting routine"
+      },
+      "tr": {
+        "displayName": "18:6",
+        "cardLabel": "Günlük Meydan Okuma",
+        "shortDescription": "Daha uzun bir günlük oruç rutini"
+      },
+      "de": {
+        "displayName": "18:6",
+        "cardLabel": "Tägliche Herausforderung",
+        "shortDescription": "Eine längere tägliche Fastenroutine"
+      },
+      "es": {
+        "displayName": "18:6",
+        "cardLabel": "Reto diario",
+        "shortDescription": "Una rutina diaria de ayuno más larga"
+      },
+      "fr": {
+        "displayName": "18:6",
+        "cardLabel": "Défi quotidien",
+        "shortDescription": "Une routine de jeûne quotidienne plus longue"
+      },
+      "it": {
+        "displayName": "18:6",
+        "cardLabel": "Sfida quotidiana",
+        "shortDescription": "Una routine di digiuno quotidiana più lunga"
+      },
+      "ru": {
+        "displayName": "18:6",
+        "cardLabel": "Ежедневный вызов",
+        "shortDescription": "Более длинный ежедневный режим голодания"
+      }
+    }
+  },
+  {
+    "code": "19_5",
+    "category": "intermediate",
+    "scheduleType": "daily",
+    "fastHours": 19,
+    "eatHours": 5,
+    "intensity": 3,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": false,
+    "defaultTiming": "skip_breakfast",
+    "defaultEatStart": "12:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "intermediate"
+    ],
+    "sortOrder": 80,
+    "translations": {
+      "en": {
+        "displayName": "19:5",
+        "cardLabel": "Narrow Window",
+        "shortDescription": "A more focused eating window"
+      },
+      "tr": {
+        "displayName": "19:5",
+        "cardLabel": "Dar Pencere",
+        "shortDescription": "Daha odaklı bir yeme penceresi"
+      },
+      "de": {
+        "displayName": "19:5",
+        "cardLabel": "Enges Fenster",
+        "shortDescription": "Ein fokussierteres Essensfenster"
+      },
+      "es": {
+        "displayName": "19:5",
+        "cardLabel": "Ventana estrecha",
+        "shortDescription": "Una ventana de alimentación más concentrada"
+      },
+      "fr": {
+        "displayName": "19:5",
+        "cardLabel": "Fenêtre étroite",
+        "shortDescription": "Une fenêtre alimentaire plus concentrée"
+      },
+      "it": {
+        "displayName": "19:5",
+        "cardLabel": "Finestra stretta",
+        "shortDescription": "Una finestra alimentare più concentrata"
+      },
+      "ru": {
+        "displayName": "19:5",
+        "cardLabel": "Узкое окно",
+        "shortDescription": "Более сжатое окно приёма пищи"
+      }
+    }
+  },
+  {
+    "code": "20_4",
+    "category": "advanced",
+    "scheduleType": "daily",
+    "fastHours": 20,
+    "eatHours": 4,
+    "intensity": 3,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": true,
+    "defaultTiming": "skip_breakfast",
+    "defaultEatStart": "14:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "advanced"
+    ],
+    "sortOrder": 90,
+    "translations": {
+      "en": {
+        "displayName": "20:4",
+        "cardLabel": "Warrior Style",
+        "shortDescription": "A short daily eating window",
+        "safetyNote": "This is a restrictive schedule. It isn't recommended if you're pregnant or breastfeeding, have a history of eating disorders, have diabetes, a heart condition or take regular medication. Talk to your doctor before starting."
+      },
+      "tr": {
+        "displayName": "20:4",
+        "cardLabel": "Savaşçı Stili",
+        "shortDescription": "Kısa bir günlük yeme penceresi",
+        "safetyNote": "Bu kısıtlayıcı bir program. Hamileysen ya da emziriyorsan, yeme bozukluğu geçmişin, diyabetin veya kalp rahatsızlığın varsa ya da düzenli ilaç kullanıyorsan önerilmez. Başlamadan önce doktoruna danış."
+      },
+      "de": {
+        "displayName": "20:4",
+        "cardLabel": "Krieger-Stil",
+        "shortDescription": "Ein kurzes tägliches Essensfenster",
+        "safetyNote": "Dies ist ein restriktiver Plan. Er wird nicht empfohlen, wenn du schwanger bist oder stillst, eine Essstörung hattest, Diabetes oder eine Herzerkrankung hast oder regelmäßig Medikamente nimmst. Sprich vor dem Start mit deiner Ärztin oder deinem Arzt."
+      },
+      "es": {
+        "displayName": "20:4",
+        "cardLabel": "Estilo guerrero",
+        "shortDescription": "Una ventana de alimentación diaria corta",
+        "safetyNote": "Es un plan restrictivo. No se recomienda si estás embarazada o en periodo de lactancia, tienes antecedentes de trastornos alimentarios, diabetes, una afección cardíaca o tomas medicación habitual. Consulta a tu médico antes de empezar."
+      },
+      "fr": {
+        "displayName": "20:4",
+        "cardLabel": "Style guerrier",
+        "shortDescription": "Une courte fenêtre alimentaire quotidienne",
+        "safetyNote": "Ce programme est restrictif. Il est déconseillé si tu es enceinte ou allaites, si tu as des antécédents de troubles alimentaires, du diabète, une maladie cardiaque ou si tu prends un traitement régulier. Parles-en à ton médecin avant de commencer."
+      },
+      "it": {
+        "displayName": "20:4",
+        "cardLabel": "Stile guerriero",
+        "shortDescription": "Una breve finestra alimentare quotidiana",
+        "safetyNote": "È un programma restrittivo. Non è consigliato se sei in gravidanza o allatti, hai una storia di disturbi alimentari, il diabete, una patologia cardiaca o assumi farmaci regolarmente. Parlane con il tuo medico prima di iniziare."
+      },
+      "ru": {
+        "displayName": "20:4",
+        "cardLabel": "Стиль воина",
+        "shortDescription": "Короткое ежедневное окно приёма пищи",
+        "safetyNote": "Это строгий режим. Он не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете, болезнях сердца или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      }
+    }
+  },
+  {
+    "code": "21_3",
+    "category": "advanced",
+    "scheduleType": "daily",
+    "fastHours": 21,
+    "eatHours": 3,
+    "intensity": 4,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": true,
+    "defaultTiming": "skip_breakfast",
+    "defaultEatStart": "15:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "advanced"
+    ],
+    "sortOrder": 100,
+    "translations": {
+      "en": {
+        "displayName": "21:3",
+        "cardLabel": "Advanced Fast",
+        "shortDescription": "A very narrow daily eating window",
+        "safetyNote": "This is a restrictive schedule. It isn't recommended if you're pregnant or breastfeeding, have a history of eating disorders, have diabetes, a heart condition or take regular medication. Talk to your doctor before starting."
+      },
+      "tr": {
+        "displayName": "21:3",
+        "cardLabel": "İleri Oruç",
+        "shortDescription": "Çok dar bir günlük yeme penceresi",
+        "safetyNote": "Bu kısıtlayıcı bir program. Hamileysen ya da emziriyorsan, yeme bozukluğu geçmişin, diyabetin veya kalp rahatsızlığın varsa ya da düzenli ilaç kullanıyorsan önerilmez. Başlamadan önce doktoruna danış."
+      },
+      "de": {
+        "displayName": "21:3",
+        "cardLabel": "Fortgeschrittenes Fasten",
+        "shortDescription": "Ein sehr enges tägliches Essensfenster",
+        "safetyNote": "Dies ist ein restriktiver Plan. Er wird nicht empfohlen, wenn du schwanger bist oder stillst, eine Essstörung hattest, Diabetes oder eine Herzerkrankung hast oder regelmäßig Medikamente nimmst. Sprich vor dem Start mit deiner Ärztin oder deinem Arzt."
+      },
+      "es": {
+        "displayName": "21:3",
+        "cardLabel": "Ayuno avanzado",
+        "shortDescription": "Una ventana de alimentación diaria muy estrecha",
+        "safetyNote": "Es un plan restrictivo. No se recomienda si estás embarazada o en periodo de lactancia, tienes antecedentes de trastornos alimentarios, diabetes, una afección cardíaca o tomas medicación habitual. Consulta a tu médico antes de empezar."
+      },
+      "fr": {
+        "displayName": "21:3",
+        "cardLabel": "Jeûne avancé",
+        "shortDescription": "Une fenêtre alimentaire quotidienne très étroite",
+        "safetyNote": "Ce programme est restrictif. Il est déconseillé si tu es enceinte ou allaites, si tu as des antécédents de troubles alimentaires, du diabète, une maladie cardiaque ou si tu prends un traitement régulier. Parles-en à ton médecin avant de commencer."
+      },
+      "it": {
+        "displayName": "21:3",
+        "cardLabel": "Digiuno avanzato",
+        "shortDescription": "Una finestra alimentare quotidiana molto stretta",
+        "safetyNote": "È un programma restrittivo. Non è consigliato se sei in gravidanza o allatti, hai una storia di disturbi alimentari, il diabete, una patologia cardiaca o assumi farmaci regolarmente. Parlane con il tuo medico prima di iniziare."
+      },
+      "ru": {
+        "displayName": "21:3",
+        "cardLabel": "Продвинутое голодание",
+        "shortDescription": "Очень узкое ежедневное окно приёма пищи",
+        "safetyNote": "Это строгий режим. Он не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете, болезнях сердца или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      }
+    }
+  },
+  {
+    "code": "22_2",
+    "category": "advanced",
+    "scheduleType": "daily",
+    "fastHours": 22,
+    "eatHours": 2,
+    "intensity": 4,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": true,
+    "defaultTiming": "skip_breakfast",
+    "defaultEatStart": "16:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "advanced"
+    ],
+    "sortOrder": 110,
+    "translations": {
+      "en": {
+        "displayName": "22:2",
+        "cardLabel": "Expert Window",
+        "shortDescription": "Designed for experienced fasters",
+        "safetyNote": "This is a restrictive schedule. It isn't recommended if you're pregnant or breastfeeding, have a history of eating disorders, have diabetes, a heart condition or take regular medication. Talk to your doctor before starting."
+      },
+      "tr": {
+        "displayName": "22:2",
+        "cardLabel": "Uzman Penceresi",
+        "shortDescription": "Deneyimli oruç tutanlar için",
+        "safetyNote": "Bu kısıtlayıcı bir program. Hamileysen ya da emziriyorsan, yeme bozukluğu geçmişin, diyabetin veya kalp rahatsızlığın varsa ya da düzenli ilaç kullanıyorsan önerilmez. Başlamadan önce doktoruna danış."
+      },
+      "de": {
+        "displayName": "22:2",
+        "cardLabel": "Expertenfenster",
+        "shortDescription": "Für erfahrene Fastende gedacht",
+        "safetyNote": "Dies ist ein restriktiver Plan. Er wird nicht empfohlen, wenn du schwanger bist oder stillst, eine Essstörung hattest, Diabetes oder eine Herzerkrankung hast oder regelmäßig Medikamente nimmst. Sprich vor dem Start mit deiner Ärztin oder deinem Arzt."
+      },
+      "es": {
+        "displayName": "22:2",
+        "cardLabel": "Ventana experta",
+        "shortDescription": "Pensado para quienes ya tienen experiencia ayunando",
+        "safetyNote": "Es un plan restrictivo. No se recomienda si estás embarazada o en periodo de lactancia, tienes antecedentes de trastornos alimentarios, diabetes, una afección cardíaca o tomas medicación habitual. Consulta a tu médico antes de empezar."
+      },
+      "fr": {
+        "displayName": "22:2",
+        "cardLabel": "Fenêtre experte",
+        "shortDescription": "Conçu pour les jeûneurs expérimentés",
+        "safetyNote": "Ce programme est restrictif. Il est déconseillé si tu es enceinte ou allaites, si tu as des antécédents de troubles alimentaires, du diabète, une maladie cardiaque ou si tu prends un traitement régulier. Parles-en à ton médecin avant de commencer."
+      },
+      "it": {
+        "displayName": "22:2",
+        "cardLabel": "Finestra esperta",
+        "shortDescription": "Pensato per chi digiuna già con esperienza",
+        "safetyNote": "È un programma restrittivo. Non è consigliato se sei in gravidanza o allatti, hai una storia di disturbi alimentari, il diabete, una patologia cardiaca o assumi farmaci regolarmente. Parlane con il tuo medico prima di iniziare."
+      },
+      "ru": {
+        "displayName": "22:2",
+        "cardLabel": "Окно эксперта",
+        "shortDescription": "Для опытных в голодании",
+        "safetyNote": "Это строгий режим. Он не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете, болезнях сердца или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      }
+    }
+  },
+  {
+    "code": "23_1",
+    "category": "advanced",
+    "scheduleType": "daily",
+    "fastHours": 23,
+    "eatHours": 1,
+    "intensity": 4,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": true,
+    "defaultTiming": "custom",
+    "defaultEatStart": "18:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "advanced"
+    ],
+    "sortOrder": 120,
+    "translations": {
+      "en": {
+        "displayName": "23:1",
+        "cardLabel": "One-Hour Window",
+        "shortDescription": "A highly restrictive daily schedule",
+        "safetyNote": "This is a restrictive schedule. It isn't recommended if you're pregnant or breastfeeding, have a history of eating disorders, have diabetes, a heart condition or take regular medication. Talk to your doctor before starting."
+      },
+      "tr": {
+        "displayName": "23:1",
+        "cardLabel": "Tek Saatlik Pencere",
+        "shortDescription": "Oldukça kısıtlayıcı bir günlük program",
+        "safetyNote": "Bu kısıtlayıcı bir program. Hamileysen ya da emziriyorsan, yeme bozukluğu geçmişin, diyabetin veya kalp rahatsızlığın varsa ya da düzenli ilaç kullanıyorsan önerilmez. Başlamadan önce doktoruna danış."
+      },
+      "de": {
+        "displayName": "23:1",
+        "cardLabel": "Ein-Stunden-Fenster",
+        "shortDescription": "Ein sehr restriktiver Tagesplan",
+        "safetyNote": "Dies ist ein restriktiver Plan. Er wird nicht empfohlen, wenn du schwanger bist oder stillst, eine Essstörung hattest, Diabetes oder eine Herzerkrankung hast oder regelmäßig Medikamente nimmst. Sprich vor dem Start mit deiner Ärztin oder deinem Arzt."
+      },
+      "es": {
+        "displayName": "23:1",
+        "cardLabel": "Ventana de una hora",
+        "shortDescription": "Un horario diario muy restrictivo",
+        "safetyNote": "Es un plan restrictivo. No se recomienda si estás embarazada o en periodo de lactancia, tienes antecedentes de trastornos alimentarios, diabetes, una afección cardíaca o tomas medicación habitual. Consulta a tu médico antes de empezar."
+      },
+      "fr": {
+        "displayName": "23:1",
+        "cardLabel": "Fenêtre d'une heure",
+        "shortDescription": "Un programme quotidien très restrictif",
+        "safetyNote": "Ce programme est restrictif. Il est déconseillé si tu es enceinte ou allaites, si tu as des antécédents de troubles alimentaires, du diabète, une maladie cardiaque ou si tu prends un traitement régulier. Parles-en à ton médecin avant de commencer."
+      },
+      "it": {
+        "displayName": "23:1",
+        "cardLabel": "Finestra di un'ora",
+        "shortDescription": "Un programma quotidiano molto restrittivo",
+        "safetyNote": "È un programma restrittivo. Non è consigliato se sei in gravidanza o allatti, hai una storia di disturbi alimentari, il diabete, una patologia cardiaca o assumi farmaci regolarmente. Parlane con il tuo medico prima di iniziare."
+      },
+      "ru": {
+        "displayName": "23:1",
+        "cardLabel": "Окно в один час",
+        "shortDescription": "Очень строгий ежедневный режим",
+        "safetyNote": "Это строгий режим. Он не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете, болезнях сердца или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      }
+    }
+  },
+  {
+    "code": "omad",
+    "category": "advanced",
+    "scheduleType": "daily",
+    "fastHours": 23,
+    "eatHours": 1,
+    "intensity": 4,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": true,
+    "defaultTiming": "custom",
+    "defaultEatStart": "18:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "custom"
+    ],
+    "groups": [
+      "advanced"
+    ],
+    "sortOrder": 130,
+    "translations": {
+      "en": {
+        "displayName": "OMAD",
+        "cardLabel": "One Meal a Day",
+        "shortDescription": "One main meal within the day",
+        "safetyNote": "This is a restrictive schedule. It isn't recommended if you're pregnant or breastfeeding, have a history of eating disorders, have diabetes, a heart condition or take regular medication. Talk to your doctor before starting."
+      },
+      "tr": {
+        "displayName": "OMAD",
+        "cardLabel": "Günde Tek Öğün",
+        "shortDescription": "Gün içinde tek bir ana öğün",
+        "safetyNote": "Bu kısıtlayıcı bir program. Hamileysen ya da emziriyorsan, yeme bozukluğu geçmişin, diyabetin veya kalp rahatsızlığın varsa ya da düzenli ilaç kullanıyorsan önerilmez. Başlamadan önce doktoruna danış."
+      },
+      "de": {
+        "displayName": "OMAD",
+        "cardLabel": "Eine Mahlzeit am Tag",
+        "shortDescription": "Eine Hauptmahlzeit pro Tag",
+        "safetyNote": "Dies ist ein restriktiver Plan. Er wird nicht empfohlen, wenn du schwanger bist oder stillst, eine Essstörung hattest, Diabetes oder eine Herzerkrankung hast oder regelmäßig Medikamente nimmst. Sprich vor dem Start mit deiner Ärztin oder deinem Arzt."
+      },
+      "es": {
+        "displayName": "OMAD",
+        "cardLabel": "Una comida al día",
+        "shortDescription": "Una comida principal al día",
+        "safetyNote": "Es un plan restrictivo. No se recomienda si estás embarazada o en periodo de lactancia, tienes antecedentes de trastornos alimentarios, diabetes, una afección cardíaca o tomas medicación habitual. Consulta a tu médico antes de empezar."
+      },
+      "fr": {
+        "displayName": "OMAD",
+        "cardLabel": "Un repas par jour",
+        "shortDescription": "Un seul repas principal dans la journée",
+        "safetyNote": "Ce programme est restrictif. Il est déconseillé si tu es enceinte ou allaites, si tu as des antécédents de troubles alimentaires, du diabète, une maladie cardiaque ou si tu prends un traitement régulier. Parles-en à ton médecin avant de commencer."
+      },
+      "it": {
+        "displayName": "OMAD",
+        "cardLabel": "Un pasto al giorno",
+        "shortDescription": "Un solo pasto principale nella giornata",
+        "safetyNote": "È un programma restrittivo. Non è consigliato se sei in gravidanza o allatti, hai una storia di disturbi alimentari, il diabete, una patologia cardiaca o assumi farmaci regolarmente. Parlane con il tuo medico prima di iniziare."
+      },
+      "ru": {
+        "displayName": "OMAD",
+        "cardLabel": "Один приём пищи в день",
+        "shortDescription": "Один основной приём пищи за день",
+        "safetyNote": "Это строгий режим. Он не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете, болезнях сердца или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      }
+    }
+  },
+  {
+    "code": "5_2",
+    "category": "weekly",
+    "scheduleType": "weekly_reduced",
+    "fastHours": null,
+    "eatHours": null,
+    "reducedDaysPerWeek": 2,
+    "reducedDayKcal": 500,
+    "intensity": 2,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": true,
+    "defaultTiming": null,
+    "defaultEatStart": null,
+    "allowedTimings": [],
+    "groups": [
+      "weekly"
+    ],
+    "sortOrder": 140,
+    "translations": {
+      "en": {
+        "displayName": "5:2",
+        "cardLabel": "Weekly 5:2",
+        "shortDescription": "A weekly approach instead of a daily timer",
+        "safetyNote": "On reduced-intake days you eat about 500 kcal. It isn't recommended if you're pregnant or breastfeeding, have a history of eating disorders, have diabetes or take regular medication. Talk to your doctor before starting."
+      },
+      "tr": {
+        "displayName": "5:2",
+        "cardLabel": "Haftalık 5:2",
+        "shortDescription": "Günlük sayaç yerine haftalık bir yaklaşım",
+        "safetyNote": "Hafif günlerde yaklaşık 500 kcal yersin. Hamileysen ya da emziriyorsan, yeme bozukluğu geçmişin ya da diyabetin varsa veya düzenli ilaç kullanıyorsan önerilmez. Başlamadan önce doktoruna danış."
+      },
+      "de": {
+        "displayName": "5:2",
+        "cardLabel": "Wöchentlich 5:2",
+        "shortDescription": "Ein wöchentlicher Ansatz statt täglichem Timer",
+        "safetyNote": "An Tagen mit reduzierter Aufnahme isst du etwa 500 kcal. Nicht empfohlen, wenn du schwanger bist oder stillst, eine Essstörung hattest, Diabetes hast oder regelmäßig Medikamente nimmst. Sprich vor dem Start mit deiner Ärztin oder deinem Arzt."
+      },
+      "es": {
+        "displayName": "5:2",
+        "cardLabel": "Semanal 5:2",
+        "shortDescription": "Un enfoque semanal en lugar de un temporizador diario",
+        "safetyNote": "Los días de ingesta reducida comes unas 500 kcal. No se recomienda si estás embarazada o en periodo de lactancia, tienes antecedentes de trastornos alimentarios, diabetes o tomas medicación habitual. Consulta a tu médico antes de empezar."
+      },
+      "fr": {
+        "displayName": "5:2",
+        "cardLabel": "Hebdo 5:2",
+        "shortDescription": "Une approche hebdomadaire plutôt qu'un minuteur quotidien",
+        "safetyNote": "Les jours à apport réduit, tu manges environ 500 kcal. Déconseillé si tu es enceinte ou allaites, si tu as des antécédents de troubles alimentaires, du diabète ou si tu prends un traitement régulier. Parles-en à ton médecin avant de commencer."
+      },
+      "it": {
+        "displayName": "5:2",
+        "cardLabel": "Settimanale 5:2",
+        "shortDescription": "Un approccio settimanale invece di un timer quotidiano",
+        "safetyNote": "Nei giorni a basso apporto mangi circa 500 kcal. Non è consigliato se sei in gravidanza o allatti, hai una storia di disturbi alimentari, il diabete o assumi farmaci regolarmente. Parlane con il tuo medico prima di iniziare."
+      },
+      "ru": {
+        "displayName": "5:2",
+        "cardLabel": "Неделя 5:2",
+        "shortDescription": "Недельный подход вместо ежедневного таймера",
+        "safetyNote": "В дни сниженного питания ты съедаешь около 500 ккал. Не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      }
+    }
+  },
+  {
+    "code": "6_1",
+    "category": "weekly",
+    "scheduleType": "weekly_reduced",
+    "fastHours": null,
+    "eatHours": null,
+    "reducedDaysPerWeek": 1,
+    "reducedDayKcal": 500,
+    "intensity": 2,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": true,
+    "defaultTiming": null,
+    "defaultEatStart": null,
+    "allowedTimings": [],
+    "groups": [
+      "weekly"
+    ],
+    "sortOrder": 150,
+    "translations": {
+      "en": {
+        "displayName": "6:1",
+        "cardLabel": "Weekly 6:1",
+        "shortDescription": "One fasting-focused day each week",
+        "safetyNote": "On reduced-intake days you eat about 500 kcal. It isn't recommended if you're pregnant or breastfeeding, have a history of eating disorders, have diabetes or take regular medication. Talk to your doctor before starting."
+      },
+      "tr": {
+        "displayName": "6:1",
+        "cardLabel": "Haftalık 6:1",
+        "shortDescription": "Her hafta oruca odaklı tek bir gün",
+        "safetyNote": "Hafif günlerde yaklaşık 500 kcal yersin. Hamileysen ya da emziriyorsan, yeme bozukluğu geçmişin ya da diyabetin varsa veya düzenli ilaç kullanıyorsan önerilmez. Başlamadan önce doktoruna danış."
+      },
+      "de": {
+        "displayName": "6:1",
+        "cardLabel": "Wöchentlich 6:1",
+        "shortDescription": "Ein Fastentag pro Woche",
+        "safetyNote": "An Tagen mit reduzierter Aufnahme isst du etwa 500 kcal. Nicht empfohlen, wenn du schwanger bist oder stillst, eine Essstörung hattest, Diabetes hast oder regelmäßig Medikamente nimmst. Sprich vor dem Start mit deiner Ärztin oder deinem Arzt."
+      },
+      "es": {
+        "displayName": "6:1",
+        "cardLabel": "Semanal 6:1",
+        "shortDescription": "Un día centrado en el ayuno cada semana",
+        "safetyNote": "Los días de ingesta reducida comes unas 500 kcal. No se recomienda si estás embarazada o en periodo de lactancia, tienes antecedentes de trastornos alimentarios, diabetes o tomas medicación habitual. Consulta a tu médico antes de empezar."
+      },
+      "fr": {
+        "displayName": "6:1",
+        "cardLabel": "Hebdo 6:1",
+        "shortDescription": "Une journée axée sur le jeûne chaque semaine",
+        "safetyNote": "Les jours à apport réduit, tu manges environ 500 kcal. Déconseillé si tu es enceinte ou allaites, si tu as des antécédents de troubles alimentaires, du diabète ou si tu prends un traitement régulier. Parles-en à ton médecin avant de commencer."
+      },
+      "it": {
+        "displayName": "6:1",
+        "cardLabel": "Settimanale 6:1",
+        "shortDescription": "Un giorno dedicato al digiuno ogni settimana",
+        "safetyNote": "Nei giorni a basso apporto mangi circa 500 kcal. Non è consigliato se sei in gravidanza o allatti, hai una storia di disturbi alimentari, il diabete o assumi farmaci regolarmente. Parlane con il tuo medico prima di iniziare."
+      },
+      "ru": {
+        "displayName": "6:1",
+        "cardLabel": "Неделя 6:1",
+        "shortDescription": "Один день голодания каждую неделю",
+        "safetyNote": "В дни сниженного питания ты съедаешь около 500 ккал. Не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      }
+    }
+  },
+  {
+    "code": "alternate_day",
+    "category": "weekly",
+    "scheduleType": "alternate_day",
+    "fastHours": null,
+    "eatHours": null,
+    "reducedDayKcal": 500,
+    "intensity": 3,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": true,
+    "defaultTiming": null,
+    "defaultEatStart": null,
+    "allowedTimings": [],
+    "groups": [
+      "weekly"
+    ],
+    "sortOrder": 160,
+    "translations": {
+      "en": {
+        "displayName": "Alternate-Day",
+        "cardLabel": "Alternate-Day Fasting",
+        "shortDescription": "Alternate fasting and regular eating days",
+        "safetyNote": "On reduced-intake days you eat about 500 kcal. It isn't recommended if you're pregnant or breastfeeding, have a history of eating disorders, have diabetes or take regular medication. Talk to your doctor before starting."
+      },
+      "tr": {
+        "displayName": "Gün Aşırı",
+        "cardLabel": "Gün Aşırı Oruç",
+        "shortDescription": "Oruç ve normal beslenme günlerini dönüşümlü yap",
+        "safetyNote": "Hafif günlerde yaklaşık 500 kcal yersin. Hamileysen ya da emziriyorsan, yeme bozukluğu geçmişin ya da diyabetin varsa veya düzenli ilaç kullanıyorsan önerilmez. Başlamadan önce doktoruna danış."
+      },
+      "de": {
+        "displayName": "Alternierend",
+        "cardLabel": "Alternierendes Fasten",
+        "shortDescription": "Wechsle zwischen Fasten- und normalen Esstagen",
+        "safetyNote": "An Tagen mit reduzierter Aufnahme isst du etwa 500 kcal. Nicht empfohlen, wenn du schwanger bist oder stillst, eine Essstörung hattest, Diabetes hast oder regelmäßig Medikamente nimmst. Sprich vor dem Start mit deiner Ärztin oder deinem Arzt."
+      },
+      "es": {
+        "displayName": "Días alternos",
+        "cardLabel": "Ayuno en días alternos",
+        "shortDescription": "Alterna días de ayuno y días de comida normal",
+        "safetyNote": "Los días de ingesta reducida comes unas 500 kcal. No se recomienda si estás embarazada o en periodo de lactancia, tienes antecedentes de trastornos alimentarios, diabetes o tomas medicación habitual. Consulta a tu médico antes de empezar."
+      },
+      "fr": {
+        "displayName": "Jour sur deux",
+        "cardLabel": "Jeûne un jour sur deux",
+        "shortDescription": "Alterne jours de jeûne et jours d'alimentation normale",
+        "safetyNote": "Les jours à apport réduit, tu manges environ 500 kcal. Déconseillé si tu es enceinte ou allaites, si tu as des antécédents de troubles alimentaires, du diabète ou si tu prends un traitement régulier. Parles-en à ton médecin avant de commencer."
+      },
+      "it": {
+        "displayName": "Giorni alterni",
+        "cardLabel": "Digiuno a giorni alterni",
+        "shortDescription": "Alterna giorni di digiuno e giorni di alimentazione normale",
+        "safetyNote": "Nei giorni a basso apporto mangi circa 500 kcal. Non è consigliato se sei in gravidanza o allatti, hai una storia di disturbi alimentari, il diabete o assumi farmaci regolarmente. Parlane con il tuo medico prima di iniziare."
+      },
+      "ru": {
+        "displayName": "Через день",
+        "cardLabel": "Голодание через день",
+        "shortDescription": "Чередуй дни голодания и обычного питания",
+        "safetyNote": "В дни сниженного питания ты съедаешь около 500 ккал. Не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      }
+    }
+  },
+  {
+    "code": "crescendo",
+    "category": "flexible",
+    "scheduleType": "selected_days",
+    "fastHours": 14,
+    "eatHours": 10,
+    "intensity": 2,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": false,
+    "defaultTiming": "skip_breakfast",
+    "defaultEatStart": "12:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "weekly"
+    ],
+    "sortOrder": 170,
+    "translations": {
+      "en": {
+        "displayName": "Crescendo",
+        "cardLabel": "Crescendo Fasting",
+        "shortDescription": "Fast on selected non-consecutive days"
+      },
+      "tr": {
+        "displayName": "Crescendo",
+        "cardLabel": "Crescendo Orucu",
+        "shortDescription": "Ardışık olmayan seçili günlerde oruç tut"
+      },
+      "de": {
+        "displayName": "Crescendo",
+        "cardLabel": "Crescendo-Fasten",
+        "shortDescription": "Faste an ausgewählten, nicht aufeinanderfolgenden Tagen"
+      },
+      "es": {
+        "displayName": "Crescendo",
+        "cardLabel": "Ayuno crescendo",
+        "shortDescription": "Ayuna en días seleccionados no consecutivos"
+      },
+      "fr": {
+        "displayName": "Crescendo",
+        "cardLabel": "Jeûne crescendo",
+        "shortDescription": "Jeûne certains jours non consécutifs"
+      },
+      "it": {
+        "displayName": "Crescendo",
+        "cardLabel": "Digiuno crescendo",
+        "shortDescription": "Digiuna in giorni scelti non consecutivi"
+      },
+      "ru": {
+        "displayName": "Крещендо",
+        "cardLabel": "Голодание крещендо",
+        "shortDescription": "Голодай в выбранные дни не подряд"
+      }
+    }
+  },
+  {
+    "code": "early_tre",
+    "category": "flexible",
+    "scheduleType": "custom_daily",
+    "fastHours": 16,
+    "eatHours": 8,
+    "intensity": 2,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": false,
+    "defaultTiming": "early_window",
+    "defaultEatStart": "07:00",
+    "allowedTimings": [
+      "early_window"
+    ],
+    "groups": [
+      "flexible"
+    ],
+    "sortOrder": 180,
+    "translations": {
+      "en": {
+        "displayName": "Early Time-Restricted",
+        "cardLabel": "Early Eating",
+        "shortDescription": "Finish your eating window earlier in the day"
+      },
+      "tr": {
+        "displayName": "Erken Zaman Kısıtlı",
+        "cardLabel": "Erken Yeme",
+        "shortDescription": "Yeme pencereni günün erken saatlerinde bitir"
+      },
+      "de": {
+        "displayName": "Frühes Zeitfenster",
+        "cardLabel": "Früh essen",
+        "shortDescription": "Beende dein Essensfenster früher am Tag"
+      },
+      "es": {
+        "displayName": "Ventana temprana",
+        "cardLabel": "Comer temprano",
+        "shortDescription": "Termina tu ventana de comidas más temprano"
+      },
+      "fr": {
+        "displayName": "Fenêtre matinale",
+        "cardLabel": "Manger tôt",
+        "shortDescription": "Termine ta fenêtre alimentaire plus tôt dans la journée"
+      },
+      "it": {
+        "displayName": "Finestra anticipata",
+        "cardLabel": "Mangiare presto",
+        "shortDescription": "Chiudi la finestra alimentare prima nella giornata"
+      },
+      "ru": {
+        "displayName": "Раннее окно",
+        "cardLabel": "Ранний приём пищи",
+        "shortDescription": "Заканчивай окно приёма пищи раньше днём"
+      }
+    }
+  },
+  {
+    "code": "late_tre",
+    "category": "flexible",
+    "scheduleType": "custom_daily",
+    "fastHours": 16,
+    "eatHours": 8,
+    "intensity": 2,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": false,
+    "defaultTiming": "late_window",
+    "defaultEatStart": "14:00",
+    "allowedTimings": [
+      "late_window"
+    ],
+    "groups": [
+      "flexible"
+    ],
+    "sortOrder": 190,
+    "translations": {
+      "en": {
+        "displayName": "Late Time-Restricted",
+        "cardLabel": "Late Eating",
+        "shortDescription": "Use a later eating window that fits your routine"
+      },
+      "tr": {
+        "displayName": "Geç Zaman Kısıtlı",
+        "cardLabel": "Geç Yeme",
+        "shortDescription": "Rutinine uyan daha geç bir yeme penceresi kullan"
+      },
+      "de": {
+        "displayName": "Spätes Zeitfenster",
+        "cardLabel": "Spät essen",
+        "shortDescription": "Nutze ein späteres Essensfenster, das zu deinem Alltag passt"
+      },
+      "es": {
+        "displayName": "Ventana tardía",
+        "cardLabel": "Comer tarde",
+        "shortDescription": "Usa una ventana de comidas más tardía que encaje con tu rutina"
+      },
+      "fr": {
+        "displayName": "Fenêtre tardive",
+        "cardLabel": "Manger tard",
+        "shortDescription": "Utilise une fenêtre alimentaire plus tardive adaptée à ta routine"
+      },
+      "it": {
+        "displayName": "Finestra posticipata",
+        "cardLabel": "Mangiare tardi",
+        "shortDescription": "Usa una finestra alimentare più tardi, adatta alla tua routine"
+      },
+      "ru": {
+        "displayName": "Позднее окно",
+        "cardLabel": "Поздний приём пищи",
+        "shortDescription": "Более позднее окно приёма пищи под твой режим"
+      }
+    }
+  },
+  {
+    "code": "custom_daily",
+    "category": "flexible",
+    "scheduleType": "custom_daily",
+    "fastHours": 16,
+    "eatHours": 8,
+    "intensity": 2,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": false,
+    "defaultTiming": "custom",
+    "defaultEatStart": "12:00",
+    "allowedTimings": [
+      "skip_breakfast",
+      "skip_dinner",
+      "early_window",
+      "late_window",
+      "custom"
+    ],
+    "groups": [
+      "flexible"
+    ],
+    "sortOrder": 200,
+    "translations": {
+      "en": {
+        "displayName": "Custom Daily",
+        "cardLabel": "Create Your Plan",
+        "shortDescription": "Choose your own fasting and eating hours"
+      },
+      "tr": {
+        "displayName": "Özel Günlük",
+        "cardLabel": "Planını Oluştur",
+        "shortDescription": "Oruç ve yeme saatlerini kendin seç"
+      },
+      "de": {
+        "displayName": "Individuell täglich",
+        "cardLabel": "Erstelle deinen Plan",
+        "shortDescription": "Wähle deine eigenen Fasten- und Essenszeiten"
+      },
+      "es": {
+        "displayName": "Diario personalizado",
+        "cardLabel": "Crea tu plan",
+        "shortDescription": "Elige tus propias horas de ayuno y de comida"
+      },
+      "fr": {
+        "displayName": "Quotidien personnalisé",
+        "cardLabel": "Crée ton plan",
+        "shortDescription": "Choisis tes propres heures de jeûne et de repas"
+      },
+      "it": {
+        "displayName": "Giornaliero personalizzato",
+        "cardLabel": "Crea il tuo piano",
+        "shortDescription": "Scegli le tue ore di digiuno e di pasto"
+      },
+      "ru": {
+        "displayName": "Свой ежедневный",
+        "cardLabel": "Создай свой план",
+        "shortDescription": "Выбери свои часы голодания и приёма пищи"
+      }
+    }
+  },
+  {
+    "code": "custom_weekly",
+    "category": "flexible",
+    "scheduleType": "custom_weekly",
+    "fastHours": null,
+    "eatHours": null,
+    "intensity": 2,
+    "isPremium": true,
+    "isFeatured": false,
+    "minAge": 18,
+    "requiresSafetyAck": false,
+    "defaultTiming": null,
+    "defaultEatStart": null,
+    "allowedTimings": [],
+    "groups": [
+      "flexible"
+    ],
+    "sortOrder": 210,
+    "translations": {
+      "en": {
+        "displayName": "Custom Weekly",
+        "cardLabel": "Build Your Week",
+        "shortDescription": "Choose different fasting schedules by day"
+      },
+      "tr": {
+        "displayName": "Özel Haftalık",
+        "cardLabel": "Haftanı Kur",
+        "shortDescription": "Her gün için farklı oruç programı seç"
+      },
+      "de": {
+        "displayName": "Individuell wöchentlich",
+        "cardLabel": "Gestalte deine Woche",
+        "shortDescription": "Wähle für jeden Tag einen anderen Fastenplan"
+      },
+      "es": {
+        "displayName": "Semanal personalizado",
+        "cardLabel": "Arma tu semana",
+        "shortDescription": "Elige un horario de ayuno distinto para cada día"
+      },
+      "fr": {
+        "displayName": "Hebdo personnalisé",
+        "cardLabel": "Construis ta semaine",
+        "shortDescription": "Choisis un programme de jeûne différent selon le jour"
+      },
+      "it": {
+        "displayName": "Settimanale personalizzato",
+        "cardLabel": "Costruisci la tua settimana",
+        "shortDescription": "Scegli un programma di digiuno diverso per ogni giorno"
+      },
+      "ru": {
+        "displayName": "Своя неделя",
+        "cardLabel": "Собери свою неделю",
+        "shortDescription": "Выбирай разный режим голодания по дням"
+      }
+    }
+  }
+]

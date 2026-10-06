@@ -4,7 +4,7 @@
 #   npm run deploy                 kodu gönder + yayına al (sync + release)
 #   npm run deploy -- sync         yalnızca kodu gönder
 #   npm run deploy -- sync --env   kodu ve .env.production'ı (sunucuda .env olarak) gönder
-#   npm run deploy -- release      sunucudaki kodla: npm ci → migrate → pm2 reload → sağlık kontrolü
+#   npm run deploy -- release      sunucudaki kodla: npm ci → migrate → seed → pm2 reload → sağlık kontrolü
 #   npm run deploy -- check        sunucuyu kontrol et (hiçbir şey değiştirmez)
 #   npm run deploy -- logs         PM2 loglarını izle
 set -euo pipefail
@@ -48,6 +48,7 @@ release() {
     [ -f .env ] || { echo "Sunucuda .env yok: npm run deploy -- sync --env" >&2; exit 1; }
     echo "  · bağımlılıklar"; npm ci --omit=dev --ignore-scripts --no-audit --no-fund --loglevel=error
     echo "  · migration";     node scripts/migrate.js
+    echo "  · seed";          node scripts/seed.js
     echo "  · pm2";           pm2 startOrReload ecosystem.config.cjs --update-env >/dev/null && pm2 save >/dev/null
     PORT=$(grep -E "^PORT=" .env | cut -d= -f2 | awk "{print \$1}")
     for i in $(seq 1 15); do

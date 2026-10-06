@@ -7,6 +7,7 @@ import { createFieldCrypto } from '../../src/infra/crypto.js';
 import { createDatabase } from '../../src/infra/db.js';
 import { createFirebaseVerifier } from '../../src/infra/firebase-auth.js';
 import { migrate } from '../../src/infra/migrator.js';
+import { loadCatalogSeeds, seedCatalog } from '../../src/modules/catalog/catalog.seeder.js';
 import { createJobQueue } from '../../src/infra/queue.js';
 import { createTokenService } from '../../src/infra/tokens.js';
 import { createTestDatabase, testConfig } from './infra.js';
@@ -57,6 +58,7 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
   });
   await migrate({ dbConfig: config.db, dir: migrationsDir, logger: silent });
   const db = createDatabase(config.db);
+  await seedCatalog(db, await loadCatalogSeeds());
   const firebaseKeys = await fakeFirebase();
   const crypto = createFieldCrypto(config.fieldEncryption);
   const app = await buildApp({

@@ -1,0 +1,105 @@
+{
+  "plan_category": {
+    "beginner": {
+      "en": "Beginner Level",
+      "tr": "Başlangıç Seviyesi",
+      "de": "Anfängerlevel",
+      "es": "Nivel principiante",
+      "fr": "Niveau débutant",
+      "it": "Livello principiante",
+      "ru": "Начальный уровень"
+    },
+    "popular": {
+      "en": "Popular Plans",
+      "tr": "Popüler Planlar",
+      "de": "Beliebte Pläne",
+      "es": "Planes populares",
+      "fr": "Plans populaires",
+      "it": "Piani popolari",
+      "ru": "Популярные планы"
+    },
+    "intermediate": {
+      "en": "Intermediate Level",
+      "tr": "Orta Seviye",
+      "de": "Mittelstufe",
+      "es": "Nivel intermedio",
+      "fr": "Niveau intermédiaire",
+      "it": "Livello intermedio",
+      "ru": "Средний уровень"
+    },
+    "advanced": {
+      "en": "Advanced Level",
+      "tr": "İleri Seviye",
+      "de": "Fortgeschritten",
+      "es": "Nivel avanzado",
+      "fr": "Niveau avancé",
+      "it": "Livello avanzato",
+      "ru": "Продвинутый уровень"
+    },
+    "weekly": {
+      "en": "Weekly Plans",
+      "tr": "Haftalık Planlar",
+      "de": "Wochenpläne",
+      "es": "Planes semanales",
+      "fr": "Plans hebdomadaires",
+      "it": "Piani settimanali",
+      "ru": "Недельные планы"
+    },
+    "flexible": {
+      "en": "Flexible Plans",
+      "tr": "Esnek Planlar",
+      "de": "Flexible Pläne",
+      "es": "Planes flexibles",
+      "fr": "Plans flexibles",
+      "it": "Piani flessibili",
+      "ru": "Гибкие планы"
+    }
+  },
+  "plan_timing": {
+    "skip_breakfast": {
+      "en": "Skip Breakfast",
+      "tr": "Kahvaltıyı atla",
+      "de": "Frühstück auslassen",
+      "es": "Sáltate el desayuno",
+      "fr": "Sauter le petit-déjeuner",
+      "it": "Salta la colazione",
+      "ru": "Пропустить завтрак"
+    },
+    "skip_dinner": {
+      "en": "Skip Dinner",
+      "tr": "Akşam yemeğini atla",
+      "de": "Abendessen auslassen",
+      "es": "Sáltate la cena",
+      "fr": "Sauter le dîner",
+      "it": "Salta la cena",
+      "ru": "Пропустить ужин"
+    },
+    "early_window": {
+      "en": "Early Eating Window",
+      "tr": "Erken yeme penceresi",
+      "de": "Frühes Essensfenster",
+      "es": "Ventana temprana",
+      "fr": "Fenêtre matinale",
+      "it": "Finestra anticipata",
+      "ru": "Раннее окно"
+    },
+    "late_window": {
+      "en": "Late Eating Window",
+      "tr": "Geç yeme penceresi",
+      "de": "Spätes Essensfenster",
+      "es": "Ventana tardía",
+      "fr": "Fenêtre tardive",
+      "it": "Finestra posticipata",
+      "ru": "Позднее окно"
+    },
+    "custom": {
+      "en": "Choose My Hours",
+      "tr": "Saatlerimi seçeyim",
+      "de": "Eigene Zeiten wählen",
+      "es": "Elegir mis horas",
+      "fr": "Choisir mes heures",
+      "it": "Scegli i miei orari",
+      "ru": "Выбрать своё время"
+    }
+  }
+}

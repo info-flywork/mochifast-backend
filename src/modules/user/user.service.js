@@ -23,7 +23,7 @@ const CONSENT_SOURCE_ONBOARDING = 'onboarding';
  * Kullanıcı, onboarding, profil, ayarlar, hedefler (docs/backend/04-api.md §2).
  * `meta`: { ip, userAgent, timezone }
  */
-export function createUserService({ db }) {
+export function createUserService({ db, catalog }) {
   async function requireUser(userId, conn) {
     const row = await repo.getUserWithUnits(db, userId, conn);
     if (!row) throw new AppError('NOT_FOUND');
@@ -32,6 +32,13 @@ export function createUserService({ db }) {
 
   function todayFor(timezone) {
     return localDate(Date.now(), isValidTimezone(timezone) ? timezone : 'UTC');
+  }
+
+  /** Katalogdaki plan; bilinmeyen kod → 400. */
+  async function resolvePlan(code) {
+    const plan = await catalog.planRules(code);
+    if (!plan) throw validation('planCode', 'unknown plan');
+    return plan;
   }
 
   /** Profil + yeni değerlerle sağlık kurallarını değerlendirir; ihlalde AppError fırlatır. */
@@ -105,6 +112,7 @@ export function createUserService({ db }) {
         throw new AppError('CONSENT_REQUIRED', { details: { consent: 'healthData' } });
       }
 
+      const plan = await resolvePlan(body.planCode);
       const healthFlags = [...(body.healthFlags ?? []).map(toDbEnum)];
       if (body.age < 18) healthFlags.push('under_18');
       const warnings = [
@@ -112,13 +120,13 @@ export function createUserService({ db }) {
           {
             age: body.age,
             healthFlags,
-            planCode: body.planCode,
+            plan,
             heightCm: body.heightCm,
             goalWeightKg: body.goalWeightKg,
           },
           body.safetyAcknowledged,
         ),
-        ...mealWindowWarnings(body.planCode, body.mealWindow),
+        ...mealWindowWarnings(plan, body.mealWindow),
       ];
       const fastingReason = toDbEnum(body.fastingReason);
       const targetDate = reasonTargetDate(fastingReason, today);
@@ -171,7 +179,7 @@ export function createUserService({ db }) {
 
       return {
         user: await service.getMe(userId),
-        plan: planSummary(body.planCode, body.mealWindow),
+        plan: planSummary(plan, body.mealWindow),
         projection: projection({
           currentKg: body.weightKg,
           goalKg: body.goalWeightKg,
@@ -210,6 +218,12 @@ export function createUserService({ db }) {
         const goalWeightKg = body.goalWeightKg ?? current?.goal_weight_kg ?? null;
         const weightKg = body.weightKg ?? current?.current_weight_kg ?? current?.start_weight_kg;
         const planCode = body.planCode ?? current?.plan_code ?? null;
+        // Profildeki eski kod katalogdan kalkmış olabilir: yalnızca yeni gönderilen kod zorunlu.
+        const plan = body.planCode
+          ? await resolvePlan(body.planCode)
+          : planCode
+            ? await catalog.planRules(planCode)
+            : null;
         const heightCm = body.heightCm ?? current?.height_cm ?? null;
 
         if (goal === 'lose_weight' && goalWeightKg && weightKg && goalWeightKg > weightKg) {
@@ -222,7 +236,7 @@ export function createUserService({ db }) {
           throw validation('mealWindow', 'end must differ from start');
         }
         warnings = enforceSafety(
-          { age, healthFlags, planCode, heightCm, goalWeightKg },
+          { age, healthFlags, plan, heightCm, goalWeightKg },
           body.safetyAcknowledged,
         );
 

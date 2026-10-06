@@ -1,4 +1,5 @@
 import { deprecatedRoute, memoizeByDeps } from '../../shared/legacy.js';
+import { catalogServiceFor } from '../catalog/catalog.routes.js';
 import { createUserService } from './user.service.js';
 import {
   getGoalsSchema,
@@ -15,7 +16,9 @@ import {
   progressSchema,
 } from './user.schemas.js';
 
-const serviceFor = memoizeByDeps((app) => createUserService({ db: app.deps.db }));
+const serviceFor = memoizeByDeps((app) =>
+  createUserService({ db: app.deps.db, catalog: catalogServiceFor(app) }),
+);
 
 const meta = (request) => ({
   ip: request.ip,

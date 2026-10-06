@@ -1,5 +1,4 @@
 import { addDays } from '../../shared/time.js';
-import { PLANS } from './plans.js';
 
 /**
  * Onboarding/profil iş kuralları — saf fonksiyonlar (docs/backend/05-is-kurallari.md §2.6, §9).
@@ -58,19 +57,18 @@ export function windowMinutes(start, end) {
 export function evaluateSafety({
   age,
   healthFlags,
-  planCode,
+  plan,
   safetyAcknowledged,
   heightCm,
   goalWeightKg,
 }) {
   const warnings = [];
   const flags = new Set(healthFlags);
-  const plan = planCode ? PLANS[planCode] : null;
   const fail = (code, reason) => ({ error: { code, reason }, warnings });
 
   if (plan) {
     if (age !== null && age < plan.minAge) return fail('UNSAFE_REQUEST', 'plan_min_age');
-    if ((flags.has('pregnant') || flags.has('breastfeeding')) && !PREGNANCY_PLANS.has(planCode)) {
+    if ((flags.has('pregnant') || flags.has('breastfeeding')) && !PREGNANCY_PLANS.has(plan.code)) {
       return fail('UNSAFE_REQUEST', 'plan_pregnancy');
     }
     if (
@@ -97,9 +95,9 @@ export function evaluateSafety({
  * Plan özeti: günlük planlarda yeme penceresi, kullanıcının öğün penceresinin SONUNDA biter
  * (ör. 07:00–19:00 + 16:8 → 11:00–19:00). Haftalık planlarda süre/pencere yok.
  */
-export function planSummary(planCode, mealWindow) {
-  const plan = PLANS[planCode];
-  if (!plan || plan.scheduleType !== 'daily') {
+export function planSummary(plan, mealWindow) {
+  const planCode = plan.code;
+  if (!hasDailyWindow(plan)) {
     return { planCode, fastMinutes: null, eatWindow: null };
   }
   const end = mealWindow?.end ?? '20:00';
@@ -110,10 +108,17 @@ export function planSummary(planCode, mealWindow) {
   };
 }
 
+/** Her gün aynı yeme penceresi olan planlar (günlük ve özel günlük). */
+function hasDailyWindow(plan) {
+  return (
+    (plan.scheduleType === 'daily' || plan.scheduleType === 'custom_daily') &&
+    Boolean(plan.fastHours && plan.eatHours)
+  );
+}
+
 /** Öğün penceresi planın yeme süresinden kısaysa uyarı. */
-export function mealWindowWarnings(planCode, mealWindow) {
-  const plan = PLANS[planCode];
-  if (!plan || plan.scheduleType !== 'daily' || !mealWindow) return [];
+export function mealWindowWarnings(plan, mealWindow) {
+  if (!hasDailyWindow(plan) || !mealWindow) return [];
   return windowMinutes(mealWindow.start, mealWindow.end) < plan.eatHours * 60
     ? ['MEAL_WINDOW_SHORTER_THAN_PLAN']
     : [];

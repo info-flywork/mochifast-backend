@@ -22,6 +22,8 @@
     "deploy": "bash scripts/deploy.sh",
     "keys:jwt": "node scripts/gen-jwt-key.js",
     "keys:field": "node scripts/gen-field-key.js",
+    "seed": "node scripts/seed.js",
+    "seed:extract": "node scripts/extract-translations.js --app ../fastingapp",
     "migrate:new": "node scripts/new-migration.js",
     "openapi": "node scripts/generate-openapi.js",
     "lint": "eslint .",

@@ -1,0 +1,796 @@
+{
+  "goal": {
+    "lose_weight.title": {
+      "en": "Lose Weight",
+      "tr": "Kilo Ver",
+      "de": "Abnehmen",
+      "es": "Lose Weight",
+      "fr": "Lose Weight",
+      "it": "Perdere peso",
+      "ru": "Снизить вес"
+    },
+    "lose_weight.subtitle": {
+      "en": "Shed fat at a steady, kind pace",
+      "tr": "Yağları sakin ve sağlıklı tempoda yak",
+      "de": "Fett in ruhigem, sanftem Tempo abbauen",
+      "es": "Shed fat at a steady, kind pace",
+      "fr": "Shed fat at a steady, kind pace",
+      "it": "Riduci il grasso a un ritmo costante e gentile",
+      "ru": "Снижай количество жира постепенно и бережно"
+    },
+    "lose_weight.badge": {
+      "en": "Most Popular",
+      "tr": "En Popüler",
+      "de": "Beliebteste",
+      "es": "Most Popular",
+      "fr": "Most Popular",
+      "it": "Il più popolare",
+      "ru": "Самое популярное"
+    },
+    "build_habit.title": {
+      "en": "Build a Habit",
+      "tr": "Alışkanlık Edin",
+      "de": "Gewohnheit aufbauen",
+      "es": "Build a Habit",
+      "fr": "Build a Habit",
+      "it": "Creare un’abitudine",
+      "ru": "Создать привычку"
+    },
+    "build_habit.subtitle": {
+      "en": "Make fasting feel automatic",
+      "tr": "Orucu otomatik hissettir",
+      "de": "Fasten soll sich automatisch anfühlen",
+      "es": "Make fasting feel automatic",
+      "fr": "Make fasting feel automatic",
+      "it": "Rendi il digiuno un’abitudine naturale",
+      "ru": "Сделай голодание естественной привычкой"
+    },
+    "more_energy.title": {
+      "en": "More Energy",
+      "tr": "Daha Fazla Enerji",
+      "de": "Mehr Energie",
+      "es": "More Energy",
+      "fr": "More Energy",
+      "it": "Più energia",
+      "ru": "Больше энергии"
+    },
+    "more_energy.subtitle": {
+      "en": "Steadier focus through the day",
+      "tr": "Gün boyu daha dengeli odak",
+      "de": "Stabilerer Fokus den Tag über",
+      "es": "Steadier focus through the day",
+      "fr": "Steadier focus through the day",
+      "it": "Una concentrazione più stabile durante il giorno",
+      "ru": "Более стабильная концентрация в течение дня"
+    },
+    "gut_reset.title": {
+      "en": "Gut Reset",
+      "tr": "Sindirimi sıfırla",
+      "de": "Darm-Reset",
+      "es": "Gut Reset",
+      "fr": "Gut Reset",
+      "it": "Pausa digestiva",
+      "ru": "Отдых для пищеварения"
+    },
+    "gut_reset.subtitle": {
+      "en": "Give digestion real breaks",
+      "tr": "Sindirime gerçek molalar ver",
+      "de": "Der Verdauung echte Pausen geben",
+      "es": "Give digestion real breaks",
+      "fr": "Give digestion real breaks",
+      "it": "Concedi vere pause alla digestione",
+      "ru": "Дай пищеварению настоящую передышку"
+    }
+  },
+  "gender": {
+    "woman.title": {
+      "en": "Woman",
+      "tr": "Kadın",
+      "de": "Frau",
+      "es": "Woman",
+      "fr": "Woman",
+      "it": "Donna",
+      "ru": "Женщина"
+    },
+    "man.title": {
+      "en": "Man",
+      "tr": "Erkek",
+      "de": "Mann",
+      "es": "Man",
+      "fr": "Man",
+      "it": "Uomo",
+      "ru": "Мужчина"
+    },
+    "non_binary.title": {
+      "en": "Non-binary",
+      "tr": "İkisi de değil",
+      "de": "Non-binär",
+      "es": "Non-binary",
+      "fr": "Non-binary",
+      "it": "Persona non binaria",
+      "ru": "Небинарная личность"
+    },
+    "prefer_not_to_say.title": {
+      "en": "Prefer not to say",
+      "tr": "Belirtmek istemiyorum",
+      "de": "Möchte ich nicht sagen",
+      "es": "Prefer not to say",
+      "fr": "Prefer not to say",
+      "it": "Preferisco non rispondere",
+      "ru": "Предпочитаю не отвечать"
+    }
+  },
+  "diet": {
+    "everything.title": {
+      "en": "Everything",
+      "tr": "Hepsi",
+      "de": "Alles",
+      "es": "Everything",
+      "fr": "Everything",
+      "it": "Di tutto",
+      "ru": "Всё"
+    },
+    "everything.subtitle": {
+      "en": "no restrictions",
+      "tr": "kısıtlama yok",
+      "de": "keine Einschränkungen",
+      "es": "no restrictions",
+      "fr": "no restrictions",
+      "it": "senza restrizioni",
+      "ru": "без ограничений"
+    },
+    "vegetarian.title": {
+      "en": "Vegetarian",
+      "tr": "Vejetaryen",
+      "de": "Vegetarisch",
+      "es": "Vegetarian",
+      "fr": "Vegetarian",
+      "it": "Vegetariano",
+      "ru": "Вегетарианское питание"
+    },
+    "vegetarian.subtitle": {
+      "en": "no meat",
+      "tr": "etsiz",
+      "de": "ohne Fleisch",
+      "es": "no meat",
+      "fr": "no meat",
+      "it": "senza carne",
+      "ru": "без мяса"
+    },
+    "pescatarian.title": {
+      "en": "Pescatarian",
+      "tr": "Pesketaryen",
+      "de": "Pescetarisch",
+      "es": "Pescatarian",
+      "fr": "Pescatarian",
+      "it": "Pescetariano",
+      "ru": "Пескетарианское питание"
+    },
+    "pescatarian.subtitle": {
+      "en": "fish, no meat",
+      "tr": "balık var, et yok",
+      "de": "Fisch, kein Fleisch",
+      "es": "fish, no meat",
+      "fr": "fish, no meat",
+      "it": "pesce, senza carne",
+      "ru": "рыба, без мяса"
+    },
+    "vegan.title": {
+      "en": "Vegan",
+      "tr": "Vegan",
+      "de": "Vegan",
+      "es": "Vegan",
+      "fr": "Vegan",
+      "it": "Vegano",
+      "ru": "Веганское питание"
+    },
+    "vegan.subtitle": {
+      "en": "plant-based",
+      "tr": "bitki bazlı",
+      "de": "pflanzlich",
+      "es": "plant-based",
+      "fr": "plant-based",
+      "it": "a base vegetale",
+      "ru": "на растительной основе"
+    },
+    "low_carb.title": {
+      "en": "Low-carb",
+      "tr": "Az karbon",
+      "de": "Low-Carb",
+      "es": "Low-carb",
+      "fr": "Low-carb",
+      "it": "Pochi carboidrati",
+      "ru": "Мало углеводов"
+    },
+    "low_carb.subtitle": {
+      "en": "keep carbs low",
+      "tr": "karbonhidratı düşük tut",
+      "de": "wenig Kohlenhydrate",
+      "es": "keep carbs low",
+      "fr": "keep carbs low",
+      "it": "riduci i carboidrati",
+      "ru": "ограничение углеводов"
+    },
+    "mediterranean.title": {
+      "en": "Mediterranean",
+      "tr": "Akdeniz",
+      "de": "Mediterran",
+      "es": "Mediterranean",
+      "fr": "Mediterranean",
+      "it": "Mediterraneo",
+      "ru": "Средиземноморское питание"
+    },
+    "mediterranean.subtitle": {
+      "en": "balanced",
+      "tr": "dengeli",
+      "de": "ausgewogen",
+      "es": "balanced",
+      "fr": "balanced",
+      "it": "equilibrato",
+      "ru": "сбалансированно"
+    }
+  },
+  "food_love": {
+    "chicken.title": {
+      "en": "Chicken",
+      "tr": "Tavuk",
+      "de": "Hähnchen",
+      "es": "Chicken",
+      "fr": "Chicken",
+      "it": "Pollo",
+      "ru": "Курица"
+    },
+    "fish.title": {
+      "en": "Fish",
+      "tr": "Balık",
+      "de": "Fisch",
+      "es": "Fish",
+      "fr": "Fish",
+      "it": "Pesce",
+      "ru": "Рыба"
+    },
+    "rice.title": {
+      "en": "Rice",
+      "tr": "Pilav",
+      "de": "Reis",
+      "es": "Rice",
+      "fr": "Rice",
+      "it": "Riso",
+      "ru": "Рис"
+    },
+    "red_meat.title": {
+      "en": "Red Meat",
+      "tr": "Kırmızı et",
+      "de": "Rindfleisch",
+      "es": "Red Meat",
+      "fr": "Red Meat",
+      "it": "Carne rossa",
+      "ru": "Красное мясо"
+    },
+    "pasta.title": {
+      "en": "Pasta",
+      "tr": "Makarna",
+      "de": "Pasta",
+      "es": "Pasta",
+      "fr": "Pasta",
+      "it": "Pasta",
+      "ru": "Паста"
+    },
+    "salads.title": {
+      "en": "Salads",
+      "tr": "Salata",
+      "de": "Salat",
+      "es": "Salads",
+      "fr": "Salads",
+      "it": "Insalate",
+      "ru": "Салаты"
+    },
+    "cheese.title": {
+      "en": "Cheese",
+      "tr": "Peynir",
+      "de": "Käse",
+      "es": "Cheese",
+      "fr": "Cheese",
+      "it": "Formaggio",
+      "ru": "Сыр"
+    },
+    "eggs.title": {
+      "en": "Eggs",
+      "tr": "Yumurta",
+      "de": "Eier",
+      "es": "Eggs",
+      "fr": "Eggs",
+      "it": "Uova",
+      "ru": "Яйца"
+    },
+    "spicy.title": {
+      "en": "Spicy",
+      "tr": "Acılı",
+      "de": "Scharf",
+      "es": "Spicy",
+      "fr": "Spicy",
+      "it": "Piccante",
+      "ru": "Острое"
+    },
+    "noodles.title": {
+      "en": "Noodles",
+      "tr": "Noodle",
+      "de": "Nudeln",
+      "es": "Noodles",
+      "fr": "Noodles",
+      "it": "Noodles",
+      "ru": "Лапша"
+    },
+    "fruit.title": {
+      "en": "Fruit",
+      "tr": "Meyve",
+      "de": "Obst",
+      "es": "Fruit",
+      "fr": "Fruit",
+      "it": "Frutta",
+      "ru": "Фрукты"
+    },
+    "avocado.title": {
+      "en": "Avocado",
+      "tr": "Avokado",
+      "de": "Avocado",
+      "es": "Avocado",
+      "fr": "Avocado",
+      "it": "Avocado",
+      "ru": "Авокадо"
+    },
+    "sweets.title": {
+      "en": "Sweets",
+      "tr": "Tatlı",
+      "de": "Süßes",
+      "es": "Sweets",
+      "fr": "Sweets",
+      "it": "Dolci",
+      "ru": "Сладости"
+    }
+  },
+  "food_skip": {
+    "mushrooms.title": {
+      "en": "Mushrooms",
+      "tr": "Mantar",
+      "de": "Pilze",
+      "es": "Mushrooms",
+      "fr": "Mushrooms",
+      "it": "Funghi",
+      "ru": "Грибы"
+    },
+    "olives.title": {
+      "en": "Olives",
+      "tr": "Zeytin",
+      "de": "Oliven",
+      "es": "Olives",
+      "fr": "Olives",
+      "it": "Olive",
+      "ru": "Оливки"
+    },
+    "seafood.title": {
+      "en": "Seafood",
+      "tr": "Deniz ürünleri",
+      "de": "Meeresfrüchte",
+      "es": "Seafood",
+      "fr": "Seafood",
+      "it": "Frutti di mare",
+      "ru": "Морепродукты"
+    },
+    "onions.title": {
+      "en": "Onions",
+      "tr": "Soğan",
+      "de": "Zwiebeln",
+      "es": "Onions",
+      "fr": "Onions",
+      "it": "Cipolle",
+      "ru": "Лук"
+    },
+    "broccoli.title": {
+      "en": "Broccoli",
+      "tr": "Brokoli",
+      "de": "Brokkoli",
+      "es": "Broccoli",
+      "fr": "Broccoli",
+      "it": "Broccoli",
+      "ru": "Брокколи"
+    },
+    "too_spicy.title": {
+      "en": "Too Spicy",
+      "tr": "Çok acılı",
+      "de": "Zu scharf",
+      "es": "Too Spicy",
+      "fr": "Too Spicy",
+      "it": "Troppo piccante",
+      "ru": "Слишком острое"
+    },
+    "dairy.title": {
+      "en": "Dairy",
+      "tr": "Süt ürünleri",
+      "de": "Milchprodukte",
+      "es": "Dairy",
+      "fr": "Dairy",
+      "it": "Latticini",
+      "ru": "Молочные продукты"
+    },
+    "nuts.title": {
+      "en": "Nuts",
+      "tr": "Kuruyemiş",
+      "de": "Nüsse",
+      "es": "Nuts",
+      "fr": "Nuts",
+      "it": "Frutta a guscio",
+      "ru": "Орехи"
+    },
+    "beans.title": {
+      "en": "Beans",
+      "tr": "Baklagiller",
+      "de": "Bohnen",
+      "es": "Beans",
+      "fr": "Beans",
+      "it": "Fagioli",
+      "ru": "Фасоль"
+    },
+    "eggplant.title": {
+      "en": "Eggplant",
+      "tr": "Patlıcan",
+      "de": "Aubergine",
+      "es": "Eggplant",
+      "fr": "Eggplant",
+      "it": "Melanzane",
+      "ru": "Баклажаны"
+    }
+  },
+  "weight_history": {
+    "many_times.title": {
+      "en": "Yes, many times",
+      "tr": "Evet, birçok kez",
+      "de": "Ja, viele Male",
+      "es": "Yes, many times",
+      "fr": "Yes, many times",
+      "it": "Sì, molte volte",
+      "ru": "Да, много раз"
+    },
+    "many_times.subtitle": {
+      "en": "Lost it, found it again",
+      "tr": "Verdim, sonra geri aldım",
+      "de": "Runter, wieder rauf",
+      "es": "Lost it, found it again",
+      "fr": "Lost it, found it again",
+      "it": "Perso e poi ripreso",
+      "ru": "Вес уходил и возвращался"
+    },
+    "once_or_twice.title": {
+      "en": "Once or twice",
+      "tr": "Bir veya iki kez",
+      "de": "Ein- oder zweimal",
+      "es": "Once or twice",
+      "fr": "Once or twice",
+      "it": "Una o due volte",
+      "ru": "Один или два раза"
+    },
+    "once_or_twice.subtitle": {
+      "en": "Gave it a real shot",
+      "tr": "Ciddi denedim",
+      "de": "Wirklich versucht",
+      "es": "Gave it a real shot",
+      "fr": "Gave it a real shot",
+      "it": "Ci ho provato davvero",
+      "ru": "Это была серьёзная попытка"
+    },
+    "first_time.title": {
+      "en": "This is my first time",
+      "tr": "Bu ilk seferim",
+      "de": "Das ist mein erstes Mal",
+      "es": "This is my first time",
+      "fr": "This is my first time",
+      "it": "È la prima volta",
+      "ru": "Это мой первый раз"
+    },
+    "first_time.subtitle": {
+      "en": "New to all of this",
+      "tr": "Bunların hepsi yeni",
+      "de": "Alles neu für mich",
+      "es": "New to all of this",
+      "fr": "New to all of this",
+      "it": "È tutto nuovo per me",
+      "ru": "Всё это для меня новое"
+    }
+  },
+  "obstacle": {
+    "too_restrictive.title": {
+      "en": "Too restrictive",
+      "tr": "Çok kısıtlayıcıydı",
+      "de": "Zu restriktiv",
+      "es": "Too restrictive",
+      "fr": "Too restrictive",
+      "it": "Troppe restrizioni",
+      "ru": "Слишком много ограничений"
+    },
+    "lost_motivation.title": {
+      "en": "Lost motivation",
+      "tr": "Motivasyonum bitti",
+      "de": "Motivation verloren",
+      "es": "Lost motivation",
+      "fr": "Lost motivation",
+      "it": "Ho perso la motivazione",
+      "ru": "Пропала мотивация"
+    },
+    "no_time_to_cook.title": {
+      "en": "No time to cook",
+      "tr": "Yemek için zaman yoktu",
+      "de": "Keine Zeit zum Kochen",
+      "es": "No time to cook",
+      "fr": "Pas le temps de cuisiner",
+      "it": "Non avevo tempo per cucinare",
+      "ru": "Нет времени готовить"
+    },
+    "too_confusing.title": {
+      "en": "Too confusing",
+      "tr": "Çok kafa karıştırıcıydı",
+      "de": "Zu verwirrend",
+      "es": "Too confusing",
+      "fr": "Trop déroutant",
+      "it": "Troppo complicato",
+      "ru": "Слишком сложно"
+    },
+    "life_got_busy.title": {
+      "en": "Life got busy",
+      "tr": "Hayat çok yoğundu",
+      "de": "Das Leben war voll",
+      "es": "Life got busy",
+      "fr": "La vie était occupée",
+      "it": "Troppi impegni",
+      "ru": "Слишком много дел"
+    },
+    "hit_plateau.title": {
+      "en": "Hit a plateau",
+      "tr": "Duraklama noktasında",
+      "de": "Plateau erreicht",
+      "es": "Hit a plateau",
+      "fr": "Atteignez un plateau",
+      "it": "Il peso si è bloccato",
+      "ru": "Вес перестал снижаться"
+    }
+  },
+  "fasting_reason": {
+    "special_date.title": {
+      "en": "A special date",
+      "tr": "Özel bir gün",
+      "de": "Ein besonderer Tag",
+      "es": "A special date",
+      "fr": "Une date particulière",
+      "it": "Una data speciale",
+      "ru": "Особая дата"
+    },
+    "trip.title": {
+      "en": "A trip coming up",
+      "tr": "Yaklaşan bir seyahat",
+      "de": "Eine anstehende Reise",
+      "es": "A trip coming up",
+      "fr": "Un voyage à venir",
+      "it": "Un viaggio in arrivo",
+      "ru": "Предстоящая поездка"
+    },
+    "health_longevity.title": {
+      "en": "Health & longevity",
+      "tr": "Sağlık ve uzun ömür",
+      "de": "Gesundheit & Langlebigkeit",
+      "es": "Health & longevity",
+      "fr": "Santé et longévité",
+      "it": "Salute e longevità",
+      "ru": "Здоровье и долголетие"
+    },
+    "confidence.title": {
+      "en": "Confidence",
+      "tr": "Özgüven",
+      "de": "Selbstvertrauen",
+      "es": "Confidence",
+      "fr": "Confiance",
+      "it": "Fiducia in me",
+      "ru": "Уверенность в себе"
+    }
+  },
+  "onboarding_plan": {
+    "16_8.title": {
+      "en": "16:8",
+      "tr": "16:8",
+      "de": "16:8",
+      "es": "16:8",
+      "fr": "16:8",
+      "it": "16:8",
+      "ru": "16:8"
+    },
+    "16_8.subtitle": {
+      "en": "fast 16h, eat 8h",
+      "tr": "16s oruç, 8s ye",
+      "de": "16 Std fasten, 8 Std essen",
+      "es": "fast 16h, eat 8h",
+      "fr": "jeûner 16h, manger 8h",
+      "it": "16 h di digiuno, 8 h per mangiare",
+      "ru": "16 ч голодания, 8 ч для еды"
+    },
+    "16_8.badge": {
+      "en": "POPULAR",
+      "tr": "POPÜLER",
+      "de": "BELIEBT",
+      "es": "POPULAR",
+      "fr": "POPULAIRE",
+      "it": "POPOLARE",
+      "ru": "ПОПУЛЯРНЫЙ"
+    },
+    "14_10.title": {
+      "en": "14:10",
+      "tr": "14:10",
+      "de": "14:10",
+      "es": "14:10",
+      "fr": "14:10",
+      "it": "14:10",
+      "ru": "14:10"
+    },
+    "14_10.subtitle": {
+      "en": "fast 14h, eat 10h",
+      "tr": "14s oruç, 10s ye",
+      "de": "14 Std fasten, 10 Std essen",
+      "es": "fast 14h, eat 10h",
+      "fr": "jeûner 14h, manger 10h",
+      "it": "14 h di digiuno, 10 h per mangiare",
+      "ru": "14 ч голодания, 10 ч для еды"
+    },
+    "14_10.badge": {
+      "en": "BEGINNER FRIENDLY",
+      "tr": "YENİ BAŞLAYAN",
+      "de": "EINFACH",
+      "es": "BEGINNER FRIENDLY",
+      "fr": "ADAPTÉ AUX DÉBUTANTS",
+      "it": "IDEALE PER INIZIARE",
+      "ru": "ДЛЯ НАЧИНАЮЩИХ"
+    },
+    "18_6.title": {
+      "en": "18:6",
+      "tr": "18:6",
+      "de": "18:6",
+      "es": "18:6",
+      "fr": "18:6",
+      "it": "18:6",
+      "ru": "18:6"
+    },
+    "18_6.subtitle": {
+      "en": "fast 18h, eat 6h",
+      "tr": "18s oruç, 6s ye",
+      "de": "18 Std fasten, 6 Std essen",
+      "es": "fast 18h, eat 6h",
+      "fr": "jeûner 18h, manger 6h",
+      "it": "18 h di digiuno, 6 h per mangiare",
+      "ru": "18 ч голодания, 6 ч для еды"
+    },
+    "18_6.badge": {
+      "en": "STEADY",
+      "tr": "DÜZENLİ",
+      "de": "STABIL",
+      "es": "STEADY",
+      "fr": "CONSTANT",
+      "it": "COSTANTE",
+      "ru": "СТАБИЛЬНЫЙ"
+    },
+    "20_4.title": {
+      "en": "20:4",
+      "tr": "20:4",
+      "de": "20:4",
+      "es": "20:4",
+      "fr": "20:4",
+      "it": "20:4",
+      "ru": "20:4"
+    },
+    "20_4.subtitle": {
+      "en": "fast 20h, eat 4h",
+      "tr": "20s oruç, 4s ye",
+      "de": "20 Std fasten, 4 Std essen",
+      "es": "fast 20h, eat 4h",
+      "fr": "vite 20h, mange 4h",
+      "it": "20 h di digiuno, 4 h per mangiare",
+      "ru": "20 ч голодания, 4 ч для еды"
+    },
+    "20_4.badge": {
+      "en": "ADVANCED",
+      "tr": "İLERİ",
+      "de": "FORTGESCHRITTEN",
+      "es": "ADVANCED",
+      "fr": "AVANCÉ",
+      "it": "AVANZATO",
+      "ru": "ПРОДВИНУТЫЙ"
+    },
+    "omad.title": {
+      "en": "OMAD",
+      "tr": "OMAD",
+      "de": "OMAD",
+      "es": "OMAD",
+      "fr": "OMAD",
+      "it": "OMAD",
+      "ru": "OMAD"
+    },
+    "omad.subtitle": {
+      "en": "one meal a day",
+      "tr": "günde bir öğün",
+      "de": "eine Mahlzeit am Tag",
+      "es": "one meal a day",
+      "fr": "un repas par jour",
+      "it": "un pasto al giorno",
+      "ru": "один приём пищи в день"
+    },
+    "omad.badge": {
+      "en": "PRO",
+      "tr": "PRO",
+      "de": "PRO",
+      "es": "PRO",
+      "fr": "PRO",
+      "it": "PRO",
+      "ru": "ПРО"
+    },
+    "5_2.title": {
+      "en": "5:2",
+      "tr": "5:2",
+      "de": "5:2",
+      "es": "5:2",
+      "fr": "5:2",
+      "it": "5:2",
+      "ru": "5:2"
+    },
+    "5_2.subtitle": {
+      "en": "2 light days / wk",
+      "tr": "haftada 2 hafif gün",
+      "de": "2 leichte Tage / Woche",
+      "es": "2 light days / wk",
+      "fr": "2 jours-lumière / semaine",
+      "it": "2 giorni leggeri / sett.",
+      "ru": "2 облегчённых дня / нед."
+    },
+    "5_2.badge": {
+      "en": "FLEXIBLE",
+      "tr": "ESNEK",
+      "de": "FLEXIBEL",
+      "es": "FLEXIBLE",
+      "fr": "FLEXIBLE",
+      "it": "FLESSIBILE",
+      "ru": "ГИБКИЙ"
+    }
+  },
+  "chat_suggestion": {
+    "hungry": {
+      "en": "I feel so hungry, should I break my fast?",
+      "tr": "Çok açım, orucumu bozmalı mıyım?",
+      "de": "Ich habe so Hunger, soll ich mein Fasten brechen?",
+      "es": "Tengo mucha hambre, ¿debería romper el ayuno?",
+      "fr": "J'ai tellement faim, dois-je rompre mon jeûne ?",
+      "it": "Ho tanta fame, dovrei interrompere il digiuno?",
+      "ru": "Я очень хочу есть. Стоит ли завершить голодание?"
+    },
+    "coffee": {
+      "en": "Can I drink coffee while fasting?",
+      "tr": "Oruçluyken kahve içebilir miyim?",
+      "de": "Kann ich beim Fasten Kaffee trinken?",
+      "es": "¿Puedo tomar café en ayunas?",
+      "fr": "Puis-je boire du café à jeun ?",
+      "it": "Posso bere caffè durante il digiuno?",
+      "ru": "Можно ли пить кофе во время голодания?"
+    },
+    "weight": {
+      "en": "Why am I not losing weight yet?",
+      "tr": "Neden henüz kilo veremiyorum?",
+      "de": "Warum nehme ich noch nicht ab?",
+      "es": "¿Por qué no estoy perdiendo peso todavía?",
+      "fr": "Pourquoi je ne perds pas encore de poids ?",
+      "it": "Perché non sto ancora perdendo peso?",
+      "ru": "Почему я пока не теряю вес?"
+    },
+    "eat": {
+      "en": "What should I eat when my fast ends?",
+      "tr": "Oruç bitince ne yemeliyim?",
+      "de": "Was soll ich essen, wenn mein Fasten endet?",
+      "es": "¿Qué debo comer cuando termine mi ayuno?",
+      "fr": "Que dois-je manger à la fin de mon jeûne ?",
+      "it": "Cosa dovrei mangiare quando finisce il digiuno?",
+      "ru": "Что съесть после окончания голодания?"
+    }
+  }
+}

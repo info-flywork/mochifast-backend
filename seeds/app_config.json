@@ -1,0 +1,84 @@
+[
+  {
+    "key": "catalog.version",
+    "platform": "all",
+    "value": 1,
+    "description": "Katalog cache sürümü; npm run seed artırır"
+  },
+  {
+    "key": "app.min_version",
+    "platform": "ios",
+    "value": "1.0.0",
+    "description": "Bu sürümün altı 426 APP_UPDATE_REQUIRED"
+  },
+  {
+    "key": "app.min_version",
+    "platform": "android",
+    "value": "1.0.0",
+    "description": "Bu sürümün altı 426 APP_UPDATE_REQUIRED"
+  },
+  {
+    "key": "app.latest_version",
+    "platform": "ios",
+    "value": "1.0.0",
+    "description": "Mağazadaki son sürüm (yumuşak güncelleme önerisi)"
+  },
+  {
+    "key": "app.latest_version",
+    "platform": "android",
+    "value": "1.0.0",
+    "description": "Mağazadaki son sürüm (yumuşak güncelleme önerisi)"
+  },
+  {
+    "key": "features",
+    "platform": "all",
+    "value": {
+      "chat": true,
+      "photoAnalysis": true,
+      "challenges": true,
+      "forecast": true
+    },
+    "description": "Özellik bayrakları"
+  },
+  {
+    "key": "limits",
+    "platform": "all",
+    "value": {
+      "freeChatDaily": 3,
+      "freePhotoDaily": 2,
+      "premiumChatDaily": 100,
+      "premiumPhotoDaily": 30
+    },
+    "description": "Günlük AI kotaları (docs/backend/09 §4, açık karar #7)"
+  },
+  {
+    "key": "marketing",
+    "platform": "all",
+    "value": {
+      "activeUsers": "2M+",
+      "rating": 4.8,
+      "avgStreakDays": 12,
+      "trustedBy": "200K+"
+    },
+    "description": "GoodCompany ekranı sayıları"
+  },
+  {
+    "key": "legal",
+    "platform": "all",
+    "value": {
+      "termsUrl": null,
+      "privacyUrl": null,
+      "termsVersion": "2026-10",
+      "privacyVersion": "2026-10"
+    },
+    "description": "Yasal metin adresleri ve sürümleri (URL'ler EKSİK)"
+  },
+  {
+    "key": "support",
+    "platform": "all",
+    "value": {
+      "email": "info@fly-work.com"
+    },
+    "description": "Destek iletişimi"
+  }
+]
