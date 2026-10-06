@@ -10,6 +10,8 @@ import docs from './plugins/docs.js';
 import httpMetrics from './plugins/http-metrics.js';
 import healthRoutes from './modules/health/health.routes.js';
 import authRoutes from './modules/auth/auth.routes.js';
+import userRoutes from './modules/user/user.routes.js';
+import devicesRoutes from './modules/devices/devices.routes.js';
 
 /**
  * Fastify uygulamasını kurar. Altyapıya bağlanmaz: bağımlılıklar (`deps`) dışarıdan verilir,
@@ -58,10 +60,16 @@ export async function buildApp({ config, deps, logger, registerV1 }) {
 
   await app.register(healthRoutes);
 
+  // Eski istemci yolları (önek yok) → aynı handler + Deprecation header'ı (docs/backend/12 F1).
+  await app.register(authRoutes, { prefix: '/auth', legacy: true });
+  await app.register(userRoutes, { prefix: '/user', legacy: true });
+
   await app.register(
     async (v1) => {
       // Domain modülleri fazlarla burada kaydedilir.
       await v1.register(authRoutes, { prefix: '/auth' });
+      await v1.register(userRoutes, { prefix: '/user' });
+      await v1.register(devicesRoutes, { prefix: '/devices' });
       if (registerV1) await registerV1(v1);
     },
     { prefix: API_PREFIX },

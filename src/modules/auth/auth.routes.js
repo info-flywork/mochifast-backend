@@ -1,3 +1,4 @@
+import { deprecatedRoute, memoizeByDeps } from '../../shared/legacy.js';
 import { createAuthService } from './auth.service.js';
 import {
   guestSchema,
@@ -11,11 +12,17 @@ import {
 /** POST /auth/* için IP başına sınır (docs/backend/06-guvenlik.md §7). */
 const AUTH_RATE_LIMIT = { max: 20, timeWindow: '1 minute' };
 
+// /v1 ve eski yol aynı servisi (aynı refresh grace belleği ve installId sayaçları) kullanır.
+const serviceFor = memoizeByDeps((app) =>
+  createAuthService({ ...app.deps, config: app.config, logger: app.log }),
+);
+
 /**
  * `/v1/auth` uçları (docs/backend/04-api.md §1).
+ * `{ legacy: true }` ile yalnızca eski istemcinin önek almayan `POST /auth/register` yolu açılır.
  */
-export default async function authRoutes(app) {
-  const service = createAuthService({ ...app.deps, config: app.config, logger: app.log });
+export default async function authRoutes(app, options) {
+  const service = serviceFor(app);
 
   const meta = (request) => ({
     ip: request.ip,
@@ -25,16 +32,6 @@ export default async function authRoutes(app) {
     platform: request.ctx.platform,
     appVersion: request.ctx.appVersion,
   });
-
-  app.post(
-    '/guest',
-    { schema: guestSchema, config: { rateLimit: { max: 10, timeWindow: '1 hour' } } },
-    async (request, reply) => {
-      const result = await service.guest(request.body, meta(request));
-      reply.code(result.created ? 201 : 200);
-      return { token: result.token, user: result.user };
-    },
-  );
 
   const register = async (request, reply) => {
     const result = await service.register(request.body, meta(request), request.user);
@@ -52,6 +49,25 @@ export default async function authRoutes(app) {
     preHandler: app.optionalAuth,
     config: { rateLimit: AUTH_RATE_LIMIT },
   };
+  if (options.legacy) {
+    const legacy = deprecatedRoute('/v1/auth/register');
+    app.post(
+      '/register',
+      { ...registerOptions, onSend: legacy.onSend, schema: { ...registerSchema, hide: true } },
+      register,
+    );
+    return;
+  }
+  app.post(
+    '/guest',
+    { schema: guestSchema, config: { rateLimit: { max: 10, timeWindow: '1 hour' } } },
+    async (request, reply) => {
+      const result = await service.guest(request.body, meta(request));
+      reply.code(result.created ? 201 : 200);
+      return { token: result.token, user: result.user };
+    },
+  );
+
   app.post('/register', registerOptions, register);
   app.post('/social', { ...registerOptions, schema: { ...registerSchema, hide: true } }, register);
 
