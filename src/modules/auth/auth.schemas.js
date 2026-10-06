@@ -64,7 +64,7 @@ const registerResult = authResult({
 
 export const registerSchema = {
   tags: ['auth'],
-  summary: 'Apple/Google ile giriş, kayıt veya misafir yükseltme',
+  summary: 'Firebase (Apple/Google) ile giriş, kayıt veya misafir yükseltme',
   description:
     'Authorization header’ında misafir oturumu varsa hesap yükseltilir. Sosyal kimlik başka bir hesaba bağlıysa 409 ACCOUNT_LINK_CONFLICT; tekrar `mergeGuest: false` (hesaba geç) ya da `true` (misafir verisini taşı) ile çağrılır.',
   body: {
@@ -72,10 +72,10 @@ export const registerSchema = {
     additionalProperties: false,
     required: ['provider'],
     properties: {
-      provider: { type: 'string', enum: ['apple', 'google', 'guest'] },
+      // firebase: Apple/Google girişi Firebase SDK'da yapılır, idToken = Firebase ID token.
+      // guest: cihaz başına tek misafir (deviceId), POST /v1/auth/guest ile aynı.
+      provider: { type: 'string', enum: ['firebase', 'guest'] },
       idToken: shortText(8192),
-      authorizationCode: shortText(1024),
-      nonce: shortText(256),
       fullName: {
         type: ['object', 'null'],
         additionalProperties: false,

@@ -70,6 +70,11 @@ export default async function authRoutes(app, options) {
 
   app.post('/register', registerOptions, register);
   app.post('/social', { ...registerOptions, schema: { ...registerSchema, hide: true } }, register);
+  app.post(
+    '/firebase',
+    { ...registerOptions, schema: { ...registerSchema, hide: true } },
+    register,
+  );
 
   app.post(
     '/refresh',

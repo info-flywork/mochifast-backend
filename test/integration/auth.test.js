@@ -1,10 +1,9 @@
 import { randomBytes, randomUUID } from 'node:crypto';
 import { SignJWT, importJWK } from 'jose';
 import { afterAll, afterEach, beforeAll, describe, expect, inject, it } from 'vitest';
-import { appleTokenContext } from '../../src/modules/auth/auth.service.js';
 import { GUEST_MERGE_STEPS } from '../../src/modules/auth/guest-merge.js';
 import { toBin } from '../../src/shared/ids.js';
-import { BUNDLE_ID, GOOGLE_CLIENT, createIntegrationApp, sha256 } from '../helpers/app.js';
+import { createIntegrationApp } from '../helpers/app.js';
 import { TEST_SECRETS } from '../helpers/infra.js';
 
 const mysqlUrl = inject('mysqlUrl');
@@ -13,17 +12,14 @@ describe.skipIf(!mysqlUrl)('auth akışları (gerçek MySQL)', () => {
   let ctx;
   let db;
   let app;
-  let crypto;
-  let apple;
-  let google;
-  let appleExchanges;
+  let firebase;
   let call;
   let guest;
-  let appleLogin;
+  let firebaseLogin;
 
   beforeAll(async () => {
     ctx = await createIntegrationApp(mysqlUrl);
-    ({ db, app, crypto, apple, google, appleExchanges, call, guest, appleLogin } = ctx);
+    ({ db, app, firebase, call, guest, firebaseLogin } = ctx);
   });
 
   afterEach(() => {
@@ -158,70 +154,78 @@ describe.skipIf(!mysqlUrl)('auth akışları (gerçek MySQL)', () => {
     expect(res.json().error.code).toBe('UNAUTHENTICATED');
   });
 
-  it('Apple: yeni hesap 201, tekrar giriş 200 aynı kullanıcı; Apple refresh token şifreli saklanır', async () => {
-    const sub = `apple-${randomUUID()}`;
-    const first = await appleLogin({ sub, code: 'code-123' });
+  it('Firebase: yeni hesap 201, tekrar 200; aynı uid başka yöntemle de aynı hesap', async () => {
+    const uid = `fb-${randomUUID()}`;
+    const first = await firebaseLogin({
+      uid,
+      email: 'x@privaterelay.appleid.com',
+      fullName: { givenName: 'Atilla', familyName: 'E.' },
+    });
     expect(first.statusCode).toBe(201);
     const data = first.json().data;
     expect(data).toMatchObject({ isNewUser: true, linkedFromGuest: false });
-    expect(data.user).toMatchObject({ isGuest: false, name: 'Atilla E.' });
+    expect(data.user).toMatchObject({
+      isGuest: false,
+      name: 'Atilla E.',
+      email: 'x@privaterelay.appleid.com',
+    });
 
-    const second = await appleLogin({ sub });
+    // Firebase'de aynı uid'ye Google da bağlanmış olabilir: kimlik uid'dir.
+    const second = await firebaseLogin({ uid, provider: 'google.com', name: 'Başka Ad' });
     expect(second.statusCode).toBe(200);
-    expect(second.json().data).toMatchObject({ isNewUser: false, user: { id: data.user.id } });
-
-    expect(appleExchanges.at(-1).body).toMatchObject({ code: 'code-123', client_id: BUNDLE_ID });
+    expect(second.json().data).toMatchObject({
+      isNewUser: false,
+      user: { id: data.user.id, name: 'Atilla E.' },
+    });
     const row = await db.one(
-      "SELECT apple_refresh_token_enc FROM auth_identities WHERE provider = 'apple' AND provider_subject = :sub",
-      { sub },
+      "SELECT sign_in_provider FROM auth_identities WHERE provider = 'firebase' AND provider_subject = :uid",
+      { uid },
     );
-    expect(row.apple_refresh_token_enc.toString()).not.toContain('apple-refresh-xyz');
-    expect(crypto.decrypt(row.apple_refresh_token_enc, appleTokenContext(data.user.id))).toBe(
-      'apple-refresh-xyz',
-    );
+    expect(row.sign_in_provider).toBe('google.com');
   });
 
-  it('Apple: nonce eşleşmezse 401', async () => {
-    const idToken = await apple.sign(
-      { sub: 'x', nonce: sha256('baska') },
-      { iss: 'https://appleid.apple.com', aud: BUNDLE_ID },
-    );
-    const res = await call('POST', '/auth/register', {
-      body: { provider: 'apple', idToken, nonce: 'gercek-nonce' },
+  it('Firebase: ad gönderilmezse token’daki ad; /firebase takma adı', async () => {
+    const idToken = await firebase.sign({
+      uid: `fb-${randomUUID()}`,
+      provider: 'google.com',
+      name: 'Ayşe',
     });
-    expect(res.statusCode).toBe(401);
+    const res = await call('POST', '/auth/firebase', { body: { provider: 'firebase', idToken } });
+    expect(res.statusCode).toBe(201);
+    expect(res.json().data.user.name).toBe('Ayşe');
   });
 
-  it('Google: aud listede olmalı', async () => {
-    const sub = `google-${randomUUID()}`;
-    const ok = await call('POST', '/auth/register', {
-      body: {
-        provider: 'google',
-        idToken: await google.sign(
-          { sub, email: 'a@gmail.com', email_verified: true, name: 'Ayşe' },
-          { iss: 'https://accounts.google.com', aud: GOOGLE_CLIENT },
-        ),
-      },
-    });
-    expect(ok.statusCode).toBe(201);
-    expect(ok.json().data.user).toMatchObject({ name: 'Ayşe', email: 'a@gmail.com' });
+  it('Firebase: başka proje, yanlış issuer, süresi dolmuş, anonim giriş reddedilir', async () => {
+    const register = (idToken) =>
+      call('POST', '/auth/register', { body: { provider: 'firebase', idToken } });
+    const uid = `fb-${randomUUID()}`;
 
-    const wrongAud = await call('POST', '/auth/register', {
-      body: {
-        provider: 'google',
-        idToken: await google.sign(
-          { sub },
-          { iss: 'https://accounts.google.com', aud: 'baska-app' },
-        ),
-      },
-    });
-    expect(wrongAud.statusCode).toBe(401);
+    expect((await register(await firebase.sign({ uid }, { aud: 'baska-proje' }))).statusCode).toBe(
+      401,
+    );
+    const wrongIssuer = await firebase.sign(
+      { uid },
+      { iss: 'https://securetoken.google.com/baska-proje' },
+    );
+    expect((await register(wrongIssuer)).statusCode).toBe(401);
+    const expired = await firebase.sign({ uid }, { exp: Math.floor(Date.now() / 1000) - 120 });
+    expect((await register(expired)).statusCode).toBe(401);
+    expect((await register('local-onboarding-session')).statusCode).toBe(401);
+
+    // Misafir Firebase'de değil, backend'de (cihaz başına tek misafir).
+    const anonymous = await register(await firebase.sign({ uid, provider: 'anonymous' }));
+    expect(anonymous.statusCode).toBe(400);
+    expect(anonymous.json().error.details).toEqual({ reason: 'provider_not_allowed' });
   });
 
   it('misafir yükseltme: aynı userId, misafir token ve installId artık geçersiz', async () => {
     const installId = randomUUID();
     const g = (await guest(installId)).json().data;
-    const res = await appleLogin({ sub: `apple-${randomUUID()}`, token: g.token.accessToken });
+    const res = await firebaseLogin({
+      uid: `fb-${randomUUID()}`,
+      token: g.token.accessToken,
+      fullName: { givenName: 'Atilla', familyName: 'E.' },
+    });
     expect(res.statusCode).toBe(200);
     expect(res.json().data).toMatchObject({
       isNewUser: false,
@@ -238,12 +242,12 @@ describe.skipIf(!mysqlUrl)('auth akışları (gerçek MySQL)', () => {
     expect(again.json().data.user.id).not.toBe(g.user.id);
   });
 
-  it('çakışma: misafir + başka hesaba bağlı Apple → 409; mergeGuest:false ile hesaba geçilir', async () => {
-    const sub = `apple-${randomUUID()}`;
-    const owner = (await appleLogin({ sub })).json().data.user;
+  it('çakışma: misafir + başka hesaba bağlı Firebase kimliği → 409; mergeGuest:false ile hesaba geçilir', async () => {
+    const uid = `fb-${randomUUID()}`;
+    const owner = (await firebaseLogin({ uid })).json().data.user;
     const g = (await guest()).json().data;
 
-    const conflict = await appleLogin({ sub, token: g.token.accessToken });
+    const conflict = await firebaseLogin({ uid, token: g.token.accessToken });
     expect(conflict.statusCode).toBe(409);
     expect(conflict.json().error).toMatchObject({
       code: 'ACCOUNT_LINK_CONFLICT',
@@ -251,7 +255,7 @@ describe.skipIf(!mysqlUrl)('auth akışları (gerçek MySQL)', () => {
     });
     expect((await userRow(g.user.id)).status).toBe('active');
 
-    const switched = await appleLogin({ sub, token: g.token.accessToken, mergeGuest: false });
+    const switched = await firebaseLogin({ uid, token: g.token.accessToken, mergeGuest: false });
     expect(switched.statusCode).toBe(200);
     expect(switched.json().data).toMatchObject({ mergedFromGuest: false, user: { id: owner.id } });
     expect((await userRow(g.user.id)).status).toBe('pending_deletion');
@@ -260,15 +264,15 @@ describe.skipIf(!mysqlUrl)('auth akışları (gerçek MySQL)', () => {
   });
 
   it('çakışma: mergeGuest:true birleştirme adımlarını aynı transaction’da çalıştırır', async () => {
-    const sub = `apple-${randomUUID()}`;
-    const owner = (await appleLogin({ sub })).json().data.user;
+    const uid = `fb-${randomUUID()}`;
+    const owner = (await firebaseLogin({ uid })).json().data.user;
     const g = (await guest()).json().data;
     const calls = [];
     GUEST_MERGE_STEPS.push(async (conn, { fromUserId, toUserId }) => {
       calls.push({ fromUserId, toUserId, inTx: Boolean(conn) });
     });
 
-    const merged = await appleLogin({ sub, token: g.token.accessToken, mergeGuest: true });
+    const merged = await firebaseLogin({ uid, token: g.token.accessToken, mergeGuest: true });
     expect(merged.statusCode).toBe(200);
     expect(merged.json().data.mergedFromGuest).toBe(true);
     expect(calls).toEqual([{ fromUserId: g.user.id, toUserId: owner.id, inTx: true }]);

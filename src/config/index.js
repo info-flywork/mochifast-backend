@@ -61,11 +61,8 @@ const schema = {
     FIELD_ENCRYPTION_KEYS_JSON: { type: 'string' },
     FIELD_ENCRYPTION_ACTIVE_KID: { type: 'integer', minimum: 1, maximum: 255 },
 
-    APPLE_AUDIENCES: { type: 'string', default: 'com.flywork.mochifast' },
-    APPLE_TEAM_ID: { type: 'string', default: '' },
-    APPLE_KEY_ID: { type: 'string', default: '' },
-    APPLE_PRIVATE_KEY_P8: { type: 'string', default: '' },
-    GOOGLE_CLIENT_IDS: { type: 'string', default: '' },
+    FIREBASE_PROJECT_ID: { type: 'string', default: '' },
+    FIREBASE_SIGN_IN_PROVIDERS: { type: 'string', default: 'apple.com,google.com' },
 
     CORS_ORIGINS: { type: 'string', default: '' },
     RATE_LIMIT_GLOBAL_MAX: { type: 'integer', minimum: 1, default: 600 },
@@ -150,14 +147,9 @@ export function loadConfig(env = process.env) {
       keys: parseJson('FIELD_ENCRYPTION_KEYS_JSON', e.FIELD_ENCRYPTION_KEYS_JSON),
       activeKid: e.FIELD_ENCRYPTION_ACTIVE_KID,
     },
-    identity: {
-      apple: {
-        audiences: splitList(e.APPLE_AUDIENCES),
-        teamId: e.APPLE_TEAM_ID,
-        keyId: e.APPLE_KEY_ID,
-        privateKeyP8: e.APPLE_PRIVATE_KEY_P8,
-      },
-      google: { clientIds: splitList(e.GOOGLE_CLIENT_IDS) },
+    firebase: {
+      projectId: e.FIREBASE_PROJECT_ID,
+      allowedProviders: splitList(e.FIREBASE_SIGN_IN_PROVIDERS),
     },
     cors: { origins: splitList(e.CORS_ORIGINS) },
     rateLimit: { globalMax: e.RATE_LIMIT_GLOBAL_MAX, window: e.RATE_LIMIT_WINDOW },

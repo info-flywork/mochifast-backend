@@ -45,34 +45,34 @@ export async function createUser(db, conn, user) {
 export async function createIdentity(db, conn, identity) {
   await db.run(
     `INSERT INTO auth_identities
-       (id, user_id, provider, provider_subject, email, apple_refresh_token_enc, last_login_at)
-     VALUES (:id, :userId, :provider, :subject, :email, :appleRefreshEnc, NOW(3))`,
+       (id, user_id, provider, provider_subject, sign_in_provider, email, last_login_at)
+     VALUES (:id, :userId, :provider, :subject, :signInProvider, :email, NOW(3))`,
     {
       id: toBin(newId()),
       userId: toBin(identity.userId),
       provider: identity.provider,
       subject: identity.subject,
       email: identity.email ?? null,
-      appleRefreshEnc: identity.appleRefreshEnc ?? null,
+      signInProvider: identity.signInProvider ?? null,
     },
     conn,
   );
 }
 
-/** Son giriş zamanı; yeni Apple refresh token geldiyse onu, e-posta geldiyse onu günceller. */
+/** Son giriş zamanı; gelen e-posta ve giriş yöntemiyle günceller. */
 export async function touchIdentity(
   db,
   conn,
   identityId,
-  { email = null, appleRefreshEnc = null } = {},
+  { email = null, signInProvider = null } = {},
 ) {
   await db.run(
     `UPDATE auth_identities
         SET last_login_at = NOW(3),
             email = COALESCE(:email, email),
-            apple_refresh_token_enc = COALESCE(:appleRefreshEnc, apple_refresh_token_enc)
+            sign_in_provider = COALESCE(:signInProvider, sign_in_provider)
       WHERE id = :id`,
-    { id: toBin(identityId), email, appleRefreshEnc },
+    { id: toBin(identityId), email, signInProvider },
     conn,
   );
 }

@@ -19,7 +19,7 @@ const REFRESH_GRACE_SEC = 10;
  *
  * `meta`: { ip, userAgent, locale, timezone, platform } — istek bağlamından.
  */
-export function createAuthService({ db, cache, tokens, identity, crypto, config, logger }) {
+export function createAuthService({ db, cache, tokens, firebase, config, logger }) {
   const refreshTtlDays = config.auth.refreshTtlDays;
   // Verilen çift yalnızca 10 sn bellekte tutulur (ADR 0005: API tek process).
   const refreshGrace = createCache({ maxEntries: 10_000 });
@@ -152,7 +152,7 @@ export function createAuthService({ db, cache, tokens, identity, crypto, config,
     },
 
     /**
-     * Apple/Google ile giriş, kayıt ya da misafir yükseltme.
+     * Firebase (Apple/Google) ile giriş, kayıt ya da misafir yükseltme.
      * @param currentUser geçerli misafir oturumu varsa request.user
      * @returns { outcome, token, user } — outcome: created | login | upgraded | switched | merged
      */
@@ -168,27 +168,21 @@ export function createAuthService({ db, cache, tokens, identity, crypto, config,
       }
       if (!input.idToken) throw validation('idToken', 'required');
 
-      let verified;
-      let appleRefreshToken = null;
-      if (input.provider === 'apple') {
-        if (!input.nonce) throw validation('nonce', 'required for apple');
-        verified = await identity.verifyApple({ idToken: input.idToken, rawNonce: input.nonce });
-        // Ağ çağrısı transaction DIŞINDA: kilit tutarken dış servisi beklemeyelim.
-        if (input.authorizationCode) {
-          appleRefreshToken = await identity.exchangeAppleCode(input.authorizationCode);
-        }
-      } else {
-        verified = await identity.verifyGoogle({ idToken: input.idToken });
-      }
-      const displayName =
-        input.provider === 'apple' ? joinName(input.fullName) : (verified.name ?? null);
+      // Apple/Google girişini istemcideki Firebase yapar; burada Firebase ID token'ı doğrulanır.
+      const verified = await firebase.verify(input.idToken);
+      // Apple adı yalnızca ilk girişte ve yalnızca istemciye verir; Firebase token'ında olmayabilir.
+      const displayName = joinName(input.fullName) ?? verified.name;
       const guestUser = currentUser?.isGuest ? currentUser : null;
-      const encryptAppleToken = (userId) =>
-        appleRefreshToken ? crypto.encrypt(appleRefreshToken, appleTokenContext(userId)) : null;
+      const identity = {
+        provider: 'firebase',
+        subject: verified.subject,
+        signInProvider: verified.signInProvider,
+        email: verified.email,
+      };
 
       const result = await withDuplicateRetry(() =>
         db.withTransaction(async (conn) => {
-          const existing = await repo.findIdentity(db, conn, input.provider, verified.subject);
+          const existing = await repo.findIdentity(db, conn, identity.provider, identity.subject);
           let userId;
           let outcome;
 
@@ -210,21 +204,12 @@ export function createAuthService({ db, cache, tokens, identity, crypto, config,
               await retireGuest(conn, guestUser.id);
               outcome = input.mergeGuest ? 'merged' : 'switched';
             }
-            await repo.touchIdentity(db, conn, existing.id, {
-              email: verified.email,
-              appleRefreshEnc: encryptAppleToken(userId),
-            });
+            await repo.touchIdentity(db, conn, existing.id, identity);
           } else if (guestUser) {
             // Misafir yükseltme: aynı userId, veriler yerinde kalır.
             userId = guestUser.id;
             outcome = 'upgraded';
-            await repo.createIdentity(db, conn, {
-              userId,
-              provider: input.provider,
-              subject: verified.subject,
-              email: verified.email,
-              appleRefreshEnc: encryptAppleToken(userId),
-            });
+            await repo.createIdentity(db, conn, { userId, ...identity });
             await repo.upgradeGuest(db, conn, userId, {
               displayName,
               email: verified.email,
@@ -245,13 +230,7 @@ export function createAuthService({ db, cache, tokens, identity, crypto, config,
               locale: localeOf(input, meta),
               timezone: timezoneOf(input, meta),
             });
-            await repo.createIdentity(db, conn, {
-              userId,
-              provider: input.provider,
-              subject: verified.subject,
-              email: verified.email,
-              appleRefreshEnc: encryptAppleToken(userId),
-            });
+            await repo.createIdentity(db, conn, { userId, ...identity });
           }
 
           const deviceId = await upsertDevice(
@@ -262,7 +241,7 @@ export function createAuthService({ db, cache, tokens, identity, crypto, config,
           );
           const token = await openSession(conn, { userId, deviceId, meta });
           await audit(conn, meta, outcome === 'upgraded' ? 'auth.linked' : 'auth.login', userId, {
-            provider: input.provider,
+            provider: identity.signInProvider,
             outcome,
             ...(guestUser && outcome !== 'login' ? { guestUserId: guestUser.id } : {}),
           });
@@ -393,11 +372,6 @@ export function toUserDto(row) {
     isPremium: false,
     isAnsweredQuestions: row.onboarding_completed_at !== null,
   };
-}
-
-/** Şifreli Apple refresh token'ı satıra bağlayan AAD. */
-export function appleTokenContext(userId) {
-  return `auth_identities.apple_refresh_token:${userId}`;
 }
 
 function assertUsable(status) {

@@ -186,10 +186,10 @@ describe.skipIf(!mysqlUrl)('kullanıcı & onboarding (gerçek MySQL)', () => {
     );
   });
 
-  it('kabul kriteri: misafir → onboarding → Apple girişi → aynı userId, veriler korunur', async () => {
+  it('kabul kriteri: misafir → onboarding → Firebase (Apple) girişi → aynı userId, veriler korunur', async () => {
     const { token, userId } = await newGuest();
     expect((await onboard(token)).statusCode).toBe(200);
-    const login = await ctx.appleLogin({ sub: `apple-${randomUUID()}`, token });
+    const login = await ctx.firebaseLogin({ uid: `fb-${randomUUID()}`, token });
     expect(login.json().data).toMatchObject({ linkedFromGuest: true, user: { id: userId } });
     const access = login.json().data.token.accessToken;
     const me = (await call('GET', '/user/me', { token: access })).json().data;
