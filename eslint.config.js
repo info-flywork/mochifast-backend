@@ -31,6 +31,10 @@ export default [
     },
   },
   {
+    files: ['**/*.cjs'],
+    languageOptions: { sourceType: 'commonjs' },
+  },
+  {
     files: ['scripts/**/*.js'],
     rules: { 'no-console': 'off' },
   },

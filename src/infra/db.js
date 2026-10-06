@@ -20,6 +20,16 @@ const typeCast = (field, next) => {
   return next();
 };
 
+/**
+ * mysql2 TLS ayarı. `sslVerify=false` yalnızca geliştirmede, kendinden imzalı sertifikalı uzak
+ * sunucu için: trafik şifrelenir ama sunucunun kimliği doğrulanmaz (config üretimde reddeder).
+ */
+export function sslOptions(dbConfig) {
+  if (!dbConfig.ssl) return undefined;
+  if (dbConfig.sslVerify === false) return { rejectUnauthorized: false };
+  return { rejectUnauthorized: true, ...(dbConfig.sslCa ? { ca: dbConfig.sslCa } : {}) };
+}
+
 export function createDatabase(dbConfig, { logger } = {}) {
   const pool = mysql.createPool({
     host: dbConfig.host,
@@ -40,9 +50,7 @@ export function createDatabase(dbConfig, { logger } = {}) {
     multipleStatements: false, // enjeksiyon yüzeyini daralt (migration aracı ayrı bağlantı kullanır)
     charset: 'UTF8MB4_0900_AI_CI',
     typeCast,
-    ssl: dbConfig.ssl
-      ? { rejectUnauthorized: true, ...(dbConfig.sslCa ? { ca: dbConfig.sslCa } : {}) }
-      : undefined,
+    ssl: sslOptions(dbConfig),
   });
 
   // Oturum saat dilimi de UTC olsun: NOW(3), CURRENT_TIMESTAMP(3) UTC üretir.

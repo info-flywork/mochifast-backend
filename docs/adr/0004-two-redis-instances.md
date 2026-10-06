@@ -1,6 +1,6 @@
 # ADR 0004 — İki ayrı Redis: cache ve kuyruk
 
-**Durum:** Kabul edildi · **Tarih:** 2026-10-06
+**Durum:** Yerini aldı → [ADR 0005](0005-redis-yok.md) · **Tarih:** 2026-10-06
 
 ## Karar
 

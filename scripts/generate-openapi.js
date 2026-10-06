@@ -11,8 +11,6 @@ const config = loadConfig({
   DB_HOST: 'unused',
   DB_USER: 'unused',
   DB_NAME: 'unused',
-  REDIS_CACHE_URL: 'redis://unused',
-  REDIS_QUEUE_URL: 'redis://unused',
   PUBLIC_BASE_URL: process.env.PUBLIC_BASE_URL ?? 'https://api.mochifast.app',
 });
 
@@ -24,9 +22,8 @@ const app = await buildApp({
   logger: false,
   deps: {
     db: { ping: unavailable },
-    cacheRedis: null,
-    queueRedis: null,
     cache: {},
+    jobs: {},
   },
 });
 await app.ready();

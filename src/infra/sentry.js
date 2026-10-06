@@ -4,7 +4,7 @@ let enabled = false;
 
 /**
  * SENTRY_DSN tanımlıysa Sentry'yi başlatır. PII gönderilmez.
- * @param serverName api | worker | scheduler
+ * @param serverName api | worker
  */
 export function initSentry(config, serverName) {
   if (!config.sentry.dsn) return;

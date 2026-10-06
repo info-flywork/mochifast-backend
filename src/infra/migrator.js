@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import mysql from 'mysql2/promise';
+import { sslOptions } from './db.js';
 
 /**
  * mysql2 tabanlı, yalnızca İLERİ yönlü migration aracı (docs/backend/02-mimari.md §3.3).
@@ -59,9 +60,7 @@ export async function migrate({ dbConfig, dir, dryRun = false, logger }) {
     multipleStatements: true, // yalnızca bu bağlantıda: migration dosyaları çok ifadelidir
     timezone: 'Z',
     charset: 'UTF8MB4_0900_AI_CI',
-    ssl: dbConfig.ssl
-      ? { rejectUnauthorized: true, ...(dbConfig.sslCa ? { ca: dbConfig.sslCa } : {}) }
-      : undefined,
+    ssl: sslOptions(dbConfig),
   });
 
   try {

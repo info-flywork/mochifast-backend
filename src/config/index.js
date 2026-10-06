@@ -6,7 +6,7 @@ import { envSchema } from 'env-schema';
  */
 const schema = {
   type: 'object',
-  required: ['DB_HOST', 'DB_USER', 'DB_NAME', 'REDIS_CACHE_URL', 'REDIS_QUEUE_URL'],
+  required: ['DB_HOST', 'DB_USER', 'DB_NAME'],
   properties: {
     NODE_ENV: {
       type: 'string',
@@ -34,12 +34,14 @@ const schema = {
     DB_NAME: { type: 'string' },
     DB_SSL: { type: 'boolean', default: false },
     DB_SSL_CA: { type: 'string', default: '' },
+    DB_SSL_VERIFY: { type: 'boolean', default: true },
     DB_POOL_SIZE: { type: 'integer', minimum: 1, maximum: 200, default: 20 },
     DB_SLOW_QUERY_MS: { type: 'integer', minimum: 1, default: 200 },
 
-    REDIS_CACHE_URL: { type: 'string' },
-    REDIS_QUEUE_URL: { type: 'string' },
-    REDIS_KEY_PREFIX: { type: 'string', default: 'mf' },
+    CACHE_MAX_ENTRIES: { type: 'integer', minimum: 100, default: 10_000 },
+
+    WORKER_CONCURRENCY: { type: 'integer', minimum: 1, maximum: 50, default: 5 },
+    WORKER_POLL_MS: { type: 'integer', minimum: 100, default: 1_000 },
 
     CORS_ORIGINS: { type: 'string', default: '' },
     RATE_LIMIT_GLOBAL_MAX: { type: 'integer', minimum: 1, default: 600 },
@@ -78,6 +80,11 @@ export function loadConfig(env = process.env) {
   if (e.NODE_ENV === 'production' && !e.DB_SSL && !LOCAL_DB_HOSTS.has(e.DB_HOST)) {
     throw new Error('Üretimde uzak MySQL için DB_SSL=true zorunlu.');
   }
+  if (e.NODE_ENV === 'production' && e.DB_SSL && !e.DB_SSL_VERIFY) {
+    throw new Error(
+      'Üretimde DB_SSL_VERIFY=false kullanılamaz (sertifika doğrulanmalı; DB_SSL_CA verin).',
+    );
+  }
 
   const config = {
     env: e.NODE_ENV,
@@ -101,14 +108,12 @@ export function loadConfig(env = process.env) {
       database: e.DB_NAME,
       ssl: e.DB_SSL,
       sslCa: e.DB_SSL_CA,
+      sslVerify: e.DB_SSL_VERIFY,
       poolSize: e.DB_POOL_SIZE,
       slowQueryMs: e.DB_SLOW_QUERY_MS,
     },
-    redis: {
-      cacheUrl: e.REDIS_CACHE_URL,
-      queueUrl: e.REDIS_QUEUE_URL,
-      keyPrefix: e.REDIS_KEY_PREFIX,
-    },
+    cache: { maxEntries: e.CACHE_MAX_ENTRIES },
+    worker: { concurrency: e.WORKER_CONCURRENCY, pollMs: e.WORKER_POLL_MS },
     cors: { origins: splitList(e.CORS_ORIGINS) },
     rateLimit: { globalMax: e.RATE_LIMIT_GLOBAL_MAX, window: e.RATE_LIMIT_WINDOW },
     metrics: { enabled: e.METRICS_ENABLED, host: e.METRICS_HOST, port: e.METRICS_PORT },

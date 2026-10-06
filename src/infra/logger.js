@@ -44,7 +44,7 @@ export function buildLoggerOptions(config) {
 }
 
 /**
- * Worker/scheduler/script'ler için bağımsız logger.
+ * Worker ve script'ler için bağımsız logger.
  */
 export function createLogger(config, bindings = {}) {
   return pino(buildLoggerOptions(config)).child(bindings);

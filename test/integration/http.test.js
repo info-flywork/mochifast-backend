@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { buildApp } from '../../src/app.js';
 import { AppError } from '../../src/shared/errors.js';
 import { envelope } from '../../src/shared/schemas.js';
-import { fakeDeps, fakeRedis } from '../helpers/fakes.js';
+import { fakeDeps } from '../helpers/fakes.js';
 import { testConfig } from '../helpers/infra.js';
 
 const apps = [];
@@ -280,20 +280,16 @@ describe('rate limit', () => {
 
 describe('readiness', () => {
   it('tüm bağımlılıklar ayaktaysa 200', async () => {
-    const deps = { ...fakeDeps(), cacheRedis: fakeRedis() };
-    const app = await makeApp({ deps });
+    const app = await makeApp();
     const res = await app.inject({ method: 'GET', url: '/health/ready' });
     expect(res.statusCode).toBe(200);
-    expect(res.json().data.checks).toMatchObject({
-      mysql: { status: 'up' },
-      redisCache: { status: 'up' },
-      redisQueue: { status: 'up' },
+    expect(res.json().data.checks).toEqual({
+      mysql: { status: 'up', latencyMs: expect.any(Number) },
     });
   });
 
   it('bir bağımlılık düşükse 503 UNAVAILABLE; iç hata mesajı sızmaz', async () => {
-    const deps = { ...fakeDeps({ dbUp: false }), cacheRedis: fakeRedis() };
-    const app = await makeApp({ deps });
+    const app = await makeApp({ deps: fakeDeps({ dbUp: false }) });
     const res = await app.inject({ method: 'GET', url: '/health/ready' });
     expect(res.statusCode).toBe(503);
     const body = res.json();
@@ -303,8 +299,7 @@ describe('readiness', () => {
   });
 
   it('kapanış sırasında 503 (LB trafiği keser)', async () => {
-    const deps = { ...fakeDeps(), cacheRedis: fakeRedis() };
-    const app = await makeApp({ deps });
+    const app = await makeApp();
     app.isShuttingDown = true;
     const res = await app.inject({ method: 'GET', url: '/health/ready' });
     expect(res.statusCode).toBe(503);

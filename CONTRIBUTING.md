@@ -45,7 +45,7 @@ route ──► service ──► repository ──► mysql2
 - [ ] Girdi ve yanıt şemaları tanımlı, `additionalProperties: false`
 - [ ] Auth ve sahiplik testi (başkasının kaydına erişim → 404)
 - [ ] İş kuralları saf fonksiyonda ve birim testli
-- [ ] Entegrasyon testi (gerçek MySQL/Redis): mutlu yol, doğrulama hatası, yetki hatası
+- [ ] Entegrasyon testi (gerçek MySQL): mutlu yol, doğrulama hatası, yetki hatası
 - [ ] Cache okuma ve invalidation kuralı eklendi
 - [ ] Rate limit sınıfı belirlendi
 - [ ] Hata kodları katalogda; mesajlar en az `en` ve `tr` dilinde

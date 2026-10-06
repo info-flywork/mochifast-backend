@@ -7,7 +7,7 @@ import client from 'prom-client';
  */
 
 /**
- * @param options.service api | worker | scheduler
+ * @param options.service api | worker
  */
 export function createMetrics({ service, dbPoolStats }) {
   const registry = new client.Registry();

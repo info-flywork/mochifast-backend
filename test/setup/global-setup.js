@@ -1,21 +1,30 @@
+import { readFileSync } from 'node:fs';
+import { parseEnv } from 'node:util';
+
 /**
- * Test altyapısını test dosyalarına `inject('mysqlUrl' | 'redisUrl')` ile verir.
- * Adresler ortam değişkenlerinden gelir: TEST_MYSQL_URL / TEST_REDIS_URL
- * (yerel kurulum ya da CI servisleri). Verilmeyen altyapıyı isteyen testler atlanır;
- * CI'da (CI=true) eksik altyapı HATADIR.
+ * Test altyapısını test dosyalarına `inject('mysqlUrl')` ile verir.
+ * Adres TEST_MYSQL_URL'den gelir: önce ortam değişkeni, yoksa proje kökündeki `.env`.
+ * (`.env`'in geri kalanı testlere YÜKLENMEZ; testler kendi konfigürasyonunu kurar.)
+ * Verilmezse MySQL isteyen testler atlanır; CI'da (CI=true) eksik MySQL HATADIR.
  */
 export default function setup(project) {
-  const mysqlUrl = process.env.TEST_MYSQL_URL || null;
-  const redisUrl = process.env.TEST_REDIS_URL || null;
+  const mysqlUrl = process.env.TEST_MYSQL_URL || fromDotEnv('TEST_MYSQL_URL');
 
-  if (process.env.CI === 'true' && (!mysqlUrl || !redisUrl)) {
-    throw new Error('CI ortamında MySQL ve Redis zorunlu (TEST_MYSQL_URL / TEST_REDIS_URL).');
+  if (process.env.CI === 'true' && !mysqlUrl) {
+    throw new Error('CI ortamında MySQL zorunlu (TEST_MYSQL_URL).');
   }
-  if (!mysqlUrl || !redisUrl) {
-    const missing = [!mysqlUrl && 'MySQL', !redisUrl && 'Redis'].filter(Boolean).join(', ');
-    process.stdout.write(`[test] Eksik altyapı → atlanacak testler: ${missing}\n`);
+  if (!mysqlUrl) {
+    process.stdout.write('[test] TEST_MYSQL_URL yok → MySQL isteyen testler atlanacak\n');
   }
 
   project.provide('mysqlUrl', mysqlUrl);
-  project.provide('redisUrl', redisUrl);
+}
+
+function fromDotEnv(key) {
+  try {
+    const file = new URL('../../.env', import.meta.url);
+    return parseEnv(readFileSync(file, 'utf8'))[key] || null;
+  } catch {
+    return null;
+  }
 }

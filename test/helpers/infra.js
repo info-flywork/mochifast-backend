@@ -13,9 +13,6 @@ export function testConfig(overrides = {}) {
     DB_HOST: '127.0.0.1',
     DB_USER: 'root',
     DB_NAME: 'unused',
-    REDIS_CACHE_URL: 'redis://127.0.0.1:1',
-    REDIS_QUEUE_URL: 'redis://127.0.0.1:1',
-    REDIS_KEY_PREFIX: `mftest${randomBytes(3).toString('hex')}`,
     METRICS_ENABLED: 'false',
     ...overrides,
   });

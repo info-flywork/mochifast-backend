@@ -1,29 +1,20 @@
 import fp from 'fastify-plugin';
 import rateLimit from '@fastify/rate-limit';
-import { Redis } from 'ioredis';
 import { AppError } from '../shared/errors.js';
 
 /**
  * Global rate limit (docs/backend/06-guvenlik.md §7). Route bazında daha sıkı limitler
  * `config: { rateLimit: { max, timeWindow } }` ile verilir; kapatmak için `rateLimit: false`.
- * Redis erişilemezse istek GEÇİRİLİR (skipOnError) — kota/AI gibi fail-closed gereken yerler
- * kendi kontrolünü yapar.
+ * Sayaçlar process belleğindedir (API tek process çalışır; docs/adr/0005-redis-yok.md).
+ * Kota/AI gibi kalıcı sınır gereken yerler kendi kontrolünü DB'de yapar.
  */
 export default fp(
   async function rateLimitPlugin(app) {
-    const { config, deps } = app;
-    // Replikalar arası ortak sayaç için Redis store; gerçek bağlantı yoksa (testler) bellek içi store.
-    const redis = deps.cacheRedis instanceof Redis ? deps.cacheRedis : undefined;
-    if (!redis && config.env !== 'test') {
-      app.log.warn('rate limit Redis olmadan çalışıyor: sayaçlar replika başına tutulur');
-    }
+    const { config } = app;
     await app.register(rateLimit, {
       global: true,
       max: config.rateLimit.globalMax,
       timeWindow: config.rateLimit.window,
-      ...(redis ? { redis } : {}),
-      nameSpace: `${config.redis.keyPrefix}:${config.env}:rl:`,
-      skipOnError: true,
       // Oturum açılmışsa kullanıcı, değilse IP (trustProxy ile gerçek istemci IP'si).
       keyGenerator: (request) => {
         const userId = request.user?.id;

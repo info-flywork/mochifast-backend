@@ -1,63 +1,73 @@
 /**
- * Cache-aside katmanı (docs/backend/07-cache-performans.md §4).
- * - Fail-open: Redis hatasında cache atlanır, loader çalışır, uygulama durmaz.
- * - Single-flight: aynı process'te aynı anahtar için eşzamanlı yüklemeler tekleştirilir.
+ * Process içi cache-aside katmanı (docs/adr/0005-redis-yok.md).
+ * - LRU: `maxEntries` aşılınca en uzun süredir kullanılmayan anahtar atılır.
  * - TTL jitter: aynı anda süresi dolan anahtar yığılmasını önler.
- * Anahtarlar otomatik olarak `<prefix>:<env>:` ile öneklenir.
+ * - Single-flight: aynı anahtar için eşzamanlı yüklemeler tekleştirilir.
+ * - Değerler JSON olarak saklanır: çağıran, dönen nesneyi değiştirse de cache bozulmaz.
+ * API async'tir; ileride paylaşımlı bir store'a geçilirse çağıranlar değişmez.
+ *
+ * Not: cache process'e özeldir. API tek process çalışır (ecosystem.config.cjs); birden çok
+ * kopyaya çıkılırsa invalidation yalnızca o kopyada geçerli olur.
  */
 
 /**
- * @param deps.prefix ör. "mf:prod"
+ * @param [deps.maxEntries] en fazla anahtar sayısı
+ * @param [deps.now] test için saat
  * @param [deps.random] test için
  */
-export function createCache({ client, prefix, logger, metrics, random = Math.random }) {
+export function createCache({
+  maxEntries = 10_000,
+  metrics,
+  now = Date.now,
+  random = Math.random,
+} = {}) {
+  // Map ekleme sırasını korur: ilk anahtar = en uzun süredir kullanılmayan.
+  const store = new Map();
   const inflight = new Map();
-  let lastErrorLog = 0;
 
-  function onError(err) {
-    metrics?.record('error');
-    const now = Date.now();
-    if (now - lastErrorLog > 10_000) {
-      lastErrorLog = now;
-      logger?.warn({ err: err instanceof Error ? err.message : err }, 'cache hatası (fail-open)');
+  function read(k) {
+    const entry = store.get(k);
+    if (!entry) return null;
+    if (entry.expiresAt <= now()) {
+      store.delete(k);
+      return null;
     }
+    // Kullanılanı sona taşı (LRU).
+    store.delete(k);
+    store.set(k, entry);
+    return JSON.parse(entry.json);
   }
 
-  const fullKey = (k) => `${prefix}:${k}`;
-
   const cache = {
-    key: fullKey,
+    get size() {
+      return store.size;
+    },
 
     async get(k) {
-      try {
-        const raw = await client.get(fullKey(k));
-        return raw === null ? null : JSON.parse(raw);
-      } catch (err) {
-        onError(err);
-        return null;
-      }
+      return read(k);
     },
 
     async set(k, value, ttlSec) {
-      try {
-        const jitter = Math.floor(ttlSec * 0.1 * random());
-        await client.set(fullKey(k), JSON.stringify(value), 'EX', ttlSec + jitter);
-      } catch (err) {
-        onError(err);
+      const jitter = Math.floor(ttlSec * 0.1 * random());
+      store.delete(k);
+      store.set(k, { json: JSON.stringify(value), expiresAt: now() + (ttlSec + jitter) * 1000 });
+      while (store.size > maxEntries) {
+        store.delete(store.keys().next().value);
+        metrics?.record('evict');
       }
     },
 
     async del(...keys) {
-      if (keys.length === 0) return;
-      try {
-        await client.del(...keys.map(fullKey));
-      } catch (err) {
-        onError(err);
-      }
+      for (const k of keys) store.delete(k);
+    },
+
+    /** Önekle başlayan tüm anahtarları siler (ör. bir kullanıcının tüm özetleri: "u:42:"). */
+    async delPrefix(prefix) {
+      for (const k of store.keys()) if (k.startsWith(prefix)) store.delete(k);
     },
 
     async getOrSet(k, ttlSec, loader) {
-      const cached = await cache.get(k);
+      const cached = read(k);
       if (cached !== null) {
         metrics?.record('hit');
         return cached;

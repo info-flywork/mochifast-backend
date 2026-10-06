@@ -4,8 +4,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['test/**/*.test.js'],
-    // MySQL/Redis adresleri TEST_MYSQL_URL / TEST_REDIS_URL'den gelir; yoksa entegrasyon
-    // testleri atlanır (CI'da atlanmaz).
+    // MySQL adresi TEST_MYSQL_URL'den gelir; yoksa entegrasyon testleri atlanır (CI'da atlanmaz).
     globalSetup: ['test/setup/global-setup.js'],
     testTimeout: 20_000,
     hookTimeout: 120_000,

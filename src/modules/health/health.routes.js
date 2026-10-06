@@ -15,7 +15,7 @@ const checkSchema = {
 /**
  * Yük dengeleyici / orkestratör uçları. `/v1` öneki YOK, rate limit YOK.
  * - live : process ayakta mı (bağımlılık kontrolü yapmaz → gereksiz yeniden başlatma olmaz)
- * - ready: trafik alabilir mi (MySQL + iki Redis). Kapanışta 503 → LB trafiği keser.
+ * - ready: trafik alabilir mi (MySQL). Kapanışta 503 → LB trafiği keser.
  */
 export default async function healthRoutes(app) {
   app.get(
@@ -58,12 +58,7 @@ export default async function healthRoutes(app) {
       if (app.isShuttingDown) {
         throw new AppError('UNAVAILABLE', { details: { reason: 'shutting_down' } });
       }
-      const { db, cacheRedis, queueRedis } = app.deps;
-      const entries = await Promise.all([
-        check('mysql', () => db.ping()),
-        check('redisCache', () => requirePing(cacheRedis)),
-        check('redisQueue', () => requirePing(queueRedis)),
-      ]);
+      const entries = await Promise.all([check('mysql', () => app.deps.db.ping())]);
       const checks = Object.fromEntries(
         entries.map(({ name, status, latencyMs }) => [name, { status, latencyMs }]),
       );
@@ -78,11 +73,6 @@ export default async function healthRoutes(app) {
       return { status: 'ok', checks };
     },
   );
-}
-
-async function requirePing(target) {
-  if (!target) throw new Error('yapılandırılmamış');
-  await target.ping();
 }
 
 async function check(name, fn) {

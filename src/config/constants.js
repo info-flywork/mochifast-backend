@@ -18,7 +18,7 @@ export const HEADERS = Object.freeze({
 /** API sürüm öneki. */
 export const API_PREFIX = '/v1';
 
-/** BullMQ kuyruk adları. Yeni kuyruklar fazlarla eklenir. */
+/** İş kuyruğu adları (`jobs.queue`). Yeni kuyruklar fazlarla eklenir. */
 export const QUEUES = Object.freeze({
   system: 'system',
 });

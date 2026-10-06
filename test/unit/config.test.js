@@ -5,8 +5,6 @@ const base = {
   DB_HOST: 'localhost',
   DB_USER: 'app',
   DB_NAME: 'mochifast',
-  REDIS_CACHE_URL: 'redis://localhost:6379',
-  REDIS_QUEUE_URL: 'redis://localhost:6380',
 };
 
 describe('loadConfig', () => {
@@ -45,6 +43,12 @@ describe('loadConfig', () => {
     expect(() => loadConfig(remote)).toThrow(/DB_SSL/);
     expect(loadConfig({ ...remote, DB_SSL: 'true' }).isProduction).toBe(true);
     expect(loadConfig({ ...base, NODE_ENV: 'production' }).isProduction).toBe(true);
+  });
+
+  it('DB_SSL_VERIFY=false yalnızca üretim dışında', () => {
+    const remote = { ...base, DB_HOST: 'db.example.com', DB_SSL: 'true', DB_SSL_VERIFY: 'false' };
+    expect(loadConfig(remote).db.sslVerify).toBe(false);
+    expect(() => loadConfig({ ...remote, NODE_ENV: 'production' })).toThrow(/DB_SSL_VERIFY/);
   });
 
   it('belgeler açıksa güçlü basic auth ister', () => {

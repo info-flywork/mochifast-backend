@@ -1,3 +1,4 @@
+import '../src/config/env-file.js';
 import { fileURLToPath } from 'node:url';
 import { loadConfig } from '../src/config/index.js';
 import { migrate } from '../src/infra/migrator.js';
