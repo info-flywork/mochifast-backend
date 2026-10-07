@@ -26,6 +26,7 @@
     "stats:recompute": "node scripts/recompute-stats.js",
     "eval:meals": "node scripts/eval-meal-analysis.js",
     "redteam:chat": "node scripts/redteam-chat.js",
+    "premium:grant": "node scripts/grant-premium.js",
     "seed:extract": "node scripts/extract-translations.js --app ../fastingapp",
     "migrate:new": "node scripts/new-migration.js",
     "openapi": "node scripts/generate-openapi.js",

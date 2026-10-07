@@ -8,6 +8,8 @@ import { buildApp } from '../../src/app.js';
 import { createAiClient } from '../../src/infra/anthropic.js';
 import { createMediaStorage } from '../../src/infra/bunny.js';
 import { createChatClient } from '../../src/infra/openai.js';
+import { createRevenueCatClient } from '../../src/infra/revenuecat.js';
+import { createEntitlements } from '../../src/modules/billing/billing.service.js';
 import { createCache } from '../../src/infra/cache.js';
 import { createFieldCrypto } from '../../src/infra/crypto.js';
 import { createDatabase } from '../../src/infra/db.js';
@@ -133,6 +135,41 @@ export async function* openAiChunks(
   };
 }
 
+/**
+ * Ağa çıkmayan RevenueCat REST'i: `subscribers[appUserId]` yanıtı test belirler;
+ * promosyon isteği entitlement ekler. `calls` istekleri tutar.
+ */
+export function fakeRevenueCat() {
+  const subscribers = {};
+  const calls = [];
+  const json = (body, status = 200) =>
+    new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
+  return {
+    subscribers,
+    calls,
+    async fetch(url, init) {
+      calls.push({ url, method: init?.method ?? 'GET', body: init?.body });
+      const m = String(url).match(/\/subscribers\/([^/]+)(\/entitlements\/([^/]+)\/promotional)?$/);
+      const id = decodeURIComponent(m?.[1] ?? '');
+      if (m?.[2]) {
+        const expires = new Date(Date.now() + 30 * 86_400_000).toISOString();
+        subscribers[id] = {
+          entitlements: {
+            [m[3]]: {
+              expires_date: expires,
+              product_identifier: 'rc_promo_premium_monthly',
+              purchase_date: new Date().toISOString(),
+            },
+          },
+          subscriptions: {},
+        };
+        return json({ subscriber: subscribers[id] }, 201);
+      }
+      return json({ subscriber: subscribers[id] ?? { entitlements: {}, subscriptions: {} } });
+    },
+  };
+}
+
 /** Claude yanıtı biçiminde mesaj (yapılandırılmış çıktı JSON metin bloğunda). */
 export function aiMessage(
   body,
@@ -182,12 +219,19 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
     },
     { clientImpl: openai },
   );
+  const cache = createCache();
+  const revenuecatApi = fakeRevenueCat();
+  const revenuecat = createRevenueCatClient(
+    { ...config.billing, enabled: true, secretApiKey: 'sk_test' },
+    { fetchImpl: revenuecatApi.fetch },
+  );
+  const entitlements = createEntitlements({ db, cache, config: config.billing });
   const app = await buildApp({
     config,
     logger: false,
     deps: {
       db,
-      cache: createCache(),
+      cache,
       jobs: createJobQueue(db),
       tokens: await createTokenService(config.auth),
       crypto,
@@ -195,6 +239,8 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
       storage,
       ai,
       chat,
+      revenuecat,
+      entitlements,
     },
   });
 
@@ -240,6 +286,8 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
     anthropic,
     chat,
     openai,
+    revenuecatApi,
+    entitlements,
     config,
     crypto,
     firebase: firebaseKeys,

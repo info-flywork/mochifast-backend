@@ -5,7 +5,10 @@ import * as s from './gamification.schemas.js';
 import { createWorldService } from './world.service.js';
 
 export const challengesServiceFor = memoizeByDeps((app) =>
-  createChallengesService({ db: app.deps.db }),
+  createChallengesService({
+    db: app.deps.db,
+    hasPremium: (userId) => app.deps.entitlements.isPremium(userId),
+  }),
 );
 const worldServiceFor = memoizeByDeps((app) =>
   createWorldService({ db: app.deps.db, stats: statsServiceFor(app) }),

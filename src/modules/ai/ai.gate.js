@@ -17,7 +17,7 @@ const BUDGET_CACHE_SEC = 60;
  * gün), global maliyet sigortası ve kullanım kaydı. Değerler `app_config`'ten okunur (deploy'suz
  * ayarlanır).
  */
-export function createAiGate({ db, catalog, cache, logger }) {
+export function createAiGate({ db, catalog, cache, logger, entitlements }) {
   const unpriced = new Set();
   async function settings() {
     const config = await catalog.appConfig('all');
@@ -43,6 +43,11 @@ export function createAiGate({ db, catalog, cache, logger }) {
   };
 
   const gate = {
+    /** Premium mı (abonelik yansıması); worker'da entitlement yoksa ücretsiz sayılır. */
+    async isPremium(userId) {
+      return entitlements ? entitlements.isPremium(userId) : false;
+    },
+
     /** `ai_processing` rızası yoksa 403 (fotoğraf/metin Anthropic'e gönderilmez). */
     async assertConsent(userId) {
       if (!(await repo.aiConsentGranted(db, userId))) {
@@ -96,7 +101,8 @@ export function createAiGate({ db, catalog, cache, logger }) {
     },
 
     /** GET /v1/chat/quota ve /v1/ai/quota. */
-    async status(userId, { isPremium = false } = {}) {
+    async status(userId, options = {}) {
+      const isPremium = options.isPremium ?? (await gate.isPremium(userId));
       const [{ limits }, { today, resetAt }] = await Promise.all([settings(), zone(userId)]);
       const used = await repo.quotaUsage(db, userId, today);
       const entry = (kind) => {

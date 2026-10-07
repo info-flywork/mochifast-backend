@@ -17,9 +17,6 @@ export const plansServiceFor = memoizeByDeps((app) =>
   }),
 );
 
-/** Premium entitlement F8'de bağlanır. */
-const hasPremium = () => false;
-
 /**
  * `/v1/plans` (docs/backend/04-api.md §5).
  */
@@ -32,11 +29,14 @@ export default async function plansRoutes(app) {
     service.current(request.user.id, request.ctx.locale),
   );
 
-  app.put('/current', { ...auth, schema: putCurrentSchema }, (request) =>
+  app.put('/current', { ...auth, schema: putCurrentSchema }, async (request) =>
     service.activateAndGet(
       request.user.id,
       request.body,
-      { hasPremium: hasPremium(request.user), meta: meta(request) },
+      {
+        hasPremium: await app.deps.entitlements.isPremium(request.user.id),
+        meta: meta(request),
+      },
       request.ctx.locale,
     ),
   );

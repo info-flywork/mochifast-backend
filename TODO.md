@@ -1,0 +1,112 @@
+# TODO — senin doldurman / karar vermen gerekenler
+
+Backend F0–F8 tamam; aşağıdakiler kod dışında kalan, anahtar, panel ayarı ya da karar gerektiren işler.
+Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` altında.
+
+---
+
+## 0. Önce (deploy'u engelleyenler)
+
+- [ ] **Sunucudaki Nginx'i güncelle.** Canlı dosyada `client_max_body_size 2M` var: 2 MB üstü fotoğraf (avatar,
+      öğün, analiz) API'ye ulaşmaz. `deploy/nginx/mochifast-api.conf`'taki iki `location` bloğunu (yükleme yolları
+      11 MB, sohbet SSE `proxy_buffering off` + 120 sn) sunucudaki dosyaya ekle (certbot'un eklediği 443 bloğu dahil),
+      sonra `nginx -t && systemctl reload nginx`.
+- [ ] **Bunny private zone kur** (bkz. §2). Kurulmadan **üretim açılmaz**: `.env.production`'da
+      `MEDIA_DRIVER=bunny` ve private zone ayarları zorunlu (kullanıcı fotoğrafları token'sız CDN'e yazılmasın diye
+      bilinçli kilit).
+- [ ] **Paylaşılan şifreleri değiştir:** DB şifresi ve Bunny storage şifresi sohbette açık yazıldı. Değiştirip
+      `.env` / `.env.production`'a yeni değerleri koy.
+- [ ] **Branch'i push'la / merge et:** `feat/backend-f0-f1` (F0–F8 commit'leri) henüz uzakta yok.
+- [ ] **Sunucuda deploy:** `npm ci` → `npm run migrate` (0015'e kadar) → `npm run seed` → `npm run stats:recompute`
+      → PM2'de API **ve worker** yeniden başlat (yeni kuyruklar: `stats`, `media`, `ai`, `billing`).
+      `scripts/deploy.sh` migrate + seed + pm2'yi yapar; `stats:recompute`'u ilk seferde elle çalıştır.
+
+## 1. `.env` ve `.env.production` — boş alanlar (dosyalara eklendi, değerleri sen gir)
+
+| Anahtar                          | Nereden                                                                                                                                                                    | Boşken ne olur                                                     |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `FIREBASE_PROJECT_ID`            | Firebase projesi (Apple + Google girişi açık)                                                                                                                              | Apple/Google girişi kapalı, yalnızca misafir                       |
+| `BUNNY_PRIVATE_STORAGE_ZONE`     | Bunny → yeni storage zone (ör. `mochifast-private`, DE)                                                                                                                    | Geliştirmede `var/media`'ya yazar; üretim açılmaz                  |
+| `BUNNY_PRIVATE_STORAGE_PASSWORD` | Private zone → FTP & API Access → Password                                                                                                                                 | 〃                                                                 |
+| `BUNNY_PRIVATE_PULL_ZONE_HOST`   | Private zone'a bağlı **yeni** pull zone (ör. `mochifast-private.b-cdn.net`)                                                                                                | 〃                                                                 |
+| `BUNNY_TOKEN_AUTH_KEY`           | **Private** pull zone → Security → Token Authentication → URL Token Authentication Key (şu an boş)                                                                         | 〃 (imzalı URL doğrulanamaz)                                       |
+| `BUNNY_API_KEY`                  | Bunny → Account → API key (şu an boş)                                                                                                                                      | Avatar değişince / silmede CDN purge yapılmaz (dosya yine silinir) |
+| `ANTHROPIC_API_KEY`              | console.anthropic.com                                                                                                                                                      | Fotoğraftan kalori analizi 503                                     |
+| `OPENAI_API_KEY`                 | platform.openai.com                                                                                                                                                        | Coach Mochi sohbeti 503                                            |
+| `OPENAI_CHAT_MODEL`              | Kullanmak istediğin OpenAI sohbet modeli (varsayılan yok, bilinçli)                                                                                                        | Sohbet 503                                                         |
+| `OPENAI_REASONING_EFFORT`        | Yalnızca reasoning model seçersen: `minimal\|low\|medium\|high`                                                                                                            | Gönderilmez (normal modelde boş kalsın)                            |
+| `REVENUECAT_SECRET_API_KEY`      | RevenueCat → Project settings → API keys → **Secret** key (`sk_…`)                                                                                                         | Herkes ücretsiz; `/subscription/sync` 503                          |
+| `REVENUECAT_WEBHOOK_AUTH`        | Uzun rastgele değer üret (`openssl rand -hex 32`), panelde webhook "Authorization header" alanına **aynısını** yaz (ör. `Bearer <değer>`; başlığın tamamı karşılaştırılır) | Webhook 503 (sync yine çalışır)                                    |
+| `REVENUECAT_ALLOW_SANDBOX`       | TestFlight'ta premium verilsin mi? Üretimde boş = hayır                                                                                                                    | Üretimde sandbox satın alma premium vermez                         |
+| `SENTRY_DSN`                     | Sentry projesi (isteğe bağlı)                                                                                                                                              | Hata takibi kapalı                                                 |
+
+## 2. Panel ayarları
+
+### Bunny (private zone)
+
+- [ ] Storage zone: `mochifast-private` (Falkenstein/DE + AB içi replikasyon).
+- [ ] Pull zone: **Token Authentication AÇIK**, hotlink koruması, yalnızca GET; izin verilen uzantı `webp`.
+- [ ] (İsteğe bağlı) özel alan adı `media.mochifast.app` + TLS.
+- [ ] Kurulumdan sonra staging'de kontrol: token'sız URL → 403, imzalı URL → 200 (bunu birlikte yapalım).
+
+### RevenueCat
+
+- [ ] Proje + iOS/Android uygulamaları.
+- [ ] Entitlement: `premium` (farklı isim verirsen `REVENUECAT_ENTITLEMENT`'i değiştir).
+- [ ] Ürünler (öneri): `mochifast_premium_monthly`, `mochifast_premium_yearly` (deneme süreli) → offering `default`.
+- [ ] **Paywall:** RevenueCat Paywalls ile tasarla (uygulama `purchases_ui_flutter` ile gösterir; sunucuda paywall yok).
+- [ ] Webhook: `https://mochifast-api.fly-work.com/v1/webhooks/revenuecat` + Authorization header (`REVENUECAT_WEBHOOK_AUTH`).
+- [ ] Sandbox satın alma testi: satın al → uygulama `POST /v1/subscription/sync` → `isPremium: true`.
+
+### `app_config` (DB'de; yönetim paneli F10'a kadar SQL ya da seed + `--overwrite-config`)
+
+- [ ] `ai.pricing`: **OpenAI sohbet modelinin** fiyatını ekle (`{"<model>": {"inputPerMTok", "outputPerMTok", "cacheReadPerMTok", "cacheWritePerMTok"}}`).
+      Yoksa sohbet maliyeti 0 görünür ve günlük bütçe sigortası sohbeti saymaz. Claude yedek modeli (fallback) kullanılırsa onun fiyatı da.
+- [ ] `ai.daily_budget_usd` (varsayılan 50) — gerçek bütçene göre ayarla.
+- [ ] `limits` — ücretsiz/premium günlük kotalar (sohbet 3/100, fotoğraf 2/30): karar #7.
+- [ ] `legal.termsUrl` / `legal.privacyUrl` — şu an `null`; kullanım şartları ve gizlilik metni URL'leri.
+
+## 3. Gerçek modelle doğrulama (anahtarlar gelince birlikte)
+
+- [ ] **Fotoğraf analizi eval'i:** kalorisi bilinen ~100 öğün + 20 yemek dışı fotoğraf → `eval/meals/` +
+      `manifest.json` (biçim: `scripts/eval-meal-analysis.js` başı). Önce `npm run eval:meals -- --dir eval/meals --limit 10`.
+      Hedef: kcal MAPE ≤ %25, `isFood` ≥ %98, p95 < 12 sn. `eval/` git'e girmez.
+- [ ] **Sohbet red-team:** `npm run redteam:chat` → `redteam/results/*.md`'deki 14 vakayı elle işaretle
+      (enjeksiyon, yeme bozukluğu, 18 yaş altı, ilaç dozu, 72 sa oruç, acil belirti, hamilelik, kapsam dışı).
+- [ ] **Performans:** API (VPS) ile MariaDB (cPanel) arası gecikme? Geliştirmede her sorgu ~52 ms; yazmalar ~1 sn,
+      `/user/summary` ~0,8 sn. Aynı makine/veri merkezinde değilse F3 kabul kriteri (summary p95 < 120 ms) tutmaz.
+
+## 4. Çeviri ve içerik gözden geçirme
+
+- [ ] Benim yazdığım metinler (anadil kontrolü iyi olur):
+  - açlık check-in güvenlik önerisi `safety_end_fast` (7 dil) — `scripts/extract-translations.js`
+  - sohbet ret mesajı (7 dil) — `src/modules/chat/chat.service.js` `REFUSAL_TEXT`
+  - 3 challenge'ın metinleri (`week_fasts_3`, `water_week_5`, `hunger_aware_5`) — `seeds/gamification.json`
+- [ ] Uygulama çevirileri: İspanyolca/Fransızca çevrilmemiş metinler (ayrı görev açılmıştı); İngilizce
+      `home.challenge_title` "challange" yazım hatası (seed'de düzelttim, uygulamada duruyor).
+- [ ] Persona/prompt metinleri: `prompts/coach_mochi.v1.md`, `prompts/meal_analysis.v1.md` (değişirse sürüm artır).
+
+## 5. Uygulama (Flutter) tarafı — backend hazır, bağlanmayı bekliyor
+
+- [ ] Firebase (Apple/Google girişi) → `POST /v1/auth/register`; misafir → hesap yükseltme.
+- [ ] Ana sayfa `GET /v1/user/summary`; oruç akışı `/v1/fasts/*`; hafta şeridi `/v1/fasts/week`.
+- [ ] Takipçi ekranları (su, kilo grafiği, adım, uyku, öğün, beslenme, açlık) mock'lardan API'ye.
+- [ ] Medya: avatar `PUT /v1/user/me/avatar`; öğün fotoğrafı; görsel cache anahtarı `${id}_${variant}`; 403'te URL yenile.
+- [ ] AI: **`aiProcessing` rızası** onboarding'de toplanmıyor → ilk AI kullanımından önce sor (`POST /v1/user/consents`), yoksa 403.
+      Fotoğraf analizi: gönder → `pollAfterMs` ile yokla → düzenle → `POST /v1/meals {analysisId}`.
+- [ ] Sohbet: SSE istemcisi (`message.created` / `delta` / `message.completed` / `error`), `safety: "urgent"` kartı, kota (429) → paywall.
+- [ ] Mochi World `GET /v1/world` (seviyeyi sunucudan al); challenge kartı `featured` + `join`.
+- [ ] RevenueCat: `Purchases.logIn(userId)` (bizim UUID), paywall `purchases_ui_flutter`, satın alma/geri yükleme sonrası
+      `POST /v1/subscription/sync`; 402 / 429 (`upgradeAvailable`) → paywall; profildeki sabit `isPremium: true`'yu kaldır.
+
+## 6. Bilinçli ertelenenler / açık kararlar
+
+- [ ] Olay altyapısı (`events.js`) ve `/user/summary` cache'i → F9 (bildirimler) ile.
+- [ ] `weight_update` inbox olayı, seri kaybı / dünya sağlığı bildirimleri → F9 (`notifications` tablosu hazır).
+- [ ] Challenge katılımcı avatarları: "challenge'larda görün" izin ayarı yok → liste boş, istemci maskot gösteriyor. İstersen ekleriz.
+- [ ] Fast Forecast v0 ve günlük ipucu (F7 opsiyonel) yapılmadı.
+- [ ] Saat dilimi değişimi / yaz saati (DST) test senaryoları → F11.
+- [ ] Gece doğrulaması (`dailyRollup`) sabit 03:30 UTC değil, worker açılışından itibaren 24 saatte bir.
+- [ ] Kararlarımı onayla ya da değiştir: onboarding kilosu XP vermiyor; yeme bozukluğu bayrağında elle girilen kalori
+      hedefi de gizleniyor; "seri günü" challenge metriği basitleştirilmiş (şu an katalogda yok).
+- [ ] Açık kararlar listesi: `../fastingapp/docs/backend/14-acik-kararlar.md`.

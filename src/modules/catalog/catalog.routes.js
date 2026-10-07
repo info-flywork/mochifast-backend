@@ -31,8 +31,9 @@ export function softAuth(app) {
   };
 }
 
-/** Premium entitlement F8'de (abonelik) bağlanır; o zamana kadar herkes ücretsiz görünümde. */
-export const hasPremium = () => false;
+/** Premium kilitleri: oturum varsa abonelikten (RevenueCat yansıması), yoksa ücretsiz görünüm. */
+export const premiumOf = async (app, user) =>
+  user ? app.deps.entitlements.isPremium(user.id) : false;
 
 /**
  * `/v1/catalog` (docs/backend/04-api.md §4). Public; token varsa kilitler kişiselleşir.
@@ -45,7 +46,9 @@ export default async function catalogRoutes(app) {
 
   app.get('/plans', { schema: planCatalogSchema, preHandler: auth }, async (request, reply) => {
     setCatalogCacheHeaders(reply, { personal: Boolean(request.user) });
-    return service.planCatalog(request.ctx.locale, { hasPremium: hasPremium(request.user) });
+    return service.planCatalog(request.ctx.locale, {
+      hasPremium: await premiumOf(app, request.user),
+    });
   });
 
   app.get(
@@ -53,7 +56,7 @@ export default async function catalogRoutes(app) {
     { schema: planDetailSchema, preHandler: auth },
     async (request, reply) => {
       const detail = await service.planDetail(request.params.code, request.ctx.locale, {
-        hasPremium: hasPremium(request.user),
+        hasPremium: await premiumOf(app, request.user),
       });
       if (!detail) throw new AppError('NOT_FOUND');
       setCatalogCacheHeaders(reply, { personal: Boolean(request.user) });
@@ -90,7 +93,7 @@ export default async function catalogRoutes(app) {
     async (request, reply) => {
       setCatalogCacheHeaders(reply, { personal: Boolean(request.user) });
       return content.onboardingOptions(request.ctx.locale, {
-        hasPremium: hasPremium(request.user),
+        hasPremium: await premiumOf(app, request.user),
       });
     },
   );

@@ -32,6 +32,7 @@ export const userServiceFor = memoizeByDeps((app) =>
     plans: plansServiceFor(app),
     stats: statsServiceFor(app),
     media: mediaServiceFor(app),
+    entitlements: app.deps.entitlements,
   }),
 );
 

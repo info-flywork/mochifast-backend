@@ -115,6 +115,13 @@ const schema = {
     AI_CHAT_FIRST_TOKEN_MS: { type: 'integer', minimum: 1_000, default: 15_000 },
     AI_CHAT_TOTAL_MS: { type: 'integer', minimum: 5_000, default: 90_000 },
 
+    // Abonelik: RevenueCat (docs/backend/11-abonelik.md). Paywall istemcide (RevenueCat Paywalls).
+    REVENUECAT_SECRET_API_KEY: { type: 'string', default: '' },
+    REVENUECAT_WEBHOOK_AUTH: { type: 'string', default: '' },
+    REVENUECAT_ENTITLEMENT: { type: 'string', default: 'premium' },
+    // Sandbox (TestFlight / test satın alma) premium verir mi? Üretimde varsayılan: hayır.
+    REVENUECAT_ALLOW_SANDBOX: { type: 'string', enum: ['', 'true', 'false'], default: '' },
+
     SENTRY_DSN: { type: 'string', default: '' },
     SENTRY_TRACES_SAMPLE_RATE: { type: 'number', minimum: 0, maximum: 1, default: 0 },
   },
@@ -205,6 +212,16 @@ export function loadConfig(env = process.env) {
       visionModel: e.AI_VISION_MODEL,
       serverFallback: e.AI_SERVER_FALLBACK,
       analysisTimeoutMs: e.AI_ANALYSIS_TIMEOUT_MS,
+    },
+    billing: {
+      secretApiKey: e.REVENUECAT_SECRET_API_KEY,
+      webhookAuth: e.REVENUECAT_WEBHOOK_AUTH,
+      entitlement: e.REVENUECAT_ENTITLEMENT,
+      enabled: e.REVENUECAT_SECRET_API_KEY.length > 0,
+      allowSandbox:
+        e.REVENUECAT_ALLOW_SANDBOX === ''
+          ? e.NODE_ENV !== 'production'
+          : e.REVENUECAT_ALLOW_SANDBOX === 'true',
     },
     chatAi: {
       apiKey: e.OPENAI_API_KEY,

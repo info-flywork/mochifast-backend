@@ -12,7 +12,7 @@ const DAY_MS = 86_400_000;
  * Katılımcı avatarı için açık izin ayarı henüz yok: liste boş döner, istemci jenerik maskot
  * avatarlarını gösterir (05 §13).
  */
-export function createChallengesService({ db, hasPremium = () => false }) {
+export function createChallengesService({ db, hasPremium = async () => false }) {
   async function catalog(locale) {
     const rows = await db.many(
       `SELECT c.id, c.code, c.metric, c.target_count, c.duration_days, c.window_type, c.starts_at,
@@ -106,7 +106,7 @@ export function createChallengesService({ db, hasPremium = () => false }) {
     async join(userId, code, locale) {
       const c = (await catalog(locale)).find((x) => x.code === code);
       if (!c) throw new AppError('NOT_FOUND');
-      if (c.is_premium && !hasPremium(userId)) {
+      if (c.is_premium && !(await hasPremium(userId))) {
         throw new AppError('PREMIUM_REQUIRED', { details: { challenge: code } });
       }
       const now = new Date();

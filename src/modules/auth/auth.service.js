@@ -19,7 +19,11 @@ const REFRESH_GRACE_SEC = 10;
  *
  * `meta`: { ip, userAgent, locale, timezone, platform } — istek bağlamından.
  */
-export function createAuthService({ db, cache, tokens, firebase, config, logger }) {
+export function createAuthService({ db, cache, tokens, firebase, config, logger, entitlements }) {
+  const withPremium = async (dto) => ({
+    ...dto,
+    isPremium: (await entitlements?.isPremium(dto.id)) ?? false,
+  });
   const refreshTtlDays = config.auth.refreshTtlDays;
   // Verilen çift yalnızca 10 sn bellekte tutulur (ADR 0005: API tek process).
   const refreshGrace = createCache({ maxEntries: 10_000 });
@@ -145,7 +149,7 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger 
           return {
             created: !existing,
             token,
-            user: toUserDto(await repo.getUser(db, conn, userId)),
+            user: await withPremium(toUserDto(await repo.getUser(db, conn, userId))),
           };
         }),
       );
@@ -245,7 +249,11 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger 
             outcome,
             ...(guestUser && outcome !== 'login' ? { guestUserId: guestUser.id } : {}),
           });
-          return { outcome, token, user: toUserDto(await repo.getUser(db, conn, userId)) };
+          return {
+            outcome,
+            token,
+            user: await withPremium(toUserDto(await repo.getUser(db, conn, userId))),
+          };
         }),
       );
 
@@ -362,7 +370,7 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger 
   return service;
 }
 
-/** API kullanıcı özeti (docs/backend/04-api.md §1). Premium F8'de bağlanır. */
+/** API kullanıcı özeti (docs/backend/04-api.md §1). Premium durumu servis ekler (withPremium). */
 export function toUserDto(row) {
   return {
     id: row.id,

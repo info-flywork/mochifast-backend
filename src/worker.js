@@ -10,6 +10,7 @@ import { SCHEDULES } from './schedules.js';
 import { createMediaStorage } from './infra/bunny.js';
 import { createFieldCrypto } from './infra/crypto.js';
 import { aiJobs } from './jobs/ai.jobs.js';
+import { billingJobs } from './jobs/billing.jobs.js';
 import { mediaJobs } from './jobs/media.jobs.js';
 import { statsJobs } from './jobs/stats.jobs.js';
 import { systemJobs } from './jobs/system.jobs.js';
@@ -76,6 +77,14 @@ const workers = [
     // Analiz 5–15 sn sürer (dış çağrı); paralel işlenir, CPU'yu meşgul etmez.
     concurrency: 4,
     timeoutMs: 120_000,
+    pollMs: config.worker.pollMs,
+    logger,
+  }),
+  createWorker({
+    db,
+    queue: QUEUES.billing,
+    handlers: billingJobs({ db, config, logger }),
+    concurrency: 2,
     pollMs: config.worker.pollMs,
     logger,
   }),

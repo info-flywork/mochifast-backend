@@ -1,5 +1,5 @@
 import { setCatalogCacheHeaders } from '../../shared/http-cache.js';
-import { contentServiceFor, hasPremium, softAuth } from './catalog.routes.js';
+import { contentServiceFor, premiumOf, softAuth } from './catalog.routes.js';
 import {
   insightArticleSchema,
   insightArticlesSchema,
@@ -14,14 +14,14 @@ export default async function insightsRoutes(app) {
   const auth = softAuth(app);
   const cacheHeaders = (request, reply) =>
     setCatalogCacheHeaders(reply, { personal: Boolean(request.user) });
-  const premium = (request) => ({ hasPremium: hasPremium(request.user) });
+  const premium = async (request) => ({ hasPremium: await premiumOf(app, request.user) });
 
   app.get(
     '/categories',
     { schema: insightCategoriesSchema, preHandler: auth },
     async (request, reply) => {
       cacheHeaders(request, reply);
-      return content.insightCategories(request.ctx.locale, premium(request));
+      return content.insightCategories(request.ctx.locale, await premium(request));
     },
   );
 
@@ -30,7 +30,7 @@ export default async function insightsRoutes(app) {
     { schema: insightArticlesSchema, preHandler: auth },
     async (request, reply) => {
       cacheHeaders(request, reply);
-      return content.insightArticles(request.ctx.locale, request.query, premium(request));
+      return content.insightArticles(request.ctx.locale, request.query, await premium(request));
     },
   );
 
@@ -41,7 +41,7 @@ export default async function insightsRoutes(app) {
       const article = await content.insightArticle(
         request.params.slug,
         request.ctx.locale,
-        premium(request),
+        await premium(request),
       );
       cacheHeaders(request, reply);
       return article;

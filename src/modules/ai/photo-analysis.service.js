@@ -88,8 +88,9 @@ export function createPhotoAnalysisService({ db, jobs, gate, media, ai, storage,
     async submit(userId, buffer, locale) {
       if (!ai.enabled) throw new AppError('UNAVAILABLE', { details: { reason: 'ai_disabled' } });
       await gate.assertConsent(userId);
-      await gate.assertBudget(false);
-      const quota = await gate.consume(userId, 'photo_analysis');
+      const isPremium = await gate.isPremium(userId);
+      await gate.assertBudget(isPremium);
+      const quota = await gate.consume(userId, 'photo_analysis', { isPremium });
       try {
         const { media: photo } = await media.upload(userId, 'meal_photo', buffer);
         // Aynı fotoğraf tekrar gönderildi: yeni AI çağrısı yapılmaz, hak iade edilir.

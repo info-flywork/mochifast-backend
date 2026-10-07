@@ -25,4 +25,11 @@ export const SCHEDULES = [
   // 09: AI kota sayaçları ve takılı analizler.
   { id: 'ai-quota-cleanup', queue: 'ai', jobName: 'aiQuotaCleanup', everyMs: 21_600_000 },
   { id: 'ai-stuck-analyses', queue: 'ai', jobName: 'aiStuckAnalyses', everyMs: 5 * 60_000 },
+  // 11 §5: premium kaybında plan düşürme (yerel gün dönümünden sonraki ilk çalışma).
+  {
+    id: 'billing-premium-downgrade',
+    queue: 'billing',
+    jobName: 'premiumDowngrade',
+    everyMs: 3_600_000,
+  },
 ];

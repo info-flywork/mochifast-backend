@@ -11,6 +11,7 @@ export const aiGateFor = memoizeByDeps((app) =>
     catalog: catalogServiceFor(app),
     cache: app.deps.cache,
     logger: app.log,
+    entitlements: app.deps.entitlements,
   }),
 );
 
