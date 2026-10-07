@@ -8,6 +8,7 @@ import { createDatabase } from './infra/db.js';
 import { createScheduler, createWorker } from './infra/queue.js';
 import { SCHEDULES } from './schedules.js';
 import { createMediaStorage } from './infra/bunny.js';
+import { createFieldCrypto } from './infra/crypto.js';
 import { aiJobs } from './jobs/ai.jobs.js';
 import { mediaJobs } from './jobs/media.jobs.js';
 import { statsJobs } from './jobs/stats.jobs.js';
@@ -65,7 +66,13 @@ const workers = [
   createWorker({
     db,
     queue: QUEUES.ai,
-    handlers: aiJobs({ db, storage, config, logger }),
+    handlers: aiJobs({
+      db,
+      storage,
+      config,
+      logger,
+      crypto: createFieldCrypto(config.fieldEncryption),
+    }),
     // Analiz 5–15 sn sürer (dış çağrı); paralel işlenir, CPU'yu meşgul etmez.
     concurrency: 4,
     timeoutMs: 120_000,

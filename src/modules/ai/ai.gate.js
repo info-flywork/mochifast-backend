@@ -17,7 +17,8 @@ const BUDGET_CACHE_SEC = 60;
  * gün), global maliyet sigortası ve kullanım kaydı. Değerler `app_config`'ten okunur (deploy'suz
  * ayarlanır).
  */
-export function createAiGate({ db, catalog, cache }) {
+export function createAiGate({ db, catalog, cache, logger }) {
+  const unpriced = new Set();
   async function settings() {
     const config = await catalog.appConfig('all');
     return {
@@ -114,7 +115,16 @@ export function createAiGate({ db, catalog, cache }) {
     async recordUsage(userId, feature, message) {
       const { pricing } = await settings();
       const usage = message?.usage ?? {};
-      const cost = costMicroUsd(usage, pricing[message?.model]);
+      const price = pricing[message?.model];
+      // Fiyatı tanımsız model (ör. yedek model, yeni sohbet modeli): maliyet 0 sayılır, bir kez uyarılır.
+      if (!price && message?.model && !unpriced.has(message.model)) {
+        unpriced.add(message.model);
+        logger?.warn(
+          { model: message.model },
+          'app_config ai.pricing içinde bu modelin fiyatı yok',
+        );
+      }
+      const cost = costMicroUsd(usage, price);
       await repo.recordUsage(db, userId, feature, { ...usage, costMicroUsd: cost });
       return cost;
     },

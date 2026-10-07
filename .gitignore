@@ -15,3 +15,6 @@ var/
 
 # Değerlendirme veri setleri (gerçek kullanıcı fotoğrafları içerebilir)
 eval/
+
+# Red-team çıktıları (model yanıtları; gözden geçirme notları)
+redteam/results/

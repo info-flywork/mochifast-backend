@@ -7,6 +7,7 @@ import { SignJWT, createLocalJWKSet, exportJWK, generateKeyPair } from 'jose';
 import { buildApp } from '../../src/app.js';
 import { createAiClient } from '../../src/infra/anthropic.js';
 import { createMediaStorage } from '../../src/infra/bunny.js';
+import { createChatClient } from '../../src/infra/openai.js';
 import { createCache } from '../../src/infra/cache.js';
 import { createFieldCrypto } from '../../src/infra/crypto.js';
 import { createDatabase } from '../../src/infra/db.js';
@@ -80,6 +81,58 @@ export function fakeAnthropic() {
   };
 }
 
+/**
+ * Ağa çıkmayan OpenAI istemcisi. `respond(fn)`: fn(params, options) → async iterable parça listesi
+ * (akış) ya da tamamlanmış yanıt (stream olmayan çağrı). `chunks(...)` yardımcıyla parça üretir.
+ */
+export function fakeOpenAI() {
+  const calls = [];
+  let handler = () => {
+    throw new Error('fakeOpenAI: yanıt tanımlanmadı');
+  };
+  return {
+    calls,
+    respond(fn) {
+      handler = fn;
+    },
+    chat: {
+      completions: {
+        async create(params, options) {
+          calls.push(params);
+          return handler(params, options);
+        },
+      },
+    },
+  };
+}
+
+/**
+ * Chat Completions akış parçaları. `texts`: metin parçaları; `delayMs`: parçalar arası bekleme
+ * (iptal testleri); `signal` verilirse iptalde SDK gibi APIUserAbortError fırlatır.
+ */
+export async function* openAiChunks(
+  texts,
+  { finish = 'stop', usage, model = 'test-chat-model', delayMs = 0, signal, refusal } = {},
+) {
+  const { default: OpenAI } = await import('openai');
+  for (const text of texts) {
+    if (delayMs) await new Promise((r) => setTimeout(r, delayMs));
+    if (signal?.aborted) throw new OpenAI.APIUserAbortError();
+    yield { model, choices: [{ index: 0, delta: { content: text }, finish_reason: null }] };
+  }
+  if (refusal) yield { model, choices: [{ index: 0, delta: { refusal }, finish_reason: null }] };
+  yield { model, choices: [{ index: 0, delta: {}, finish_reason: finish }] };
+  yield {
+    model,
+    choices: [],
+    usage: usage ?? {
+      prompt_tokens: 900,
+      completion_tokens: 60,
+      prompt_tokens_details: { cached_tokens: 0 },
+    },
+  };
+}
+
 /** Claude yanıtı biçiminde mesaj (yapılandırılmış çıktı JSON metin bloğunda). */
 export function aiMessage(
   body,
@@ -118,6 +171,17 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
   );
   const anthropic = fakeAnthropic();
   const ai = createAiClient({ ...config.ai, enabled: true }, { clientImpl: anthropic });
+  const openai = fakeOpenAI();
+  const chat = createChatClient(
+    {
+      ...config.chatAi,
+      enabled: true,
+      model: 'test-chat-model',
+      firstTokenMs: 2000,
+      totalMs: 5000,
+    },
+    { clientImpl: openai },
+  );
   const app = await buildApp({
     config,
     logger: false,
@@ -130,6 +194,7 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
       firebase: createFirebaseVerifier({ ...config.firebase, jwks: firebaseKeys.jwks }),
       storage,
       ai,
+      chat,
     },
   });
 
@@ -173,6 +238,8 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
     mediaDir,
     ai,
     anthropic,
+    chat,
+    openai,
     config,
     crypto,
     firebase: firebaseKeys,

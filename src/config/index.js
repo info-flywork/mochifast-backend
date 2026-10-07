@@ -102,6 +102,18 @@ const schema = {
     // Sunucu tarafı yedek model (refusal → Anthropic'in önerdiği modelle yeniden dene).
     AI_SERVER_FALLBACK: { type: 'boolean', default: true },
     AI_ANALYSIS_TIMEOUT_MS: { type: 'integer', minimum: 5_000, default: 45_000 },
+    // Sohbet (Coach Mochi): OpenAI. Anahtar ve model birlikte verilmezse sohbet 503 döner.
+    OPENAI_API_KEY: { type: 'string', default: '' },
+    OPENAI_CHAT_MODEL: { type: 'string', default: '' },
+    // Yalnızca akıl yürüten (reasoning) modellerde gönderilir: low | medium | high; boş = gönderme.
+    OPENAI_REASONING_EFFORT: {
+      type: 'string',
+      enum: ['', 'minimal', 'low', 'medium', 'high'],
+      default: '',
+    },
+    AI_CHAT_MAX_OUTPUT_TOKENS: { type: 'integer', minimum: 100, default: 1200 },
+    AI_CHAT_FIRST_TOKEN_MS: { type: 'integer', minimum: 1_000, default: 15_000 },
+    AI_CHAT_TOTAL_MS: { type: 'integer', minimum: 5_000, default: 90_000 },
 
     SENTRY_DSN: { type: 'string', default: '' },
     SENTRY_TRACES_SAMPLE_RATE: { type: 'number', minimum: 0, maximum: 1, default: 0 },
@@ -193,6 +205,15 @@ export function loadConfig(env = process.env) {
       visionModel: e.AI_VISION_MODEL,
       serverFallback: e.AI_SERVER_FALLBACK,
       analysisTimeoutMs: e.AI_ANALYSIS_TIMEOUT_MS,
+    },
+    chatAi: {
+      apiKey: e.OPENAI_API_KEY,
+      model: e.OPENAI_CHAT_MODEL,
+      enabled: e.OPENAI_API_KEY.length > 0 && e.OPENAI_CHAT_MODEL.length > 0,
+      reasoningEffort: e.OPENAI_REASONING_EFFORT || null,
+      maxOutputTokens: e.AI_CHAT_MAX_OUTPUT_TOKENS,
+      firstTokenMs: e.AI_CHAT_FIRST_TOKEN_MS,
+      totalMs: e.AI_CHAT_TOTAL_MS,
     },
   };
   return deepFreeze(config);

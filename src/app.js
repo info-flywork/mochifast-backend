@@ -20,7 +20,7 @@ import insightsRoutes from './modules/catalog/insights.routes.js';
 import plansRoutes from './modules/plans/plans.routes.js';
 import fastingRoutes, { strugglesRoutes } from './modules/fasting/fasting.routes.js';
 import appConfigRoutes from './modules/app/app-config.routes.js';
-import chatRoutes from './modules/ai/ai.routes.js';
+import chatRoutes from './modules/chat/chat.routes.js';
 import hungerRoutes from './modules/hunger/hunger.routes.js';
 import mediaRoutes, { localMediaFiles } from './modules/media/media.routes.js';
 import { mealsRoutes, nutritionRoutes } from './modules/meals/meals.routes.js';

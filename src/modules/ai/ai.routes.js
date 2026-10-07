@@ -6,7 +6,12 @@ import { createPhotoAnalysisService } from './photo-analysis.service.js';
 import * as s from './ai.schemas.js';
 
 export const aiGateFor = memoizeByDeps((app) =>
-  createAiGate({ db: app.deps.db, catalog: catalogServiceFor(app), cache: app.deps.cache }),
+  createAiGate({
+    db: app.deps.db,
+    catalog: catalogServiceFor(app),
+    cache: app.deps.cache,
+    logger: app.log,
+  }),
 );
 
 export const photoAnalysisFor = memoizeByDeps((app) =>
@@ -37,13 +42,5 @@ export async function photoAnalysisRoutes(app) {
   );
   app.get('/photo-analyses/:id', { ...auth, schema: s.getAnalysisSchema }, (request) =>
     analyses.get(request.user.id, request.params.id),
-  );
-}
-
-/** `/v1/chat` — F6 1. hafta: yalnızca kota; sohbet uçları 2. haftada. */
-export default async function chatRoutes(app) {
-  const gate = aiGateFor(app);
-  app.get('/quota', { preHandler: app.requireAuth, schema: s.quotaSchema }, (request) =>
-    gate.status(request.user.id),
   );
 }

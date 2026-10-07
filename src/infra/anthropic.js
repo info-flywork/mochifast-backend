@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { AppError } from '../shared/errors.js';
+import { createBreaker } from './breaker.js';
 
 /**
  * Claude API istemcisi (docs/backend/09-yapay-zeka.md). Tüm çağrılar buradan geçer:
@@ -9,8 +10,6 @@ import { AppError } from '../shared/errors.js';
  */
 
 export const FALLBACK_BETA = 'server-side-fallback-2026-07-01';
-const BREAKER_THRESHOLD = 5;
-const BREAKER_OPEN_MS = 30_000;
 
 /**
  * @returns 'aborted' | 'timeout' | 'connection' | 'rate_limited' | 'overloaded' | 'permanent'
@@ -51,29 +50,19 @@ export function costMicroUsd(usage, price) {
 export function createAiClient(config, { logger, clientImpl, now = Date.now } = {}) {
   const client =
     clientImpl ?? (config.enabled ? new Anthropic({ apiKey: config.apiKey, maxRetries: 2 }) : null);
-  let failures = 0;
-  let openUntil = 0;
+  const breaker = createBreaker({
+    name: 'ai',
+    isTransient: (err) => isTransient(classifyAiError(err)),
+    now,
+    logger,
+  });
 
   function guard() {
     if (!client) throw new AppError('UNAVAILABLE', { details: { reason: 'ai_disabled' } });
-    if (now() < openUntil) {
-      throw new AppError('UNAVAILABLE', { details: { reason: 'ai_circuit_open' } });
-    }
+    breaker.guard();
   }
 
-  function record(err) {
-    if (!err) {
-      failures = 0;
-      return;
-    }
-    if (!isTransient(classifyAiError(err))) return;
-    failures += 1;
-    if (failures >= BREAKER_THRESHOLD) {
-      openUntil = now() + BREAKER_OPEN_MS;
-      failures = 0;
-      logger?.warn({ openMs: BREAKER_OPEN_MS }, 'AI devre kesici açıldı');
-    }
-  }
+  const record = (err) => (err ? breaker.failure(err) : breaker.success());
 
   /** Ortak parametreler: yedek model yalnızca açıksa (kapatılabilir, 09 §1). */
   function withDefaults(params) {
