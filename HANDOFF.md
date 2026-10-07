@@ -107,7 +107,7 @@ Uçtan uca doğrulanan: misafir girişi → `/v1/user/me`, `/v1/user/progress` 2
 Kalan (önerilen sıra; her birinde sahte veriyi kaldır, gerçek uca bağla):
 
 1. [ ] Onboarding'i simülatörde sonuna kadar dene; `POST /v1/user/onboarding` 200 olmalı.
-2. [ ] Ana sayfa → `GET /v1/user/summary` (home_bloc + home kartları; doküman 13 §4 tablosu).
+2. [~] Ana sayfa → `GET /v1/user/summary`: **yapıldı** — `HomeBloc` tek çağrı (`lib/data/model/user/home_summary.dart`, `UserRepository.getSummary`), hata → `HomeError` (sahte "Squish"/seri 3 kaldırıldı), su/adım kartları ve kilo kartı gerçek veri. **Kalan:** `home_fasting_card` (activeFast + serverTime), `home_week_strip` (week), `home_meal_records_card` (lastMeal), `home_challenge_card` (featuredChallenge + join), oruç ekranındaki metrik kartları (şimdilik 0/varsayılan hedef). Modele ilgili alanları ekle.
 3. [ ] Oruç: `GET /v1/fasts/active`, `POST /v1/fasts`, `POST /v1/fasts/:id/finish`, `GET /v1/plans/current`, evreler `GET /v1/catalog/stages`.
 4. [ ] Su / kilo / adım / uyku / öğün / açlık ekranları (trackers, meals, hunger uçları).
 5. [ ] Sohbet (SSE) `/v1/chat/*`; fotoğraf analizi `/v1/meals/photo-analyses`.
