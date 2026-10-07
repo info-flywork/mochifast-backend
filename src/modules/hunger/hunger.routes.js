@@ -17,7 +17,7 @@ const hungerServiceFor = memoizeByDeps((app) =>
 export default async function hungerRoutes(app) {
   const hunger = hungerServiceFor(app);
   const read = { preHandler: app.requireAuth };
-  const write = { preHandler: [app.requireAuth, app.idempotent] };
+  const write = { preHandler: [app.requireAuth, app.requireHealthConsent, app.idempotent] };
 
   app.post('/evaluate', { ...read, schema: s.evaluateSchema }, (request) =>
     hunger.evaluate(request.user.id, request.body ?? {}, request.ctx.locale),

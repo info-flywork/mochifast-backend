@@ -51,6 +51,8 @@ export const guestSchema = {
       appVersion: shortText(32),
       osVersion: shortText(32),
       deviceModel: shortText(64),
+      // Silme talebi bekleyen hesabı geri aç (409 ACCOUNT_PENDING_DELETION sonrası).
+      restoreAccount: { type: 'boolean' },
     },
   },
   response: { 200: authResult(), 201: authResult() },
@@ -89,6 +91,7 @@ export const registerSchema = {
       locale,
       timezone,
       mergeGuest: { type: 'boolean' },
+      restoreAccount: { type: 'boolean' },
     },
   },
   response: { 200: registerResult, 201: registerResult },

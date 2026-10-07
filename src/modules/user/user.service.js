@@ -17,6 +17,7 @@ import {
   projection,
   reasonTargetDate,
 } from './onboarding.rules.js';
+import { healthConsentKey } from '../account/account.service.js';
 import * as repo from './user.repository.js';
 
 /** Sağlık verisi ve AI rızalarının kaydedildiği belge sürümü yoksa gizlilik metninin sürümü kullanılır. */
@@ -26,7 +27,7 @@ const CONSENT_SOURCE_ONBOARDING = 'onboarding';
  * Kullanıcı, onboarding, profil, ayarlar, hedefler (docs/backend/04-api.md §2).
  * `meta`: { ip, userAgent, timezone }
  */
-export function createUserService({ db, catalog, plans, stats, media, entitlements }) {
+export function createUserService({ db, cache, catalog, plans, stats, media, entitlements }) {
   async function requireUser(userId, conn) {
     const row = await repo.getUserWithUnits(db, userId, conn);
     if (!row) throw new AppError('NOT_FOUND');
@@ -72,11 +73,13 @@ export function createUserService({ db, catalog, plans, stats, media, entitlemen
 
   const service = {
     async getMe(userId) {
-      const dto = toMeDto(await requireUser(userId));
+      const row = await requireUser(userId);
+      const dto = toMeDto(row);
       return {
         ...dto,
         avatarUrl: (await media?.avatarUrl(userId)) ?? null,
         isPremium: (await entitlements?.isPremium(userId)) ?? false,
+        requiredConsents: row.onboarding_completed_at ? await requiredConsents(userId) : [],
       };
     },
 
@@ -394,7 +397,12 @@ export function createUserService({ db, catalog, plans, stats, media, entitlemen
           version: body.version,
           granted: body.granted,
         });
+        // Pazarlama rızası geri çekilince pazarlama bildirimi de kapanır (06 §8.1).
+        if (body.type === 'marketingPush' && !body.granted) {
+          await repo.upsertSettings(db, conn, userId, { notif_marketing: 0 });
+        }
       });
+      if (body.type === 'healthData') await cache?.del(healthConsentKey(userId));
       return service.listConsents(userId);
     },
 
@@ -415,6 +423,23 @@ export function createUserService({ db, catalog, plans, stats, media, entitlemen
       return { items };
     },
   };
+
+  /**
+   * Yasal metin sürümü değiştiyse (app_config.legal) yeniden onay gereken türler (06 §8.1).
+   * @returns API adları, ör. ['terms', 'privacy']
+   */
+  async function requiredConsents(userId) {
+    const legal = (await catalog.appConfig('all')).legal ?? {};
+    const current = { terms: legal.termsVersion, privacy: legal.privacyVersion };
+    const latest = new Map((await repo.latestConsents(db, userId)).map((r) => [r.consent_type, r]));
+    return Object.entries(current)
+      .filter(([type, version]) => {
+        if (!version) return false;
+        const last = latest.get(type);
+        return !last || !last.granted || last.document_version !== version;
+      })
+      .map(([type]) => type);
+  }
 
   async function ensureRows(userId) {
     await db.withTransaction((conn) => repo.ensureDefaults(db, conn, userId));

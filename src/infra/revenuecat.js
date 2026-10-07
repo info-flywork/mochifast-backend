@@ -112,6 +112,19 @@ export function createRevenueCatClient(config, { fetchImpl = fetch, logger } = {
       return request('GET', `/subscribers/${encodeURIComponent(appUserId)}`);
     },
 
+    /**
+     * Müşteri verisini siler (hesap silme, 06 §8.3). Aktif mağaza aboneliğini İPTAL ETMEZ:
+     * kullanıcı mağazadan iptal eder. Abone yoksa (404) başarı sayılır.
+     */
+    async deleteSubscriber(appUserId) {
+      try {
+        await request('DELETE', `/subscribers/${encodeURIComponent(appUserId)}`);
+      } catch (err) {
+        if (err?.details?.status === 404) return;
+        throw err;
+      }
+    },
+
     /** Süreli promosyon premium (destek/admin). `duration`: daily … lifetime. */
     async grantPromotional(appUserId, entitlement, duration) {
       return request(

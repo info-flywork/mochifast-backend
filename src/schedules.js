@@ -51,4 +51,18 @@ export const SCHEDULES = [
     jobName: 'notificationHousekeeping',
     everyMs: 86_400_000,
   },
+  // Hesap silme, dışa aktarma, saklama (06 §8)
+  {
+    id: 'account-deletion-sweep',
+    queue: 'account',
+    jobName: 'accountDeletionSweep',
+    everyMs: 3_600_000,
+  },
+  {
+    id: 'account-export-expire',
+    queue: 'account',
+    jobName: 'dataExportExpire',
+    everyMs: 3_600_000,
+  },
+  { id: 'account-retention', queue: 'account', jobName: 'accountRetention', everyMs: 86_400_000 },
 ];

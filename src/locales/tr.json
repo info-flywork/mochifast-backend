@@ -19,6 +19,7 @@
     "FAST_OVERLAP": "Bu oruç başka bir orucunla çakışıyor.",
     "IDEMPOTENCY_KEY_REUSED": "Bu istek daha önce farklı verilerle gönderilmiş.",
     "ACCOUNT_LINK_CONFLICT": "Bu giriş yöntemi başka bir MochiFast hesabına bağlı.",
+    "ACCOUNT_PENDING_DELETION": "Bu hesap silinmek üzere. Geri almak ister misin?",
     "REPLY_IN_PROGRESS": "Mochi hâlâ cevap yazıyor. Biraz bekle.",
     "GONE": "Bu hesap artık kullanılamıyor.",
     "PAYLOAD_TOO_LARGE": "Dosya veya istek çok büyük.",

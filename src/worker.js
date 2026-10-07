@@ -9,6 +9,7 @@ import { createScheduler, createWorker } from './infra/queue.js';
 import { SCHEDULES } from './schedules.js';
 import { createMediaStorage } from './infra/bunny.js';
 import { createFieldCrypto } from './infra/crypto.js';
+import { accountJobs } from './jobs/account.jobs.js';
 import { aiJobs } from './jobs/ai.jobs.js';
 import { billingJobs } from './jobs/billing.jobs.js';
 import { notificationJobs } from './jobs/notifications.jobs.js';
@@ -95,6 +96,16 @@ const workers = [
     handlers: notificationJobs({ db, config, logger }),
     // Gönderim dış çağrıdır (FCM); paralel işlenir.
     concurrency: 8,
+    pollMs: config.worker.pollMs,
+    logger,
+  }),
+  createWorker({
+    db,
+    queue: QUEUES.account,
+    handlers: accountJobs({ db, storage, config, logger }),
+    // Silme ve zip üretimi ağır; tek tek işlenir.
+    concurrency: 1,
+    timeoutMs: 600_000,
     pollMs: config.worker.pollMs,
     logger,
   }),

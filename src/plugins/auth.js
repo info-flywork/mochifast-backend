@@ -3,6 +3,8 @@ import { AppError } from '../shared/errors.js';
 import { toBin } from '../shared/ids.js';
 
 const SESSION_CACHE_TTL_SEC = 60;
+/** `users.last_active_at` en fazla bu aralıkla yazılır (misafir saklama süresi, 06 §8.4). */
+const ACTIVITY_TOUCH_SEC = 3_600;
 
 /** Bir kullanıcının oturum cache kayıtlarının öneki; iptalde `cache.delPrefix` ile silinir. */
 export function sessionCachePrefix(userId) {
@@ -56,6 +58,19 @@ export default fp(
       if (!session.active) throw new AppError('UNAUTHENTICATED', { message: 'oturum geçersiz' });
 
       request.user = { id: userId, sessionId, isGuest: session.isGuest };
+      await touchActivity(request, userId);
+    }
+
+    /** Son etkinlik; yanıtı bekletmez, `updated_at`'i değiştirmez. */
+    async function touchActivity(request, userId) {
+      const key = `active:${userId}`;
+      if ((await app.deps.cache.get(key)) !== null) return;
+      await app.deps.cache.set(key, 1, ACTIVITY_TOUCH_SEC);
+      app.deps.db
+        .run('UPDATE users SET last_active_at = NOW(3), updated_at = updated_at WHERE id = :id', {
+          id: toBin(userId),
+        })
+        .catch((err) => request.log.warn({ err }, 'last_active_at yazılamadı'));
     }
 
     app.decorate('requireAuth', async function requireAuth(request) {

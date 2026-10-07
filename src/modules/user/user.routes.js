@@ -28,6 +28,7 @@ import {
 export const userServiceFor = memoizeByDeps((app) =>
   createUserService({
     db: app.deps.db,
+    cache: app.deps.cache,
     catalog: catalogServiceFor(app),
     plans: plansServiceFor(app),
     stats: statsServiceFor(app),

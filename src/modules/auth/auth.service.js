@@ -7,12 +7,16 @@ import { isValidTimezone } from '../../shared/time.js';
 import { createWindowLimiter } from '../../shared/window-limiter.js';
 import { sessionCachePrefix } from '../../plugins/auth.js';
 import { writeAudit } from '../audit/audit.repository.js';
+import * as accountRepo from '../account/account.repository.js';
 import { GUEST_MERGE_STEPS } from './guest-merge.js';
 import * as repo from './auth.repository.js';
 
 const ER_DUP_ENTRY = 1062;
 /** Aynı refresh token'la paralel gelen isteklere aynı yeni çift bu süre boyunca döner. */
 const REFRESH_GRACE_SEC = 10;
+
+/** Hesap birleştirmede kapatılan misafirin silinmesine kalan süre (05 §11). */
+const GUEST_RETIRED_DAYS = 30;
 
 /**
  * Kimlik doğrulama iş kuralları (docs/backend/04-api.md §1, 06-guvenlik.md §2, 05-is-kurallari.md §11).
@@ -101,8 +105,35 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
   /** Misafir/terk edilen hesabı kapatır: installId ile girilemez, oturumları iptal, 30 gün sonra silinir. */
   async function retireGuest(conn, guestId) {
     await repo.setUserStatus(db, conn, guestId, 'pending_deletion');
+    await accountRepo.insertDeletionRequest(db, conn, {
+      userId: guestId,
+      source: 'guest_retired',
+      scheduledFor: new Date(Date.now() + GUEST_RETIRED_DAYS * 86_400_000),
+    });
     await repo.deleteGuestIdentities(db, conn, guestId);
     await repo.revokeUserSessions(db, conn, guestId, 'account_switched');
+  }
+
+  /**
+   * Var olan kimliğin hesabına giriş izni. Kullanıcının kendi silme talebi beklemedeyse
+   * 409 ACCOUNT_PENDING_DELETION; `restoreAccount: true` ile talep iptal edilir, hesap açılır.
+   */
+  async function admitExisting(conn, existing, input, meta) {
+    if (existing.status === 'pending_deletion') {
+      const pending = await accountRepo.scheduledDeletion(db, existing.userId, conn);
+      if (pending?.source === 'user') {
+        if (input.restoreAccount !== true) {
+          throw new AppError('ACCOUNT_PENDING_DELETION', {
+            details: { scheduledFor: pending.scheduledFor.toISOString(), options: ['restore'] },
+          });
+        }
+        await accountRepo.cancelDeletion(db, conn, existing.userId);
+        await repo.setUserStatus(db, conn, existing.userId, 'active');
+        await audit(conn, meta, 'account.restored', existing.userId, {});
+        return;
+      }
+    }
+    assertUsable(existing.status);
   }
 
   const service = {
@@ -124,7 +155,7 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
           const existing = await repo.findIdentity(db, conn, 'guest', input.installId);
           let userId;
           if (existing) {
-            assertUsable(existing.status);
+            await admitExisting(conn, existing, input, meta);
             userId = existing.userId;
             await repo.touchIdentity(db, conn, existing.id);
           } else {
@@ -191,7 +222,7 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
           let outcome;
 
           if (existing) {
-            assertUsable(existing.status);
+            await admitExisting(conn, existing, input, meta);
             userId = existing.userId;
             outcome = 'login';
             if (guestUser && guestUser.id !== userId) {

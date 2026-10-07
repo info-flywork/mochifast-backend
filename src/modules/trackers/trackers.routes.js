@@ -28,7 +28,7 @@ const meta = (r) => ({ ip: r.ip, userAgent: r.headers['user-agent'], timezone: r
 export async function weightsRoutes(app) {
   const { weights } = trackersFor(app);
   const read = { preHandler: app.requireAuth };
-  const write = { preHandler: [app.requireAuth, app.idempotent] };
+  const write = { preHandler: [app.requireAuth, app.requireHealthConsent, app.idempotent] };
 
   app.post('/', { ...write, schema: s.weightCreateSchema }, async (request, reply) => {
     const result = await weights.create(request.user.id, request.body);
@@ -60,7 +60,7 @@ export async function weightsRoutes(app) {
 export async function waterRoutes(app) {
   const { water } = trackersFor(app);
   const read = { preHandler: app.requireAuth };
-  const write = { preHandler: [app.requireAuth, app.idempotent] };
+  const write = { preHandler: [app.requireAuth, app.requireHealthConsent, app.idempotent] };
 
   app.get('/day', { ...read, schema: s.waterDaySchema }, (request) =>
     water.day(request.user.id, request.query.date),
@@ -82,7 +82,7 @@ export async function waterRoutes(app) {
 export async function stepsRoutes(app) {
   const { steps } = trackersFor(app);
   const read = { preHandler: app.requireAuth };
-  const write = { preHandler: [app.requireAuth, app.idempotent] };
+  const write = { preHandler: [app.requireAuth, app.requireHealthConsent, app.idempotent] };
 
   app.get('/', { ...read, schema: s.stepsListSchema }, (request) =>
     steps.list(request.user.id, request.query),
@@ -99,7 +99,7 @@ export async function stepsRoutes(app) {
 export async function sleepRoutes(app) {
   const { sleep } = trackersFor(app);
   const read = { preHandler: app.requireAuth };
-  const write = { preHandler: [app.requireAuth, app.idempotent] };
+  const write = { preHandler: [app.requireAuth, app.requireHealthConsent, app.idempotent] };
 
   app.post('/', { ...write, schema: s.sleepCreateSchema }, async (request, reply) => {
     const result = await sleep.create(request.user.id, request.body);

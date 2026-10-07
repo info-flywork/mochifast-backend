@@ -16,9 +16,9 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
       bilinçli kilit).
 - [ ] **Paylaşılan şifreleri değiştir:** DB şifresi ve Bunny storage şifresi sohbette açık yazıldı. Değiştirip
       `.env` / `.env.production`'a yeni değerleri koy.
-- [ ] **Branch'i push'la / merge et:** `feat/backend-f0-f1` (F0–F9 commit'leri) henüz uzakta yok.
-- [ ] **Sunucuda deploy:** `npm ci` → `npm run migrate` (0016'ya kadar) → `npm run seed` → `npm run stats:recompute`
-      → PM2'de API **ve worker** yeniden başlat (yeni kuyruklar: `stats`, `media`, `ai`, `billing`, `notifications`).
+- [ ] **Branch'i push'la / merge et:** `feat/backend-f0-f1` (F0–F10 commit'leri) henüz uzakta yok.
+- [ ] **Sunucuda deploy:** `npm ci` → `npm run migrate` (0017'ye kadar) → `npm run seed` → `npm run stats:recompute`
+      → PM2'de API **ve worker** yeniden başlat (yeni kuyruklar: `stats`, `media`, `ai`, `billing`, `notifications`, `account`).
       `scripts/deploy.sh` migrate + seed + pm2'yi yapar; `stats:recompute`'u ilk seferde elle çalıştır.
 
 ## 1. `.env` ve `.env.production` — boş alanlar (dosyalara eklendi, değerleri sen gir)
@@ -44,7 +44,7 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
 ### Bunny (private zone)
 
 - [ ] Storage zone: `mochifast-private` (Falkenstein/DE + AB içi replikasyon).
-- [ ] Pull zone: **Token Authentication AÇIK**, hotlink koruması, yalnızca GET; izin verilen uzantı `webp`.
+- [ ] Pull zone: **Token Authentication AÇIK**, hotlink koruması, yalnızca GET; izin verilen uzantılar `webp` **ve `zip`** (veri dışa aktarma).
 - [ ] (İsteğe bağlı) özel alan adı `media.mochifast.app` + TLS.
 - [ ] Kurulumdan sonra staging'de kontrol: token'sız URL → 403, imzalı URL → 200 (bunu birlikte yapalım).
 
@@ -115,12 +115,21 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
       `onTokenRefresh`'te tekrar gönder. Android'de `quiet` kanalı (düşük önem) oluştur — sessiz saat push'ları oraya gider.
 - [ ] Inbox ekranı `GET /v1/notifications` + rozet `unread-count`; okundu / tümü okundu / kaydırarak sil.
       Push verisindeki `deepLink` ile yönlendirme (`notificationId` gelirse okundu işaretle).
+- [x] **Hesabı sil** Profili Düzenle ekranının en altında: onay → Apple ile girildiyse token iptali → `DELETE /v1/user/me` → çıkış;
+      abonelik varsa uyarı. Girişte `409 ACCOUNT_PENDING_DELETION` → geri alma sorusu → `restoreAccount: true`.
+      (Kod yazıldı, cihazda denenmedi.)
+- [ ] Verilerimi indir: uygulamada **bilinçli olarak yok** (karar). Backend ucu hazır (`POST /v1/user/me/export`); KVKK/GDPR
+      erişim talebi gelirse destekten tetiklenebilir ya da ekran sonradan eklenir.
+- [ ] Yeniden onay: `GET /v1/user/me` → `requiredConsents` boş değilse şartlar/gizlilik ekranı → `POST /v1/user/consents`.
+      Ayarlarda rıza anahtarları (sağlık verisi, AI, pazarlama); sağlık geri çekilince kayıt ekranları 403 gösterir.
 - [ ] Bildirim ayarları ekranı: kategoriler (`fasting`, `streak`, `weight`, `water`, `challenges`, **`world`**), sessiz saatler,
       su hatırlatma aralığı → `PATCH /v1/user/settings`. Uygulamadaki yerel oruç bildirimlerini kaldır (çift bildirim olur).
 
 ## 6. Bilinçli ertelenenler / açık kararlar
 
 - [ ] `/user/summary` cache'i: bildirimler domain servislerinden doğrudan planlandı, ayrı olay altyapısı gerekmedi; cache ihtiyaç olursa.
+- [ ] İnaktif **kayıtlı** hesap saklama (24 ay + uyarı + 30 gün): e-posta kanalı olmadığı için yapılmadı.
+- [ ] Play Store web hesap silme sayfası → F10 2. hafta (admin API ile).
 - [ ] Widget yenilemesi için sessiz push (F9 opsiyonel) yapılmadı. `subscription_expiring`, dışa aktarma ve hesap silme
       bildirimlerinin tetikleyicileri F10'da.
 - [ ] Challenge katılımcı avatarları: "challenge'larda görün" izin ayarı yok → liste boş, istemci maskot gösteriyor. İstersen ekleriz.

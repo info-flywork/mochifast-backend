@@ -53,7 +53,7 @@ export async function insertMedia(db, m, conn) {
   await db.run(
     `INSERT INTO media (id, owner_user_id, purpose, visibility, storage_path, variants, mime, bytes,
                         width, height, blurhash, sha256, status)
-     VALUES (:id, :owner, :purpose, :visibility, :path, :variants, 'image/webp', :bytes, :width,
+     VALUES (:id, :owner, :purpose, :visibility, :path, :variants, :mime, :bytes, :width,
              :height, :blurhash, :sha256, 'processing')`,
     {
       id: toBin(m.id),
@@ -62,6 +62,7 @@ export async function insertMedia(db, m, conn) {
       visibility: m.visibility,
       path: m.storagePath,
       variants: JSON.stringify(m.variants),
+      mime: m.mime ?? 'image/webp',
       bytes: m.bytes,
       width: m.width,
       height: m.height,

@@ -21,7 +21,7 @@ export async function mealsRoutes(app) {
   // `/:id`'den önce: sabit yol parametreli yolla karışmasın.
   await app.register(photoAnalysisRoutes);
   const read = { preHandler: app.requireAuth };
-  const write = { preHandler: [app.requireAuth, app.idempotent] };
+  const write = { preHandler: [app.requireAuth, app.requireHealthConsent, app.idempotent] };
 
   app.post('/', { ...write, schema: s.mealCreateSchema }, async (request, reply) => {
     const { created, ...result } = await meals.create(request.user.id, request.body ?? {});

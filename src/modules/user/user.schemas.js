@@ -71,6 +71,8 @@ export const meSchema = {
     'createdAt',
   ],
   properties: {
+    // Yasal metin sürümü değiştiyse yeniden onay istenecek türler (POST /user/consents).
+    requiredConsents: { type: 'array', items: { type: 'string', enum: ['terms', 'privacy'] } },
     id: uuidSchema,
     name: { type: ['string', 'null'] },
     email: { type: ['string', 'null'] },

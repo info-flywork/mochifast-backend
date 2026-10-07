@@ -19,6 +19,7 @@
     "FAST_OVERLAP": "Dieses Fasten überschneidet sich mit einem anderen.",
     "IDEMPOTENCY_KEY_REUSED": "Diese Anfrage wurde bereits mit anderen Daten gesendet.",
     "ACCOUNT_LINK_CONFLICT": "Diese Anmeldung ist bereits mit einem anderen MochiFast-Konto verknüpft.",
+    "ACCOUNT_PENDING_DELETION": "Dieses Konto ist zur Löschung vorgemerkt. Möchtest du es wiederherstellen?",
     "REPLY_IN_PROGRESS": "Mochi antwortet noch. Bitte warte kurz.",
     "GONE": "Dieses Konto ist nicht mehr verfügbar.",
     "PAYLOAD_TOO_LARGE": "Die Datei oder Anfrage ist zu groß.",
