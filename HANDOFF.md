@@ -67,7 +67,7 @@ Durumu güncelle: bitirince `[x]` yap.
        Son 14 günün oruçlarından: bugün hedefi tutturma olasılığı (tamamlama oranı + bugüne kadarki seri), tahmini bitiş
        saati (aktif oruç varsa `startedAt + target`, yoksa plan yeme penceresi sonu), "en zor saat" (geçmiş zorlanma
        olaylarının (`struggle_events`) en sık saati). Veri azsa `{available:false}` → istemci kartı gizler. Testleri ekle.
-2. [ ] **Günlük ipucu** `GET /v1/fasts/daily-tip` — `fasting_mochi_plan_card`. AI kullanma; katalogdaki
+2. [x] **Günlük ipucu** `GET /v1/fasts/daily-tip` — `fasting_mochi_plan_card`. AI kullanma; katalogdaki
        (`content.items` / insights) ipuçlarından gün + kullanıcıya göre deterministik seçim, dile göre. Cache'le.
 3. [x] **Refresh için aile başına limit** (06 §7: 30/saat) — `src/modules/auth/auth.service.js` `refresh()`; `createWindowLimiter` ile `familyId` anahtarı.
 4. [ ] **Sunucu tarafı misafir sırrı** (güvenlik denetimi bulgu 7): misafir oluşturulurken rastgele sır üret, hash'ini

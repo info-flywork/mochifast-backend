@@ -415,4 +415,25 @@ describe.skipIf(!mysqlUrl)('plan & oruç (gerçek MySQL)', () => {
     const g = await get();
     expect(g.fast).toMatchObject({ active: true, startsAt: active.startedAt });
   });
+
+  it('günün ipucu: oruç yokken yeme, oruçta oruç ipucu; dile göre; gün içinde aynı', async () => {
+    const { token } = await newUser();
+    const tip = async (lang) =>
+      (
+        await call('GET', '/fasts/daily-tip', { token, headers: { 'accept-language': lang } })
+      ).json().data.tip;
+    const eat = await tip('tr');
+    expect(eat).toMatchObject({ phase: 'eat' });
+    expect(eat.code).toMatch(/^eat_/);
+    expect(eat.text.length).toBeGreaterThan(10);
+    expect((await tip('tr')).code).toBe(eat.code);
+    const en = await tip('en');
+    expect(en.code).toBe(eat.code);
+    expect(en.text).not.toBe(eat.text);
+
+    await start(token, { startedAt: ago(1) });
+    const fast = await tip('tr');
+    expect(fast.phase).toBe('fast');
+    expect(fast.code).toMatch(/^fast_/);
+  });
 });

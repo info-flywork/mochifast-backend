@@ -123,6 +123,7 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
 - [ ] Benim yazdığım metinler (anadil kontrolü iyi olur):
   - açlık check-in güvenlik önerisi `safety_end_fast` (7 dil) — `scripts/extract-translations.js`
   - sohbet ret mesajı (7 dil) — `src/modules/chat/chat.service.js` `REFUSAL_TEXT`
+  - **Günün ipuçları** (10 × 7 dil) — `seeds/catalog_labels.json` → `daily_tip`
   - **20 bildirim şablonu × 7 dil** — `seeds/notifications.json` (çoğu yeni; ton ve uzunluk push için kısa olmalı)
   - 3 challenge'ın metinleri (`week_fasts_3`, `water_week_5`, `hunger_aware_5`) — `seeds/gamification.json`
 - [ ] Uygulama çevirileri: İspanyolca/Fransızca çevrilmemiş metinler (ayrı görev açılmıştı); İngilizce

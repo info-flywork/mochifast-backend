@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { pickTip } from '../../src/modules/fasting/daily-tip.js';
 import { forecastStats, upcomingFast } from '../../src/modules/fasting/forecast.js';
 
 describe('Fast Forecast', () => {
@@ -87,5 +88,18 @@ describe('Fast Forecast', () => {
         timezone: 'UTC',
       }),
     ).toBeNull();
+  });
+
+  it('günün ipucu: kullanıcı + gün için sabit, sıradan bağımsız; günler arasında dağılır', () => {
+    const codes = ['fast_a', 'fast_b', 'fast_c', 'fast_d'];
+    const one = pickTip(codes, 'u1', '2026-10-07');
+    expect(pickTip([...codes].reverse(), 'u1', '2026-10-07')).toBe(one);
+    const days = new Set(
+      Array.from({ length: 30 }, (_, i) =>
+        pickTip(codes, 'u1', `2026-11-${String(i + 1).padStart(2, '0')}`),
+      ),
+    );
+    expect(days.size).toBeGreaterThan(1);
+    expect(pickTip([], 'u1', '2026-10-07')).toBeNull();
   });
 });

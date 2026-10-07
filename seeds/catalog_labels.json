@@ -101,5 +101,97 @@
       "it": "Scegli i miei orari",
       "ru": "Выбрать своё время"
     }
+  },
+  "daily_tip": {
+    "fast_water": {
+      "en": "Sip water regularly — thirst often feels like hunger.",
+      "tr": "Düzenli su iç; susuzluk çoğu zaman açlık gibi hissettirir.",
+      "de": "Trink regelmäßig Wasser – Durst fühlt sich oft wie Hunger an.",
+      "es": "Bebe agua con frecuencia: la sed a menudo se siente como hambre.",
+      "fr": "Bois de l’eau régulièrement : la soif ressemble souvent à la faim.",
+      "it": "Bevi acqua regolarmente: la sete spesso sembra fame.",
+      "ru": "Пейте воду регулярно — жажду часто принимают за голод."
+    },
+    "fast_wave": {
+      "en": "Hunger comes in waves. Give it 15 minutes and it usually passes.",
+      "tr": "Açlık dalga dalga gelir. 15 dakika ver, genelde geçer.",
+      "de": "Hunger kommt in Wellen. Gib ihm 15 Minuten, meist vergeht er.",
+      "es": "El hambre llega en oleadas. Dale 15 minutos y suele pasar.",
+      "fr": "La faim vient par vagues. Laisse passer 15 minutes, elle s’en va souvent.",
+      "it": "La fame arriva a ondate. Concedile 15 minuti e di solito passa.",
+      "ru": "Голод приходит волнами. Подождите 15 минут — обычно он проходит."
+    },
+    "fast_walk": {
+      "en": "A short walk can take the edge off cravings and lift your energy.",
+      "tr": "Kısa bir yürüyüş isteği bastırır ve enerjini yükseltir.",
+      "de": "Ein kurzer Spaziergang dämpft Heißhunger und hebt die Energie.",
+      "es": "Un paseo corto calma los antojos y te da energía.",
+      "fr": "Une courte marche apaise les envies et redonne de l’énergie.",
+      "it": "Una breve camminata calma le voglie e alza l’energia.",
+      "ru": "Короткая прогулка снимает тягу к еде и добавляет энергии."
+    },
+    "fast_tea": {
+      "en": "Plain tea or black coffee won't break your fast.",
+      "tr": "Sade çay ya da sade kahve orucunu bozmaz.",
+      "de": "Ungesüßter Tee oder schwarzer Kaffee bricht dein Fasten nicht.",
+      "es": "El té solo o el café negro no rompen tu ayuno.",
+      "fr": "Le thé nature ou le café noir ne rompent pas ton jeûne.",
+      "it": "Tè semplice o caffè nero non interrompono il digiuno.",
+      "ru": "Чай без добавок или чёрный кофе не прерывают голодание."
+    },
+    "fast_busy": {
+      "en": "Keep your hands and mind busy during your toughest hour.",
+      "tr": "En zor saatinde elini ve aklını meşgul tut.",
+      "de": "Beschäftige Hände und Kopf in deiner schwierigsten Stunde.",
+      "es": "Mantén las manos y la mente ocupadas en tu hora más difícil.",
+      "fr": "Occupe tes mains et ton esprit pendant ton heure la plus difficile.",
+      "it": "Tieni occupate mani e mente nella tua ora più difficile.",
+      "ru": "В самый трудный час займите руки и голову."
+    },
+    "fast_sleep": {
+      "en": "Good sleep makes fasting easier — the hours you sleep count too.",
+      "tr": "İyi uyku orucu kolaylaştırır; uyuduğun saatler de sayılır.",
+      "de": "Guter Schlaf erleichtert das Fasten – auch Schlafstunden zählen.",
+      "es": "Dormir bien facilita el ayuno: las horas de sueño también cuentan.",
+      "fr": "Bien dormir facilite le jeûne : les heures de sommeil comptent aussi.",
+      "it": "Dormire bene rende il digiuno più facile: anche le ore di sonno contano.",
+      "ru": "Хороший сон облегчает голодание — часы сна тоже считаются."
+    },
+    "eat_protein": {
+      "en": "Break your fast with protein and vegetables to stay full longer.",
+      "tr": "Orucunu protein ve sebzeyle aç; daha uzun tok kalırsın.",
+      "de": "Brich dein Fasten mit Eiweiß und Gemüse – so bleibst du länger satt.",
+      "es": "Rompe el ayuno con proteína y verduras para saciarte más tiempo.",
+      "fr": "Romps ton jeûne avec des protéines et des légumes pour rester rassasié·e plus longtemps.",
+      "it": "Interrompi il digiuno con proteine e verdure per restare sazio più a lungo.",
+      "ru": "Выходите из голодания с белком и овощами — сытость продержится дольше."
+    },
+    "eat_slow": {
+      "en": "Eat slowly. It takes about 20 minutes to feel full.",
+      "tr": "Yavaş ye; tokluğu hissetmek yaklaşık 20 dakika sürer.",
+      "de": "Iss langsam. Es dauert etwa 20 Minuten, bis du dich satt fühlst.",
+      "es": "Come despacio: sentirte lleno tarda unos 20 minutos.",
+      "fr": "Mange lentement : il faut environ 20 minutes pour se sentir rassasié·e.",
+      "it": "Mangia lentamente: servono circa 20 minuti per sentirsi sazi.",
+      "ru": "Ешьте медленно: чувство сытости приходит примерно через 20 минут."
+    },
+    "eat_plan": {
+      "en": "Plan your last meal so your next fast starts on time.",
+      "tr": "Son öğününü planla ki sıradaki orucun zamanında başlasın.",
+      "de": "Plane deine letzte Mahlzeit, damit das nächste Fasten pünktlich beginnt.",
+      "es": "Planifica tu última comida para empezar el próximo ayuno a tiempo.",
+      "fr": "Planifie ton dernier repas pour commencer le prochain jeûne à l’heure.",
+      "it": "Pianifica l’ultimo pasto così il prossimo digiuno inizia in orario.",
+      "ru": "Спланируйте последний приём пищи, чтобы следующее голодание началось вовремя."
+    },
+    "eat_fiber": {
+      "en": "Fiber-rich foods like oats and legumes make the next fast easier.",
+      "tr": "Yulaf ve baklagil gibi lifli besinler sıradaki orucu kolaylaştırır.",
+      "de": "Ballaststoffreiche Lebensmittel wie Hafer und Hülsenfrüchte erleichtern das nächste Fasten.",
+      "es": "Los alimentos ricos en fibra, como la avena y las legumbres, facilitan el próximo ayuno.",
+      "fr": "Les aliments riches en fibres comme l’avoine et les légumineuses facilitent le prochain jeûne.",
+      "it": "Cibi ricchi di fibre come avena e legumi rendono più facile il prossimo digiuno.",
+      "ru": "Продукты с клетчаткой, например овёс и бобовые, облегчают следующее голодание."
+    }
   }
 }

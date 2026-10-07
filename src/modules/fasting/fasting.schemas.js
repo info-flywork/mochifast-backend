@@ -396,3 +396,26 @@ export const forecastSchema = {
     }),
   },
 };
+
+export const dailyTipSchema = {
+  tags: ['fasts'],
+  summary: 'Günün ipucu (oruç sürüyorsa oruç, değilse yeme penceresi ipucu; dile göre)',
+  security: bearer,
+  response: {
+    200: envelope({
+      type: 'object',
+      required: ['tip'],
+      properties: {
+        tip: {
+          type: ['object', 'null'],
+          properties: {
+            code: { type: 'string' },
+            phase: { type: 'string', enum: ['fast', 'eat'] },
+            date: { type: 'string' },
+            text: { type: 'string' },
+          },
+        },
+      },
+    }),
+  },
+};

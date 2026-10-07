@@ -3,10 +3,12 @@ import { contentServiceFor } from '../catalog/catalog.routes.js';
 import { plansServiceFor } from '../plans/plans.routes.js';
 import { statsServiceFor } from '../stats/stats.routes.js';
 import { createFastingService } from './fasting.service.js';
+import { createDailyTipService } from './daily-tip.js';
 import { createForecastService } from './forecast.js';
 import {
   activeSchema,
   cancelSchema,
+  dailyTipSchema,
   finishSchema,
   forecastSchema,
   getSchema,
@@ -34,6 +36,7 @@ export const fastingServiceFor = memoizeByDeps((app) =>
 export const forecastServiceFor = memoizeByDeps((app) =>
   createForecastService({ db: app.deps.db }),
 );
+const dailyTipFor = memoizeByDeps((app) => createDailyTipService({ db: app.deps.db }));
 
 /**
  * `/v1/fasts` (docs/backend/04-api.md §6). Yazma uçları Idempotency-Key destekler.
@@ -67,6 +70,12 @@ export default async function fastingRoutes(app) {
   });
 
   // `/:id`'den önce: sabit yollar parametreli yolla karışmasın.
+  app.get('/daily-tip', { ...read, schema: dailyTipSchema }, (request) =>
+    dailyTipFor(app).dailyTip(
+      request.user.id,
+      request.headers['accept-language'] ? request.ctx.locale : null,
+    ),
+  );
   app.get('/forecast', { ...read, schema: forecastSchema }, (request) =>
     forecast.forecast(request.user.id),
   );
