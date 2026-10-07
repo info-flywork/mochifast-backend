@@ -5,6 +5,7 @@ import { loadConfig } from './config/index.js';
 import { createLogger } from './infra/logger.js';
 import { initSentry, flushSentry } from './infra/sentry.js';
 import { createDatabase } from './infra/db.js';
+import { createMediaStorage } from './infra/bunny.js';
 import { createCache } from './infra/cache.js';
 import { createJobQueue } from './infra/queue.js';
 import { createTokenService } from './infra/tokens.js';
@@ -27,12 +28,18 @@ const jobs = createJobQueue(db);
 const tokens = await createTokenService(config.auth);
 const crypto = createFieldCrypto(config.fieldEncryption);
 const firebase = createFirebaseVerifier(config.firebase);
+const storage = createMediaStorage(config.media, {
+  logger,
+  baseUrl: config.server.publicBaseUrl || `http://localhost:${config.server.port}`,
+});
+if (storage.driver === 'local')
+  logger.warn({ dir: config.media.localDir }, 'medya yerel diske yazılıyor (MEDIA_DRIVER=local)');
 if (!firebase.enabled) logger.warn('FIREBASE_PROJECT_ID yok: Apple/Google girişi kapalı');
 
 const app = await buildApp({
   config,
   logger,
-  deps: { db, cache, jobs, metrics, tokens, crypto, firebase },
+  deps: { db, cache, jobs, metrics, tokens, crypto, firebase, storage },
 });
 
 app.addHook('onClose', async () => {

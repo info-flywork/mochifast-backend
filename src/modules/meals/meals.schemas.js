@@ -5,6 +5,7 @@ import {
   pageQuerySchema,
   uuidSchema,
 } from '../../shared/schemas.js';
+import { mediaSchema } from '../media/media.schemas.js';
 
 const bearer = [{ bearerAuth: [] }];
 const dateTime = { type: 'string', format: 'date-time' };
@@ -31,6 +32,8 @@ const editable = {
   proteinG: { type: ['number', 'null'], minimum: 0, maximum: 1000 },
   carbsG: { type: ['number', 'null'], minimum: 0, maximum: 2000 },
   fatG: { type: ['number', 'null'], minimum: 0, maximum: 1000 },
+  // POST /v1/media ile yüklenmiş kendi öğün fotoğrafı; null bağlantıyı kaldırır.
+  photoMediaId: { type: ['string', 'null'], format: 'uuid' },
 };
 
 export const mealSchema = {
@@ -51,6 +54,7 @@ export const mealSchema = {
     fatG: nnum,
     source: { type: 'string' },
     breaksFastId: nstr,
+    photo: mediaSchema,
   },
 };
 const mealResponse = (extra = {}) =>

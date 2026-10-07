@@ -1,6 +1,8 @@
 import { deprecatedRoute, memoizeByDeps } from '../../shared/legacy.js';
 import { catalogServiceFor } from '../catalog/catalog.routes.js';
 import { fastingServiceFor } from '../fasting/fasting.routes.js';
+import { mediaServiceFor, readUpload, uploadRateLimit } from '../media/media.routes.js';
+import { avatarDeleteSchema, avatarPutSchema } from '../media/media.schemas.js';
 import { plansServiceFor } from '../plans/plans.routes.js';
 import { statsServiceFor } from '../stats/stats.routes.js';
 import { createSummaryService } from './summary.service.js';
@@ -28,6 +30,7 @@ export const userServiceFor = memoizeByDeps((app) =>
     catalog: catalogServiceFor(app),
     plans: plansServiceFor(app),
     stats: statsServiceFor(app),
+    media: mediaServiceFor(app),
   }),
 );
 
@@ -69,6 +72,15 @@ export default async function userRoutes(app, options) {
   }
 
   app.get('/me', { ...auth, schema: getMeSchema }, (request) => service.getMe(request.user.id));
+  // Avatar senkron yüklenir; eski avatar hemen silinir (docs/backend/08-medya-bunny.md §6).
+  app.put(
+    '/me/avatar',
+    { ...auth, schema: avatarPutSchema, config: uploadRateLimit },
+    async (request) => mediaServiceFor(app).setAvatar(request.user.id, await readUpload(request)),
+  );
+  app.delete('/me/avatar', { ...auth, schema: avatarDeleteSchema }, (request) =>
+    mediaServiceFor(app).removeAvatar(request.user.id),
+  );
   app.patch('/me', { ...auth, schema: patchMeSchema }, (request) =>
     service.updateMe(request.user.id, request.body),
   );

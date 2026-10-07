@@ -22,6 +22,7 @@ export const API_PREFIX = '/v1';
 export const QUEUES = Object.freeze({
   system: 'system',
   stats: 'stats',
+  media: 'media',
 });
 
 /** Cache anahtar ad alanları (docs/backend/07-cache-performans.md §3). */

@@ -11,6 +11,18 @@ const base = {
   FIELD_ENCRYPTION_ACTIVE_KID: '1',
 };
 
+/** Üretimde zorunlu medya ayarları (private zone token korumalı, public'ten ayrı). */
+const prodMedia = {
+  MEDIA_DRIVER: 'bunny',
+  MEDIA_PATH_SECRET: 'x'.repeat(32),
+  BUNNY_STORAGE_ZONE: 'mochifast',
+  BUNNY_PULL_ZONE_HOST: 'mochifast.b-cdn.net',
+  BUNNY_PRIVATE_STORAGE_ZONE: 'mochifast-private',
+  BUNNY_PRIVATE_STORAGE_PASSWORD: 'secret',
+  BUNNY_PRIVATE_PULL_ZONE_HOST: 'mochifast-private.b-cdn.net',
+  BUNNY_TOKEN_AUTH_KEY: 'token-key',
+};
+
 describe('loadConfig', () => {
   it('varsayılanları uygular ve tipleri dönüştürür', () => {
     const c = loadConfig({
@@ -43,16 +55,35 @@ describe('loadConfig', () => {
   });
 
   it('üretimde uzak MySQL için DB_SSL zorunlu, localhost için değil', () => {
-    const remote = { ...base, NODE_ENV: 'production', DB_HOST: 'db.example.com' };
+    const remote = { ...base, ...prodMedia, NODE_ENV: 'production', DB_HOST: 'db.example.com' };
     expect(() => loadConfig(remote)).toThrow(/DB_SSL/);
     expect(loadConfig({ ...remote, DB_SSL: 'true' }).isProduction).toBe(true);
-    expect(loadConfig({ ...base, NODE_ENV: 'production' }).isProduction).toBe(true);
+    expect(loadConfig({ ...base, ...prodMedia, NODE_ENV: 'production' }).isProduction).toBe(true);
   });
 
   it('DB_SSL_VERIFY=false yalnızca üretim dışında', () => {
     const remote = { ...base, DB_HOST: 'db.example.com', DB_SSL: 'true', DB_SSL_VERIFY: 'false' };
     expect(loadConfig(remote).db.sslVerify).toBe(false);
-    expect(() => loadConfig({ ...remote, NODE_ENV: 'production' })).toThrow(/DB_SSL_VERIFY/);
+    expect(() => loadConfig({ ...remote, ...prodMedia, NODE_ENV: 'production' })).toThrow(
+      /DB_SSL_VERIFY/,
+    );
+  });
+
+  it('medya: üretimde bunny + güçlü yol sırrı; private zone public ile aynı olamaz', () => {
+    const prod = { ...base, NODE_ENV: 'production' };
+    expect(() => loadConfig(prod)).toThrow(/MEDIA_DRIVER=bunny/);
+    expect(() => loadConfig({ ...prod, ...prodMedia, MEDIA_PATH_SECRET: 'short' })).toThrow(
+      /MEDIA_PATH_SECRET/,
+    );
+    const { BUNNY_TOKEN_AUTH_KEY: _k, ...noToken } = prodMedia;
+    expect(() => loadConfig({ ...prod, ...noToken })).toThrow(/BUNNY_TOKEN_AUTH_KEY/);
+    // Token'sız public CDN'e kullanıcı fotoğrafı yazılmasın.
+    expect(() =>
+      loadConfig({ ...prod, ...prodMedia, BUNNY_PRIVATE_PULL_ZONE_HOST: 'mochifast.b-cdn.net' }),
+    ).toThrow(/public zone/);
+    const c = loadConfig({ ...base });
+    expect(c.media).toMatchObject({ driver: 'local', uploadMaxBytes: 10 * 1024 * 1024 });
+    expect(c.media.pathSecret.length).toBeGreaterThanOrEqual(32);
   });
 
   it('belgeler açıksa güçlü basic auth ister', () => {

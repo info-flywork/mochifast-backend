@@ -7,6 +7,8 @@ import { initSentry, flushSentry } from './infra/sentry.js';
 import { createDatabase } from './infra/db.js';
 import { createScheduler, createWorker } from './infra/queue.js';
 import { SCHEDULES } from './schedules.js';
+import { createMediaStorage } from './infra/bunny.js';
+import { mediaJobs } from './jobs/media.jobs.js';
 import { statsJobs } from './jobs/stats.jobs.js';
 import { systemJobs } from './jobs/system.jobs.js';
 import { createStatsService } from './modules/stats/stats.service.js';
@@ -45,6 +47,19 @@ const workers = [
     queue: QUEUES.stats,
     handlers: statsJobs({ db, stats: createStatsService({ db }), logger }),
     // Yeniden hesaplamalar kullanıcı satırını kilitler; az eşzamanlılık API'yi rahat bırakır.
+    concurrency: 1,
+    pollMs: config.worker.pollMs,
+    logger,
+  }),
+  createWorker({
+    db,
+    queue: QUEUES.media,
+    handlers: mediaJobs({
+      db,
+      storage: createMediaStorage(config.media, { logger }),
+      config: config.media,
+      logger,
+    }),
     concurrency: 1,
     pollMs: config.worker.pollMs,
     logger,

@@ -2,7 +2,8 @@ import { fromBin, toBin } from '../../shared/ids.js';
 import { isoDate } from '../../shared/time.js';
 
 const COLUMNS = `id, user_id, eaten_at, local_date, kind, slot, diet_type, feeling, title, notes_enc,
-                 kcal, protein_g, carbs_g, fat_g, source, breaks_fast_session_id, deleted_at`;
+                 kcal, protein_g, carbs_g, fat_g, source, breaks_fast_session_id, photo_media_id,
+                 deleted_at`;
 
 const num = (v) => (v === null || v === undefined ? null : Number(v));
 
@@ -23,6 +24,7 @@ function toMeal(r) {
     fatG: num(r.fat_g),
     source: r.source,
     breaksFastId: r.breaks_fast_session_id ? fromBin(r.breaks_fast_session_id) : null,
+    photoMediaId: r.photo_media_id ? fromBin(r.photo_media_id) : null,
   };
 }
 
@@ -49,15 +51,16 @@ const WRITABLE = {
   proteinG: 'protein_g',
   carbsG: 'carbs_g',
   fatG: 'fat_g',
+  photoMediaId: 'photo_media_id',
 };
 
 export async function insertMeal(db, conn, userId, m) {
   await db.run(
     `INSERT INTO meals
        (id, user_id, eaten_at, local_date, tz, kind, slot, diet_type, feeling, title, notes_enc,
-        kcal, protein_g, carbs_g, fat_g, source)
+        kcal, protein_g, carbs_g, fat_g, source, photo_media_id)
      VALUES (:id, :userId, :eatenAt, :localDate, :tz, :kind, :slot, :dietType, :feeling, :title,
-             :notesEnc, :kcal, :proteinG, :carbsG, :fatG, :source)`,
+             :notesEnc, :kcal, :proteinG, :carbsG, :fatG, :source, :photoMediaId)`,
     {
       id: toBin(m.id),
       userId: toBin(userId),
@@ -75,6 +78,7 @@ export async function insertMeal(db, conn, userId, m) {
       carbsG: m.carbsG ?? null,
       fatG: m.fatG ?? null,
       source: m.source,
+      photoMediaId: m.photoMediaId ? toBin(m.photoMediaId) : null,
     },
     conn,
   );
@@ -84,7 +88,9 @@ export async function updateMeal(db, conn, id, fields) {
   const keys = Object.keys(fields).filter((k) => WRITABLE[k] && fields[k] !== undefined);
   if (keys.length === 0) return;
   const params = { id: toBin(id) };
-  for (const k of keys) params[k] = fields[k];
+  for (const k of keys) {
+    params[k] = k === 'photoMediaId' && fields[k] ? toBin(fields[k]) : fields[k];
+  }
   // Kolon adları yalnızca WRITABLE sözlüğünden gelir (kullanıcı girdisi değil).
   await db.run(
     `UPDATE meals SET ${keys.map((k) => `${WRITABLE[k]} = :${k}`).join(', ')} WHERE id = :id`,

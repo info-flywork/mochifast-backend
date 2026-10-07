@@ -20,11 +20,11 @@ const round1 = (v) => Math.round(v * 10) / 10;
 const ratio = (a, b) => (b ? Math.min(1, Math.round((a / b) * 1000) / 1000) : null);
 
 /**
- * Öğünler ve beslenme (docs/backend/04-api.md §11, 05 §6). Fotoğraf analizi F6'da bağlanır;
- * şimdilik kaynak `manual` ya da `quickKcal`.
+ * Öğünler ve beslenme (docs/backend/04-api.md §11, 05 §6). Fotoğraf `POST /v1/media` ile
+ * yüklenip `photoMediaId` ile bağlanır; AI analizi F6'da (`source: aiPhoto`).
  */
-export function createMealsService({ db, crypto, ctx }) {
-  function toDto(m) {
+export function createMealsService({ db, crypto, ctx, media }) {
+  function toDto(m, photos = new Map()) {
     return {
       id: m.id,
       eatenAt: m.eatenAt.toISOString(),
@@ -41,7 +41,23 @@ export function createMealsService({ db, crypto, ctx }) {
       fatG: m.fatG,
       source: toApiEnum(m.source),
       breaksFastId: m.breaksFastId,
+      photo: (m.photoMediaId && photos.get(m.photoMediaId)) ?? null,
     };
+  }
+
+  /** Öğünleri fotoğraflarıyla (imzalı URL) birlikte, tek medya sorgusuyla sunar. */
+  async function toDtos(meals) {
+    const photos = await media.presentMany(meals.map((m) => m.photoMediaId));
+    return meals.map((m) => toDto(m, photos));
+  }
+  const one = async (m) => (await toDtos([m]))[0];
+
+  /** Fotoğraf kullanıcının kendi, hazır öğün fotoğrafı olmalı (null → bağlantı kalkar). */
+  async function photoField(userId, body) {
+    if (body.photoMediaId === undefined) return {};
+    if (body.photoMediaId === null) return { photoMediaId: null };
+    await media.mustOwn(userId, body.photoMediaId, { purpose: 'meal_photo' });
+    return { photoMediaId: body.photoMediaId };
   }
 
   function encryptNotes(id, notes) {
@@ -93,6 +109,7 @@ export function createMealsService({ db, crypto, ctx }) {
       const now = new Date();
       const eatenAt = body.eatenAt ? new Date(body.eatenAt) : now;
       assertInstant(eatenAt, now, { path: 'eatenAt', pastDays: MEAL_PAST_DAYS });
+      const photo = await photoField(userId, body);
       const result = await ctx.write(userId, async (conn, { tz, touch }) => {
         if (body.id) {
           const existing = await repo.findMeal(db, userId, body.id, conn, { includeDeleted: true });
@@ -107,6 +124,7 @@ export function createMealsService({ db, crypto, ctx }) {
           localDate: localDate(eatenAt, tz),
           tz,
           ...dbFields(body),
+          ...photo,
           notesEnc: encryptNotes(id, body.notes) ?? null,
           source: toDbEnum(body.source ?? 'manual'),
         };
@@ -118,21 +136,22 @@ export function createMealsService({ db, crypto, ctx }) {
       const breaksFast = Boolean(active && result.meal.eatenAt >= active.startedAt);
       return {
         created: result.created,
-        meal: toDto(result.meal),
+        meal: await one(result.meal),
         activeFastId: breaksFast ? active.id : null,
         suggestEndFast: breaksFast,
       };
     },
 
     async get(userId, id) {
-      return { meal: toDto(await mustFind(userId, id)) };
+      return { meal: await one(await mustFind(userId, id)) };
     },
 
     async update(userId, id, body) {
       const now = new Date();
+      const photo = await photoField(userId, body);
       const meal = await ctx.write(userId, async (conn, { tz, touch }) => {
         const m = await mustFind(userId, id, conn);
-        const fields = dbFields(body);
+        const fields = { ...dbFields(body), ...photo };
         if (body.eatenAt) {
           const eatenAt = new Date(body.eatenAt);
           assertInstant(eatenAt, now, { path: 'eatenAt', pastDays: MEAL_PAST_DAYS });
@@ -145,7 +164,7 @@ export function createMealsService({ db, crypto, ctx }) {
         if (fields.localDate) touch(fields.localDate);
         return repo.findMeal(db, userId, id, conn);
       });
-      return { meal: toDto(meal) };
+      return { meal: await one(meal) };
     },
 
     async remove(userId, id) {
@@ -161,7 +180,7 @@ export function createMealsService({ db, crypto, ctx }) {
     async list(userId, { date, from, to, cursor, limit = 20 }) {
       if (date) {
         const items = await repo.mealsOfDay(db, userId, date);
-        return { items: items.map(toDto), pageInfo: { nextCursor: null, hasMore: false } };
+        return { items: await toDtos(items), pageInfo: { nextCursor: null, hasMore: false } };
       }
       const after = decodeCursor(cursor, ['t', 'i']);
       const rows = await repo.listMeals(db, userId, {
@@ -174,7 +193,7 @@ export function createMealsService({ db, crypto, ctx }) {
       const last = page.at(-1);
       const hasMore = rows.length > limit;
       return {
-        items: page.map(toDto),
+        items: await toDtos(page),
         pageInfo: {
           nextCursor:
             hasMore && last ? encodeCursor({ t: last.eatenAt.toISOString(), i: last.id }) : null,
@@ -214,7 +233,7 @@ export function createMealsService({ db, crypto, ctx }) {
           carbs: macro(sum('carbsG'), goals.carbsGoalG),
           fat: macro(sum('fatG'), goals.fatGoalG),
         },
-        meals: meals.map(toDto),
+        meals: await toDtos(meals),
       };
     },
 

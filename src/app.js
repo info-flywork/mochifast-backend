@@ -1,3 +1,4 @@
+import multipart from '@fastify/multipart';
 import Fastify, { LogController } from 'fastify';
 import { API_PREFIX } from './config/constants.js';
 import requestContext, { generateRequestId } from './plugins/request-context.js';
@@ -20,6 +21,7 @@ import plansRoutes from './modules/plans/plans.routes.js';
 import fastingRoutes, { strugglesRoutes } from './modules/fasting/fasting.routes.js';
 import appConfigRoutes from './modules/app/app-config.routes.js';
 import hungerRoutes from './modules/hunger/hunger.routes.js';
+import mediaRoutes, { localMediaFiles } from './modules/media/media.routes.js';
 import { mealsRoutes, nutritionRoutes } from './modules/meals/meals.routes.js';
 import {
   sleepRoutes,
@@ -74,8 +76,14 @@ export async function buildApp({ config, deps, logger, registerV1 }) {
   await app.register(idempotency);
   await app.register(docs);
   await app.register(httpMetrics);
+  // Yüklemeler: tek dosya, sınır aşımı 413 (docs/backend/08-medya-bunny.md §4).
+  await app.register(multipart, {
+    limits: { fileSize: config.media.uploadMaxBytes, files: 1, fields: 5, parts: 6 },
+  });
 
   await app.register(healthRoutes);
+  // Bunny yerine geliştirme/testte dosyaları API sunar (üretimde kayıtlı değil).
+  if (deps.storage?.driver === 'local') await app.register(localMediaFiles);
 
   // Eski istemci yolları (önek yok) → aynı handler + Deprecation header'ı (docs/backend/12 F1).
   await app.register(authRoutes, { prefix: '/auth', legacy: true });
@@ -100,6 +108,7 @@ export async function buildApp({ config, deps, logger, registerV1 }) {
       await v1.register(mealsRoutes, { prefix: '/meals' });
       await v1.register(nutritionRoutes, { prefix: '/nutrition' });
       await v1.register(hungerRoutes, { prefix: '/hunger-checkins' });
+      await v1.register(mediaRoutes, { prefix: '/media' });
       if (registerV1) await registerV1(v1);
     },
     { prefix: API_PREFIX },

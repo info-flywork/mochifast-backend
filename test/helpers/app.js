@@ -1,7 +1,11 @@
 import { randomUUID } from 'node:crypto';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SignJWT, createLocalJWKSet, exportJWK, generateKeyPair } from 'jose';
 import { buildApp } from '../../src/app.js';
+import { createMediaStorage } from '../../src/infra/bunny.js';
 import { createCache } from '../../src/infra/cache.js';
 import { createFieldCrypto } from '../../src/infra/crypto.js';
 import { createDatabase } from '../../src/infra/db.js';
@@ -61,6 +65,11 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
   await seedCatalog(db, await loadCatalogSeeds());
   const firebaseKeys = await fakeFirebase();
   const crypto = createFieldCrypto(config.fieldEncryption);
+  const mediaDir = await mkdtemp(join(tmpdir(), 'mochifast-media-'));
+  const storage = createMediaStorage(
+    { ...config.media, localDir: mediaDir },
+    { baseUrl: 'http://media.test' },
+  );
   const app = await buildApp({
     config,
     logger: false,
@@ -71,6 +80,7 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
       tokens: await createTokenService(config.auth),
       crypto,
       firebase: createFirebaseVerifier({ ...config.firebase, jwks: firebaseKeys.jwks }),
+      storage,
     },
   });
 
@@ -110,6 +120,8 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
   return {
     app,
     db,
+    storage,
+    mediaDir,
     config,
     crypto,
     firebase: firebaseKeys,
@@ -120,6 +132,7 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
       await app.close();
       await db.close();
       await testDb.drop();
+      await rm(mediaDir, { recursive: true, force: true });
     },
   };
 }

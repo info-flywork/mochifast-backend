@@ -9,3 +9,6 @@ openapi.json
 .DS_Store
 .vscode/
 .idea/
+
+# Yerel medya sürücüsü (MEDIA_DRIVER=local)
+var/

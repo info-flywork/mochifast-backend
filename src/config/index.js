@@ -76,6 +76,25 @@ const schema = {
     DOCS_USER: { type: 'string', default: '' },
     DOCS_PASSWORD: { type: 'string', default: '' },
 
+    // Medya (docs/backend/08-medya-bunny.md). local: geliştirme/test (diske yazar, API sunar).
+    MEDIA_DRIVER: { type: 'string', enum: ['local', 'bunny'], default: 'local' },
+    MEDIA_LOCAL_DIR: { type: 'string', default: 'var/media' },
+    MEDIA_PATH_SECRET: { type: 'string', default: '' },
+    MEDIA_UPLOAD_MAX_BYTES: { type: 'integer', minimum: 65_536, default: 10 * 1024 * 1024 },
+    MEDIA_URL_TTL_SEC: { type: 'integer', minimum: 300, maximum: 7 * 86_400, default: 6 * 3600 },
+    // Public zone: uygulama görselleri ve yönetim içeriği (token yok).
+    BUNNY_STORAGE_ZONE: { type: 'string', default: '' },
+    BUNNY_STORAGE_PASSWORD: { type: 'string', default: '' },
+    BUNNY_STORAGE_HOST: { type: 'string', default: 'storage.bunnycdn.com' },
+    BUNNY_PULL_ZONE_HOST: { type: 'string', default: '' },
+    // Private zone: kullanıcı fotoğrafları; pull zone'da Token Authentication AÇIK olmalı.
+    BUNNY_PRIVATE_STORAGE_ZONE: { type: 'string', default: '' },
+    BUNNY_PRIVATE_STORAGE_PASSWORD: { type: 'string', default: '' },
+    BUNNY_PRIVATE_STORAGE_HOST: { type: 'string', default: 'storage.bunnycdn.com' },
+    BUNNY_PRIVATE_PULL_ZONE_HOST: { type: 'string', default: '' },
+    BUNNY_TOKEN_AUTH_KEY: { type: 'string', default: '' },
+    BUNNY_API_KEY: { type: 'string', default: '' },
+
     SENTRY_DSN: { type: 'string', default: '' },
     SENTRY_TRACES_SAMPLE_RATE: { type: 'number', minimum: 0, maximum: 1, default: 0 },
   },
@@ -106,6 +125,8 @@ export function loadConfig(env = process.env) {
       'Üretimde DB_SSL_VERIFY=false kullanılamaz (sertifika doğrulanmalı; DB_SSL_CA verin).',
     );
   }
+
+  const media = mediaConfig(e);
 
   const config = {
     env: e.NODE_ENV,
@@ -156,8 +177,65 @@ export function loadConfig(env = process.env) {
     metrics: { enabled: e.METRICS_ENABLED, host: e.METRICS_HOST, port: e.METRICS_PORT },
     docs: { enabled: e.DOCS_ENABLED, user: e.DOCS_USER, password: e.DOCS_PASSWORD },
     sentry: { dsn: e.SENTRY_DSN, tracesSampleRate: e.SENTRY_TRACES_SAMPLE_RATE },
+    media,
   };
   return deepFreeze(config);
+}
+
+/** Geliştirme/test için sabit yol sırrı (üretimde kullanılamaz). */
+const DEV_MEDIA_PATH_SECRET = 'dev-only-media-path-secret-not-for-production!';
+
+/**
+ * Medya ayarları. Kullanıcı fotoğrafları yalnızca token korumalı private zone'a yazılır:
+ * private pull zone public olanla aynıysa (token'sız CDN) process başlamaz.
+ */
+function mediaConfig(e) {
+  const prod = e.NODE_ENV === 'production';
+  if (prod && e.MEDIA_DRIVER !== 'bunny') throw new Error('Üretimde MEDIA_DRIVER=bunny zorunlu.');
+  if (prod && e.MEDIA_PATH_SECRET.length < 32) {
+    throw new Error('Üretimde en az 32 karakterlik MEDIA_PATH_SECRET zorunlu.');
+  }
+  if (e.MEDIA_DRIVER === 'bunny') {
+    const missing = [
+      'BUNNY_PRIVATE_STORAGE_ZONE',
+      'BUNNY_PRIVATE_STORAGE_PASSWORD',
+      'BUNNY_PRIVATE_PULL_ZONE_HOST',
+      'BUNNY_TOKEN_AUTH_KEY',
+    ].filter((k) => !e[k]);
+    if (missing.length > 0) {
+      throw new Error(`MEDIA_DRIVER=bunny için eksik: ${missing.join(', ')}`);
+    }
+    if (
+      e.BUNNY_PRIVATE_PULL_ZONE_HOST === e.BUNNY_PULL_ZONE_HOST ||
+      e.BUNNY_PRIVATE_STORAGE_ZONE === e.BUNNY_STORAGE_ZONE
+    ) {
+      throw new Error(
+        "Private medya zone'u public zone ile aynı olamaz (kullanıcı fotoğrafları token'sız yayınlanır).",
+      );
+    }
+  }
+  return {
+    driver: e.MEDIA_DRIVER,
+    localDir: e.MEDIA_LOCAL_DIR,
+    pathSecret: e.MEDIA_PATH_SECRET || DEV_MEDIA_PATH_SECRET,
+    uploadMaxBytes: e.MEDIA_UPLOAD_MAX_BYTES,
+    urlTtlSec: e.MEDIA_URL_TTL_SEC,
+    publicZone: {
+      zone: e.BUNNY_STORAGE_ZONE,
+      password: e.BUNNY_STORAGE_PASSWORD,
+      storageHost: e.BUNNY_STORAGE_HOST,
+      pullHost: e.BUNNY_PULL_ZONE_HOST,
+    },
+    privateZone: {
+      zone: e.BUNNY_PRIVATE_STORAGE_ZONE,
+      password: e.BUNNY_PRIVATE_STORAGE_PASSWORD,
+      storageHost: e.BUNNY_PRIVATE_STORAGE_HOST,
+      pullHost: e.BUNNY_PRIVATE_PULL_ZONE_HOST,
+      // local sürücüde de imza aynı algoritmayla atılır (anahtar yoksa yol sırrından).
+      tokenKey: e.BUNNY_TOKEN_AUTH_KEY || e.MEDIA_PATH_SECRET || DEV_MEDIA_PATH_SECRET,
+    },
+    apiKey: e.BUNNY_API_KEY,
+  };
 }
 
 function parseTrustProxy(value) {

@@ -26,7 +26,7 @@ const CONSENT_SOURCE_ONBOARDING = 'onboarding';
  * Kullanıcı, onboarding, profil, ayarlar, hedefler (docs/backend/04-api.md §2).
  * `meta`: { ip, userAgent, timezone }
  */
-export function createUserService({ db, catalog, plans, stats }) {
+export function createUserService({ db, catalog, plans, stats, media }) {
   async function requireUser(userId, conn) {
     const row = await repo.getUserWithUnits(db, userId, conn);
     if (!row) throw new AppError('NOT_FOUND');
@@ -72,7 +72,8 @@ export function createUserService({ db, catalog, plans, stats }) {
 
   const service = {
     async getMe(userId) {
-      return toMeDto(await requireUser(userId));
+      const dto = toMeDto(await requireUser(userId));
+      return { ...dto, avatarUrl: (await media?.avatarUrl(userId)) ?? null };
     },
 
     async updateMe(userId, body) {
@@ -444,7 +445,7 @@ function computedGoals(profile, today, stepKcal = 0) {
   return computeNutritionGoals({ ...nutritionInputs(profile, today), stepKcal });
 }
 
-/** API kullanıcı modeli (04 §2 GET /v1/user/me). Avatar F5'te, premium F8'de bağlanır. */
+/** API kullanıcı modeli (04 §2 GET /v1/user/me). Avatar URL'si servis ekler; premium F8'de. */
 export function toMeDto(row) {
   return {
     id: row.id,

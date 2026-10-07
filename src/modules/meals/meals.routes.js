@@ -1,10 +1,16 @@
 import { memoizeByDeps } from '../../shared/legacy.js';
+import { mediaServiceFor } from '../media/media.routes.js';
 import { trackerContextFor } from '../trackers/trackers.routes.js';
 import { createMealsService } from './meals.service.js';
 import * as s from './meals.schemas.js';
 
 export const mealsServiceFor = memoizeByDeps((app) =>
-  createMealsService({ db: app.deps.db, crypto: app.deps.crypto, ctx: trackerContextFor(app) }),
+  createMealsService({
+    db: app.deps.db,
+    crypto: app.deps.crypto,
+    ctx: trackerContextFor(app),
+    media: mediaServiceFor(app),
+  }),
 );
 
 /** `/v1/meals` (docs/backend/04-api.md §11). */
