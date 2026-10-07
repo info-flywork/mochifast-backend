@@ -1,4 +1,4 @@
-import { bmi } from './onboarding.rules.js';
+import { ageFromBirthYear, bmi } from './onboarding.rules.js';
 
 /**
  * Beslenme hedefleri (docs/backend/05-is-kurallari.md §6) — saf fonksiyonlar.
@@ -60,4 +60,33 @@ export function computeNutritionGoals({
     carbsGoalG: Math.round((rest * carbShare) / 4),
     fatGoalG: Math.round((rest * (1 - carbShare)) / 9),
   };
+}
+
+/**
+ * Profil satırından hesap girdileri (05 §6.6): yaş doğum yılından, kilo son kayıttan
+ * (yoksa başlangıç kilosu).
+ */
+export function nutritionInputs(profile, todayIso) {
+  if (!profile) return {};
+  return {
+    weightKg: profile.current_weight_kg ?? profile.start_weight_kg,
+    heightCm: profile.height_cm,
+    age: ageFromBirthYear(profile.birth_year, todayIso),
+    gender: profile.gender,
+    goal: profile.goal,
+    goalWeightKg: profile.goal_weight_kg,
+    diet: profile.diet,
+    weeklyLossKg: profile.weekly_loss_target_kg,
+    healthFlags: (profile.health_flags ?? '').split(',').filter(Boolean),
+  };
+}
+
+/**
+ * Yakılan kalori (05 §6.5): BMR'nin günün geçen kısmı + adım kalorisi. Geçmiş gün tam gün,
+ * gelecek gün 0. BMR girdileri eksikse yalnızca adım kalorisi.
+ */
+export function burnedKcal(inputs, { elapsedMinutes, stepKcal = 0 }) {
+  const { weightKg, heightCm, age, gender } = inputs;
+  const base = weightKg && heightCm && age ? bmr({ weightKg, heightCm, age, gender }) : 0;
+  return Math.round(base * (Math.min(Math.max(elapsedMinutes, 0), 1440) / 1440) + stepKcal);
 }

@@ -535,7 +535,18 @@ export const summarySchema = {
               type: 'object',
               properties: { kcal: { type: 'integer' }, kcalGoal: { type: ['integer', 'null'] } },
             },
-            lastMeal: { type: ['object', 'null'], additionalProperties: true },
+            lastMeal: {
+              type: ['object', 'null'],
+              properties: {
+                id: { type: 'string' },
+                eatenAt: { type: 'string' },
+                kind: { type: ['string', 'null'] },
+                dietType: { type: ['string', 'null'] },
+                feeling: { type: ['string', 'null'] },
+                title: { type: ['string', 'null'] },
+                kcal: { type: ['integer', 'null'] },
+              },
+            },
             hunger: {
               type: 'object',
               properties: { physical: { type: 'integer' }, emotional: { type: 'integer' } },

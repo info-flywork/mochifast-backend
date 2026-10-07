@@ -1,10 +1,12 @@
+import { toApiEnum } from '../../shared/enums.js';
+import { mealsOfDay } from '../meals/meals.repository.js';
 import { summariesBetween } from '../trackers/trackers.repository.js';
 import { weightProgress as progressOf } from '../trackers/trackers.rules.js';
 
 /**
  * GET /v1/user/summary — ana sayfa, profil başlığı, oruç sekmesi ve widget'lar için tek çağrı
  * (docs/backend/04-api.md §2). Kendi verisi yoktur; modül servislerini birleştirir.
- * Öğün, açlık, challenge ve bildirim alanları ilgili fazlarda dolar.
+ * Challenge (F7) ve bildirim (F9) alanları ilgili fazlarda dolar.
  */
 export function createSummaryService({ db, users, plans, fasting, stats }) {
   return {
@@ -19,9 +21,12 @@ export function createSummaryService({ db, users, plans, fasting, stats }) {
         fasting.active(userId, locale),
         stats.week(userId),
       ]);
-      const day = (await summariesBetween(db, userId, { from: week.today, to: week.today })).get(
-        week.today,
-      );
+      const [days, meals] = await Promise.all([
+        summariesBetween(db, userId, { from: week.today, to: week.today }),
+        mealsOfDay(db, userId, week.today),
+      ]);
+      const day = days.get(week.today);
+      const lastMeal = meals.at(-1);
       return {
         user: {
           id: me.id,
@@ -46,9 +51,25 @@ export function createSummaryService({ db, users, plans, fasting, stats }) {
           water: { ml: day?.water_ml ?? 0, goalMl: goals.waterGoalMl ?? null },
           steps: { count: day?.steps ?? 0, goal: goals.stepsGoal ?? null },
           sleep: { minutes: day?.sleep_minutes ?? 0, goalMin: goals.sleepGoalMin ?? null },
-          nutrition: { kcal: 0, kcalGoal: goals.kcalGoal ?? goals.computed?.kcalGoal ?? null },
-          lastMeal: null,
-          hunger: { physical: 0, emotional: 0 },
+          nutrition: {
+            kcal: day?.kcal ?? 0,
+            // Yeme bozukluğu geçmişinde hedef gösterilmez (05 §6.3; /nutrition/day ile aynı).
+            kcalGoal: profile.healthFlags?.includes('eatingDisorderHistory')
+              ? null
+              : (goals.kcalGoal ?? goals.computed?.kcalGoal ?? null),
+          },
+          lastMeal: lastMeal
+            ? {
+                id: lastMeal.id,
+                eatenAt: lastMeal.eatenAt.toISOString(),
+                kind: toApiEnum(lastMeal.kind),
+                dietType: toApiEnum(lastMeal.dietType),
+                feeling: toApiEnum(lastMeal.feeling),
+                title: lastMeal.title,
+                kcal: lastMeal.kcal,
+              }
+            : null,
+          hunger: { physical: day?.hunger_physical ?? 0, emotional: day?.hunger_emotional ?? 0 },
         },
         weight: weightProgress(profile),
         featuredChallenge: null,

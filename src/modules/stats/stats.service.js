@@ -6,6 +6,10 @@ import {
   FAST_XP,
   GOAL_BONUS_MAX_TARGET,
   MIN_COUNTED_FAST_MINUTES,
+  HUNGER_XP,
+  HUNGER_XP_DAILY_CAP,
+  MEAL_XP,
+  MEAL_XP_DAILY_CAP,
   WATER_GOAL_XP,
   WEIGHT_LOGGED_XP,
   computeStreaks,
@@ -22,6 +26,10 @@ const XP_RULES = Object.freeze({
   bonusMaxTarget: GOAL_BONUS_MAX_TARGET,
   waterGoalXp: WATER_GOAL_XP,
   weightXp: WEIGHT_LOGGED_XP,
+  mealXp: MEAL_XP,
+  mealCap: MEAL_XP_DAILY_CAP,
+  hungerXp: HUNGER_XP,
+  hungerCap: HUNGER_XP_DAILY_CAP,
 });
 
 /** range → gün sayısı (null = tüm geçmiş). */
@@ -108,8 +116,8 @@ export function createStatsService({ db }) {
     async applyDay(userId, date, conn) {
       await repo.upsertTrackerDay(db, conn, userId, date);
       await repo.syncTrackerXp(db, conn, userId, date, XP_RULES);
-      const { xp, waterGoalDays } = await repo.xpAndWaterDays(db, conn, userId);
-      await repo.saveXp(db, conn, userId, { xp, level: levelFor(xp), waterGoalDays });
+      const counters = await repo.trackerCounters(db, conn, userId);
+      await repo.saveXp(db, conn, userId, { ...counters, level: levelFor(counters.xp) });
     },
 
     /**
@@ -252,9 +260,8 @@ export function createStatsService({ db }) {
         currentStreak: s?.current_streak ?? 0,
         bestStreak: s?.best_streak ?? 0,
         weightChangeKg: await repo.weightChange(db, userId, { from: r.from, to: r.to }),
-        // Su ve öğün takipçileri F4'te gelir.
         waterGoalDays: await repo.waterGoalDays(db, userId, { from: r.from, to: r.to }),
-        mealsLogged: 0,
+        mealsLogged: await repo.mealsLogged(db, userId, { from: r.from, to: r.to }),
       };
     },
 

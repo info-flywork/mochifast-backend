@@ -154,6 +154,12 @@ export function createContentService({ db, cache, catalog }) {
       return { items: items.map((i) => ({ code: i.code, text: i.labels[''] ?? i.code })) };
     },
 
+    /** Açlık check-in öneri metinleri (05 §5.2): `{ code: text }`. */
+    async hungerRecommendations(rawLocale) {
+      const items = await list('hunger_rec', localeOf(rawLocale));
+      return Object.fromEntries(items.map((i) => [i.code, i.labels[''] ?? i.code]));
+    },
+
     /** Onboarding ekranlarının listeleri + onboarding'de gösterilen plan kartları. */
     async onboardingOptions(rawLocale, { hasPremium = false } = {}) {
       const locale = localeOf(rawLocale);

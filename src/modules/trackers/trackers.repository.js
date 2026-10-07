@@ -173,7 +173,8 @@ export async function waterOfDay(db, userId, date, conn) {
 export async function summariesBetween(db, userId, { from, to }, conn) {
   const rows = await db.many(
     `SELECT local_date, water_ml, water_goal_ml, steps, steps_goal, sleep_minutes, sleep_goal_min,
-            weight_kg
+            weight_kg, kcal, protein_g, carbs_g, fat_g, meals_count, snacks_count,
+            hunger_physical, hunger_emotional, fasted_minutes
        FROM daily_summaries WHERE user_id = :userId AND local_date BETWEEN :from AND :to`,
     { userId: toBin(userId), from, to },
     conn,

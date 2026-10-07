@@ -3,7 +3,9 @@ import { apiToSet, setToApi, toApiEnum, toDbEnum } from '../../shared/enums.js';
 import { toBin } from '../../shared/ids.js';
 import { isValidTimezone, isoDate, localDate } from '../../shared/time.js';
 import { writeAudit } from '../audit/audit.repository.js';
-import { computeNutritionGoals } from './nutrition.rules.js';
+import { findSteps } from '../trackers/trackers.repository.js';
+import { stepKcal } from '../trackers/trackers.rules.js';
+import { computeNutritionGoals, nutritionInputs } from './nutrition.rules.js';
 import {
   DEFAULT_WEEKLY_LOSS_KG,
   ageFromBirthYear,
@@ -340,7 +342,10 @@ export function createUserService({ db, catalog, plans, stats }) {
         repo.getGoals(db, userId),
         repo.getProfile(db, userId),
       ]);
-      return toGoalsDto(goals, computedGoals(profile, todayFor(user.timezone)));
+      const today = todayFor(user.timezone);
+      const steps = await findSteps(db, userId, today);
+      const inputs = nutritionInputs(profile, today);
+      return toGoalsDto(goals, computedGoals(profile, today, stepKcal(steps, inputs)));
     },
 
     async updateGoals(userId, body) {
@@ -434,19 +439,9 @@ function onboardingConsents(c) {
   return list;
 }
 
-function computedGoals(profile, today) {
-  if (!profile) return computeNutritionGoals({});
-  return computeNutritionGoals({
-    weightKg: profile.current_weight_kg ?? profile.start_weight_kg,
-    heightCm: profile.height_cm,
-    age: ageFromBirthYear(profile.birth_year, today),
-    gender: profile.gender,
-    goal: profile.goal,
-    goalWeightKg: profile.goal_weight_kg,
-    diet: profile.diet,
-    weeklyLossKg: profile.weekly_loss_target_kg,
-    healthFlags: (profile.health_flags ?? '').split(',').filter(Boolean),
-  });
+/** Önerilen hedefler; `stepKcal`: bugünün adım kalorisi (TDEE'ye eklenir, 05 §6.2). */
+function computedGoals(profile, today, stepKcal = 0) {
+  return computeNutritionGoals({ ...nutritionInputs(profile, today), stepKcal });
 }
 
 /** API kullanıcı modeli (04 §2 GET /v1/user/me). Avatar F5'te, premium F8'de bağlanır. */

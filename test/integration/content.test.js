@@ -210,7 +210,7 @@ describe.skipIf(!mysqlUrl)('içerik katalogları (gerçek MySQL)', () => {
       struggle: 5,
       insightArticles: 5,
       faq: 6,
-      items: 60,
+      items: 68, // 60 onboarding/sohbet + 8 açlık önerisi
     });
 
     const trimmed = structuredClone(seeds);

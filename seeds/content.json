@@ -2685,6 +2685,50 @@
         "sortOrder": 4,
         "data": null
       }
+    ],
+    "hunger_rec": [
+      {
+        "code": "physical_1",
+        "sortOrder": 1,
+        "data": null
+      },
+      {
+        "code": "physical_2",
+        "sortOrder": 2,
+        "data": null
+      },
+      {
+        "code": "physical_3",
+        "sortOrder": 3,
+        "data": null
+      },
+      {
+        "code": "emotional_1",
+        "sortOrder": 4,
+        "data": null
+      },
+      {
+        "code": "emotional_2",
+        "sortOrder": 5,
+        "data": null
+      },
+      {
+        "code": "emotional_3",
+        "sortOrder": 6,
+        "data": null
+      },
+      {
+        "code": "emotional_4",
+        "sortOrder": 7,
+        "data": null
+      },
+      {
+        "code": "safety_end_fast",
+        "sortOrder": 0,
+        "data": {
+          "priority": true
+        }
+      }
     ]
   }
 }

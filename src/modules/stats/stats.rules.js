@@ -15,6 +15,10 @@ export const MIN_COUNTED_FAST_MINUTES = 60;
 export const FAST_XP = 10;
 export const WATER_GOAL_XP = 5;
 export const WEIGHT_LOGGED_XP = 3;
+export const MEAL_XP = 2;
+export const MEAL_XP_DAILY_CAP = 5;
+export const HUNGER_XP = 2;
+export const HUNGER_XP_DAILY_CAP = 3;
 export const FAST_GOAL_BONUS_XP = 5;
 /** Hedefe ulaşma bonusu yalnızca bu süreye kadarki hedeflerde verilir (uzun oruç teşvik edilmez). */
 export const GOAL_BONUS_MAX_TARGET = 24 * 60;

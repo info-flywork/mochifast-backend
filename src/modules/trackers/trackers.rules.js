@@ -99,6 +99,12 @@ export function stepMetrics(steps, { heightCm, weightKg } = {}) {
   };
 }
 
+/** Günün adım kalorisi: sağlık uygulaması ölçtüyse o, yoksa formül. Kayıt yoksa 0. */
+export function stepKcal(row, body) {
+  if (!row) return 0;
+  return row.active_kcal ?? stepMetrics(row.steps, body).kcal;
+}
+
 /** Sağlık uygulaması kaynakları manuelden önceliklidir. */
 export const STEP_SOURCE_RANK = Object.freeze({ manual: 0, apple_health: 1, google_fit: 1 });
 

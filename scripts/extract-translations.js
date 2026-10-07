@@ -428,6 +428,29 @@ list(
   })),
 );
 
+// Açlık check-in önerileri (05 §5.2–5.3). Güvenlik önerisinin uygulamada metni yok; burada
+// yazılır (güvenlik metni olduğu için çeviri kontrolü insan gözünden geçmeli).
+list('hunger_rec', [
+  ...[1, 2, 3].map((n) => ({
+    code: `physical_${n}`,
+    text: { '': `hunger_result_page.physical_rec_${n}` },
+  })),
+  ...[1, 2, 3, 4].map((n) => ({
+    code: `emotional_${n}`,
+    text: { '': `hunger_result_page.emotional_rec_${n}` },
+  })),
+]);
+items.hunger_rec.push({ code: 'safety_end_fast', sortOrder: 0, data: { priority: true } });
+labels.hunger_rec.safety_end_fast = {
+  en: "If you don't feel well, it's completely okay to end your fast now.",
+  tr: 'Kendini iyi hissetmiyorsan orucunu şimdi bitirmen tamamen normal.',
+  de: 'Wenn du dich nicht gut fühlst, ist es völlig in Ordnung, dein Fasten jetzt zu beenden.',
+  es: 'Si no te sientes bien, está totalmente bien terminar tu ayuno ahora.',
+  fr: "Si tu ne te sens pas bien, c'est tout à fait normal d'arrêter ton jeûne maintenant.",
+  it: 'Se non ti senti bene, va benissimo interrompere il digiuno adesso.',
+  ru: 'Если ты плохо себя чувствуешь, совершенно нормально прервать голодание сейчас.',
+};
+
 const write = (name, data) => writeFile(new URL(name, OUT), `${JSON.stringify(data, null, 2)}\n`);
 await write('content.json', { stages, struggle, insights, faq, items });
 await write('content_labels.json', labels);

@@ -792,5 +792,79 @@
       "it": "Cosa dovrei mangiare quando finisce il digiuno?",
       "ru": "Что съесть после окончания голодания?"
     }
+  },
+  "hunger_rec": {
+    "physical_1": {
+      "en": "Choose a wholesome meal",
+      "tr": "Sağlıklı bir öğün seç",
+      "de": "Wähle eine nahrhafte Mahlzeit",
+      "es": "Choose a wholesome meal",
+      "fr": "Choose a wholesome meal",
+      "it": "Scegli un pasto nutriente",
+      "ru": "Выбери полноценный приём пищи"
+    },
+    "physical_2": {
+      "en": "Include protein, fiber and healthy fats",
+      "tr": "Protein, lif ve sağlıklı yağlar ekle",
+      "de": "Protein, Ballaststoffe und gesunde Fette",
+      "es": "Include protein, fiber and healthy fats",
+      "fr": "Include protein, fiber and healthy fats",
+      "it": "Includi proteine, fibre e grassi sani",
+      "ru": "Добавь белок, клетчатку и полезные жиры"
+    },
+    "physical_3": {
+      "en": "Eat mindfully and enjoy",
+      "tr": "Bilinçli ye ve tadını çıkar",
+      "de": "Achtsam essen und genießen",
+      "es": "Eat mindfully and enjoy",
+      "fr": "Eat mindfully and enjoy",
+      "it": "Mangia consapevolmente e goditi il pasto",
+      "ru": "Ешь осознанно и наслаждайся"
+    },
+    "emotional_1": {
+      "en": "Try drinking some water",
+      "tr": "Biraz su içmeyi dene",
+      "de": "Trink etwas Wasser",
+      "es": "Try drinking some water",
+      "fr": "Try drinking some water",
+      "it": "Prova a bere un po’ d’acqua",
+      "ru": "Попробуй выпить немного воды"
+    },
+    "emotional_2": {
+      "en": "Take a 5-minute break",
+      "tr": "5 dakikalık bir mola ver",
+      "de": "Mach 5 Minuten Pause",
+      "es": "Take a 5-minute break",
+      "fr": "Take a 5-minute break",
+      "it": "Fai una pausa di 5 minuti",
+      "ru": "Сделай перерыв на 5 минут"
+    },
+    "emotional_3": {
+      "en": "Do a quick breathing exercise",
+      "tr": "Hızlı bir nefes egzersizi yap",
+      "de": "Kurze Atemübung machen",
+      "es": "Do a quick breathing exercise",
+      "fr": "Do a quick breathing exercise",
+      "it": "Fai un breve esercizio di respirazione",
+      "ru": "Выполни короткое дыхательное упражнение"
+    },
+    "emotional_4": {
+      "en": "Talk to Mochi if you want support",
+      "tr": "Destek istersen Mochi ile konuş",
+      "de": "Sprich mit Mochi, wenn du Support willst",
+      "es": "Talk to Mochi if you want support",
+      "fr": "Talk to Mochi if you want support",
+      "it": "Parla con Mochi se vuoi sostegno",
+      "ru": "Поговори с Мочи, если нужна поддержка"
+    },
+    "safety_end_fast": {
+      "en": "If you don't feel well, it's completely okay to end your fast now.",
+      "tr": "Kendini iyi hissetmiyorsan orucunu şimdi bitirmen tamamen normal.",
+      "de": "Wenn du dich nicht gut fühlst, ist es völlig in Ordnung, dein Fasten jetzt zu beenden.",
+      "es": "Si no te sientes bien, está totalmente bien terminar tu ayuno ahora.",
+      "fr": "Si tu ne te sens pas bien, c'est tout à fait normal d'arrêter ton jeûne maintenant.",
+      "it": "Se non ti senti bene, va benissimo interrompere il digiuno adesso.",
+      "ru": "Если ты плохо себя чувствуешь, совершенно нормально прервать голодание сейчас."
+    }
   }
 }

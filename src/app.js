@@ -19,6 +19,8 @@ import insightsRoutes from './modules/catalog/insights.routes.js';
 import plansRoutes from './modules/plans/plans.routes.js';
 import fastingRoutes, { strugglesRoutes } from './modules/fasting/fasting.routes.js';
 import appConfigRoutes from './modules/app/app-config.routes.js';
+import hungerRoutes from './modules/hunger/hunger.routes.js';
+import { mealsRoutes, nutritionRoutes } from './modules/meals/meals.routes.js';
 import {
   sleepRoutes,
   stepsRoutes,
@@ -95,6 +97,9 @@ export async function buildApp({ config, deps, logger, registerV1 }) {
       await v1.register(waterRoutes, { prefix: '/water' });
       await v1.register(stepsRoutes, { prefix: '/steps' });
       await v1.register(sleepRoutes, { prefix: '/sleep' });
+      await v1.register(mealsRoutes, { prefix: '/meals' });
+      await v1.register(nutritionRoutes, { prefix: '/nutrition' });
+      await v1.register(hungerRoutes, { prefix: '/hunger-checkins' });
       if (registerV1) await registerV1(v1);
     },
     { prefix: API_PREFIX },

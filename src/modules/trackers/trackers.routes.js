@@ -8,12 +8,12 @@ import * as s from './trackers.schemas.js';
 import { createWaterService } from './water.service.js';
 import { createWeightsService } from './weights.service.js';
 
-const contextFor = memoizeByDeps((app) =>
+export const trackerContextFor = memoizeByDeps((app) =>
   createTrackerContext({ db: app.deps.db, stats: statsServiceFor(app) }),
 );
 
 export const trackersFor = memoizeByDeps((app) => {
-  const deps = { db: app.deps.db, ctx: contextFor(app) };
+  const deps = { db: app.deps.db, ctx: trackerContextFor(app) };
   return {
     weights: createWeightsService({ ...deps, users: userServiceFor(app) }),
     water: createWaterService(deps),
