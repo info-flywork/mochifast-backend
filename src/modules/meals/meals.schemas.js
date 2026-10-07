@@ -75,8 +75,9 @@ export const mealCreateSchema = {
     properties: {
       id: uuidSchema,
       eatenAt: dateTime,
-      // aiPhoto F6'da (fotoğraf analizi) açılır.
-      source: { type: 'string', enum: ['manual', 'quickKcal'] },
+      // aiPhoto: analysisId ile (fotoğraf ve AI sonucu öğüne bağlanır; değerler düzenlenebilir).
+      source: { type: 'string', enum: ['manual', 'quickKcal', 'aiPhoto'] },
+      analysisId: uuidSchema,
       ...editable,
     },
   },

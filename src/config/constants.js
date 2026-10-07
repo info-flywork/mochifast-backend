@@ -23,6 +23,7 @@ export const QUEUES = Object.freeze({
   system: 'system',
   stats: 'stats',
   media: 'media',
+  ai: 'ai',
 });
 
 /** Cache anahtar ad alanları (docs/backend/07-cache-performans.md §3). */

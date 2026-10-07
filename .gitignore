@@ -12,3 +12,6 @@ openapi.json
 
 # Yerel medya sürücüsü (MEDIA_DRIVER=local)
 var/
+
+# Değerlendirme veri setleri (gerçek kullanıcı fotoğrafları içerebilir)
+eval/

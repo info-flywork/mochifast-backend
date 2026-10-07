@@ -23,7 +23,7 @@ const ratio = (a, b) => (b ? Math.min(1, Math.round((a / b) * 1000) / 1000) : nu
  * Öğünler ve beslenme (docs/backend/04-api.md §11, 05 §6). Fotoğraf `POST /v1/media` ile
  * yüklenip `photoMediaId` ile bağlanır; AI analizi F6'da (`source: aiPhoto`).
  */
-export function createMealsService({ db, crypto, ctx, media }) {
+export function createMealsService({ db, crypto, ctx, media, analyses }) {
   function toDto(m, photos = new Map()) {
     return {
       id: m.id,
@@ -52,8 +52,15 @@ export function createMealsService({ db, crypto, ctx, media }) {
   }
   const one = async (m) => (await toDtos([m]))[0];
 
-  /** Fotoğraf kullanıcının kendi, hazır öğün fotoğrafı olmalı (null → bağlantı kalkar). */
+  /**
+   * Fotoğraf kullanıcının kendi, hazır öğün fotoğrafı olmalı (null → bağlantı kalkar).
+   * `analysisId` verilirse fotoğraf analizden gelir ve kaynak `ai_photo` olur.
+   */
   async function photoField(userId, body) {
+    if (body.analysisId) {
+      const a = await analyses.mustUse(userId, body.analysisId);
+      return { photoMediaId: a.mediaId, analysisId: a.id };
+    }
     if (body.photoMediaId === undefined) return {};
     if (body.photoMediaId === null) return { photoMediaId: null };
     await media.mustOwn(userId, body.photoMediaId, { purpose: 'meal_photo' });
@@ -126,7 +133,7 @@ export function createMealsService({ db, crypto, ctx, media }) {
           ...dbFields(body),
           ...photo,
           notesEnc: encryptNotes(id, body.notes) ?? null,
-          source: toDbEnum(body.source ?? 'manual'),
+          source: toDbEnum(body.source ?? (photo.analysisId ? 'aiPhoto' : 'manual')),
         };
         await repo.insertMeal(db, conn, userId, meal);
         touch(meal.localDate);

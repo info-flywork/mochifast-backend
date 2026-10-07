@@ -1,4 +1,5 @@
 import { memoizeByDeps } from '../../shared/legacy.js';
+import { photoAnalysisFor, photoAnalysisRoutes } from '../ai/ai.routes.js';
 import { mediaServiceFor } from '../media/media.routes.js';
 import { trackerContextFor } from '../trackers/trackers.routes.js';
 import { createMealsService } from './meals.service.js';
@@ -10,12 +11,15 @@ export const mealsServiceFor = memoizeByDeps((app) =>
     crypto: app.deps.crypto,
     ctx: trackerContextFor(app),
     media: mediaServiceFor(app),
+    analyses: photoAnalysisFor(app),
   }),
 );
 
 /** `/v1/meals` (docs/backend/04-api.md §11). */
 export async function mealsRoutes(app) {
   const meals = mealsServiceFor(app);
+  // `/:id`'den önce: sabit yol parametreli yolla karışmasın.
+  await app.register(photoAnalysisRoutes);
   const read = { preHandler: app.requireAuth };
   const write = { preHandler: [app.requireAuth, app.idempotent] };
 

@@ -21,4 +21,7 @@ export const SCHEDULES = [
   { id: 'media-stuck', queue: 'media', jobName: 'mediaStuck', everyMs: 15 * 60_000 },
   { id: 'media-unattached', queue: 'media', jobName: 'mediaUnattached', everyMs: 3_600_000 },
   { id: 'media-deleted-meals', queue: 'media', jobName: 'mediaDeletedMeals', everyMs: 21_600_000 },
+  // 09: AI kota sayaçları ve takılı analizler.
+  { id: 'ai-quota-cleanup', queue: 'ai', jobName: 'aiQuotaCleanup', everyMs: 21_600_000 },
+  { id: 'ai-stuck-analyses', queue: 'ai', jobName: 'aiStuckAnalyses', everyMs: 5 * 60_000 },
 ];

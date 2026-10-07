@@ -58,9 +58,9 @@ export async function insertMeal(db, conn, userId, m) {
   await db.run(
     `INSERT INTO meals
        (id, user_id, eaten_at, local_date, tz, kind, slot, diet_type, feeling, title, notes_enc,
-        kcal, protein_g, carbs_g, fat_g, source, photo_media_id)
+        kcal, protein_g, carbs_g, fat_g, source, photo_media_id, analysis_id)
      VALUES (:id, :userId, :eatenAt, :localDate, :tz, :kind, :slot, :dietType, :feeling, :title,
-             :notesEnc, :kcal, :proteinG, :carbsG, :fatG, :source, :photoMediaId)`,
+             :notesEnc, :kcal, :proteinG, :carbsG, :fatG, :source, :photoMediaId, :analysisId)`,
     {
       id: toBin(m.id),
       userId: toBin(userId),
@@ -79,6 +79,7 @@ export async function insertMeal(db, conn, userId, m) {
       fatG: m.fatG ?? null,
       source: m.source,
       photoMediaId: m.photoMediaId ? toBin(m.photoMediaId) : null,
+      analysisId: m.analysisId ? toBin(m.analysisId) : null,
     },
     conn,
   );

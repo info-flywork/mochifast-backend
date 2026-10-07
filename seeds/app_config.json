@@ -80,5 +80,24 @@
       "email": "info@fly-work.com"
     },
     "description": "Destek iletişimi"
+  },
+  {
+    "key": "ai.pricing",
+    "platform": "all",
+    "value": {
+      "claude-opus-5-5": {
+        "inputPerMTok": 4,
+        "outputPerMTok": 20,
+        "cacheReadPerMTok": 0.2,
+        "cacheWritePerMTok": 5
+      }
+    },
+    "description": "Model başına USD / milyon token; yedek model eklenmezse maliyeti 0 sayılır (log uyarısı)"
+  },
+  {
+    "key": "ai.daily_budget_usd",
+    "platform": "all",
+    "value": 50,
+    "description": "Günlük toplam AI maliyet sınırı (UTC gün); aşılınca ücretsiz kullanıcılarda AI 503"
   }
 ]

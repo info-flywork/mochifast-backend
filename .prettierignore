@@ -6,3 +6,6 @@ migrations/*.sql
 
 # Script çıktısı (extract-translations.js, seed üreticileri)
 seeds/*.json
+
+# Prompt metinleri sürümlü ve birebir sabit (prompt cache, eval karşılaştırması)
+prompts/

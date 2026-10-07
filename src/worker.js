@@ -8,6 +8,7 @@ import { createDatabase } from './infra/db.js';
 import { createScheduler, createWorker } from './infra/queue.js';
 import { SCHEDULES } from './schedules.js';
 import { createMediaStorage } from './infra/bunny.js';
+import { aiJobs } from './jobs/ai.jobs.js';
 import { mediaJobs } from './jobs/media.jobs.js';
 import { statsJobs } from './jobs/stats.jobs.js';
 import { systemJobs } from './jobs/system.jobs.js';
@@ -33,6 +34,8 @@ try {
 }
 scheduler.start();
 
+const storage = createMediaStorage(config.media, { logger });
+
 const workers = [
   createWorker({
     db,
@@ -54,13 +57,18 @@ const workers = [
   createWorker({
     db,
     queue: QUEUES.media,
-    handlers: mediaJobs({
-      db,
-      storage: createMediaStorage(config.media, { logger }),
-      config: config.media,
-      logger,
-    }),
+    handlers: mediaJobs({ db, storage, config: config.media, logger }),
     concurrency: 1,
+    pollMs: config.worker.pollMs,
+    logger,
+  }),
+  createWorker({
+    db,
+    queue: QUEUES.ai,
+    handlers: aiJobs({ db, storage, config, logger }),
+    // Analiz 5–15 sn sürer (dış çağrı); paralel işlenir, CPU'yu meşgul etmez.
+    concurrency: 4,
+    timeoutMs: 120_000,
     pollMs: config.worker.pollMs,
     logger,
   }),

@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SignJWT, createLocalJWKSet, exportJWK, generateKeyPair } from 'jose';
 import { buildApp } from '../../src/app.js';
+import { createAiClient } from '../../src/infra/anthropic.js';
 import { createMediaStorage } from '../../src/infra/bunny.js';
 import { createCache } from '../../src/infra/cache.js';
 import { createFieldCrypto } from '../../src/infra/crypto.js';
@@ -51,6 +52,51 @@ export async function fakeFirebase(kid = 'firebase-1') {
 }
 
 /**
+ * Ağa çıkmayan Claude istemcisi: `respond(fn)` ile yanıt (ya da hata) test belirler,
+ * `calls` gönderilen parametreleri tutar.
+ */
+export function fakeAnthropic() {
+  const calls = [];
+  let handler = () => {
+    throw new Error('fakeAnthropic: yanıt tanımlanmadı');
+  };
+  return {
+    calls,
+    respond(fn) {
+      handler = fn;
+    },
+    beta: {
+      messages: {
+        async create(params, options) {
+          calls.push(params);
+          return handler(params, options);
+        },
+        stream(params, options) {
+          calls.push(params);
+          return handler(params, options);
+        },
+      },
+    },
+  };
+}
+
+/** Claude yanıtı biçiminde mesaj (yapılandırılmış çıktı JSON metin bloğunda). */
+export function aiMessage(
+  body,
+  { stopReason = 'end_turn', model = 'claude-opus-5-5', usage } = {},
+) {
+  return {
+    id: 'msg_test',
+    type: 'message',
+    role: 'assistant',
+    model,
+    content: [{ type: 'text', text: typeof body === 'string' ? body : JSON.stringify(body) }],
+    stop_reason: stopReason,
+    usage: usage ?? { input_tokens: 1500, output_tokens: 400, cache_read_input_tokens: 0 },
+  };
+}
+
+/**
  * Gerçek MySQL (geçici veritabanı, tüm migration'lar) üzerinde tam uygulama + istek yardımcıları.
  */
 export async function createIntegrationApp(mysqlUrl, env = {}) {
@@ -70,6 +116,8 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
     { ...config.media, localDir: mediaDir },
     { baseUrl: 'http://media.test' },
   );
+  const anthropic = fakeAnthropic();
+  const ai = createAiClient({ ...config.ai, enabled: true }, { clientImpl: anthropic });
   const app = await buildApp({
     config,
     logger: false,
@@ -81,6 +129,7 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
       crypto,
       firebase: createFirebaseVerifier({ ...config.firebase, jwks: firebaseKeys.jwks }),
       storage,
+      ai,
     },
   });
 
@@ -122,6 +171,8 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
     db,
     storage,
     mediaDir,
+    ai,
+    anthropic,
     config,
     crypto,
     firebase: firebaseKeys,

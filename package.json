@@ -24,6 +24,7 @@
     "keys:field": "node scripts/gen-field-key.js",
     "seed": "node scripts/seed.js",
     "stats:recompute": "node scripts/recompute-stats.js",
+    "eval:meals": "node scripts/eval-meal-analysis.js",
     "seed:extract": "node scripts/extract-translations.js --app ../fastingapp",
     "migrate:new": "node scripts/new-migration.js",
     "openapi": "node scripts/generate-openapi.js",
@@ -48,6 +49,7 @@
     ]
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0",
     "@fastify/cors": "^11.3.0",
     "@fastify/etag": "^6.2.0",
     "@fastify/helmet": "^13.1.1",

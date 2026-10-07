@@ -95,6 +95,14 @@ const schema = {
     BUNNY_TOKEN_AUTH_KEY: { type: 'string', default: '' },
     BUNNY_API_KEY: { type: 'string', default: '' },
 
+    // Yapay zekâ (docs/backend/09-yapay-zeka.md). Anahtar yoksa AI uçları 503 döner.
+    ANTHROPIC_API_KEY: { type: 'string', default: '' },
+    AI_CHAT_MODEL: { type: 'string', default: 'claude-opus-5-5' },
+    AI_VISION_MODEL: { type: 'string', default: 'claude-opus-5-5' },
+    // Sunucu tarafı yedek model (refusal → Anthropic'in önerdiği modelle yeniden dene).
+    AI_SERVER_FALLBACK: { type: 'boolean', default: true },
+    AI_ANALYSIS_TIMEOUT_MS: { type: 'integer', minimum: 5_000, default: 45_000 },
+
     SENTRY_DSN: { type: 'string', default: '' },
     SENTRY_TRACES_SAMPLE_RATE: { type: 'number', minimum: 0, maximum: 1, default: 0 },
   },
@@ -178,6 +186,14 @@ export function loadConfig(env = process.env) {
     docs: { enabled: e.DOCS_ENABLED, user: e.DOCS_USER, password: e.DOCS_PASSWORD },
     sentry: { dsn: e.SENTRY_DSN, tracesSampleRate: e.SENTRY_TRACES_SAMPLE_RATE },
     media,
+    ai: {
+      apiKey: e.ANTHROPIC_API_KEY,
+      enabled: e.ANTHROPIC_API_KEY.length > 0,
+      chatModel: e.AI_CHAT_MODEL,
+      visionModel: e.AI_VISION_MODEL,
+      serverFallback: e.AI_SERVER_FALLBACK,
+      analysisTimeoutMs: e.AI_ANALYSIS_TIMEOUT_MS,
+    },
   };
   return deepFreeze(config);
 }

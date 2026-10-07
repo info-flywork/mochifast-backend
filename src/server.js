@@ -5,6 +5,7 @@ import { loadConfig } from './config/index.js';
 import { createLogger } from './infra/logger.js';
 import { initSentry, flushSentry } from './infra/sentry.js';
 import { createDatabase } from './infra/db.js';
+import { createAiClient } from './infra/anthropic.js';
 import { createMediaStorage } from './infra/bunny.js';
 import { createCache } from './infra/cache.js';
 import { createJobQueue } from './infra/queue.js';
@@ -32,6 +33,8 @@ const storage = createMediaStorage(config.media, {
   logger,
   baseUrl: config.server.publicBaseUrl || `http://localhost:${config.server.port}`,
 });
+const ai = createAiClient(config.ai, { logger });
+if (!ai.enabled) logger.warn('ANTHROPIC_API_KEY yok: AI uçları 503 döner');
 if (storage.driver === 'local')
   logger.warn({ dir: config.media.localDir }, 'medya yerel diske yazılıyor (MEDIA_DRIVER=local)');
 if (!firebase.enabled) logger.warn('FIREBASE_PROJECT_ID yok: Apple/Google girişi kapalı');
@@ -39,7 +42,7 @@ if (!firebase.enabled) logger.warn('FIREBASE_PROJECT_ID yok: Apple/Google giriş
 const app = await buildApp({
   config,
   logger,
-  deps: { db, cache, jobs, metrics, tokens, crypto, firebase, storage },
+  deps: { db, cache, jobs, metrics, tokens, crypto, firebase, storage, ai },
 });
 
 app.addHook('onClose', async () => {

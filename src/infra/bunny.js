@@ -1,5 +1,5 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
-import { mkdir, readdir, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, normalize, resolve, sep } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 
@@ -78,6 +78,14 @@ function bunnyZone({ zone, password, storageHost }, { fetchImpl, apiKey, pullHos
       throw lastError;
     },
 
+    async get(path) {
+      const res = await fetchImpl(base + assertSafePath(path), {
+        headers: { AccessKey: password, Accept: '*/*' },
+      });
+      if (!res.ok) throw new Error(`Bunny GET ${res.status}`);
+      return Buffer.from(await res.arrayBuffer());
+    },
+
     async delete(path) {
       const res = await fetchImpl(base + assertSafePath(path), {
         method: 'DELETE',
@@ -127,6 +135,9 @@ function localZone(root) {
       const target = full(path);
       await mkdir(dirname(target), { recursive: true });
       await writeFile(target, body);
+    },
+    async get(path) {
+      return readFile(full(path));
     },
     async delete(path) {
       await rm(full(path), { force: true });
