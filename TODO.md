@@ -42,7 +42,6 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
       `deploy/monitoring/alerts.yml`; dışarıdan uptime (`/health/ready`); `SENTRY_DSN` + `SENTRY_TRACES_SAMPLE_RATE=0.05`.
 - [ ] **Yük testi** staging'de (`loadtest/README.md`); k6: `brew install k6`.
 - [ ] **Mağaza formları:** App Store gizlilik etiketi + Play Veri güvenliği → `../fastingapp/docs/backend/15-magaza-gizlilik.md`.
-- [ ] **Eski önek'siz yollar** (`/auth/register`, `/user/me`, …): uygulama mağazada olmadığı için lansmandan önce kaldırılabilir — karar ver.
 
 ## 1. `.env` ve `.env.production` — boş alanlar (dosyalara eklendi, değerleri sen gir)
 

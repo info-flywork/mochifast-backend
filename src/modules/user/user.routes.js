@@ -1,4 +1,4 @@
-import { deprecatedRoute, memoizeByDeps } from '../../shared/legacy.js';
+import { memoizeByDeps } from '../../shared/legacy.js';
 import { catalogServiceFor } from '../catalog/catalog.routes.js';
 import { fastingServiceFor } from '../fasting/fasting.routes.js';
 import { challengesServiceFor } from '../gamification/gamification.routes.js';
@@ -56,24 +56,11 @@ const meta = (request) => ({
 
 /**
  * `/v1/user` uçları (docs/backend/04-api.md §2).
- * `{ legacy: true }` ile kaydedilince yalnızca eski istemcinin önek almayan yolları açılır.
  */
-export default async function userRoutes(app, options) {
+export default async function userRoutes(app) {
   const service = userServiceFor(app);
   const stats = statsServiceFor(app);
   const auth = { preHandler: app.requireAuth };
-
-  if (options.legacy) {
-    app.get('/me', { ...auth, ...deprecatedRoute('/v1/user/me') }, (request) =>
-      service.getMe(request.user.id),
-    );
-    app.get('/progress', { ...auth, ...deprecatedRoute('/v1/user/progress') }, (request) =>
-      stats.progress(request.user.id),
-    );
-    // Eski istemci seviye başına PATCH atıyordu; artık tek seferde POST /v1/user/onboarding. Yok sayılır.
-    app.patch('/onboarding', deprecatedRoute('/v1/user/onboarding'), async () => ({}));
-    return;
-  }
 
   app.get('/me', { ...auth, schema: getMeSchema }, (request) => service.getMe(request.user.id));
   // Avatar senkron yüklenir; eski avatar hemen silinir (docs/backend/08-medya-bunny.md §6).

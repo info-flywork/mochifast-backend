@@ -1,4 +1,4 @@
-import { deprecatedRoute, memoizeByDeps } from '../../shared/legacy.js';
+import { memoizeByDeps } from '../../shared/legacy.js';
 import { createAuthService } from './auth.service.js';
 import {
   guestSchema,
@@ -19,9 +19,8 @@ const serviceFor = memoizeByDeps((app) =>
 
 /**
  * `/v1/auth` uçları (docs/backend/04-api.md §1).
- * `{ legacy: true }` ile yalnızca eski istemcinin önek almayan `POST /auth/register` yolu açılır.
  */
-export default async function authRoutes(app, options) {
+export default async function authRoutes(app) {
   const service = serviceFor(app);
 
   const meta = (request) => ({
@@ -49,15 +48,6 @@ export default async function authRoutes(app, options) {
     preHandler: app.optionalAuth,
     config: { rateLimit: AUTH_RATE_LIMIT },
   };
-  if (options.legacy) {
-    const legacy = deprecatedRoute('/v1/auth/register');
-    app.post(
-      '/register',
-      { ...registerOptions, onSend: legacy.onSend, schema: { ...registerSchema, hide: true } },
-      register,
-    );
-    return;
-  }
   app.post(
     '/guest',
     { schema: guestSchema, config: { rateLimit: { max: 10, timeWindow: '1 hour' } } },

@@ -355,7 +355,7 @@ describe.skipIf(!mysqlUrl)('kullanıcı & onboarding (gerçek MySQL)', () => {
     expect(await db.many("SELECT id FROM devices WHERE push_token = 'fcm-1'")).toEqual([]);
   });
 
-  it('ilerleme ve eski istemci yolları (Deprecation header)', async () => {
+  it("ilerleme; eski önek'siz yollar yok", async () => {
     const { token } = await newGuest();
     await onboard(token);
     // Mevcut alanlar korunur; yenileri (bestStreak, nextLevelXp…) eklenebilir.
@@ -366,32 +366,14 @@ describe.skipIf(!mysqlUrl)('kullanıcı & onboarding (gerçek MySQL)', () => {
       xp: 0,
     });
 
-    const legacyMe = await call('GET', '/user/me', { token, prefix: '' });
-    expect(legacyMe.statusCode).toBe(200);
-    expect(legacyMe.headers.deprecation).toBe('true');
-    expect(legacyMe.headers.link).toContain('/v1/user/me');
-    expect(legacyMe.json().data.isAnsweredQuestions).toBe(true);
-
-    const legacyOnboarding = await call('PATCH', '/user/onboarding', {
-      prefix: '',
-      body: { level: 3 },
-    });
-    expect(legacyOnboarding.statusCode).toBe(200);
-    expect(legacyOnboarding.headers.deprecation).toBe('true');
-
-    const legacyRegister = await call('POST', '/auth/register', {
-      prefix: '',
-      body: { provider: 'guest', deviceId: randomUUID(), platform: 'ios' },
-    });
-    expect(legacyRegister.statusCode).toBe(201);
-    expect(legacyRegister.headers.deprecation).toBe('true');
-    expect(legacyRegister.json().data.user.isGuest).toBe(true);
-
-    // Yalnızca listelenen eski yollar açık; diğerleri öneksiz çalışmaz.
-    const noLegacyGuest = await call('POST', '/auth/guest', {
-      prefix: '',
-      body: { installId: randomUUID(), platform: 'ios' },
-    });
-    expect(noLegacyGuest.statusCode).toBe(404);
+    // Eski önek'siz yollar kaldırıldı (lansman öncesi).
+    for (const [method, url] of [
+      ['GET', '/user/me'],
+      ['GET', '/user/progress'],
+      ['PATCH', '/user/onboarding'],
+      ['POST', '/auth/register'],
+    ]) {
+      expect((await call(method, url, { token, prefix: '', body: {} })).statusCode).toBe(404);
+    }
   });
 });

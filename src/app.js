@@ -100,10 +100,6 @@ export async function buildApp({ config, deps, logger, registerV1 }) {
   // Bunny yerine geliştirme/testte dosyaları API sunar (üretimde kayıtlı değil).
   if (deps.storage?.driver === 'local') await app.register(localMediaFiles);
 
-  // Eski istemci yolları (önek yok) → aynı handler + Deprecation header'ı (docs/backend/12 F1).
-  await app.register(authRoutes, { prefix: '/auth', legacy: true });
-  await app.register(userRoutes, { prefix: '/user', legacy: true });
-
   await app.register(
     async (v1) => {
       // Domain modülleri fazlarla burada kaydedilir.
