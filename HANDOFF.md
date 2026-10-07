@@ -73,7 +73,7 @@ Durumu güncelle: bitirince `[x]` yap.
 4. [ ] **Sunucu tarafı misafir sırrı** (güvenlik denetimi bulgu 7): misafir oluşturulurken rastgele sır üret, hash'ini
        `auth_identities`'te sakla, yanıtla bir kez dön; sonraki `/auth/guest` girişlerinde iste (istemci güncellemesiyle
        birlikte; geçiş için sırsız eski misafirlere izin ver). İstemci: `DeviceManager` yanında Keychain'de sakla.
-5. [ ] `account_deletion_scheduled` bildirim şablonu kullanılmıyor (silme talebinde push token'lar silindiği için
+5. [x] `account_deletion_scheduled` bildirim şablonu kullanılmıyor (silme talebinde push token'lar silindiği için
        gönderilemez). Ya şablonu kaldır ya da talepten önce anlık push gönder.
 6. [ ] (Opsiyonel) widget yenilemesi için sessiz push (F9), ürün analitiği (PostHog/Amplitude, rıza kontrollü).
 7. [ ] (E-posta kanalı gelince) 24 ay inaktif kayıtlı hesap uyarısı + silme (06 §8.4).

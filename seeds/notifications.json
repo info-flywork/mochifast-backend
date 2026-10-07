@@ -848,48 +848,6 @@
           "body": "Файл доступен для скачивания в профиле в течение 7 дней."
         }
       }
-    },
-    {
-      "type": "account_deletion_scheduled",
-      "channel": [
-        "inbox"
-      ],
-      "category": "system",
-      "quietHours": "send",
-      "maxDelayMin": null,
-      "priority": 4,
-      "deepLink": "fastingapp://profile",
-      "iconKey": "account",
-      "translations": {
-        "en": {
-          "title": "Account deletion scheduled",
-          "body": "Your account will be deleted soon. Sign in again before then to cancel."
-        },
-        "tr": {
-          "title": "Hesap silme planlandı",
-          "body": "Hesabın yakında silinecek. İptal etmek için bu süre içinde tekrar giriş yap."
-        },
-        "de": {
-          "title": "Kontolöschung geplant",
-          "body": "Dein Konto wird bald gelöscht. Melde dich vorher erneut an, um abzubrechen."
-        },
-        "es": {
-          "title": "Eliminación de cuenta programada",
-          "body": "Tu cuenta se eliminará pronto. Inicia sesión antes para cancelarlo."
-        },
-        "fr": {
-          "title": "Suppression du compte programmée",
-          "body": "Votre compte sera bientôt supprimé. Reconnectez-vous d'ici là pour annuler."
-        },
-        "it": {
-          "title": "Eliminazione account programmata",
-          "body": "Il tuo account verrà eliminato a breve. Accedi di nuovo prima per annullare."
-        },
-        "ru": {
-          "title": "Удаление аккаунта запланировано",
-          "body": "Твой аккаунт скоро будет удалён. Войди снова до этого, чтобы отменить."
-        }
-      }
     }
   ]
 }
