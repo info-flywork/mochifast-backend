@@ -1,4 +1,5 @@
 import { toDbEnum } from '../../shared/enums.js';
+import { accountServiceFor } from '../account/account.routes.js';
 import { memoizeByDeps } from '../../shared/legacy.js';
 import { billingServiceFor } from '../billing/billing.routes.js';
 import { mediaServiceFor, readUpload, uploadRateLimit } from '../media/media.routes.js';
@@ -36,6 +37,7 @@ export default async function adminRoutes(app) {
     cache: app.deps.cache,
     entitlements: app.deps.entitlements,
     billing: billingServiceFor(app),
+    account: accountServiceFor(app),
     audit: auth.audit,
   });
   const reports = createAdminReports({ db: app.deps.db });
@@ -149,6 +151,19 @@ export default async function adminRoutes(app) {
     { ...need('users.act'), schema: s.grantPremiumSchema },
     (request) =>
       support.grantPremium(request.params.id, request.body, meta(request), actor(request)),
+  );
+  app.post(
+    '/users/:id/deletion',
+    { ...need('users.act'), schema: s.requestDeletionSchema },
+    async (request, reply) => {
+      reply.code(202);
+      return support.requestDeletion(
+        request.params.id,
+        request.body,
+        meta(request),
+        actor(request),
+      );
+    },
   );
   app.post(
     '/users/:id/deletion/expedite',

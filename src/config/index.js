@@ -67,9 +67,6 @@ const schema = {
 
     FIREBASE_PROJECT_ID: { type: 'string', default: '' },
     FIREBASE_SIGN_IN_PROVIDERS: { type: 'string', default: 'apple.com,google.com' },
-    // Web hesap silme sayfası (Play Store): Firebase web uygulaması yapılandırması.
-    FIREBASE_WEB_API_KEY: { type: 'string', default: '' },
-    FIREBASE_AUTH_DOMAIN: { type: 'string', default: '' },
 
     CORS_ORIGINS: { type: 'string', default: '' },
     RATE_LIMIT_GLOBAL_MAX: { type: 'integer', minimum: 1, default: 600 },
@@ -211,10 +208,6 @@ export function loadConfig(env = process.env) {
     firebase: {
       projectId: e.FIREBASE_PROJECT_ID,
       allowedProviders: splitList(e.FIREBASE_SIGN_IN_PROVIDERS),
-      webApiKey: e.FIREBASE_WEB_API_KEY,
-      authDomain:
-        e.FIREBASE_AUTH_DOMAIN ||
-        (e.FIREBASE_PROJECT_ID ? `${e.FIREBASE_PROJECT_ID}.firebaseapp.com` : ''),
     },
     cors: { origins: splitList(e.CORS_ORIGINS) },
     rateLimit: { globalMax: e.RATE_LIMIT_GLOBAL_MAX, window: e.RATE_LIMIT_WINDOW },

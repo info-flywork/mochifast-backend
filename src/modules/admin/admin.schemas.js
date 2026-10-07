@@ -435,6 +435,21 @@ export const grantPremiumSchema = {
   },
 };
 
+export const requestDeletionSchema = {
+  tags,
+  summary: 'E-postayla gelen silme talebini oluştur (7 gün bekleme, uygulamadaki gibi)',
+  security: bearer,
+  params: idParams,
+  body: withReason(),
+  response: {
+    202: envelope({
+      type: 'object',
+      required: ['scheduledFor'],
+      properties: { scheduledFor: isoDateTimeSchema },
+    }),
+  },
+};
+
 export const expediteDeletionSchema = {
   tags,
   summary: 'Bekleyen silme talebini hızlandır (≤ 1 saat içinde silinir)',

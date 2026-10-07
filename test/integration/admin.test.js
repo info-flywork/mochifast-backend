@@ -331,11 +331,13 @@ describe.skipIf(!mysqlUrl)('yönetim API: giriş, yetki, içerik, destek, raporl
         body: { reason: 'user email request' },
       });
     expect((await expedite()).statusCode).toBe(409);
-    await ctx.db.run(
-      `INSERT INTO account_deletion_requests (id, user_id, scheduled_for)
-       VALUES (:id, :userId, DATE_ADD(NOW(3), INTERVAL 7 DAY))`,
-      { id: toBin(randomUUID()), userId: toBin(user.id) },
-    );
+    // E-postayla gelen talep: destek oluşturur (uygulamadaki akışla aynı), sonra hızlandırır.
+    const requested = await call('POST', `/admin/users/${user.id}/deletion`, {
+      token: support,
+      body: { reason: 'email request' },
+    });
+    expect(requested.statusCode).toBe(202);
+    expect(new Date(requested.json().data.scheduledFor).getTime()).toBeGreaterThan(Date.now());
     expect((await expedite()).statusCode).toBe(200);
     const due = await ctx.db.one(
       'SELECT scheduled_for <= NOW(3) AS due FROM account_deletion_requests WHERE user_id = :id',
@@ -359,6 +361,7 @@ describe.skipIf(!mysqlUrl)('yönetim API: giriş, yetki, içerik, destek, raporl
         'admin.user.view',
         'admin.user.premium_granted',
         'admin.user.sessions_revoked',
+        'admin.user.deletion_requested',
         'admin.user.deletion_expedited',
       ]),
     );
@@ -388,33 +391,21 @@ describe.skipIf(!mysqlUrl)('yönetim API: giriş, yetki, içerik, destek, raporl
   });
 
   // ── Web hesap silme (Play Store) ────────────────────────────────────
-  it('web silme: sayfa açılır; Firebase token ile talep oluşur; hesabı olmayan 404', async () => {
-    const pageRes = await ctx.app.inject({
+  it('web silme bilgi sayfası (Play Store): adımlar ve destek e-postası; form yok', async () => {
+    const tr = await ctx.app.inject({
       method: 'GET',
       url: '/account/delete',
       headers: { 'accept-language': 'tr-TR' },
     });
-    expect(pageRes.statusCode).toBe(200);
-    expect(pageRes.headers['content-type']).toMatch(/text\/html/);
-    expect(pageRes.headers['content-security-policy']).toMatch(/frame-ancestors 'none'/);
-    expect(pageRes.body).toContain('MochiFast hesabını sil');
-
-    const uid = `google-${randomUUID()}`;
-    const { user } = (await ctx.firebaseLogin({ uid, provider: 'google.com' })).json().data;
-    const res = await call('POST', '/account/delete-request', {
-      body: { idToken: await ctx.firebase.sign({ uid, provider: 'google.com' }) },
-    });
-    expect(res.statusCode).toBe(202);
-    const status = await ctx.db.one('SELECT status FROM users WHERE id = :id', {
-      id: toBin(user.id),
-    });
-    expect(status.status).toBe('pending_deletion');
-
-    const unknown = await call('POST', '/account/delete-request', {
-      body: {
-        idToken: await ctx.firebase.sign({ uid: `google-${randomUUID()}`, provider: 'google.com' }),
-      },
-    });
-    expect(unknown.statusCode).toBe(404);
+    expect(tr.statusCode).toBe(200);
+    expect(tr.headers['content-type']).toMatch(/text\/html/);
+    expect(tr.headers['content-security-policy']).toMatch(/default-src 'none'/);
+    expect(tr.body).toContain('MochiFast hesabını sil');
+    expect(tr.body).toContain('Profili Düzenle');
+    expect(tr.body).toMatch(/mailto:[^"]+@/);
+    expect(tr.body).not.toContain('<script');
+    const en = await ctx.app.inject({ method: 'GET', url: '/account/delete' });
+    expect(en.body).toContain('Delete your MochiFast account');
+    expect((await call('POST', '/account/delete-request', { body: {} })).statusCode).toBe(404);
   });
 });

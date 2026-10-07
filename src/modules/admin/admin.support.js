@@ -42,7 +42,7 @@ function userSummary(r) {
  * Destek: kullanıcı arama (PII maskeli) ve işlemler (04 §19). Ham sağlık verisi gösterilmez.
  * Her işlem gerekçesiyle `audit_logs`'a yazılır.
  */
-export function createAdminSupport({ db, cache, entitlements, billing, audit }) {
+export function createAdminSupport({ db, cache, entitlements, billing, account, audit }) {
   async function mustFind(id) {
     if (!UUID.test(id)) throw new AppError('NOT_FOUND');
     const row = await db.one(`SELECT ${USER_COLUMNS} FROM users u WHERE u.id = :id`, {
@@ -183,6 +183,21 @@ export function createAdminSupport({ db, cache, entitlements, billing, audit }) 
         metadata: { duration, reason },
       });
       return { isPremium: Boolean(result.after) };
+    },
+
+    /**
+     * E-postayla gelen silme talebi (web bilgi sayfası): uygulamadaki silmeyle aynı akış
+     * (oturumlar kapanır, 7 gün sonra silinir, kullanıcı tekrar girişle geri alabilir).
+     */
+    async requestDeletion(id, { reason }, meta, adminId) {
+      await mustFind(id);
+      const result = await account.requestDeletion(id, { reason: `support: ${reason}` }, meta);
+      await audit(meta, 'admin.user.deletion_requested', adminId, {
+        entityType: 'user',
+        entityId: id,
+        metadata: { reason },
+      });
+      return { scheduledFor: result.scheduledFor };
     },
 
     /** Bekleyen silme talebini şimdiye çeker; sonraki süpürmede (≤ 1 sa) silinir. */
