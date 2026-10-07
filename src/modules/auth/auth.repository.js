@@ -7,7 +7,7 @@ import { fromBin, newId, toBin } from '../../shared/ids.js';
 
 export async function findIdentity(db, conn, provider, subject) {
   const row = await db.one(
-    `SELECT ai.id, ai.user_id, u.status, u.is_guest
+    `SELECT ai.id, ai.user_id, ai.secret_hash, u.status, u.is_guest
        FROM auth_identities ai
        JOIN users u ON u.id = ai.user_id
       WHERE ai.provider = :provider AND ai.provider_subject = :subject
@@ -21,6 +21,7 @@ export async function findIdentity(db, conn, provider, subject) {
         userId: fromBin(row.user_id),
         status: row.status,
         isGuest: row.is_guest,
+        secretHash: row.secret_hash ?? null,
       }
     : null;
 }
@@ -45,13 +46,14 @@ export async function createUser(db, conn, user) {
 export async function createIdentity(db, conn, identity) {
   await db.run(
     `INSERT INTO auth_identities
-       (id, user_id, provider, provider_subject, sign_in_provider, email, last_login_at)
-     VALUES (:id, :userId, :provider, :subject, :signInProvider, :email, NOW(3))`,
+       (id, user_id, provider, provider_subject, secret_hash, sign_in_provider, email, last_login_at)
+     VALUES (:id, :userId, :provider, :subject, :secretHash, :signInProvider, :email, NOW(3))`,
     {
       id: toBin(newId()),
       userId: toBin(identity.userId),
       provider: identity.provider,
       subject: identity.subject,
+      secretHash: identity.secretHash ?? null,
       email: identity.email ?? null,
       signInProvider: identity.signInProvider ?? null,
     },
@@ -60,6 +62,15 @@ export async function createIdentity(db, conn, identity) {
 }
 
 /** Son giriş zamanı; gelen e-posta ve giriş yöntemiyle günceller. */
+/** Eski (sırsız) misafire sır verilir. */
+export async function setIdentitySecret(db, conn, identityId, secretHash) {
+  await db.run(
+    'UPDATE auth_identities SET secret_hash = :secretHash WHERE id = :id',
+    { id: toBin(identityId), secretHash },
+    conn,
+  );
+}
+
 export async function touchIdentity(
   db,
   conn,

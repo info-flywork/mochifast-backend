@@ -1,3 +1,4 @@
+import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import { createCache } from '../../infra/cache.js';
 import { hashRefreshToken, newRefreshToken } from '../../infra/tokens.js';
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '../../config/constants.js';
@@ -162,7 +163,20 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
         db.withTransaction(async (conn) => {
           const existing = await repo.findIdentity(db, conn, 'guest', input.installId);
           let userId;
+          let guestSecret = null;
           if (existing) {
+            if (existing.secretHash) {
+              if (!guestSecretMatches(input.guestSecret, existing.secretHash)) {
+                throw new AppError('UNAUTHENTICATED', {
+                  message: 'misafir sırrı geçersiz',
+                  details: { reason: 'guest_secret_invalid' },
+                });
+              }
+            } else {
+              // Eski misafir: bu girişte sır verilir, sonraki girişlerde istenir.
+              guestSecret = newGuestSecret();
+              await repo.setIdentitySecret(db, conn, existing.id, hashGuestSecret(guestSecret));
+            }
             await admitExisting(conn, existing, input, meta);
             userId = existing.userId;
             await repo.touchIdentity(db, conn, existing.id);
@@ -181,10 +195,12 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
               locale: localeOf(input, meta),
               timezone: timezoneOf(input, meta),
             });
+            guestSecret = newGuestSecret();
             await repo.createIdentity(db, conn, {
               userId,
               provider: 'guest',
               subject: input.installId,
+              secretHash: hashGuestSecret(guestSecret),
             });
           }
           const deviceId = await upsertDevice(conn, userId, input, meta);
@@ -195,6 +211,8 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
           return {
             created: !existing,
             token,
+            // Yalnızca yeni verildiğinde döner; istemci güvenli depoda saklar.
+            guestSecret,
             user: await withPremium(toUserDto(await repo.getUser(db, conn, userId))),
           };
         }),
@@ -213,6 +231,7 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
         return {
           outcome: result.created ? 'created' : 'login',
           token: result.token,
+          guestSecret: result.guestSecret,
           user: result.user,
         };
       }
@@ -440,6 +459,22 @@ export function toUserDto(row) {
     isPremium: false,
     isAnsweredQuestions: row.onboarding_completed_at !== null,
   };
+}
+
+/** Misafir sırrı: `gs_` + 256 bit; DB'de SHA-256'sı. */
+function newGuestSecret() {
+  return `gs_${randomBytes(32).toString('base64url')}`;
+}
+
+function hashGuestSecret(secret) {
+  return createHash('sha256').update(secret, 'utf8').digest('hex');
+}
+
+function guestSecretMatches(secret, expectedHash) {
+  if (typeof secret !== 'string' || secret.length === 0) return false;
+  const given = Buffer.from(hashGuestSecret(secret), 'hex');
+  const expected = Buffer.from(expectedHash, 'hex');
+  return given.length === expected.length && timingSafeEqual(given, expected);
 }
 
 function assertUsable(status) {

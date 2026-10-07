@@ -70,7 +70,7 @@ Durumu güncelle: bitirince `[x]` yap.
 2. [x] **Günlük ipucu** `GET /v1/fasts/daily-tip` — `fasting_mochi_plan_card`. AI kullanma; katalogdaki
        (`content.items` / insights) ipuçlarından gün + kullanıcıya göre deterministik seçim, dile göre. Cache'le.
 3. [x] **Refresh için aile başına limit** (06 §7: 30/saat) — `src/modules/auth/auth.service.js` `refresh()`; `createWindowLimiter` ile `familyId` anahtarı.
-4. [ ] **Sunucu tarafı misafir sırrı** (güvenlik denetimi bulgu 7): misafir oluşturulurken rastgele sır üret, hash'ini
+4. [x] **Sunucu tarafı misafir sırrı** (güvenlik denetimi bulgu 7): misafir oluşturulurken rastgele sır üret, hash'ini
        `auth_identities`'te sakla, yanıtla bir kez dön; sonraki `/auth/guest` girişlerinde iste (istemci güncellemesiyle
        birlikte; geçiş için sırsız eski misafirlere izin ver). İstemci: `DeviceManager` yanında Keychain'de sakla.
 5. [x] `account_deletion_scheduled` bildirim şablonu kullanılmıyor (silme talebinde push token'lar silindiği için
@@ -91,6 +91,7 @@ Yapıldı (commit edilmedi, `fastingapp` çalışma ağacında):
 - Ağ: `lib/core/network/` — `ContextInterceptor` (X-Timezone, X-App-Version, X-Platform, X-Install-Id, Idempotency-Key), uygulama diline göre `Accept-Language`, tek uçuşlu token yenileme (`expired_token_interceptor.dart`), `NetworkException.code/details`.
 - Oturum: `AuthBloc` açılışta önbellekten; `AuthSessionEnded`; çıkış `POST /auth/logout`; router'da yalnızca giriş/onboarding rotaları herkese açık; splash onboarding'i bitmişse home'a.
 - Onboarding: `lib/domain/onboarding/` (`OnboardingDraft` + `OnboardingRepository`); "Başla"da misafir oturumu, her adım taslağa yazar, BuildingPlan'da `POST /v1/user/onboarding`, WeightProjection sunucu projeksiyonuyla; GoodCompany sahte oturum kaldırıldı.
+- Misafir sırrı: `DeviceManager` Keychain'de saklar; `AuthRepository.loginAsGuest` gönderir, `guest_secret_invalid`'de kurulum kimliğini sıfırlayıp yeni misafir açar.
 - Hesabı sil: Profili Düzenle en altında (`ProfileDangerCard`, `ConfirmDialog`).
 - Yerel ayar: `dart_defines/local.json` (`API_BASE_URL=http://localhost:3000/v1`); varsayılan prod `https://mochifast-api.fly-work.com/v1`.
 

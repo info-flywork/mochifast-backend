@@ -41,6 +41,7 @@ export default async function authRoutes(app) {
       isNewUser: result.outcome === 'created',
       linkedFromGuest: result.outcome === 'upgraded',
       mergedFromGuest: result.outcome === 'merged',
+      guestSecret: result.guestSecret ?? null,
     };
   };
   const registerOptions = {
@@ -54,7 +55,7 @@ export default async function authRoutes(app) {
     async (request, reply) => {
       const result = await service.guest(request.body, meta(request));
       reply.code(result.created ? 201 : 200);
-      return { token: result.token, user: result.user };
+      return { token: result.token, user: result.user, guestSecret: result.guestSecret };
     },
   );
 

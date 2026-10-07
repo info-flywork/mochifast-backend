@@ -63,6 +63,45 @@ describe.skipIf(!mysqlUrl)('auth akışları (gerçek MySQL)', () => {
     expect(audit.map((r) => r.action)).toEqual(['auth.guest_created', 'auth.login']);
   });
 
+  it('misafir sırrı: oluştururken bir kez döner; tekrar girişte zorunlu; eski misafire ilk girişte verilir', async () => {
+    const installId = randomUUID();
+    const first = (await guest(installId)).json().data;
+    expect(first.guestSecret).toMatch(/^gs_[A-Za-z0-9_-]{43}$/);
+    const hash = await db.one(
+      "SELECT secret_hash FROM auth_identities WHERE provider = 'guest' AND provider_subject = :s",
+      { s: installId },
+    );
+    expect(hash.secret_hash).toHaveLength(64);
+    expect(hash.secret_hash).not.toContain(first.guestSecret);
+
+    // installId tek başına yetmez.
+    const noSecret = await guest(installId, { guestSecret: null });
+    expect(noSecret.statusCode).toBe(401);
+    expect(noSecret.json().error.details).toEqual({ reason: 'guest_secret_invalid' });
+    expect((await guest(installId, { guestSecret: 'gs_wrong' })).statusCode).toBe(401);
+    const again = await guest(installId);
+    expect(again.statusCode).toBe(200);
+    expect(again.json().data.guestSecret).toBeNull();
+    // /auth/register provider=guest de aynı kural.
+    const viaRegister = await call('POST', '/auth/register', {
+      body: { provider: 'guest', deviceId: installId, platform: 'ios' },
+    });
+    expect(viaRegister.statusCode).toBe(401);
+
+    // Eski (sırsız) misafir: ilk girişte sır alır, sonra zorunlu.
+    const legacy = randomUUID();
+    const created = (await guest(legacy)).json().data;
+    await db.run(
+      "UPDATE auth_identities SET secret_hash = NULL WHERE provider = 'guest' AND provider_subject = :s",
+      { s: legacy },
+    );
+    const upgraded = await guest(legacy, { guestSecret: null });
+    expect(upgraded.statusCode).toBe(200);
+    expect(upgraded.json().data.user.id).toBe(created.user.id);
+    expect(upgraded.json().data.guestSecret).toMatch(/^gs_/);
+    expect((await guest(legacy, { guestSecret: null })).statusCode).toBe(401);
+  });
+
   it('misafir: installId başına saatte 5 → 6. istek 429', async () => {
     const installId = randomUUID();
     for (let i = 0; i < 5; i += 1) expect((await guest(installId)).statusCode).toBeLessThan(300);

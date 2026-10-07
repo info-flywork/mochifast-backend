@@ -29,12 +29,15 @@ export const authUserSchema = {
   },
 };
 
-const authResult = (extra = {}) =>
+const authResult = (extra = {}, optional = {}) =>
   envelope({
     type: 'object',
     required: ['token', 'user', ...Object.keys(extra)],
-    properties: { token: tokenPairSchema, user: authUserSchema, ...extra },
+    properties: { token: tokenPairSchema, user: authUserSchema, ...extra, ...optional },
   });
+
+/** Misafir sırrı: yalnızca yeni verildiğinde (oluşturma ya da eski misafirin ilk girişi). */
+const guestSecretField = { guestSecret: { type: ['string', 'null'] } };
 
 export const guestSchema = {
   tags: ['auth'],
@@ -53,16 +56,21 @@ export const guestSchema = {
       deviceModel: shortText(64),
       // Silme talebi bekleyen hesabı geri aç (409 ACCOUNT_PENDING_DELETION sonrası).
       restoreAccount: { type: 'boolean' },
+      // Misafir oluşturulurken dönen sır; var olan misafire girişte zorunlu (eskilerde yok).
+      guestSecret: { type: 'string', minLength: 1, maxLength: 64 },
     },
   },
-  response: { 200: authResult(), 201: authResult() },
+  response: { 200: authResult({}, guestSecretField), 201: authResult({}, guestSecretField) },
 };
 
-const registerResult = authResult({
-  isNewUser: { type: 'boolean' },
-  linkedFromGuest: { type: 'boolean' },
-  mergedFromGuest: { type: 'boolean' },
-});
+const registerResult = authResult(
+  {
+    isNewUser: { type: 'boolean' },
+    linkedFromGuest: { type: 'boolean' },
+    mergedFromGuest: { type: 'boolean' },
+  },
+  guestSecretField,
+);
 
 export const registerSchema = {
   tags: ['auth'],
@@ -92,6 +100,7 @@ export const registerSchema = {
       timezone,
       mergeGuest: { type: 'boolean' },
       restoreAccount: { type: 'boolean' },
+      guestSecret: { type: 'string', minLength: 1, maxLength: 64 },
     },
   },
   response: { 200: registerResult, 201: registerResult },

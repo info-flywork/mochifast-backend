@@ -275,10 +275,21 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
     });
   }
 
-  const guest = (installId = randomUUID(), extra = {}) =>
-    call('POST', '/auth/guest', {
-      body: { installId, platform: 'ios', locale: 'tr', timezone: 'Europe/Istanbul', ...extra },
-    });
+  /**
+   * Misafir girişi. Aynı installId ile tekrar girişte, oluşturulurken dönen misafir sırrı
+   * otomatik gönderilir (`extra.guestSecret` verilirse o kullanılır; `null` → gönderilmez).
+   */
+  const guestSecrets = new Map();
+  const guest = async (installId = randomUUID(), extra = {}) => {
+    const body = { installId, platform: 'ios', locale: 'tr', timezone: 'Europe/Istanbul' };
+    if (guestSecrets.has(installId)) body.guestSecret = guestSecrets.get(installId);
+    Object.assign(body, extra);
+    if (body.guestSecret === null) delete body.guestSecret;
+    const res = await call('POST', '/auth/guest', { body });
+    const secret = res.statusCode < 300 ? res.json().data.guestSecret : null;
+    if (secret) guestSecrets.set(installId, secret);
+    return res;
+  };
 
   /** Firebase ile (varsayılan Apple) giriş: POST /v1/auth/register { provider: 'firebase' }. */
   async function firebaseLogin({ uid, token, mergeGuest, provider, fullName, ...claims }) {
