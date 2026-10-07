@@ -361,3 +361,38 @@ export const statsSchema = {
     }),
   },
 };
+
+export const forecastSchema = {
+  tags: ['fasts'],
+  summary: 'Fast Forecast: bugünkü oruç başarı tahmini, bitiş ve en zor saat',
+  description:
+    'Son 14 günde en az 3 biten oruç yoksa `available: false` (istemci kartı gizler). `successChance` 0–1; `toughestElapsedHour` orucun kaçıncı saatinde en sık zorlanıldığı (son 30 gün, en az 3 olay), `toughestAt` bugünkü oruç için o saatin zamanı.',
+  security: bearer,
+  response: {
+    200: envelope({
+      type: 'object',
+      required: ['forecast'],
+      properties: {
+        forecast: {
+          type: 'object',
+          required: ['available'],
+          properties: {
+            available: { type: 'boolean' },
+            successChance: { type: 'number' },
+            basedOnFasts: { type: 'integer' },
+            toughestElapsedHour: { type: ['integer', 'null'] },
+            toughestAt: { type: ['string', 'null'], format: 'date-time' },
+            fast: {
+              type: ['object', 'null'],
+              properties: {
+                active: { type: 'boolean' },
+                startsAt: { type: 'string', format: 'date-time' },
+                endsAt: { type: 'string', format: 'date-time' },
+              },
+            },
+          },
+        },
+      },
+    }),
+  },
+};

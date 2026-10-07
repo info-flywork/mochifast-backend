@@ -372,4 +372,47 @@ describe.skipIf(!mysqlUrl)('plan & oruç (gerçek MySQL)', () => {
     const f = (await start(token)).json().data.fast;
     expect(f).toMatchObject({ targetMinutes: 960, planCode: null });
   });
+
+  // ── Fast Forecast ───────────────────────────────────────────────────
+  it('forecast: az veride kapalı; geçmişten başarı tahmini, en zor saat ve bugünkü oruç', async () => {
+    const { token, userId } = await newUser();
+    const get = async () => (await call('GET', '/fasts/forecast', { token })).json().data.forecast;
+    expect(await get()).toEqual({ available: false });
+
+    // Son günlerde 4 oruç: 3'ü 16 sa hedefe ulaştı, 1'i 10 sa'te bitti.
+    for (const [startH, hours] of [
+      [24 * 5, 16],
+      [24 * 4, 16],
+      [24 * 3, 16],
+      [24 * 2, 10],
+    ]) {
+      const res = await call('POST', '/fasts/manual', {
+        token,
+        body: { startedAt: ago(startH), endedAt: ago(startH - hours), targetMinutes: 960 },
+      });
+      expect(res.statusCode).toBe(201);
+    }
+    for (const minutes of [14 * 60 + 10, 14 * 60 + 40, 13 * 60, 14 * 60 + 5]) {
+      await ctx.db.run(
+        `INSERT INTO struggle_events (id, user_id, reason, elapsed_minutes)
+         VALUES (:id, :userId, 'hungry', :minutes)`,
+        { id: toBin(newId()), userId: toBin(userId), minutes },
+      );
+    }
+
+    const f = await get();
+    expect(f).toMatchObject({ available: true, basedOnFasts: 4, toughestElapsedHour: 14 });
+    // (3+1)/(4+2) = 0.67 (+ seri bonusu)
+    expect(f.successChance).toBeGreaterThanOrEqual(0.67);
+    expect(f.successChance).toBeLessThanOrEqual(0.97);
+    expect(f.fast.active).toBe(false);
+    const span = new Date(f.fast.endsAt) - new Date(f.fast.startsAt);
+    expect(span).toBe(16 * 3_600_000);
+    expect(new Date(f.toughestAt) - new Date(f.fast.startsAt)).toBe(14 * 3_600_000);
+
+    // Aktif oruç varsa onun zamanları.
+    const active = (await start(token, { startedAt: ago(2) })).json().data.fast;
+    const g = await get();
+    expect(g.fast).toMatchObject({ active: true, startsAt: active.startedAt });
+  });
 });

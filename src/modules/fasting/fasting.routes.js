@@ -3,10 +3,12 @@ import { contentServiceFor } from '../catalog/catalog.routes.js';
 import { plansServiceFor } from '../plans/plans.routes.js';
 import { statsServiceFor } from '../stats/stats.routes.js';
 import { createFastingService } from './fasting.service.js';
+import { createForecastService } from './forecast.js';
 import {
   activeSchema,
   cancelSchema,
   finishSchema,
+  forecastSchema,
   getSchema,
   listSchema,
   manualSchema,
@@ -29,12 +31,17 @@ export const fastingServiceFor = memoizeByDeps((app) =>
   }),
 );
 
+export const forecastServiceFor = memoizeByDeps((app) =>
+  createForecastService({ db: app.deps.db }),
+);
+
 /**
  * `/v1/fasts` (docs/backend/04-api.md §6). Yazma uçları Idempotency-Key destekler.
  */
 export default async function fastingRoutes(app) {
   const service = fastingServiceFor(app);
   const stats = statsServiceFor(app);
+  const forecast = forecastServiceFor(app);
   const read = { preHandler: app.requireAuth };
   const write = { preHandler: [app.requireAuth, app.idempotent] };
   const meta = (r) => ({ ip: r.ip, userAgent: r.headers['user-agent'] });
@@ -60,6 +67,9 @@ export default async function fastingRoutes(app) {
   });
 
   // `/:id`'den önce: sabit yollar parametreli yolla karışmasın.
+  app.get('/forecast', { ...read, schema: forecastSchema }, (request) =>
+    forecast.forecast(request.user.id),
+  );
   app.get('/week', { ...read, schema: weekSchema }, (request) =>
     stats.week(request.user.id, { date: request.query.date }),
   );

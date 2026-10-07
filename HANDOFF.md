@@ -63,7 +63,7 @@ stats, trackers (kilo/su/adım/uyku), meals, hunger, ai (fotoğraf analizi, Clau
 
 Durumu güncelle: bitirince `[x]` yap.
 
-1. [ ] **Fast Forecast v0** `GET /v1/fasts/forecast` — uygulamadaki `fasting_fast_forecast_card` (doküman 13 §4: "%87, 14:00…").
+1. [x] **Fast Forecast v0** `GET /v1/fasts/forecast` — uygulamadaki `fasting_fast_forecast_card` (doküman 13 §4: "%87, 14:00…").
        Son 14 günün oruçlarından: bugün hedefi tutturma olasılığı (tamamlama oranı + bugüne kadarki seri), tahmini bitiş
        saati (aktif oruç varsa `startedAt + target`, yoksa plan yeme penceresi sonu), "en zor saat" (geçmiş zorlanma
        olaylarının (`struggle_events`) en sık saati). Veri azsa `{available:false}` → istemci kartı gizler. Testleri ekle.
