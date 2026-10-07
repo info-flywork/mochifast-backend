@@ -101,6 +101,12 @@ export function createCatalogService({ db, cache }) {
             minAge: plan.minAge,
             isPremium: plan.isPremium,
             requiresSafetyAck: plan.requiresSafetyAck,
+            allowedTimings: plan.allowedTimings,
+            defaultTiming: plan.defaultTiming,
+            defaultEatStart: plan.defaultEatStart,
+            reducedDaysPerWeek: plan.reducedDaysPerWeek,
+            reducedDayKcal: plan.reducedDayKcal,
+            weeklyTemplate: weeklyTemplate(plan),
           }
         : null;
     },

@@ -5,6 +5,7 @@ import security from './plugins/security.js';
 import rateLimit from './plugins/rate-limit.js';
 import auth from './plugins/auth.js';
 import appVersion from './plugins/app-version.js';
+import idempotency from './plugins/idempotency.js';
 import envelope from './plugins/envelope.js';
 import errors from './plugins/errors.js';
 import docs from './plugins/docs.js';
@@ -15,6 +16,8 @@ import userRoutes from './modules/user/user.routes.js';
 import devicesRoutes from './modules/devices/devices.routes.js';
 import catalogRoutes from './modules/catalog/catalog.routes.js';
 import insightsRoutes from './modules/catalog/insights.routes.js';
+import plansRoutes from './modules/plans/plans.routes.js';
+import fastingRoutes, { strugglesRoutes } from './modules/fasting/fasting.routes.js';
 import appConfigRoutes from './modules/app/app-config.routes.js';
 
 /**
@@ -60,6 +63,7 @@ export async function buildApp({ config, deps, logger, registerV1 }) {
   await app.register(rateLimit);
   await app.register(auth);
   await app.register(appVersion);
+  await app.register(idempotency);
   await app.register(docs);
   await app.register(httpMetrics);
 
@@ -77,6 +81,9 @@ export async function buildApp({ config, deps, logger, registerV1 }) {
       await v1.register(devicesRoutes, { prefix: '/devices' });
       await v1.register(catalogRoutes, { prefix: '/catalog' });
       await v1.register(insightsRoutes, { prefix: '/insights' });
+      await v1.register(plansRoutes, { prefix: '/plans' });
+      await v1.register(fastingRoutes, { prefix: '/fasts' });
+      await v1.register(strugglesRoutes, { prefix: '/struggles' });
       await v1.register(appConfigRoutes, { prefix: '/app' });
       if (registerV1) await registerV1(v1);
     },

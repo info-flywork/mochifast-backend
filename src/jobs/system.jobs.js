@@ -31,5 +31,19 @@ export function systemJobs({ db, logger }) {
       }
       if (deleted > 0) logger.info({ deleted }, 'eski iş kayıtları silindi');
     },
+
+    /** Süresi dolan Idempotency-Key kayıtları (24 sa). */
+    async idempotencyCleanup() {
+      let deleted = 0;
+      for (;;) {
+        const result = await db.run(
+          'DELETE FROM idempotency_keys WHERE expires_at < NOW(3) LIMIT :limit',
+          { limit: String(CLEANUP_BATCH) },
+        );
+        deleted += result.affectedRows;
+        if (result.affectedRows < CLEANUP_BATCH) break;
+      }
+      if (deleted > 0) logger.info({ deleted }, 'süresi dolan idempotency kayıtları silindi');
+    },
   };
 }

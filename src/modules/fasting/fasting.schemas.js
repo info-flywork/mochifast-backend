@@ -1,0 +1,234 @@
+import {
+  envelope,
+  localDateSchema,
+  pagedEnvelope,
+  pageQuerySchema,
+  uuidSchema,
+} from '../../shared/schemas.js';
+
+const bearer = [{ bearerAuth: [] }];
+const nstr = { type: ['string', 'null'] };
+const dateTime = { type: 'string', format: 'date-time' };
+const feeling = { type: 'string', enum: ['tough', 'meh', 'good', 'super'] };
+const notes = { type: ['string', 'null'], maxLength: 1000 };
+const weightKg = { type: 'number', minimum: 25, maximum: 350 };
+
+export const fastSchema = {
+  type: 'object',
+  properties: {
+    id: uuidSchema,
+    status: { type: 'string' },
+    planCode: nstr,
+    targetMinutes: { type: 'integer' },
+    startedAt: { type: 'string' },
+    plannedEndAt: { type: 'string' },
+    endedAt: nstr,
+    durationMinutes: { type: ['integer', 'null'] },
+    goalReached: { type: 'boolean' },
+    localDate: { type: 'string' },
+    tz: { type: 'string' },
+    feeling: nstr,
+    notes: nstr,
+    source: { type: 'string' },
+    autoClosed: { type: 'boolean' },
+    elapsedMinutes: { type: 'integer' },
+    progress: { type: 'number' },
+    stage: {
+      type: ['object', 'null'],
+      properties: {
+        position: { type: 'integer' },
+        title: { type: 'string' },
+        rangeLabel: nstr,
+        imageKey: { type: 'string' },
+        nextStageAt: nstr,
+      },
+    },
+    serverTime: { type: 'string' },
+  },
+};
+
+const fastResponse = (extra = {}) =>
+  envelope({ type: 'object', required: ['fast'], properties: { fast: fastSchema, ...extra } });
+
+const idParams = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['id'],
+  properties: { id: uuidSchema },
+};
+
+export const activeSchema = {
+  tags: ['fasts'],
+  summary: 'Aktif oruç (canlı süre, ilerleme, evre) ya da yeme penceresi',
+  security: bearer,
+  response: {
+    200: envelope({
+      type: 'object',
+      required: ['fast', 'eatingWindow'],
+      properties: {
+        fast: { ...fastSchema, type: ['object', 'null'] },
+        eatingWindow: {
+          type: ['object', 'null'],
+          properties: {
+            lastFastId: { type: 'string' },
+            startedAt: { type: 'string' },
+            endsAt: { type: 'string' },
+            eatMinutes: { type: 'integer' },
+            elapsedMinutes: { type: 'integer' },
+            stage: {
+              type: 'object',
+              properties: {
+                key: { type: 'string' },
+                title: { type: 'string' },
+                position: { type: 'integer' },
+              },
+            },
+            suggestedNextStartAt: { type: 'string' },
+            serverTime: { type: 'string' },
+          },
+        },
+      },
+    }),
+  },
+};
+
+export const startSchema = {
+  tags: ['fasts'],
+  summary: 'Oruç başlat (idempotent: istemci id ya da Idempotency-Key)',
+  security: bearer,
+  body: {
+    type: ['object', 'null'],
+    additionalProperties: false,
+    properties: {
+      id: uuidSchema,
+      startedAt: dateTime,
+      targetMinutes: { type: 'integer', minimum: 60, maximum: 4320 },
+      source: { type: 'string', enum: ['app', 'widget'] },
+    },
+  },
+  response: { 200: fastResponse(), 201: fastResponse() },
+};
+
+export const finishSchema = {
+  tags: ['fasts'],
+  summary: 'Orucu bitir',
+  security: bearer,
+  params: idParams,
+  body: {
+    type: ['object', 'null'],
+    additionalProperties: false,
+    properties: { endedAt: dateTime, startedAt: dateTime, feeling, notes, weightKg },
+  },
+  response: {
+    200: fastResponse({
+      isFirstFast: { type: 'boolean' },
+      warnings: { type: 'array', items: { type: 'string' } },
+    }),
+  },
+};
+
+export const cancelSchema = {
+  tags: ['fasts'],
+  summary: 'Orucu iptal et (10 dk içinde iz bırakmaz)',
+  security: bearer,
+  params: idParams,
+  response: {
+    200: envelope({ type: 'object', properties: { id: uuidSchema, deleted: { type: 'boolean' } } }),
+  },
+};
+
+export const updateSchema = {
+  tags: ['fasts'],
+  summary: 'Oruç düzenle',
+  security: bearer,
+  params: idParams,
+  body: {
+    type: 'object',
+    additionalProperties: false,
+    minProperties: 1,
+    properties: {
+      startedAt: dateTime,
+      endedAt: dateTime,
+      targetMinutes: { type: 'integer', minimum: 60, maximum: 4320 },
+      feeling: { ...feeling, type: ['string', 'null'], enum: [...feeling.enum, null] },
+      notes,
+    },
+  },
+  response: { 200: fastResponse() },
+};
+
+export const manualSchema = {
+  tags: ['fasts'],
+  summary: 'Geçmiş oruç kaydet',
+  security: bearer,
+  body: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['startedAt', 'endedAt'],
+    properties: {
+      startedAt: dateTime,
+      endedAt: dateTime,
+      targetMinutes: { type: 'integer', minimum: 60, maximum: 4320 },
+      feeling,
+      notes,
+    },
+  },
+  response: { 201: fastResponse() },
+};
+
+export const removeSchema = {
+  tags: ['fasts'],
+  summary: 'Orucu sil (yumuşak silme)',
+  security: bearer,
+  params: idParams,
+  response: { 200: envelope({ type: 'object', additionalProperties: false, properties: {} }) },
+};
+
+export const getSchema = {
+  tags: ['fasts'],
+  summary: 'Oruç detayı',
+  security: bearer,
+  params: idParams,
+  response: { 200: fastResponse() },
+};
+
+export const listSchema = {
+  tags: ['fasts'],
+  summary: 'Oruç geçmişi',
+  security: bearer,
+  querystring: {
+    ...pageQuerySchema,
+    properties: {
+      ...pageQuerySchema.properties,
+      from: localDateSchema,
+      to: localDateSchema,
+      status: { type: 'string', enum: ['active', 'completed', 'endedEarly', 'cancelled'] },
+    },
+  },
+  response: { 200: pagedEnvelope(fastSchema) },
+};
+
+export const struggleSchema = {
+  tags: ['fasts'],
+  summary: 'Zorlanma olayı kaydet',
+  security: bearer,
+  body: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['reason'],
+    properties: {
+      reason: { type: 'string', enum: ['hungry', 'craving', 'energy', 'stressed', 'bored'] },
+      tip: { type: 'string', enum: ['hydration', 'walk', 'breathe'] },
+      tipCompleted: { type: 'boolean', default: false },
+      outcome: { type: 'string', enum: ['keepGoing', 'tryAnother', 'endedFast'] },
+    },
+  },
+  response: {
+    201: envelope({
+      type: 'object',
+      properties: { id: uuidSchema, elapsedMinutes: { type: ['integer', 'null'] } },
+    }),
+  },
+};
+
+export const struggleWithFastSchema = { ...struggleSchema, params: idParams };

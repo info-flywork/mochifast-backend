@@ -23,7 +23,7 @@ const CONSENT_SOURCE_ONBOARDING = 'onboarding';
  * Kullanıcı, onboarding, profil, ayarlar, hedefler (docs/backend/04-api.md §2).
  * `meta`: { ip, userAgent, timezone }
  */
-export function createUserService({ db, catalog }) {
+export function createUserService({ db, catalog, plans }) {
   async function requireUser(userId, conn) {
     const row = await repo.getUserWithUnits(db, userId, conn);
     if (!row) throw new AppError('NOT_FOUND');
@@ -130,6 +130,7 @@ export function createUserService({ db, catalog }) {
       ];
       const fastingReason = toDbEnum(body.fastingReason);
       const targetDate = reasonTargetDate(fastingReason, today);
+      const summary = planSummary(plan, body.mealWindow);
 
       await db.withTransaction(async (conn) => {
         await repo.upsertProfile(db, conn, userId, {
@@ -171,6 +172,15 @@ export function createUserService({ db, catalog }) {
         });
         if (timezone !== userRow.timezone) await repo.updateUser(db, conn, userId, { timezone });
         await repo.markOnboarded(db, conn, userId);
+        // Ücretsiz plan hemen aktif olur; premium plan F8'de (abonelik) satın alınınca etkinleşir,
+        // o zamana kadar profilde bekler (GET /v1/plans/current → pendingPlanCode).
+        if (!plan.isPremium && summary.eatWindow) {
+          await plans.activate(
+            userId,
+            { planCode: plan.code, timing: 'custom', eatWindow: summary.eatWindow },
+            { conn, skipSafety: true, meta },
+          );
+        }
         await audit(conn, meta, 'user.onboarding_completed', userId, {
           schemaVersion: body.schemaVersion,
           planCode: body.planCode,
@@ -179,7 +189,7 @@ export function createUserService({ db, catalog }) {
 
       return {
         user: await service.getMe(userId),
-        plan: planSummary(plan, body.mealWindow),
+        plan: summary,
         projection: projection({
           currentKg: body.weightKg,
           goalKg: body.goalWeightKg,
