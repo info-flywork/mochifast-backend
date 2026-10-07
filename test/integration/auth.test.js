@@ -111,6 +111,24 @@ describe.skipIf(!mysqlUrl)('auth akışları (gerçek MySQL)', () => {
     );
   });
 
+  it('refresh: oturum ailesi başına saatte 30 (çalınan token ile yoğun deneme durur)', async () => {
+    let { refreshToken } = (await ctx.guest()).json().data.token;
+    for (let i = 0; i < 30; i += 1) {
+      const res = await call('POST', '/auth/refresh', { body: { refreshToken } });
+      expect(res.statusCode).toBe(200);
+      ({ refreshToken } = res.json().data.token);
+    }
+    const blocked = await call('POST', '/auth/refresh', { body: { refreshToken } });
+    expect(blocked.statusCode).toBe(429);
+    expect(blocked.headers['retry-after']).toBeDefined();
+    // Başka bir ailenin yenilemesi etkilenmez.
+    const other = (await ctx.guest()).json().data.token;
+    expect(
+      (await call('POST', '/auth/refresh', { body: { refreshToken: other.refreshToken } }))
+        .statusCode,
+    ).toBe(200);
+  });
+
   it('refresh: aynı token ile paralel istekler aynı yeni çifti alır', async () => {
     const { token } = (await guest()).json().data;
     const body = { refreshToken: token.refreshToken };

@@ -37,6 +37,9 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
   // Yeni misafir: IP başına saatte 10 — hangi uçtan gelirse gelsin (/auth/guest ya da
   // /auth/register provider=guest). Her misafir ücretsiz AI kotası taşır (bütçe tüketme saldırısı).
   const guestCreateLimiter = createWindowLimiter({ max: 10, windowMs: 3_600_000 });
+  // Yenileme: oturum ailesi başına saatte 30 (06 §7). Access token 15 dk; meşru istemci saatte
+  // ~4 yeniler, çalınmış refresh token'la yoğun deneme burada durur.
+  const refreshLimiter = createWindowLimiter({ max: 30, windowMs: 3_600_000 });
 
   async function openSession(conn, { userId, deviceId, familyId, meta }) {
     const refreshToken = newRefreshToken();
@@ -331,6 +334,8 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
           return { error: 'UNAUTHENTICATED' };
         }
         if (s.userStatus !== 'active') return { error: 'UNAUTHENTICATED' };
+        const limit = refreshLimiter.hit(s.familyId);
+        if (!limit.allowed) return { error: 'RATE_LIMITED', retryAfterSec: limit.retryAfterSec };
         // Mutlak ömür (ASVS 3.3.2): yenileme oturumu sonsuza kadar uzamaz.
         if (Date.now() - s.familyStartedAt.getTime() > refreshAbsoluteDays * 86_400_000) {
           await repo.revokeFamily(db, conn, s, 'logout');
@@ -368,6 +373,12 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
           { userId: result.userId },
           'refresh token yeniden kullanımı: aile iptal edildi',
         );
+      }
+      if (result.error === 'RATE_LIMITED') {
+        throw new AppError('RATE_LIMITED', {
+          details: { retryAfterSec: result.retryAfterSec },
+          headers: { 'retry-after': String(result.retryAfterSec) },
+        });
       }
       if (result.error) throw new AppError(result.error);
       return result.token;
