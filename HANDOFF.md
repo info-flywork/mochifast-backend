@@ -97,6 +97,7 @@ Yapıldı (commit edilmedi, `fastingapp` çalışma ağacında):
 - Onboarding: `lib/domain/onboarding/` (`OnboardingDraft` + `OnboardingRepository`); "Başla"da misafir oturumu, her adım taslağa yazar, BuildingPlan'da `POST /v1/user/onboarding`, WeightProjection sunucu projeksiyonuyla; GoodCompany sahte oturum kaldırıldı.
 - Misafir sırrı: `DeviceManager` Keychain'de saklar; `AuthRepository.loginAsGuest` gönderir, `guest_secret_invalid`'de kurulum kimliğini sıfırlayıp yeni misafir açar.
 - Oruç ekranı Forecast kartı → `GET /v1/fasts/forecast` (`lib/domain/fasting/forecast_repository.dart`); güven %, en zor saat, risk aralığı, oruç süresi gerçek; veri yoksa kart gizli. Grafik eğrisi hâlâ örnek. Günün ipucu (`/v1/fasts/daily-tip`) için uygun kart yok (Mochi plan kartı plan yayı; ipucu metni eklenecekse orası).
+- Bildirim kutusu (Profil → Bildirimler) → `GET /v1/notifications` (sunucu metinleri), açılınca `read-all`, kaydırarak silme `DELETE /v1/notifications/:id` (`lib/domain/notification/notifications_repository.dart`). Rozet (`unread-count`) ve sayfalama henüz yok.
 - Hesabı sil: Profili Düzenle en altında (`ProfileDangerCard`, `ConfirmDialog`).
 - Yerel ayar: `dart_defines/local.json` (`API_BASE_URL=http://localhost:3000/v1`); varsayılan prod `https://mochifast-api.fly-work.com/v1`.
 
@@ -109,7 +110,7 @@ Kalan (önerilen sıra; her birinde sahte veriyi kaldır, gerçek uca bağla):
 3. [ ] Oruç: `GET /v1/fasts/active`, `POST /v1/fasts`, `POST /v1/fasts/:id/finish`, `GET /v1/plans/current`, evreler `GET /v1/catalog/stages`.
 4. [ ] Su / kilo / adım / uyku / öğün / açlık ekranları (trackers, meals, hunger uçları).
 5. [ ] Sohbet (SSE) `/v1/chat/*`; fotoğraf analizi `/v1/meals/photo-analyses`.
-6. [ ] Mochi World `GET /v1/world`, challenge'lar; profil; bildirim kutusu `GET /v1/notifications`; FCM token kaydı `PUT /v1/devices/current`.
+6. [ ] Mochi World `GET /v1/world`, challenge'lar; profil; bildirim kutusu ✓ (rozet ve sayfalama kaldı); FCM token kaydı `PUT /v1/devices/current`.
 7. [ ] RevenueCat: `Purchases.logIn(userId)`, paywall, `POST /v1/subscription/sync`.
 8. [ ] Sağlık verisi ve AI işleme için açık rıza ekranları; engeller çoklu seçim; `requiredConsents` yeniden onay ekranı.
 9. [ ] Liste yanıtları için `PagedResponse` (`data.items` + `data.pageInfo`).
