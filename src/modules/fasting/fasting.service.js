@@ -243,6 +243,8 @@ export function createFastingService({ db, crypto, plans, content, stats }) {
           );
           isFirstFast = r.affectedRows === 1;
         }
+        // Bitiş ekranındaki kilo, o günün özetine ve kilo XP'sine yazılır.
+        if (weightEntryId) await stats.applyDay(userId, endLocalDate, conn);
         const delta = await stats.recompute(userId, { from: endLocalDate, conn, now, tz });
         await writeAudit(
           db,

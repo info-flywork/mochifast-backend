@@ -1,9 +1,12 @@
+import { summariesBetween } from '../trackers/trackers.repository.js';
+import { weightProgress as progressOf } from '../trackers/trackers.rules.js';
+
 /**
  * GET /v1/user/summary — ana sayfa, profil başlığı, oruç sekmesi ve widget'lar için tek çağrı
  * (docs/backend/04-api.md §2). Kendi verisi yoktur; modül servislerini birleştirir.
- * Su, adım, öğün, açlık, challenge ve bildirim alanları ilgili fazlarda dolar.
+ * Öğün, açlık, challenge ve bildirim alanları ilgili fazlarda dolar.
  */
-export function createSummaryService({ users, plans, fasting, stats }) {
+export function createSummaryService({ db, users, plans, fasting, stats }) {
   return {
     async summary(userId, locale) {
       // Önce: seri bugüne göre tazelenir (gün döndüyse yazar); diğerleri yalnızca okur.
@@ -16,6 +19,9 @@ export function createSummaryService({ users, plans, fasting, stats }) {
         fasting.active(userId, locale),
         stats.week(userId),
       ]);
+      const day = (await summariesBetween(db, userId, { from: week.today, to: week.today })).get(
+        week.today,
+      );
       return {
         user: {
           id: me.id,
@@ -37,8 +43,9 @@ export function createSummaryService({ users, plans, fasting, stats }) {
         week: week.days,
         today: {
           date: week.today,
-          water: { ml: 0, goalMl: goals.waterGoalMl ?? null },
-          steps: { count: 0, goal: goals.stepsGoal ?? null },
+          water: { ml: day?.water_ml ?? 0, goalMl: goals.waterGoalMl ?? null },
+          steps: { count: day?.steps ?? 0, goal: goals.stepsGoal ?? null },
+          sleep: { minutes: day?.sleep_minutes ?? 0, goalMin: goals.sleepGoalMin ?? null },
           nutrition: { kcal: 0, kcalGoal: goals.kcalGoal ?? goals.computed?.kcalGoal ?? null },
           lastMeal: null,
           hunger: { physical: 0, emotional: 0 },
@@ -52,17 +59,15 @@ export function createSummaryService({ users, plans, fasting, stats }) {
   };
 }
 
-/** Başlangıçtan hedefe kat edilen yol (0–1). Hedef yoksa ya da başlangıca eşitse null. */
+/** Kilo kartı: başlangıç, güncel, hedef ve kat edilen yol (05 §9). */
 export function weightProgress({ startWeightKg, currentWeightKg, goalWeightKg }) {
-  let progress = null;
-  if (startWeightKg && currentWeightKg && goalWeightKg && startWeightKg !== goalWeightKg) {
-    const raw = (startWeightKg - currentWeightKg) / (startWeightKg - goalWeightKg);
-    progress = Math.round(Math.min(1, Math.max(0, raw)) * 1000) / 1000;
-  }
+  const start = startWeightKg ?? null;
+  const current = currentWeightKg ?? start;
+  const goal = goalWeightKg ?? null;
   return {
-    currentKg: currentWeightKg ?? null,
-    startKg: startWeightKg ?? null,
-    goalKg: goalWeightKg ?? null,
-    progress,
+    currentKg: current,
+    startKg: start,
+    goalKg: goal,
+    progress: progressOf(start, current, goal),
   };
 }

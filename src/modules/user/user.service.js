@@ -1,5 +1,6 @@
 import { AppError } from '../../shared/errors.js';
 import { apiToSet, setToApi, toApiEnum, toDbEnum } from '../../shared/enums.js';
+import { toBin } from '../../shared/ids.js';
 import { isValidTimezone, isoDate, localDate } from '../../shared/time.js';
 import { writeAudit } from '../audit/audit.repository.js';
 import { computeNutritionGoals } from './nutrition.rules.js';
@@ -23,7 +24,7 @@ const CONSENT_SOURCE_ONBOARDING = 'onboarding';
  * Kullanıcı, onboarding, profil, ayarlar, hedefler (docs/backend/04-api.md §2).
  * `meta`: { ip, userAgent, timezone }
  */
-export function createUserService({ db, catalog, plans }) {
+export function createUserService({ db, catalog, plans, stats }) {
   async function requireUser(userId, conn) {
     const row = await repo.getUserWithUnits(db, userId, conn);
     if (!row) throw new AppError('NOT_FOUND');
@@ -181,6 +182,9 @@ export function createUserService({ db, catalog, plans }) {
             { conn, skipSafety: true, meta },
           );
         }
+        // Onboarding kilosu bugünün özetine ve kilo XP'sine yazılır.
+        await db.one('SELECT id FROM users WHERE id = :id FOR UPDATE', { id: toBin(userId) }, conn);
+        await stats.applyDay(userId, today, conn);
         await audit(conn, meta, 'user.onboarding_completed', userId, {
           schemaVersion: body.schemaVersion,
           planCode: body.planCode,
@@ -289,6 +293,12 @@ export function createUserService({ db, catalog, plans }) {
             localDate: today,
             tz: user.timezone,
           });
+          await db.one(
+            'SELECT id FROM users WHERE id = :id FOR UPDATE',
+            { id: toBin(userId) },
+            conn,
+          );
+          await stats.applyDay(userId, today, conn);
         }
         if (body.healthFlags !== undefined) {
           await audit(conn, meta, 'user.health_flags_updated', userId, {

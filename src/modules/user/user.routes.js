@@ -22,17 +22,19 @@ import {
   userStatsSchema,
 } from './user.schemas.js';
 
-const serviceFor = memoizeByDeps((app) =>
+export const userServiceFor = memoizeByDeps((app) =>
   createUserService({
     db: app.deps.db,
     catalog: catalogServiceFor(app),
     plans: plansServiceFor(app),
+    stats: statsServiceFor(app),
   }),
 );
 
 const summaryFor = memoizeByDeps((app) =>
   createSummaryService({
-    users: serviceFor(app),
+    db: app.deps.db,
+    users: userServiceFor(app),
     plans: plansServiceFor(app),
     fasting: fastingServiceFor(app),
     stats: statsServiceFor(app),
@@ -50,7 +52,7 @@ const meta = (request) => ({
  * `{ legacy: true }` ile kaydedilince yalnızca eski istemcinin önek almayan yolları açılır.
  */
 export default async function userRoutes(app, options) {
-  const service = serviceFor(app);
+  const service = userServiceFor(app);
   const stats = statsServiceFor(app);
   const auth = { preHandler: app.requireAuth };
 

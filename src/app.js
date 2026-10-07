@@ -19,6 +19,12 @@ import insightsRoutes from './modules/catalog/insights.routes.js';
 import plansRoutes from './modules/plans/plans.routes.js';
 import fastingRoutes, { strugglesRoutes } from './modules/fasting/fasting.routes.js';
 import appConfigRoutes from './modules/app/app-config.routes.js';
+import {
+  sleepRoutes,
+  stepsRoutes,
+  waterRoutes,
+  weightsRoutes,
+} from './modules/trackers/trackers.routes.js';
 
 /**
  * Fastify uygulamasını kurar. Altyapıya bağlanmaz: bağımlılıklar (`deps`) dışarıdan verilir,
@@ -85,6 +91,10 @@ export async function buildApp({ config, deps, logger, registerV1 }) {
       await v1.register(fastingRoutes, { prefix: '/fasts' });
       await v1.register(strugglesRoutes, { prefix: '/struggles' });
       await v1.register(appConfigRoutes, { prefix: '/app' });
+      await v1.register(weightsRoutes, { prefix: '/weights' });
+      await v1.register(waterRoutes, { prefix: '/water' });
+      await v1.register(stepsRoutes, { prefix: '/steps' });
+      await v1.register(sleepRoutes, { prefix: '/sleep' });
       if (registerV1) await registerV1(v1);
     },
     { prefix: API_PREFIX },

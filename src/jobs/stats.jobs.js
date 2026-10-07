@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 import { fromBin } from '../shared/ids.js';
+import { addDays } from '../shared/time.js';
 import * as repo from '../modules/stats/stats.repository.js';
 
 /** 05 §1.3: bu kadar saat aktif kalan oruç kapatılır. */
@@ -12,7 +13,8 @@ const BATCH = 200;
  * Türetilmiş verilerin işleri (05 §14). Hepsi idempotent: aynı iş iki kez çalışsa da sonuç aynıdır.
  * - fastAutoclose: 72 saati geçen aktif seansı hedefte bitmiş sayar.
  * - dayRollover  : yerel gece yarısını yeni geçen saat dilimlerinde serileri tazeler.
- * - dailyRollup  : son 26 saatte oruç kaydı değişen kullanıcıları baştan hesaplar.
+ * - dailyRollup  : son 26 saatte oruç ya da takipçi kaydı değişen kullanıcıların son 3 gününü
+ *                  baştan yazar, seri/sayaç/XP'yi tüm geçmişten hesaplar.
  */
 export function statsJobs({ db, stats, logger, now = () => new Date() }) {
   async function eachUser(rows, fn) {
@@ -64,8 +66,13 @@ export function statsJobs({ db, stats, logger, now = () => new Date() }) {
     },
 
     async dailyRollup() {
-      const users = await repo.usersWithRecentFasts(db, ROLLUP_LOOKBACK_HOURS);
-      const done = await eachUser(users, (userId) => stats.recompute(userId, { now: now() }));
+      const at = now();
+      // Saat dilimi payıyla son 3 yerel gün; seri yine tüm geçmişten hesaplanır.
+      const from = addDays(at.toISOString().slice(0, 10), -2);
+      const users = await repo.usersWithRecentChanges(db, ROLLUP_LOOKBACK_HOURS);
+      const done = await eachUser(users, (userId) =>
+        stats.recompute(userId, { from, now: at, trackers: true }),
+      );
       logger.info({ users: done }, 'gece doğrulaması tamamlandı');
     },
   };

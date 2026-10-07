@@ -524,6 +524,13 @@ export const summarySchema = {
               type: 'object',
               properties: { count: { type: 'integer' }, goal: { type: ['integer', 'null'] } },
             },
+            sleep: {
+              type: 'object',
+              properties: {
+                minutes: { type: 'integer' },
+                goalMin: { type: ['integer', 'null'] },
+              },
+            },
             nutrition: {
               type: 'object',
               properties: { kcal: { type: 'integer' }, kcalGoal: { type: ['integer', 'null'] } },

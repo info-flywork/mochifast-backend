@@ -16,13 +16,17 @@ try {
   const only = process.argv[2];
   const ids = only
     ? [only]
-    : (await db.many('SELECT DISTINCT user_id FROM fasting_sessions')).map((r) =>
-        fromBin(r.user_id),
-      );
+    : (
+        await db.many(
+          `SELECT user_id FROM fasting_sessions UNION SELECT user_id FROM water_entries
+           UNION SELECT user_id FROM weight_entries UNION SELECT user_id FROM step_daily
+           UNION SELECT user_id FROM sleep_entries`,
+        )
+      ).map((r) => fromBin(r.user_id));
   let failed = 0;
   for (const id of ids) {
     try {
-      await stats.recompute(id);
+      await stats.recompute(id, { trackers: true });
     } catch (err) {
       failed += 1;
       console.error(`✖ ${id}: ${err.message}`);

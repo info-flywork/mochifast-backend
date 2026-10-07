@@ -6,6 +6,8 @@ import {
   FAST_XP,
   GOAL_BONUS_MAX_TARGET,
   MIN_COUNTED_FAST_MINUTES,
+  WATER_GOAL_XP,
+  WEIGHT_LOGGED_XP,
   computeStreaks,
   dayKept,
   dayResolver,
@@ -18,6 +20,8 @@ const XP_RULES = Object.freeze({
   fastXp: FAST_XP,
   bonusXp: FAST_GOAL_BONUS_XP,
   bonusMaxTarget: GOAL_BONUS_MAX_TARGET,
+  waterGoalXp: WATER_GOAL_XP,
+  weightXp: WEIGHT_LOGGED_XP,
 });
 
 /** range → gün sayısı (null = tüm geçmiş). */
@@ -37,7 +41,7 @@ export function createStatsService({ db }) {
     return isValidTimezone(tz) ? tz : 'UTC';
   }
 
-  async function recomputeIn(conn, userId, { from, now, lock, tz: knownTz }) {
+  async function recomputeIn(conn, userId, { from, now, lock, tz: knownTz, trackers = false }) {
     const tz = knownTz && !lock ? knownTz : await zoneOf(userId, conn, { lock });
     const today = localDate(now, tz);
     const before = await repo.getStats(db, userId, conn);
@@ -46,6 +50,13 @@ export function createStatsService({ db }) {
 
     await repo.rebuildFastingDays(db, conn, userId, from, resolveDay);
     await repo.rebuildFastXp(db, conn, userId, from, XP_RULES);
+    // Takipçi günleri kendi yazmalarında güncellenir; tam doğrulamada yeniden yazılır.
+    if (trackers) {
+      for (const date of await repo.trackerDates(db, userId, from, conn)) {
+        await repo.upsertTrackerDay(db, conn, userId, date);
+        await repo.syncTrackerXp(db, conn, userId, date, XP_RULES);
+      }
+    }
 
     // Tarih sıralı: ilk anahtar, ilk oruç günüdür (plan yoksa serinin başlangıç sınırı).
     const { fasted, checkins } = await repo.streakInputs(db, userId, conn);
@@ -84,9 +95,21 @@ export function createStatsService({ db }) {
      * transaction'ında çalışır; çağıran kullanıcı satırını zaten kilitlemiş olmalıdır (`tz` verirse
      * saat dilimi yeniden okunmaz).
      */
-    async recompute(userId, { from = null, conn, now = new Date(), tz } = {}) {
-      if (conn) return recomputeIn(conn, userId, { from, now, lock: false, tz });
-      return db.withTransaction((c) => recomputeIn(c, userId, { from, now, lock: true }));
+    async recompute(userId, { from = null, conn, now = new Date(), tz, trackers = false } = {}) {
+      if (conn) return recomputeIn(conn, userId, { from, now, lock: false, tz, trackers });
+      return db.withTransaction((c) => recomputeIn(c, userId, { from, now, lock: true, trackers }));
+    },
+
+    /**
+     * Takipçi yazmasından sonra o günün özetini, günlük XP'yi ve toplam XP/seviyeyi günceller.
+     * Seriyi etkilemez (seri yalnızca oruç ve check-in'den gelir); bu yüzden tam yeniden
+     * hesaplamadan çok daha hafiftir. Çağıranın transaction'ında, kullanıcı satırı kilitliyken.
+     */
+    async applyDay(userId, date, conn) {
+      await repo.upsertTrackerDay(db, conn, userId, date);
+      await repo.syncTrackerXp(db, conn, userId, date, XP_RULES);
+      const { xp, waterGoalDays } = await repo.xpAndWaterDays(db, conn, userId);
+      await repo.saveXp(db, conn, userId, { xp, level: levelFor(xp), waterGoalDays });
     },
 
     /**
@@ -230,7 +253,7 @@ export function createStatsService({ db }) {
         bestStreak: s?.best_streak ?? 0,
         weightChangeKg: await repo.weightChange(db, userId, { from: r.from, to: r.to }),
         // Su ve öğün takipçileri F4'te gelir.
-        waterGoalDays: 0,
+        waterGoalDays: await repo.waterGoalDays(db, userId, { from: r.from, to: r.to }),
         mealsLogged: 0,
       };
     },

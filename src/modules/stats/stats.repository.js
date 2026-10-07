@@ -5,6 +5,8 @@ import { toUserPlan } from '../plans/plans.repository.js';
 /** Sayaçlara giren seanslar: bitmiş, silinmemiş. */
 const FINISHED = "deleted_at IS NULL AND status IN ('completed', 'ended_early')";
 const EPOCH = '1000-01-01';
+/** Su hedefi tutturulan gün (05 §12): o günün hedef anlık görüntüsüyle karşılaştırılır. */
+const WATER_GOAL_DAY = 'water_goal_ml IS NOT NULL AND water_ml >= water_goal_ml';
 
 export async function userTimezone(db, userId, conn, { lock = false } = {}) {
   const row = await db.one(
@@ -226,7 +228,9 @@ export async function totals(db, conn, userId, minMinutes) {
             COALESCE(SUM(duration_minutes), 0) AS total_fasted_minutes,
             COALESCE(MAX(IF(auto_closed = 0, duration_minutes, 0)), 0) AS longest_fast_minutes,
             MIN(IF(status = 'completed', ended_at, NULL)) AS first_completed_at,
-            (SELECT COALESCE(SUM(amount), 0) FROM xp_events WHERE user_id = :userId) AS xp
+            (SELECT COALESCE(SUM(amount), 0) FROM xp_events WHERE user_id = :userId) AS xp,
+            (SELECT COUNT(*) FROM daily_summaries
+              WHERE user_id = :userId AND ${WATER_GOAL_DAY}) AS water_goal_days
        FROM fasting_sessions WHERE user_id = :userId AND ${FINISHED}`,
     { userId: toBin(userId), minMinutes },
     conn,
@@ -238,6 +242,7 @@ export async function totals(db, conn, userId, minMinutes) {
     totalFastedMinutes: Number(row.total_fasted_minutes),
     longestFastMinutes: Number(row.longest_fast_minutes),
     xp: Math.max(0, Number(row.xp)),
+    waterGoalDays: Number(row.water_goal_days),
   };
 }
 
@@ -245,14 +250,16 @@ export async function saveStats(db, conn, userId, s) {
   await db.run(
     `INSERT INTO user_stats
        (user_id, current_streak, best_streak, streak_last_date, completed_fasts, total_fasts,
-        total_fasted_minutes, longest_fast_minutes, xp, level, first_fast_completed_at)
+        total_fasted_minutes, longest_fast_minutes, xp, level, first_fast_completed_at,
+        water_goal_days)
      VALUES (:userId, :current, :best, :today, :completed, :total, :minutes, :longest, :xp, :level,
-             :firstCompletedAt)
+             :firstCompletedAt, :waterGoalDays)
      ON DUPLICATE KEY UPDATE current_streak = VALUES(current_streak),
        best_streak = VALUES(best_streak), streak_last_date = VALUES(streak_last_date),
        completed_fasts = VALUES(completed_fasts), total_fasts = VALUES(total_fasts),
        total_fasted_minutes = VALUES(total_fasted_minutes),
        longest_fast_minutes = VALUES(longest_fast_minutes), xp = VALUES(xp), level = VALUES(level),
+       water_goal_days = VALUES(water_goal_days),
        -- İlk oruç kutlaması bir kez: değer bir kez yazıldıktan sonra silme/düzenleme ile değişmez.
        first_fast_completed_at = COALESCE(first_fast_completed_at, VALUES(first_fast_completed_at))`,
     {
@@ -267,6 +274,7 @@ export async function saveStats(db, conn, userId, s) {
       xp: s.xp,
       level: s.level,
       firstCompletedAt: s.firstCompletedAt,
+      waterGoalDays: s.waterGoalDays,
     },
     conn,
   );
@@ -344,10 +352,16 @@ export async function streakTimezones(db) {
   return rows.map((r) => r.timezone);
 }
 
-/** Son `hours` saatte seansı değişen kullanıcılar (gece doğrulaması). */
-export async function usersWithRecentFasts(db, hours) {
+/**
+ * Son `hours` saatte oruç kaydı ya da günlük özeti değişen kullanıcılar (gece doğrulaması).
+ * Takipçi yazmaları özet satırını güncellediği için ikinci kaynak su/adım/uyku/kiloyu kapsar.
+ */
+export async function usersWithRecentChanges(db, hours) {
   return db.many(
-    `SELECT DISTINCT user_id AS id FROM fasting_sessions
+    `SELECT user_id AS id FROM fasting_sessions
+      WHERE updated_at >= DATE_SUB(NOW(3), INTERVAL :hours HOUR)
+     UNION
+     SELECT user_id FROM daily_summaries
       WHERE updated_at >= DATE_SUB(NOW(3), INTERVAL :hours HOUR)`,
     { hours },
   );
@@ -361,4 +375,122 @@ export async function staleActiveFasts(db, hours, limit) {
       ORDER BY started_at LIMIT :limit`,
     { hours, limit: String(limit) },
   );
+}
+
+// ── Takipçiler (F4) ───────────────────────────────────────────────────
+
+/**
+ * Bir günün takipçi sütunlarını ham kayıtlardan yazar (su, adım, uyku, günün son kilosu).
+ * Hedefler yazma anındaki kullanıcı hedefinden anlık görüntü olarak saklanır: sonradan hedef
+ * değişse de geçmiş günün "hedef tuttu mu" sonucu değişmez.
+ */
+export async function upsertTrackerDay(db, conn, userId, date) {
+  const live = 'user_id = :userId AND local_date = :date AND deleted_at IS NULL';
+  await db.run(
+    `INSERT INTO daily_summaries
+       (user_id, local_date, water_ml, water_goal_ml, steps, steps_goal, sleep_minutes,
+        sleep_goal_min, weight_kg)
+     SELECT :userId, :date,
+            LEAST((SELECT COALESCE(SUM(amount_ml), 0) FROM water_entries WHERE ${live}), 16777215),
+            g.water_goal_ml,
+            (SELECT COALESCE(MAX(steps), 0) FROM step_daily
+              WHERE user_id = :userId AND local_date = :date),
+            g.steps_goal,
+            (SELECT LEAST(SUM(duration_minutes), 65535) FROM sleep_entries WHERE ${live}),
+            g.sleep_goal_min,
+            (SELECT weight_kg FROM weight_entries WHERE ${live}
+              ORDER BY recorded_at DESC, id DESC LIMIT 1)
+       FROM (SELECT 1 AS one) AS x
+       LEFT JOIN user_goals g ON g.user_id = :userId
+     ON DUPLICATE KEY UPDATE water_ml = VALUES(water_ml), water_goal_ml = VALUES(water_goal_ml),
+       steps = VALUES(steps), steps_goal = VALUES(steps_goal),
+       sleep_minutes = VALUES(sleep_minutes), sleep_goal_min = VALUES(sleep_goal_min),
+       weight_kg = VALUES(weight_kg)`,
+    { userId: toBin(userId), date },
+    conn,
+  );
+}
+
+/**
+ * Günlük takipçi XP'si (05 §10): su hedefi günü 5, kilo kaydı 3 (ikisi de günde bir).
+ * Onboarding kilosu kayıt sayılmaz (kullanıcı tartılıp girmedi, formu doldurdu).
+ * `ref_key` gündür; aynı gün tekrar yazılınca olay yinelenmez.
+ */
+export async function syncTrackerXp(db, conn, userId, date, rules) {
+  const params = { userId: toBin(userId), date };
+  await db.run(
+    `DELETE FROM xp_events
+      WHERE user_id = :userId AND reason IN ('water_goal', 'weight_logged') AND ref_key = :date`,
+    params,
+    conn,
+  );
+  await db.run(
+    `INSERT INTO xp_events (user_id, reason, ref_key, amount, local_date)
+     SELECT user_id, 'water_goal', :date, :waterXp, local_date FROM daily_summaries
+      WHERE user_id = :userId AND local_date = :date AND ${WATER_GOAL_DAY}
+     UNION ALL
+     SELECT :userId, 'weight_logged', :date, :weightXp, :date FROM DUAL
+      WHERE EXISTS (SELECT 1 FROM weight_entries
+                     WHERE user_id = :userId AND local_date = :date AND deleted_at IS NULL
+                       AND source <> 'onboarding')`,
+    { ...params, waterXp: rules.waterGoalXp, weightXp: rules.weightXp },
+    conn,
+  );
+  await db.run(
+    `UPDATE daily_summaries
+        SET xp_earned = (SELECT LEAST(GREATEST(COALESCE(SUM(amount), 0), 0), 65535)
+                           FROM xp_events WHERE user_id = :userId AND local_date = :date)
+      WHERE user_id = :userId AND local_date = :date`,
+    params,
+    conn,
+  );
+}
+
+/** XP toplamı ve su hedefi günleri (takipçi yazmasından sonra hafif güncelleme). */
+export async function xpAndWaterDays(db, conn, userId) {
+  const row = await db.one(
+    `SELECT (SELECT COALESCE(SUM(amount), 0) FROM xp_events WHERE user_id = :userId) AS xp,
+            (SELECT COUNT(*) FROM daily_summaries
+              WHERE user_id = :userId AND ${WATER_GOAL_DAY}) AS water_goal_days`,
+    { userId: toBin(userId) },
+    conn,
+  );
+  return { xp: Math.max(0, Number(row.xp)), waterGoalDays: Number(row.water_goal_days) };
+}
+
+export async function saveXp(db, conn, userId, { xp, level, waterGoalDays }) {
+  await db.run(
+    `INSERT INTO user_stats (user_id, xp, level, water_goal_days)
+     VALUES (:userId, :xp, :level, :waterGoalDays)
+     ON DUPLICATE KEY UPDATE xp = VALUES(xp), level = VALUES(level),
+       water_goal_days = VALUES(water_goal_days)`,
+    { userId: toBin(userId), xp, level, waterGoalDays },
+    conn,
+  );
+}
+
+/** `from`'dan itibaren takipçi kaydı olan ya da özetinde takipçi değeri kalan günler. */
+export async function trackerDates(db, userId, from, conn) {
+  const rows = await db.many(
+    `SELECT local_date FROM water_entries WHERE user_id = :userId AND local_date >= :from
+     UNION SELECT local_date FROM step_daily WHERE user_id = :userId AND local_date >= :from
+     UNION SELECT local_date FROM sleep_entries WHERE user_id = :userId AND local_date >= :from
+     UNION SELECT local_date FROM weight_entries WHERE user_id = :userId AND local_date >= :from
+     UNION SELECT local_date FROM daily_summaries
+            WHERE user_id = :userId AND local_date >= :from
+              AND (water_ml > 0 OR steps > 0 OR sleep_minutes IS NOT NULL OR weight_kg IS NOT NULL)`,
+    { userId: toBin(userId), from: from ?? EPOCH },
+    conn,
+  );
+  return rows.map((r) => isoDate(r.local_date)).sort();
+}
+
+/** Aralıkta su hedefi tutturulan gün sayısı. */
+export async function waterGoalDays(db, userId, { from, to }) {
+  const row = await db.one(
+    `SELECT COUNT(*) AS n FROM daily_summaries
+      WHERE user_id = :userId AND local_date BETWEEN :from AND :to AND ${WATER_GOAL_DAY}`,
+    { userId: toBin(userId), from: from ?? EPOCH, to },
+  );
+  return Number(row.n);
 }
