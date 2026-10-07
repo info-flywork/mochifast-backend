@@ -51,8 +51,10 @@ Tuzaklar:
 ## 4. Durum
 
 Yol haritası: `../fastingapp/docs/backend/12-yol-haritasi.md`. Backend F0–F10 tamam, F11 1. hafta tamam.
-Son backend commit'leri: `4d03412` (eski önek'siz yollar silindi), `df0d871` (F11 sertleştirme), `0ad5487`, `77748b7` (F10), `d85c836`, `3d1e84c` (F9).
-Testler: 42 dosya / 380 test geçiyor. Uzak DB migration'ları 0020'ye kadar uygulandı.
+Son backend commit'leri: `0b50836` (misafir sırrı), `3b20902` (kullanılmayan şablon), `9ec59e5` (günün ipucu),
+`bf58398` (refresh aile limiti), `d99a0df` (Fast Forecast), `a14d31a` (bu dosya), `4d03412` (eski önek'siz yollar silindi),
+`df0d871` (F11 sertleştirme), `0ad5487`, `77748b7` (F10), `d85c836`, `3d1e84c` (F9).
+Testler: 43 dosya / 388 test geçiyor. Uzak DB migration'ları 0021'e kadar uygulandı; seed güncel.
 
 Modüller (`src/modules`): auth, user, account (silme/dışa aktarma/saklama), admin, devices, catalog, plans, fasting,
 stats, trackers (kilo/su/adım/uyku), meals, hunger, ai (fotoğraf analizi, Claude), chat (OpenAI, SSE), gamification
@@ -60,6 +62,8 @@ stats, trackers (kilo/su/adım/uyku), meals, hunger, ai (fotoğraf analizi, Clau
 İşler: `src/jobs/*.jobs.js`, zamanlama `src/schedules.js`, worker `src/worker.js`.
 
 ## 5. Backend'de kalanlar (öncelik sırasıyla)
+
+1–5 tamamlandı (2026-10-07). Kalan backend işi yalnızca opsiyonel/bağımlı maddeler (6, 7).
 
 Durumu güncelle: bitirince `[x]` yap.
 
