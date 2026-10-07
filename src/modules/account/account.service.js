@@ -1,6 +1,7 @@
 import { QUEUES } from '../../config/constants.js';
 import { sessionCachePrefix } from '../../plugins/auth.js';
 import { AppError } from '../../shared/errors.js';
+import { fromBin } from '../../shared/ids.js';
 import { writeAudit } from '../audit/audit.repository.js';
 import { clearPushTokens, revokeUserSessions } from '../auth/auth.repository.js';
 import { findMedia } from '../media/media.repository.js';
@@ -24,7 +25,7 @@ export const healthConsentKey = (userId) => `consent:health:${userId}`;
  * Hesap silme talebi, veri dışa aktarma ve rıza kontrolü (docs/backend/06-guvenlik.md §8).
  * Ağır işler (silme, zip) worker'da: jobs/account.jobs.js.
  */
-export function createAccountService({ db, cache, jobs, storage, entitlements }) {
+export function createAccountService({ db, cache, jobs, storage, entitlements, firebase }) {
   function exportDto(e) {
     return {
       id: e.id,
@@ -77,6 +78,22 @@ export function createAccountService({ db, cache, jobs, storage, entitlements })
       // Mağaza aboneliği uygulamadan iptal edilemez; istemci kullanıcıya bunu söyler.
       const hasActiveSubscription = (await entitlements?.isPremium(userId)) ?? false;
       return { scheduledFor: scheduledFor.toISOString(), hasActiveSubscription };
+    },
+
+    /**
+     * Web silme sayfası (Play Store): Firebase ile giriş yapılmış kullanıcının talebi.
+     * Misafir hesaplar uygulamadan silinir (web'de kimlikleri yok).
+     */
+    async requestDeletionWithIdToken(idToken, meta) {
+      const verified = await firebase.verify(idToken);
+      const identity = await db.one(
+        `SELECT ai.user_id FROM auth_identities ai
+          WHERE ai.provider = 'firebase' AND ai.provider_subject = :subject`,
+        { subject: verified.subject },
+      );
+      if (!identity) throw new AppError('NOT_FOUND', { details: { reason: 'no_account' } });
+      const userId = fromBin(identity.user_id);
+      return this.requestDeletion(userId, { reason: 'web' }, meta);
     },
 
     /** Son 24 saatte talep varsa o döner (günde 1); yoksa yeni talep kuyruğa girer. */

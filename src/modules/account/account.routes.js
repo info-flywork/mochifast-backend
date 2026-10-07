@@ -9,6 +9,7 @@ export const accountServiceFor = memoizeByDeps((app) =>
     jobs: app.deps.jobs,
     storage: app.deps.storage,
     entitlements: app.deps.entitlements,
+    firebase: app.deps.firebase,
   }),
 );
 

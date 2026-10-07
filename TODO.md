@@ -17,27 +17,35 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
 - [ ] **Paylaşılan şifreleri değiştir:** DB şifresi ve Bunny storage şifresi sohbette açık yazıldı. Değiştirip
       `.env` / `.env.production`'a yeni değerleri koy.
 - [ ] **Branch'i push'la / merge et:** `feat/backend-f0-f1` (F0–F10 commit'leri) henüz uzakta yok.
-- [ ] **Sunucuda deploy:** `npm ci` → `npm run migrate` (0017'ye kadar) → `npm run seed` → `npm run stats:recompute`
+- [ ] **Sunucuda deploy:** `npm ci` → `npm run migrate` (0018'e kadar) → `npm run seed` → `npm run stats:recompute`
       → PM2'de API **ve worker** yeniden başlat (yeni kuyruklar: `stats`, `media`, `ai`, `billing`, `notifications`, `account`).
       `scripts/deploy.sh` migrate + seed + pm2'yi yapar; `stats:recompute`'u ilk seferde elle çalıştır.
 
+- [ ] **Sunucuda Node ≥ 24.7** olmalı (yönetici şifreleri yerleşik `crypto.argon2` ile; `.nvmrc` 24 → `nvm install 24`).
+- [ ] **İlk yönetici:** sunucuda `npm run admin:create -- <senin e-postan> owner` → çıkan geçici şifre + TOTP sırrını
+      authenticator uygulamasına ekle, girişten sonra şifreyi değiştir (`POST /v1/admin/auth/password`). Kilitlenirsen
+      `npm run admin:create -- <email> --reset`.
+
 ## 1. `.env` ve `.env.production` — boş alanlar (dosyalara eklendi, değerleri sen gir)
 
-| Anahtar                          | Nereden                                                                                                                                                                    | Boşken ne olur                                                     |
-| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `BUNNY_PRIVATE_STORAGE_ZONE`     | Bunny → yeni storage zone (ör. `mochifast-private`, DE)                                                                                                                    | Geliştirmede `var/media`'ya yazar; üretim açılmaz                  |
-| `BUNNY_PRIVATE_STORAGE_PASSWORD` | Private zone → FTP & API Access → Password                                                                                                                                 | 〃                                                                 |
-| `BUNNY_PRIVATE_PULL_ZONE_HOST`   | Private zone'a bağlı **yeni** pull zone (ör. `mochifast-private.b-cdn.net`)                                                                                                | 〃                                                                 |
-| `BUNNY_TOKEN_AUTH_KEY`           | **Private** pull zone → Security → Token Authentication → URL Token Authentication Key (şu an boş)                                                                         | 〃 (imzalı URL doğrulanamaz)                                       |
-| `BUNNY_API_KEY`                  | Bunny → Account → API key (şu an boş)                                                                                                                                      | Avatar değişince / silmede CDN purge yapılmaz (dosya yine silinir) |
-| `ANTHROPIC_API_KEY`              | console.anthropic.com                                                                                                                                                      | Fotoğraftan kalori analizi 503                                     |
-| `OPENAI_API_KEY`                 | platform.openai.com                                                                                                                                                        | Coach Mochi sohbeti 503                                            |
-| `OPENAI_CHAT_MODEL`              | Kullanmak istediğin OpenAI sohbet modeli (varsayılan yok, bilinçli)                                                                                                        | Sohbet 503                                                         |
-| `OPENAI_REASONING_EFFORT`        | Yalnızca reasoning model seçersen: `minimal\|low\|medium\|high`                                                                                                            | Gönderilmez (normal modelde boş kalsın)                            |
-| `REVENUECAT_SECRET_API_KEY`      | RevenueCat → Project settings → API keys → **Secret** key (`sk_…`)                                                                                                         | Herkes ücretsiz; `/subscription/sync` 503                          |
-| `REVENUECAT_WEBHOOK_AUTH`        | Uzun rastgele değer üret (`openssl rand -hex 32`), panelde webhook "Authorization header" alanına **aynısını** yaz (ör. `Bearer <değer>`; başlığın tamamı karşılaştırılır) | Webhook 503 (sync yine çalışır)                                    |
-| `REVENUECAT_ALLOW_SANDBOX`       | TestFlight'ta premium verilsin mi? Üretimde boş = hayır                                                                                                                    | Üretimde sandbox satın alma premium vermez                         |
-| `SENTRY_DSN`                     | Sentry projesi (isteğe bağlı)                                                                                                                                              | Hata takibi kapalı                                                 |
+| Anahtar                          | Nereden                                                                                                                                                                                | Boşken ne olur                                                                                    |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `BUNNY_PRIVATE_STORAGE_ZONE`     | Bunny → yeni storage zone (ör. `mochifast-private`, DE)                                                                                                                                | Geliştirmede `var/media`'ya yazar; üretim açılmaz                                                 |
+| `BUNNY_PRIVATE_STORAGE_PASSWORD` | Private zone → FTP & API Access → Password                                                                                                                                             | 〃                                                                                                |
+| `BUNNY_PRIVATE_PULL_ZONE_HOST`   | Private zone'a bağlı **yeni** pull zone (ör. `mochifast-private.b-cdn.net`)                                                                                                            | 〃                                                                                                |
+| `BUNNY_TOKEN_AUTH_KEY`           | **Private** pull zone → Security → Token Authentication → URL Token Authentication Key (şu an boş)                                                                                     | 〃 (imzalı URL doğrulanamaz)                                                                      |
+| `BUNNY_API_KEY`                  | Bunny → Account → API key (şu an boş)                                                                                                                                                  | Avatar değişince / silmede CDN purge yapılmaz (dosya yine silinir)                                |
+| `ANTHROPIC_API_KEY`              | console.anthropic.com                                                                                                                                                                  | Fotoğraftan kalori analizi 503                                                                    |
+| `OPENAI_API_KEY`                 | platform.openai.com                                                                                                                                                                    | Coach Mochi sohbeti 503                                                                           |
+| `OPENAI_CHAT_MODEL`              | Kullanmak istediğin OpenAI sohbet modeli (varsayılan yok, bilinçli)                                                                                                                    | Sohbet 503                                                                                        |
+| `OPENAI_REASONING_EFFORT`        | Yalnızca reasoning model seçersen: `minimal\|low\|medium\|high`                                                                                                                        | Gönderilmez (normal modelde boş kalsın)                                                           |
+| `REVENUECAT_SECRET_API_KEY`      | RevenueCat → Project settings → API keys → **Secret** key (`sk_…`)                                                                                                                     | Herkes ücretsiz; `/subscription/sync` 503                                                         |
+| `REVENUECAT_WEBHOOK_AUTH`        | Uzun rastgele değer üret (`openssl rand -hex 32`), panelde webhook "Authorization header" alanına **aynısını** yaz (ör. `Bearer <değer>`; başlığın tamamı karşılaştırılır)             | Webhook 503 (sync yine çalışır)                                                                   |
+| `REVENUECAT_ALLOW_SANDBOX`       | TestFlight'ta premium verilsin mi? Üretimde boş = hayır                                                                                                                                | Üretimde sandbox satın alma premium vermez                                                        |
+| `FIREBASE_WEB_API_KEY`           | Firebase → Project settings → Your apps → **Add app → Web** → `apiKey`. Ayrıca Authentication → Settings → **Authorized domains**'e API alan adını (`mochifast-api.fly-work.com`) ekle | `/account/delete` sayfasında Google ile silme butonu çıkmaz (yalnızca talimat + destek e-postası) |
+| `ADMIN_IP_ALLOWLIST`             | Panele girdiğin IP/VPN (ör. ofis IP'si)                                                                                                                                                | Yönetici API her IP'den erişilebilir (şifre + TOTP yine zorunlu)                                  |
+| `CORS_ORIGINS`                   | Yönetim paneli adresi (ör. `https://admin.mochifast.app`)                                                                                                                              | Tarayıcıdaki panel API'ye istek atamaz                                                            |
+| `SENTRY_DSN`                     | Sentry projesi (isteğe bağlı)                                                                                                                                                          | Hata takibi kapalı                                                                                |
 
 ## 2. Panel ayarları
 
@@ -47,6 +55,11 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
 - [ ] Pull zone: **Token Authentication AÇIK**, hotlink koruması, yalnızca GET; izin verilen uzantılar `webp` **ve `zip`** (veri dışa aktarma).
 - [ ] (İsteğe bağlı) özel alan adı `media.mochifast.app` + TLS.
 - [ ] Kurulumdan sonra staging'de kontrol: token'sız URL → 403, imzalı URL → 200 (bunu birlikte yapalım).
+
+### Google Play Console
+
+- [ ] **Veri güvenliği → Hesap silme URL'si:** `https://mochifast-api.fly-work.com/account/delete`
+      (Google ile giriş yapanlar oradan siler; misafirler uygulamadan).
 
 ### RevenueCat
 
@@ -129,7 +142,10 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
 
 - [ ] `/user/summary` cache'i: bildirimler domain servislerinden doğrudan planlandı, ayrı olay altyapısı gerekmedi; cache ihtiyaç olursa.
 - [ ] İnaktif **kayıtlı** hesap saklama (24 ay + uyarı + 30 gün): e-posta kanalı olmadığı için yapılmadı.
-- [ ] Play Store web hesap silme sayfası → F10 2. hafta (admin API ile).
+- [ ] **Yönetim paneli arayüzü** ayrı proje (React/Refine vb.): API hazır (`/v1/admin/*`, 04 §19). İçerik bölüm
+      dokümanı biçiminde düzenlenir; panelden kaydedilen bölümü `npm run seed` artık ezmez (seed dosyasındaki değişiklik o
+      bölüme yansımaz → panelden yapılmalı ya da sürüm geri alınmalı).
+- [ ] Ürün analitiği (PostHog/Amplitude) yapılmadı; raporlar şimdilik DB'den (`/v1/admin/reports/overview`).
 - [ ] Widget yenilemesi için sessiz push (F9 opsiyonel) yapılmadı. `subscription_expiring`, dışa aktarma ve hesap silme
       bildirimlerinin tetikleyicileri F10'da.
 - [ ] Challenge katılımcı avatarları: "challenge'larda görün" izin ayarı yok → liste boş, istemci maskot gösteriyor. İstersen ekleriz.

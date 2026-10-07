@@ -11,6 +11,7 @@ export const RETENTION = Object.freeze({
   readNotificationDays: 90,
   auditMonths: 13,
   closedSessionDays: 30,
+  activityDays: 400,
 });
 
 const BATCH = 1_000;
@@ -143,6 +144,11 @@ export function createRetention({ db, logger }) {
           WHERE expires_at < DATE_SUB(NOW(3), INTERVAL :days DAY)
              OR revoked_at < DATE_SUB(NOW(3), INTERVAL :days DAY)`,
         { days: RETENTION.closedSessionDays },
+      );
+      counts.user_activity_daily = await deleteInBatches(
+        db,
+        'DELETE FROM user_activity_daily WHERE activity_date < DATE_SUB(UTC_DATE(), INTERVAL :days DAY)',
+        { days: RETENTION.activityDays },
       );
       const total = Object.values(counts).reduce((a, n) => a + n, 0);
       if (total > 0) logger.info(counts, 'saklama süresi dolan kayıtlar silindi');

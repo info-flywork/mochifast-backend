@@ -61,16 +61,26 @@ export default fp(
       await touchActivity(request, userId);
     }
 
-    /** Son etkinlik; yanıtı bekletmez, `updated_at`'i değiştirmez. */
+    /**
+     * Son etkinlik + günlük etkin kullanıcı kaydı (raporlar: DAU/MAU). Yanıtı bekletmez,
+     * `updated_at`'i değiştirmez. Anahtar günü içerir: gün dönünce ilk istek yine yazılır.
+     */
     async function touchActivity(request, userId) {
-      const key = `active:${userId}`;
+      const day = new Date().toISOString().slice(0, 10);
+      const key = `active:${userId}:${day}`;
       if ((await app.deps.cache.get(key)) !== null) return;
       await app.deps.cache.set(key, 1, ACTIVITY_TOUCH_SEC);
-      app.deps.db
-        .run('UPDATE users SET last_active_at = NOW(3), updated_at = updated_at WHERE id = :id', {
-          id: toBin(userId),
-        })
-        .catch((err) => request.log.warn({ err }, 'last_active_at yazılamadı'));
+      const id = toBin(userId);
+      Promise.all([
+        app.deps.db.run(
+          'UPDATE users SET last_active_at = NOW(3), updated_at = updated_at WHERE id = :id',
+          { id },
+        ),
+        app.deps.db.run(
+          'INSERT IGNORE INTO user_activity_daily (activity_date, user_id) VALUES (:day, :id)',
+          { day, id },
+        ),
+      ]).catch((err) => request.log.warn({ err }, 'etkinlik kaydı yazılamadı'));
     }
 
     app.decorate('requireAuth', async function requireAuth(request) {

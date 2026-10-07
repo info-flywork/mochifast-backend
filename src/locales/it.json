@@ -22,6 +22,7 @@
     "ACCOUNT_PENDING_DELETION": "Questo account è in attesa di eliminazione. Vuoi ripristinarlo?",
     "REPLY_IN_PROGRESS": "Mochi sta ancora rispondendo. Attendi un momento.",
     "GONE": "Questo account non è più disponibile.",
+    "ACCOUNT_LOCKED": "Troppi tentativi falliti. Riprova più tardi.",
     "PAYLOAD_TOO_LARGE": "Il file o la richiesta è troppo grande.",
     "UNSUPPORTED_MEDIA_TYPE": "Questo tipo di file non è supportato.",
     "NOT_FOOD": "Non sembra un pasto. Prova con un'altra foto.",

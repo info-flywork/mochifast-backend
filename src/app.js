@@ -26,6 +26,8 @@ import { subscriptionRoutes, webhookRoutes } from './modules/billing/billing.rou
 import hungerRoutes from './modules/hunger/hunger.routes.js';
 import notificationsRoutes from './modules/notifications/notifications.routes.js';
 import accountRoutes, { accountServiceFor } from './modules/account/account.routes.js';
+import adminRoutes from './modules/admin/admin.routes.js';
+import { deletePageRoutes, deleteRequestRoutes } from './modules/account/delete-page.js';
 import mediaRoutes, { localMediaFiles } from './modules/media/media.routes.js';
 import { mealsRoutes, nutritionRoutes } from './modules/meals/meals.routes.js';
 import {
@@ -93,6 +95,8 @@ export async function buildApp({ config, deps, logger, registerV1 }) {
   });
 
   await app.register(healthRoutes);
+  // Play Store web hesap silme sayfası (HTML).
+  await app.register(deletePageRoutes);
   // Bunny yerine geliştirme/testte dosyaları API sunar (üretimde kayıtlı değil).
   if (deps.storage?.driver === 'local') await app.register(localMediaFiles);
 
@@ -106,6 +110,8 @@ export async function buildApp({ config, deps, logger, registerV1 }) {
       await v1.register(authRoutes, { prefix: '/auth' });
       await v1.register(userRoutes, { prefix: '/user' });
       await v1.register(accountRoutes, { prefix: '/user' });
+      await v1.register(adminRoutes, { prefix: '/admin' });
+      await v1.register(deleteRequestRoutes, { prefix: '/account' });
       await v1.register(devicesRoutes, { prefix: '/devices' });
       await v1.register(catalogRoutes, { prefix: '/catalog' });
       await v1.register(insightsRoutes, { prefix: '/insights' });

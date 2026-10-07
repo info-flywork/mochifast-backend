@@ -22,6 +22,7 @@
     "ACCOUNT_PENDING_DELETION": "Dieses Konto ist zur Löschung vorgemerkt. Möchtest du es wiederherstellen?",
     "REPLY_IN_PROGRESS": "Mochi antwortet noch. Bitte warte kurz.",
     "GONE": "Dieses Konto ist nicht mehr verfügbar.",
+    "ACCOUNT_LOCKED": "Zu viele Fehlversuche. Versuche es später erneut.",
     "PAYLOAD_TOO_LARGE": "Die Datei oder Anfrage ist zu groß.",
     "UNSUPPORTED_MEDIA_TYPE": "Dieser Dateityp wird nicht unterstützt.",
     "NOT_FOOD": "Das sieht nicht nach einer Mahlzeit aus. Versuch ein anderes Foto.",

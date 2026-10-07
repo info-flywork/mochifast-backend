@@ -57,12 +57,19 @@ const schema = {
     JWT_AUDIENCE: { type: 'string', default: 'mochifast-app' },
     JWT_ACCESS_TTL_SEC: { type: 'integer', minimum: 60, maximum: 3600, default: 900 },
     REFRESH_TTL_DAYS: { type: 'integer', minimum: 1, maximum: 365, default: 60 },
+    JWT_ADMIN_AUDIENCE: { type: 'string', default: 'mochifast-admin' },
+    ADMIN_TOKEN_TTL_SEC: { type: 'integer', minimum: 300, maximum: 3600, default: 3600 },
+    // Virgülle ayrılmış IP/CIDR (ör. 203.0.113.7,10.0.0.0/8). Boş = kısıt yok (uyarı loglanır).
+    ADMIN_IP_ALLOWLIST: { type: 'string', default: '' },
 
     FIELD_ENCRYPTION_KEYS_JSON: { type: 'string' },
     FIELD_ENCRYPTION_ACTIVE_KID: { type: 'integer', minimum: 1, maximum: 255 },
 
     FIREBASE_PROJECT_ID: { type: 'string', default: '' },
     FIREBASE_SIGN_IN_PROVIDERS: { type: 'string', default: 'apple.com,google.com' },
+    // Web hesap silme sayfası (Play Store): Firebase web uygulaması yapılandırması.
+    FIREBASE_WEB_API_KEY: { type: 'string', default: '' },
+    FIREBASE_AUTH_DOMAIN: { type: 'string', default: '' },
 
     CORS_ORIGINS: { type: 'string', default: '' },
     RATE_LIMIT_GLOBAL_MAX: { type: 'integer', minimum: 1, default: 600 },
@@ -193,7 +200,10 @@ export function loadConfig(env = process.env) {
       audience: e.JWT_AUDIENCE,
       accessTtlSec: e.JWT_ACCESS_TTL_SEC,
       refreshTtlDays: e.REFRESH_TTL_DAYS,
+      adminAudience: e.JWT_ADMIN_AUDIENCE,
+      adminTtlSec: e.ADMIN_TOKEN_TTL_SEC,
     },
+    admin: { ipAllowlist: splitList(e.ADMIN_IP_ALLOWLIST) },
     fieldEncryption: {
       keys: parseJson('FIELD_ENCRYPTION_KEYS_JSON', e.FIELD_ENCRYPTION_KEYS_JSON),
       activeKid: e.FIELD_ENCRYPTION_ACTIVE_KID,
@@ -201,6 +211,10 @@ export function loadConfig(env = process.env) {
     firebase: {
       projectId: e.FIREBASE_PROJECT_ID,
       allowedProviders: splitList(e.FIREBASE_SIGN_IN_PROVIDERS),
+      webApiKey: e.FIREBASE_WEB_API_KEY,
+      authDomain:
+        e.FIREBASE_AUTH_DOMAIN ||
+        (e.FIREBASE_PROJECT_ID ? `${e.FIREBASE_PROJECT_ID}.firebaseapp.com` : ''),
     },
     cors: { origins: splitList(e.CORS_ORIGINS) },
     rateLimit: { globalMax: e.RATE_LIMIT_GLOBAL_MAX, window: e.RATE_LIMIT_WINDOW },

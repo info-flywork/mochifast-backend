@@ -24,6 +24,10 @@ export const PURPOSES = Object.freeze({
     variants: { lg: 1600, md: 1024, thumb: 256 },
     main: 'md',
   },
+  // Yönetim paneli içerik görselleri (public zone, kalıcı URL; 08 §7).
+  insight_cover: { visibility: 'public', variants: { lg: 1600, md: 960, thumb: 320 }, main: 'md' },
+  challenge_image: { visibility: 'public', variants: { md: 1024, thumb: 256 }, main: 'md' },
+  plan_image: { visibility: 'public', variants: { md: 1024, thumb: 256 }, main: 'md' },
 });
 
 /** Kullanıcı kimliğinden geri çıkarılamayan, kararlı yol öneki (hesap silmede önekle silinir). */
@@ -36,6 +40,8 @@ export function storagePrefix(purpose, { ownerKey: key, mediaId, now = new Date(
   if (purpose === 'avatar') return `u/${key}/avatar/${mediaId}`;
   const yyyy = now.getUTCFullYear();
   const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+  // Public içerik görselleri kullanıcıya bağlı değildir.
+  if (PURPOSES[purpose]?.visibility === 'public') return `p/${purpose}/${yyyy}/${mm}/${mediaId}`;
   return `u/${key}/meals/${yyyy}/${mm}/${mediaId}`;
 }
 

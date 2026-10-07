@@ -59,12 +59,15 @@ export function createMediaService({ db, storage, config, logger }) {
      */
     async upload(userId, purpose, buffer) {
       const processed = await processImage(buffer, purpose);
-      const duplicate = await repo.findDuplicate(db, userId, purpose, processed.sha256);
-      if (duplicate) return { media: duplicate, duplicate: true };
+      // userId null: yönetici içeriği (public; sahibi yok, yineleme kontrolü yapılmaz).
+      if (userId) {
+        const duplicate = await repo.findDuplicate(db, userId, purpose, processed.sha256);
+        if (duplicate) return { media: duplicate, duplicate: true };
+      }
 
       const id = newId();
       const prefix = storagePrefix(purpose, {
-        ownerKey: ownerKey(userId, config.pathSecret),
+        ownerKey: userId ? ownerKey(userId, config.pathSecret) : null,
         mediaId: id,
       });
       const sizes = PURPOSES[purpose].variants;

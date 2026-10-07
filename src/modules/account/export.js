@@ -68,6 +68,7 @@ export const EXPORT_EXCLUDED = Object.freeze({
   push_deliveries: 'teslim kaydı, 30 gün',
   data_export_requests: 'bu dosyanın kendisi',
   account_deletion_requests: 'hukuki iz (silme talebi)',
+  user_activity_daily: 'etkinlik sayacı (raporlar)',
 });
 
 /** Şifreli kolonların AAD bağlamı: `<tablo>.<alan>:<id>` (servislerle aynı). */
