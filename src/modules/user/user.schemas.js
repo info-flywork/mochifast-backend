@@ -4,6 +4,7 @@ import {
   statsTotalsSchema,
   weekDaySchema,
 } from '../fasting/fasting.schemas.js';
+import { challengeSchema } from '../gamification/gamification.schemas.js';
 import {
   CONSENT_TYPES,
   DIETS,
@@ -562,7 +563,7 @@ export const summarySchema = {
             progress: nullableNumber,
           },
         },
-        featuredChallenge: { type: ['object', 'null'], additionalProperties: true },
+        featuredChallenge: challengeSchema,
         unreadNotifications: { type: 'integer' },
         serverTime: { type: 'string' },
       },

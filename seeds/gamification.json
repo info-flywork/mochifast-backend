@@ -1,0 +1,79 @@
+{
+  "zones": {
+    "forest": [3, 10, 25, 50],
+    "lake": [3, 7, 14, 30],
+    "summit": [1, 2, 5, 10],
+    "garden": [3, 10, 30, 60]
+  },
+  "challenges": [
+    {
+      "code": "week_meals_3",
+      "metric": "meals_logged",
+      "targetCount": 3,
+      "durationDays": 7,
+      "rewardXp": 50,
+      "isFeatured": true,
+      "sortOrder": 1,
+      "translations": {
+        "en": { "title": "1 Week of Fasting Challenge", "subtitle": "Record 3 meals in a week", "badge": "7D / 3x" },
+        "tr": { "title": "1 haftalık oruç meydan okuması", "subtitle": "Haftada 3 öğün kaydetmelisin", "badge": "7G / 3x" },
+        "de": { "title": "1 Woche Fasten-Challenge", "subtitle": "Du solltest 3 Mahlzeiten pro Woche erfassen", "badge": "7T / 3x" },
+        "es": { "title": "Reto de 1 semana de ayuno", "subtitle": "Registra 3 comidas en una semana", "badge": "7D / 3x" },
+        "fr": { "title": "1 semaine de défi de jeûne", "subtitle": "Vous devriez enregistrer 3 repas par semaine", "badge": "7J / 3x" },
+        "it": { "title": "Sfida: 1 settimana di digiuno", "subtitle": "Registra 3 pasti in una settimana", "badge": "7 G / 3×" },
+        "ru": { "title": "Челлендж: 1 неделя голодания", "subtitle": "Нужно записать 3 приёма пищи за неделю", "badge": "7 Д / 3×" }
+      }
+    },
+    {
+      "code": "week_fasts_3",
+      "metric": "fasts_completed",
+      "targetCount": 3,
+      "durationDays": 7,
+      "rewardXp": 60,
+      "sortOrder": 2,
+      "translations": {
+        "en": { "title": "Fast Week", "subtitle": "Complete 3 fasts in 7 days", "badge": "7D / 3x" },
+        "tr": { "title": "Oruç haftası", "subtitle": "7 günde 3 oruç tamamla", "badge": "7G / 3x" },
+        "de": { "title": "Fastenwoche", "subtitle": "Schließe 3 Fastenzeiten in 7 Tagen ab", "badge": "7T / 3x" },
+        "es": { "title": "Semana de ayuno", "subtitle": "Completa 3 ayunos en 7 días", "badge": "7D / 3x" },
+        "fr": { "title": "Semaine de jeûne", "subtitle": "Terminez 3 jeûnes en 7 jours", "badge": "7J / 3x" },
+        "it": { "title": "Settimana di digiuno", "subtitle": "Completa 3 digiuni in 7 giorni", "badge": "7 G / 3×" },
+        "ru": { "title": "Неделя голодания", "subtitle": "Заверши 3 голодания за 7 дней", "badge": "7 Д / 3×" }
+      }
+    },
+    {
+      "code": "water_week_5",
+      "metric": "water_goal_days",
+      "targetCount": 5,
+      "durationDays": 7,
+      "rewardXp": 50,
+      "sortOrder": 3,
+      "translations": {
+        "en": { "title": "Hydration Hero", "subtitle": "Hit your water goal on 5 days this week", "badge": "7D / 5x" },
+        "tr": { "title": "Su kahramanı", "subtitle": "Bu hafta 5 gün su hedefine ulaş", "badge": "7G / 5x" },
+        "de": { "title": "Trink-Held", "subtitle": "Erreiche an 5 Tagen dieser Woche dein Wasserziel", "badge": "7T / 5x" },
+        "es": { "title": "Héroe de la hidratación", "subtitle": "Cumple tu meta de agua 5 días esta semana", "badge": "7D / 5x" },
+        "fr": { "title": "Héros de l'hydratation", "subtitle": "Atteignez votre objectif d'eau 5 jours cette semaine", "badge": "7J / 5x" },
+        "it": { "title": "Eroe dell'idratazione", "subtitle": "Raggiungi l'obiettivo d'acqua 5 giorni questa settimana", "badge": "7 G / 5×" },
+        "ru": { "title": "Герой гидратации", "subtitle": "Выполни норму воды 5 дней на этой неделе", "badge": "7 Д / 5×" }
+      }
+    },
+    {
+      "code": "hunger_aware_5",
+      "metric": "hunger_checkins",
+      "targetCount": 5,
+      "durationDays": 7,
+      "rewardXp": 40,
+      "sortOrder": 4,
+      "translations": {
+        "en": { "title": "Know Your Hunger", "subtitle": "Do 5 hunger check-ins in 7 days", "badge": "7D / 5x" },
+        "tr": { "title": "Açlığını tanı", "subtitle": "7 günde 5 açlık kontrolü yap", "badge": "7G / 5x" },
+        "de": { "title": "Kenne deinen Hunger", "subtitle": "Mach 5 Hunger-Check-ins in 7 Tagen", "badge": "7T / 5x" },
+        "es": { "title": "Conoce tu hambre", "subtitle": "Haz 5 registros de hambre en 7 días", "badge": "7D / 5x" },
+        "fr": { "title": "Connaissez votre faim", "subtitle": "Faites 5 bilans de faim en 7 jours", "badge": "7J / 5x" },
+        "it": { "title": "Conosci la tua fame", "subtitle": "Fai 5 check-in della fame in 7 giorni", "badge": "7 G / 5×" },
+        "ru": { "title": "Пойми свой голод", "subtitle": "Сделай 5 отметок голода за 7 дней", "badge": "7 Д / 5×" }
+      }
+    }
+  ]
+}

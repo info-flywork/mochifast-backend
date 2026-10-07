@@ -13,10 +13,22 @@ const WATER_GOAL_DAY = 'water_goal_ml IS NOT NULL AND water_ml >= water_goal_ml'
  */
 const SNACK = "(COALESCE(kind, slot, '') = 'snack')";
 /** Kullanıcı sayaçları (alt sorgular; `:userId` gerektirir). */
+/**
+ * Zirve bölgesi (05 §7.1): ulaşılan EN İYİ değişim. Kilo verme hedefinde başlangıç − en düşük
+ * ölçüm; hedef başlangıçtan büyükse (kilo alma) en yüksek ölçüm − başlangıç. Negatif olmaz.
+ * Profil sütunları tek satırdır; MAX() yalnızca ONLY_FULL_GROUP_BY için.
+ */
+const BEST_WEIGHT = `(SELECT GREATEST(0, CASE WHEN MAX(p.goal_weight_kg) > MAX(p.start_weight_kg)
+                                  THEN MAX(w.weight_kg) - MAX(p.start_weight_kg)
+                                  ELSE MAX(p.start_weight_kg) - MIN(w.weight_kg) END)
+                       FROM weight_entries w JOIN user_profiles p ON p.user_id = w.user_id
+                      WHERE w.user_id = :userId AND w.deleted_at IS NULL
+                        AND p.start_weight_kg IS NOT NULL) AS best_weight_lost_kg`;
 const COUNTERS = `(SELECT COUNT(*) FROM daily_summaries
                     WHERE user_id = :userId AND ${WATER_GOAL_DAY}) AS water_goal_days,
                   (SELECT COUNT(*) FROM meals
-                    WHERE user_id = :userId AND deleted_at IS NULL) AS meals_logged`;
+                    WHERE user_id = :userId AND deleted_at IS NULL) AS meals_logged,
+                  ${BEST_WEIGHT}`;
 
 export async function userTimezone(db, userId, conn, { lock = false } = {}) {
   const row = await db.one(
@@ -30,7 +42,8 @@ export async function userTimezone(db, userId, conn, { lock = false } = {}) {
 export async function getStats(db, userId, conn) {
   return db.one(
     `SELECT current_streak, best_streak, streak_last_date, completed_fasts, total_fasts,
-            total_fasted_minutes, longest_fast_minutes, meals_logged, water_goal_days, xp, level
+            total_fasted_minutes, longest_fast_minutes, meals_logged, water_goal_days, xp, level,
+            best_weight_lost_kg, world_health
        FROM user_stats WHERE user_id = :id`,
     { id: toBin(userId) },
     conn,
@@ -253,6 +266,7 @@ export async function totals(db, conn, userId, minMinutes) {
     xp: Math.max(0, Number(row.xp)),
     waterGoalDays: Number(row.water_goal_days),
     mealsLogged: Number(row.meals_logged),
+    bestWeightLostKg: Math.round(Number(row.best_weight_lost_kg ?? 0) * 100) / 100,
   };
 }
 
@@ -261,15 +275,16 @@ export async function saveStats(db, conn, userId, s) {
     `INSERT INTO user_stats
        (user_id, current_streak, best_streak, streak_last_date, completed_fasts, total_fasts,
         total_fasted_minutes, longest_fast_minutes, xp, level, first_fast_completed_at,
-        water_goal_days, meals_logged)
+        water_goal_days, meals_logged, best_weight_lost_kg, world_health)
      VALUES (:userId, :current, :best, :today, :completed, :total, :minutes, :longest, :xp, :level,
-             :firstCompletedAt, :waterGoalDays, :mealsLogged)
+             :firstCompletedAt, :waterGoalDays, :mealsLogged, :bestWeight, :health)
      ON DUPLICATE KEY UPDATE current_streak = VALUES(current_streak),
        best_streak = VALUES(best_streak), streak_last_date = VALUES(streak_last_date),
        completed_fasts = VALUES(completed_fasts), total_fasts = VALUES(total_fasts),
        total_fasted_minutes = VALUES(total_fasted_minutes),
        longest_fast_minutes = VALUES(longest_fast_minutes), xp = VALUES(xp), level = VALUES(level),
        water_goal_days = VALUES(water_goal_days), meals_logged = VALUES(meals_logged),
+       best_weight_lost_kg = VALUES(best_weight_lost_kg), world_health = VALUES(world_health),
        -- İlk oruç kutlaması bir kez: değer bir kez yazıldıktan sonra silme/düzenleme ile değişmez.
        first_fast_completed_at = COALESCE(first_fast_completed_at, VALUES(first_fast_completed_at))`,
     {
@@ -286,6 +301,8 @@ export async function saveStats(db, conn, userId, s) {
       firstCompletedAt: s.firstCompletedAt,
       waterGoalDays: s.waterGoalDays,
       mealsLogged: s.mealsLogged,
+      bestWeight: s.bestWeightLostKg,
+      health: s.health,
     },
     conn,
   );
@@ -512,16 +529,30 @@ export async function trackerCounters(db, conn, userId) {
     xp: Math.max(0, Number(row.xp)),
     waterGoalDays: Number(row.water_goal_days),
     mealsLogged: Number(row.meals_logged),
+    bestWeightLostKg: Math.round(Number(row.best_weight_lost_kg ?? 0) * 100) / 100,
   };
 }
 
-export async function saveXp(db, conn, userId, { xp, level, waterGoalDays, mealsLogged }) {
+export async function saveXp(
+  db,
+  conn,
+  userId,
+  { xp, level, waterGoalDays, mealsLogged, bestWeightLostKg },
+) {
   await db.run(
-    `INSERT INTO user_stats (user_id, xp, level, water_goal_days, meals_logged)
-     VALUES (:userId, :xp, :level, :waterGoalDays, :mealsLogged)
+    `INSERT INTO user_stats (user_id, xp, level, water_goal_days, meals_logged, best_weight_lost_kg)
+     VALUES (:userId, :xp, :level, :waterGoalDays, :mealsLogged, :bestWeight)
      ON DUPLICATE KEY UPDATE xp = VALUES(xp), level = VALUES(level),
-       water_goal_days = VALUES(water_goal_days), meals_logged = VALUES(meals_logged)`,
-    { userId: toBin(userId), xp, level, waterGoalDays, mealsLogged },
+       water_goal_days = VALUES(water_goal_days), meals_logged = VALUES(meals_logged),
+       best_weight_lost_kg = VALUES(best_weight_lost_kg)`,
+    {
+      userId: toBin(userId),
+      xp,
+      level,
+      waterGoalDays,
+      mealsLogged,
+      bestWeight: bestWeightLostKg ?? 0,
+    },
     conn,
   );
 }

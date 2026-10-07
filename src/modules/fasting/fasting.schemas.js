@@ -154,6 +154,35 @@ export const finishSchema = {
         type: ['object', 'null'],
         properties: { from: { type: 'integer' }, to: { type: 'integer' } },
       },
+      world: {
+        type: 'object',
+        properties: {
+          health: { type: 'string' },
+          levelUps: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                zone: { type: 'string' },
+                from: { type: 'integer' },
+                to: { type: 'integer' },
+              },
+            },
+          },
+        },
+      },
+      challenges: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            code: { type: 'string' },
+            progress: { type: 'integer' },
+            target: { type: 'integer' },
+            status: { type: 'string' },
+          },
+        },
+      },
     }),
   },
 };

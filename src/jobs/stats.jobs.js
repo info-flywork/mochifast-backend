@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 import { fromBin } from '../shared/ids.js';
 import { addDays } from '../shared/time.js';
+import { expireChallenges } from '../modules/gamification/challenges.service.js';
 import * as repo from '../modules/stats/stats.repository.js';
 
 /** 05 §1.3: bu kadar saat aktif kalan oruç kapatılır. */
@@ -63,6 +64,12 @@ export function statsJobs({ db, stats, logger, now = () => new Date() }) {
       const users = await repo.usersWithStreakIn(db, zones);
       const refreshed = await eachUser(users, (userId) => stats.fresh(userId, at));
       if (refreshed > 0) logger.info({ refreshed, zones }, 'gün dönümü: seriler tazelendi');
+    },
+
+    /** Süresi dolup hedefi tutmayan challenge katılımları (05 §13). */
+    async challengeExpire() {
+      const failed = await expireChallenges(db);
+      if (failed > 0) logger.info({ failed }, 'süresi dolan challenge katılımları kapatıldı');
     },
 
     async dailyRollup() {

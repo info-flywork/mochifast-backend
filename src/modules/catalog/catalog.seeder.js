@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { seedGamification } from '../gamification/gamification.seeder.js';
 import { seedContent } from './content.seeder.js';
 
 /**
@@ -21,6 +22,7 @@ export async function loadCatalogSeeds(dir = SEEDS_DIR) {
     labels: { ...(await read('catalog_labels.json')), ...(await read('content_labels.json')) },
     appConfig: await read('app_config.json'),
     content: await read('content.json'),
+    gamification: await read('gamification.json'),
   };
 }
 
@@ -28,6 +30,9 @@ export async function seedCatalog(db, seeds, { overwriteConfig = false } = {}) {
   return db.withTransaction(async (conn) => {
     const stats = { plans: 0, deactivated: 0, labels: 0, configAdded: 0 };
     if (seeds.content) stats.content = await seedContent(db, conn, seeds.content);
+    if (seeds.gamification) {
+      stats.gamification = await seedGamification(db, conn, seeds.gamification);
+    }
 
     for (const p of seeds.plans) {
       await db.run(

@@ -1,6 +1,7 @@
 import { deprecatedRoute, memoizeByDeps } from '../../shared/legacy.js';
 import { catalogServiceFor } from '../catalog/catalog.routes.js';
 import { fastingServiceFor } from '../fasting/fasting.routes.js';
+import { challengesServiceFor } from '../gamification/gamification.routes.js';
 import { mediaServiceFor, readUpload, uploadRateLimit } from '../media/media.routes.js';
 import { avatarDeleteSchema, avatarPutSchema } from '../media/media.schemas.js';
 import { plansServiceFor } from '../plans/plans.routes.js';
@@ -41,6 +42,7 @@ const summaryFor = memoizeByDeps((app) =>
     plans: plansServiceFor(app),
     fasting: fastingServiceFor(app),
     stats: statsServiceFor(app),
+    challenges: challengesServiceFor(app),
   }),
 );
 

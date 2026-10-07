@@ -6,20 +6,21 @@ import { weightProgress as progressOf } from '../trackers/trackers.rules.js';
 /**
  * GET /v1/user/summary — ana sayfa, profil başlığı, oruç sekmesi ve widget'lar için tek çağrı
  * (docs/backend/04-api.md §2). Kendi verisi yoktur; modül servislerini birleştirir.
- * Challenge (F7) ve bildirim (F9) alanları ilgili fazlarda dolar.
+ * Bildirim (F9) alanı ilgili fazda dolar.
  */
-export function createSummaryService({ db, users, plans, fasting, stats }) {
+export function createSummaryService({ db, users, plans, fasting, stats, challenges }) {
   return {
     async summary(userId, locale) {
       // Önce: seri bugüne göre tazelenir (gün döndüyse yazar); diğerleri yalnızca okur.
       const progress = await stats.progress(userId);
-      const [me, profile, goals, current, active, week] = await Promise.all([
+      const [me, profile, goals, current, active, week, featured] = await Promise.all([
         users.getMe(userId),
         users.getProfile(userId),
         users.getGoals(userId),
         plans.current(userId, locale),
         fasting.active(userId, locale),
         stats.week(userId),
+        challenges.featured(userId, locale),
       ]);
       const [days, meals] = await Promise.all([
         summariesBetween(db, userId, { from: week.today, to: week.today }),
@@ -72,7 +73,7 @@ export function createSummaryService({ db, users, plans, fasting, stats }) {
           hunger: { physical: day?.hunger_physical ?? 0, emotional: day?.hunger_emotional ?? 0 },
         },
         weight: weightProgress(profile),
-        featuredChallenge: null,
+        featuredChallenge: featured.challenge,
         unreadNotifications: 0,
         serverTime: week.serverTime,
       };

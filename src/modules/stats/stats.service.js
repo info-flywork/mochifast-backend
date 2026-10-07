@@ -1,5 +1,7 @@
 import { addDays, isValidTimezone, isoDate, localDate, mondayOf } from '../../shared/time.js';
 import * as fastingRepo from '../fasting/fasting.repository.js';
+import * as gamification from '../gamification/gamification.repository.js';
+import { worldHealth } from '../gamification/world.rules.js';
 import * as repo from './stats.repository.js';
 import {
   FAST_GOAL_BONUS_XP,
@@ -68,33 +70,57 @@ export function createStatsService({ db }) {
 
     // Tarih sıralı: ilk anahtar, ilk oruç günüdür (plan yoksa serinin başlangıç sınırı).
     const { fasted, checkins } = await repo.streakInputs(db, userId, conn);
-    const streak = computeStreaks({
+    const days = {
       firstDay: minDate(plans[0]?.startedOn, fasted.keys().next().value),
       today,
       resolveDay,
       fasted,
       checkins,
-    });
+    };
+    const streak = computeStreaks(days);
     await repo.insertMilestoneXp(db, conn, userId, streak.milestones);
     await repo.rebuildDailyXp(db, conn, userId);
 
     const totals = await repo.totals(db, conn, userId, MIN_COUNTED_FAST_MINUTES);
-    const level = levelFor(totals.xp);
+    const health = worldHealth(days);
     await repo.saveStats(db, conn, userId, {
       ...totals,
       current: streak.current,
       best: streak.best,
       today,
-      level,
+      level: levelFor(totals.xp),
+      health,
     });
+    // Challenge'lar güncel seriyle sayılır; tamamlanan varsa XP toplamı yenilenir.
+    const { challenges, xp } = await syncGamification(conn, userId, { now, tz, xp: totals.xp });
+    const world = await gamification.syncWorld(db, conn, userId);
     return {
       before: {
         streak: before?.current_streak ?? 0,
         xp: before?.xp ?? 0,
         level: before?.level ?? 1,
+        health: before?.world_health ?? 'thriving',
       },
-      after: { streak: streak.current, best: streak.best, xp: totals.xp, level },
+      after: {
+        streak: streak.current,
+        best: streak.best,
+        xp,
+        level: levelFor(xp),
+        health,
+        levelUps: world.levelUps,
+        challenges,
+      },
     };
+  }
+
+  /** Challenge ilerlemesi; tamamlanan olursa XP toplamı ve günlük XP yenilenir. */
+  async function syncGamification(conn, userId, { now, tz, xp }) {
+    const challenges = await gamification.syncChallenges(db, conn, userId, { now, tz });
+    if (!challenges.some((c) => c.status === 'completed')) return { challenges, xp };
+    const counters = await repo.trackerCounters(db, conn, userId);
+    await repo.saveXp(db, conn, userId, { ...counters, level: levelFor(counters.xp) });
+    await repo.rebuildDailyXp(db, conn, userId);
+    return { challenges, xp: counters.xp };
   }
 
   const service = {
@@ -118,6 +144,8 @@ export function createStatsService({ db }) {
       await repo.syncTrackerXp(db, conn, userId, date, XP_RULES);
       const counters = await repo.trackerCounters(db, conn, userId);
       await repo.saveXp(db, conn, userId, { ...counters, level: levelFor(counters.xp) });
+      await syncGamification(conn, userId, { now: new Date(), xp: counters.xp });
+      await gamification.syncWorld(db, conn, userId);
     },
 
     /**
@@ -144,6 +172,8 @@ export function createStatsService({ db }) {
         },
         xpGained: Math.max(0, after.xp - before.xp),
         levelUp: after.level > before.level ? { from: before.level, to: after.level } : null,
+        world: { levelUps: after.levelUps ?? [], health: after.health },
+        challenges: after.challenges ?? [],
       };
     },
 
