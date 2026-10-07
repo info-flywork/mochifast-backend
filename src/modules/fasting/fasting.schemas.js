@@ -47,6 +47,43 @@ export const fastSchema = {
   },
 };
 
+export const eatingWindowSchema = {
+  type: ['object', 'null'],
+  properties: {
+    lastFastId: { type: 'string' },
+    startedAt: { type: 'string' },
+    endsAt: { type: 'string' },
+    eatMinutes: { type: 'integer' },
+    elapsedMinutes: { type: 'integer' },
+    stage: {
+      type: 'object',
+      properties: {
+        key: { type: 'string' },
+        title: { type: 'string' },
+        position: { type: 'integer' },
+      },
+    },
+    suggestedNextStartAt: { type: 'string' },
+    serverTime: { type: 'string' },
+  },
+};
+
+export const weekDaySchema = {
+  type: 'object',
+  properties: {
+    date: { type: 'string' },
+    dayType: { type: 'string', enum: ['fast', 'reduced', 'normal'] },
+    isRequiredDay: { type: 'boolean' },
+    goalMinutes: { type: ['integer', 'null'] },
+    fastedMinutes: { type: 'integer' },
+    progress: { type: ['number', 'null'] },
+    checkin: nstr,
+    kept: { type: ['boolean', 'null'] },
+    isToday: { type: 'boolean' },
+    isFuture: { type: 'boolean' },
+  },
+};
+
 const fastResponse = (extra = {}) =>
   envelope({ type: 'object', required: ['fast'], properties: { fast: fastSchema, ...extra } });
 
@@ -67,26 +104,7 @@ export const activeSchema = {
       required: ['fast', 'eatingWindow'],
       properties: {
         fast: { ...fastSchema, type: ['object', 'null'] },
-        eatingWindow: {
-          type: ['object', 'null'],
-          properties: {
-            lastFastId: { type: 'string' },
-            startedAt: { type: 'string' },
-            endsAt: { type: 'string' },
-            eatMinutes: { type: 'integer' },
-            elapsedMinutes: { type: 'integer' },
-            stage: {
-              type: 'object',
-              properties: {
-                key: { type: 'string' },
-                title: { type: 'string' },
-                position: { type: 'integer' },
-              },
-            },
-            suggestedNextStartAt: { type: 'string' },
-            serverTime: { type: 'string' },
-          },
-        },
+        eatingWindow: eatingWindowSchema,
       },
     }),
   },
@@ -123,6 +141,19 @@ export const finishSchema = {
     200: fastResponse({
       isFirstFast: { type: 'boolean' },
       warnings: { type: 'array', items: { type: 'string' } },
+      streak: {
+        type: 'object',
+        properties: {
+          current: { type: 'integer' },
+          best: { type: 'integer' },
+          increased: { type: 'boolean' },
+        },
+      },
+      xpGained: { type: 'integer' },
+      levelUp: {
+        type: ['object', 'null'],
+        properties: { from: { type: 'integer' }, to: { type: 'integer' } },
+      },
     }),
   },
 };
@@ -232,3 +263,72 @@ export const struggleSchema = {
 };
 
 export const struggleWithFastSchema = { ...struggleSchema, params: idParams };
+
+export const weekSchema = {
+  tags: ['fasts'],
+  summary: 'Hafta şeridi (Pzt–Paz)',
+  security: bearer,
+  querystring: {
+    type: 'object',
+    additionalProperties: false,
+    properties: { date: localDateSchema },
+  },
+  response: {
+    200: envelope({
+      type: 'object',
+      properties: {
+        weekStart: { type: 'string' },
+        today: { type: 'string' },
+        serverTime: { type: 'string' },
+        days: { type: 'array', items: weekDaySchema },
+      },
+    }),
+  },
+};
+
+export const statsTotalsSchema = {
+  fasts: { type: 'integer' },
+  completedFasts: { type: 'integer' },
+  completionRate: { type: 'number' },
+  totalFastedMinutes: { type: 'integer' },
+  longestFastMinutes: { type: 'integer' },
+  avgFastMinutes: { type: 'integer' },
+};
+
+export const statsSchema = {
+  tags: ['fasts'],
+  summary: 'Oruç toplamları ve grafik kovaları',
+  security: bearer,
+  querystring: {
+    type: 'object',
+    additionalProperties: false,
+    properties: {
+      range: { type: 'string', enum: ['week', 'month', 'year', 'all'], default: 'week' },
+    },
+  },
+  response: {
+    200: envelope({
+      type: 'object',
+      properties: {
+        range: { type: 'string' },
+        from: nstr,
+        to: { type: 'string' },
+        bucketSize: { type: 'string', enum: ['day', 'month'] },
+        totals: { type: 'object', properties: statsTotalsSchema },
+        buckets: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              date: { type: 'string' },
+              month: { type: 'string' },
+              fastedMinutes: { type: 'integer' },
+              goalMinutes: { type: ['integer', 'null'] },
+              fasts: { type: 'integer' },
+            },
+          },
+        },
+      },
+    }),
+  },
+};

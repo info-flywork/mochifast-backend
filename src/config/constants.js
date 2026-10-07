@@ -21,6 +21,7 @@ export const API_PREFIX = '/v1';
 /** İş kuyruğu adları (`jobs.queue`). Yeni kuyruklar fazlarla eklenir. */
 export const QUEUES = Object.freeze({
   system: 'system',
+  stats: 'stats',
 });
 
 /** Cache anahtar ad alanları (docs/backend/07-cache-performans.md §3). */

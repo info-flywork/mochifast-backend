@@ -354,10 +354,11 @@ describe.skipIf(!mysqlUrl)('kullanıcı & onboarding (gerçek MySQL)', () => {
     expect(await db.many("SELECT id FROM devices WHERE push_token = 'fcm-1'")).toEqual([]);
   });
 
-  it('ilerleme iskeleti ve eski istemci yolları (Deprecation header)', async () => {
+  it('ilerleme ve eski istemci yolları (Deprecation header)', async () => {
     const { token } = await newGuest();
     await onboard(token);
-    expect((await call('GET', '/user/progress', { token })).json().data).toEqual({
+    // Mevcut alanlar korunur; yenileri (bestStreak, nextLevelXp…) eklenebilir.
+    expect((await call('GET', '/user/progress', { token })).json().data).toMatchObject({
       level: 1,
       streakDays: 0,
       completedFasts: 0,

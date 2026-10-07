@@ -36,3 +36,20 @@ export function mondayOf(isoDate) {
 export function addDays(isoDate, days) {
   return DateTime.fromISO(isoDate, { zone: 'utc' }).plus({ days }).toISODate();
 }
+
+/**
+ * DATE sütunu (mysql2 `Date`, UTC gece yarısı) ya da metin → "YYYY-MM-DD".
+ */
+export function isoDate(value) {
+  return value instanceof Date ? value.toISOString().slice(0, 10) : String(value);
+}
+
+/** ISO haftanın günü: 1 = Pazartesi … 7 = Pazar. */
+export function isoWeekday(isoDay) {
+  return ((new Date(`${isoDay}T00:00:00Z`).getUTCDay() + 6) % 7) + 1;
+}
+
+/** İki yerel tarih arasındaki gün farkı (b − a). */
+export function daysBetween(a, b) {
+  return Math.round((Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`)) / 86_400_000);
+}

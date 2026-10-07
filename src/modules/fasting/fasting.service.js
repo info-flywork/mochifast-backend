@@ -25,7 +25,7 @@ const NOTE_CONTEXT = (id) => `fasting_sessions.notes:${id}`;
  * Oruç seansları (docs/backend/04-api.md §6, 05 §1). Her yazma işlemi kullanıcı satırını
  * kilitler: aynı kullanıcının eşzamanlı istekleri sırayla işlenir (tek aktif oruç, çakışma).
  */
-export function createFastingService({ db, crypto, plans, content }) {
+export function createFastingService({ db, crypto, plans, content, stats }) {
   async function context(userId, conn, { lock = false } = {}) {
     if (lock)
       await db.one('SELECT id FROM users WHERE id = :id FOR UPDATE', { id: toBin(userId) }, conn);
@@ -243,17 +243,24 @@ export function createFastingService({ db, crypto, plans, content }) {
           );
           isFirstFast = r.affectedRows === 1;
         }
+        const delta = await stats.recompute(userId, { from: endLocalDate, conn, now, tz });
         await writeAudit(
           db,
           auditEntry(userId, 'fast.finished', s.id, meta, { status: outcome.status }),
           conn,
         );
-        return { session: await repo.findById(db, userId, s.id, conn), outcome, isFirstFast };
+        return {
+          session: await repo.findById(db, userId, s.id, conn),
+          outcome,
+          isFirstFast,
+          delta,
+        };
       });
       return {
         fast: toDto(result.session, { withNotes: true }),
         isFirstFast: result.isFirstFast,
         warnings: result.outcome.warnings,
+        ...stats.outcome(result.delta),
       };
     },
 
@@ -323,6 +330,9 @@ export function createFastingService({ db, crypto, plans, content }) {
             ...(body.feeling !== undefined ? { feeling: body.feeling } : {}),
             ...(body.notes !== undefined ? { notesEnc: encryptNotes(s.id, body.notes) } : {}),
           });
+          const newDate = localDate(endedAt, s.tz);
+          const from = s.endLocalDate && s.endLocalDate < newDate ? s.endLocalDate : newDate;
+          await stats.recompute(userId, { from, conn, now });
         }
         await writeAudit(db, auditEntry(userId, 'fast.updated', s.id, meta), conn);
         return repo.findById(db, userId, s.id, conn);
@@ -364,6 +374,7 @@ export function createFastingService({ db, crypto, plans, content }) {
           notesEnc: encryptNotes(id, body.notes) ?? null,
           source: 'manual_log',
         });
+        await stats.recompute(userId, { from: localDate(endedAt, tz), conn, now, tz });
         await writeAudit(db, auditEntry(userId, 'fast.logged', id, meta), conn);
         return repo.findById(db, userId, id, conn);
       });
@@ -378,6 +389,7 @@ export function createFastingService({ db, crypto, plans, content }) {
         if (s.status === 'active')
           throw new AppError('CONFLICT', { details: { reason: 'active_use_cancel' } });
         await repo.softDelete(db, conn, s.id);
+        if (s.endLocalDate) await stats.recompute(userId, { from: s.endLocalDate, conn });
         await writeAudit(db, auditEntry(userId, 'fast.deleted', s.id, meta), conn);
       });
       return {};

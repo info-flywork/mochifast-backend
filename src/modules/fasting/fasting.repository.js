@@ -1,4 +1,5 @@
 import { fromBin, newId, toBin } from '../../shared/ids.js';
+import { isoDate } from '../../shared/time.js';
 
 /** Sayılan (iptal edilmemiş, silinmemiş) seanslar. */
 const LIVE = "s.deleted_at IS NULL AND s.status <> 'cancelled'";
@@ -214,8 +215,4 @@ export async function insertStruggle(db, userId, e) {
     },
   );
   return id;
-}
-
-function isoDate(v) {
-  return v instanceof Date ? v.toISOString().slice(0, 10) : String(v);
 }

@@ -1,6 +1,9 @@
 import { deprecatedRoute, memoizeByDeps } from '../../shared/legacy.js';
 import { catalogServiceFor } from '../catalog/catalog.routes.js';
+import { fastingServiceFor } from '../fasting/fasting.routes.js';
 import { plansServiceFor } from '../plans/plans.routes.js';
+import { statsServiceFor } from '../stats/stats.routes.js';
+import { createSummaryService } from './summary.service.js';
 import { createUserService } from './user.service.js';
 import {
   getGoalsSchema,
@@ -15,6 +18,8 @@ import {
   patchSettingsSchema,
   postConsentSchema,
   progressSchema,
+  summarySchema,
+  userStatsSchema,
 } from './user.schemas.js';
 
 const serviceFor = memoizeByDeps((app) =>
@@ -22,6 +27,15 @@ const serviceFor = memoizeByDeps((app) =>
     db: app.deps.db,
     catalog: catalogServiceFor(app),
     plans: plansServiceFor(app),
+  }),
+);
+
+const summaryFor = memoizeByDeps((app) =>
+  createSummaryService({
+    users: serviceFor(app),
+    plans: plansServiceFor(app),
+    fasting: fastingServiceFor(app),
+    stats: statsServiceFor(app),
   }),
 );
 
@@ -37,6 +51,7 @@ const meta = (request) => ({
  */
 export default async function userRoutes(app, options) {
   const service = serviceFor(app);
+  const stats = statsServiceFor(app);
   const auth = { preHandler: app.requireAuth };
 
   if (options.legacy) {
@@ -44,7 +59,7 @@ export default async function userRoutes(app, options) {
       service.getMe(request.user.id),
     );
     app.get('/progress', { ...auth, ...deprecatedRoute('/v1/user/progress') }, (request) =>
-      service.getProgress(request.user.id),
+      stats.progress(request.user.id),
     );
     // Eski istemci seviye başına PATCH atıyordu; artık tek seferde POST /v1/user/onboarding. Yok sayılır.
     app.patch('/onboarding', deprecatedRoute('/v1/user/onboarding'), async () => ({}));
@@ -89,6 +104,12 @@ export default async function userRoutes(app, options) {
   );
 
   app.get('/progress', { ...auth, schema: progressSchema }, (request) =>
-    service.getProgress(request.user.id),
+    stats.progress(request.user.id),
+  );
+  app.get('/stats', { ...auth, schema: userStatsSchema }, (request) =>
+    stats.userStats(request.user.id, request.query.range),
+  );
+  app.get('/summary', { ...auth, schema: summarySchema }, (request) =>
+    summaryFor(app).summary(request.user.id, request.ctx.locale),
   );
 }

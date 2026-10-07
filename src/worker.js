@@ -7,7 +7,9 @@ import { initSentry, flushSentry } from './infra/sentry.js';
 import { createDatabase } from './infra/db.js';
 import { createScheduler, createWorker } from './infra/queue.js';
 import { SCHEDULES } from './schedules.js';
+import { statsJobs } from './jobs/stats.jobs.js';
 import { systemJobs } from './jobs/system.jobs.js';
+import { createStatsService } from './modules/stats/stats.service.js';
 
 /**
  * Kuyruk tüketicisi + tekrarlı iş zamanlayıcısı. Ağır/yavaş işler (görsel işleme, AI analizi,
@@ -35,6 +37,15 @@ const workers = [
     queue: QUEUES.system,
     handlers: systemJobs({ db, logger }),
     concurrency: config.worker.concurrency,
+    pollMs: config.worker.pollMs,
+    logger,
+  }),
+  createWorker({
+    db,
+    queue: QUEUES.stats,
+    handlers: statsJobs({ db, stats: createStatsService({ db }), logger }),
+    // Yeniden hesaplamalar kullanıcı satırını kilitler; az eşzamanlılık API'yi rahat bırakır.
+    concurrency: 1,
     pollMs: config.worker.pollMs,
     logger,
   }),

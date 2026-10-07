@@ -78,12 +78,13 @@ export async function insertPlan(db, conn, userId, plan) {
   return id;
 }
 
-export async function upsertCheckin(db, userId, { localDate, dayType, status }) {
+export async function upsertCheckin(db, userId, { localDate, dayType, status }, conn) {
   await db.run(
     `INSERT INTO plan_day_checkins (user_id, local_date, day_type, status)
      VALUES (:userId, :localDate, :dayType, :status)
      ON DUPLICATE KEY UPDATE day_type = VALUES(day_type), status = VALUES(status), auto_suggested = 0`,
     { userId: toBin(userId), localDate, dayType, status },
+    conn,
   );
 }
 

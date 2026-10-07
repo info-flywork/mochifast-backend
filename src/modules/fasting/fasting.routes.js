@@ -1,6 +1,7 @@
 import { memoizeByDeps } from '../../shared/legacy.js';
 import { contentServiceFor } from '../catalog/catalog.routes.js';
 import { plansServiceFor } from '../plans/plans.routes.js';
+import { statsServiceFor } from '../stats/stats.routes.js';
 import { createFastingService } from './fasting.service.js';
 import {
   activeSchema,
@@ -13,7 +14,9 @@ import {
   startSchema,
   struggleSchema,
   struggleWithFastSchema,
+  statsSchema,
   updateSchema,
+  weekSchema,
 } from './fasting.schemas.js';
 
 export const fastingServiceFor = memoizeByDeps((app) =>
@@ -22,6 +25,7 @@ export const fastingServiceFor = memoizeByDeps((app) =>
     crypto: app.deps.crypto,
     plans: plansServiceFor(app),
     content: contentServiceFor(app),
+    stats: statsServiceFor(app),
   }),
 );
 
@@ -30,6 +34,7 @@ export const fastingServiceFor = memoizeByDeps((app) =>
  */
 export default async function fastingRoutes(app) {
   const service = fastingServiceFor(app);
+  const stats = statsServiceFor(app);
   const read = { preHandler: app.requireAuth };
   const write = { preHandler: [app.requireAuth, app.idempotent] };
   const meta = (r) => ({ ip: r.ip, userAgent: r.headers['user-agent'] });
@@ -53,6 +58,15 @@ export default async function fastingRoutes(app) {
     reply.code(201);
     return service.manual(request.user.id, request.body, meta(request));
   });
+
+  // `/:id`'den önce: sabit yollar parametreli yolla karışmasın.
+  app.get('/week', { ...read, schema: weekSchema }, (request) =>
+    stats.week(request.user.id, { date: request.query.date }),
+  );
+
+  app.get('/stats', { ...read, schema: statsSchema }, (request) =>
+    stats.rangeStats(request.user.id, request.query.range),
+  );
 
   app.get('/', { ...read, schema: listSchema }, (request) =>
     service.list(request.user.id, request.query),

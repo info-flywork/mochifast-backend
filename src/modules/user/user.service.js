@@ -1,6 +1,6 @@
 import { AppError } from '../../shared/errors.js';
 import { apiToSet, setToApi, toApiEnum, toDbEnum } from '../../shared/enums.js';
-import { isValidTimezone, localDate } from '../../shared/time.js';
+import { isValidTimezone, isoDate, localDate } from '../../shared/time.js';
 import { writeAudit } from '../audit/audit.repository.js';
 import { computeNutritionGoals } from './nutrition.rules.js';
 import {
@@ -394,17 +394,6 @@ export function createUserService({ db, catalog, plans }) {
       }
       return { items };
     },
-
-    /** F1 iskeleti: user_stats satırından (F3'te gerçek oruç verisiyle dolar). */
-    async getProgress(userId) {
-      const stats = await repo.getStats(db, userId);
-      return {
-        level: stats?.level ?? 1,
-        streakDays: stats?.current_streak ?? 0,
-        completedFasts: stats?.completed_fasts ?? 0,
-        xp: stats?.xp ?? 0,
-      };
-    },
   };
 
   async function ensureRows(userId) {
@@ -541,8 +530,6 @@ function toGoalsDto(g, computed) {
 }
 
 const hhmm = (time) => String(time).slice(0, 5);
-const isoDate = (value) =>
-  value instanceof Date ? value.toISOString().slice(0, 10) : String(value);
 
 function validation(path, message) {
   return new AppError('VALIDATION_FAILED', { details: { fields: [{ path, message }] } });

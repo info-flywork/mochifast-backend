@@ -1,5 +1,6 @@
 import { memoizeByDeps } from '../../shared/legacy.js';
 import { catalogServiceFor } from '../catalog/catalog.routes.js';
+import { statsServiceFor } from '../stats/stats.routes.js';
 import { createPlansService } from './plans.service.js';
 import {
   checkinSchema,
@@ -9,7 +10,11 @@ import {
 } from './plans.schemas.js';
 
 export const plansServiceFor = memoizeByDeps((app) =>
-  createPlansService({ db: app.deps.db, catalog: catalogServiceFor(app) }),
+  createPlansService({
+    db: app.deps.db,
+    catalog: catalogServiceFor(app),
+    stats: statsServiceFor(app),
+  }),
 );
 
 /** Premium entitlement F8'de bağlanır. */

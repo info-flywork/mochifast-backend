@@ -2,7 +2,7 @@ import { AppError } from '../../shared/errors.js';
 import { toApiEnum, toDbEnum } from '../../shared/enums.js';
 import { toBin } from '../../shared/ids.js';
 import { decodeCursor, encodeCursor } from '../../shared/pagination.js';
-import { isValidTimezone, localDate, addDays } from '../../shared/time.js';
+import { addDays, isValidTimezone, isoDate, isoWeekday, localDate } from '../../shared/time.js';
 import { writeAudit } from '../audit/audit.repository.js';
 import * as userRepo from '../user/user.repository.js';
 import { ageFromBirthYear, evaluateSafety } from '../user/onboarding.rules.js';
@@ -21,7 +21,7 @@ const CHECKIN_PAST_DAYS = 7;
  * Kullanıcı planı (docs/backend/04-api.md §5, 05 §2). Plan değişimi bir sonraki oruçtan itibaren
  * geçerlidir; aktif oruç etkilenmez (hedefi seansta saklıdır).
  */
-export function createPlansService({ db, catalog }) {
+export function createPlansService({ db, catalog, stats }) {
   async function userContext(userId, conn) {
     const user = await userRepo.getUserWithUnits(db, userId, conn);
     if (!user) throw new AppError('NOT_FOUND');
@@ -111,8 +111,7 @@ export function createPlansService({ db, catalog }) {
     async targetFor(userId, isoDay, conn) {
       const current = await repo.findCurrent(db, userId, conn);
       if (!current) return { userPlan: null, fastMinutes: DEFAULT_FAST_MINUTES, dayType: 'fast' };
-      const dow = ((new Date(`${isoDay}T00:00:00Z`).getUTCDay() + 6) % 7) + 1;
-      const target = dayTarget(current, dow);
+      const target = dayTarget(current, isoWeekday(isoDay));
       return {
         userPlan: current,
         fastMinutes: target.fastMinutes ?? current.fastMinutes,
@@ -154,6 +153,8 @@ export function createPlansService({ db, catalog }) {
           startedOn: today,
         });
         await userRepo.upsertProfile(db, c, userId, { plan_code: plan.code });
+        // Gün tipleri (zorunlu/nötr) bugünden itibaren değişir: seri yeniden hesaplanır.
+        await stats.recompute(userId, { from: today, conn: c });
         await writeAudit(
           db,
           {
@@ -194,7 +195,11 @@ export function createPlansService({ db, catalog }) {
       if (!userPlan?.weeklySchedule || !['reduced', 'fast'].includes(dayType)) {
         throw new AppError('CONFLICT', { details: { reason: 'not_a_plan_day' } });
       }
-      await repo.upsertCheckin(db, userId, { localDate: isoDay, dayType, status });
+      await db.withTransaction(async (conn) => {
+        await db.one('SELECT id FROM users WHERE id = :id FOR UPDATE', { id: toBin(userId) }, conn);
+        await repo.upsertCheckin(db, userId, { localDate: isoDay, dayType, status }, conn);
+        await stats.recompute(userId, { from: isoDay, conn });
+      });
       return { date: isoDay, dayType, status };
     },
 
@@ -222,8 +227,4 @@ export function createPlansService({ db, catalog }) {
     },
   };
   return service;
-}
-
-function isoDate(v) {
-  return v instanceof Date ? v.toISOString().slice(0, 10) : String(v);
 }

@@ -277,12 +277,3 @@ export async function getGoals(db, userId) {
     id: toBin(userId),
   });
 }
-
-export async function getStats(db, userId) {
-  return db.one(
-    'SELECT level, current_streak, completed_fasts, xp FROM user_stats WHERE user_id = :id',
-    {
-      id: toBin(userId),
-    },
-  );
-}

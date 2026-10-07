@@ -1,4 +1,10 @@
 import {
+  eatingWindowSchema,
+  fastSchema,
+  statsTotalsSchema,
+  weekDaySchema,
+} from '../fasting/fasting.schemas.js';
+import {
   CONSENT_TYPES,
   DIETS,
   FASTING_REASONS,
@@ -418,19 +424,129 @@ export const postConsentSchema = {
   response: { 200: consentList },
 };
 
+const progressDto = {
+  type: 'object',
+  required: ['level', 'streakDays', 'completedFasts', 'xp'],
+  properties: {
+    level: { type: 'integer' },
+    xp: { type: 'integer' },
+    levelXp: { type: 'integer' },
+    nextLevelXp: { type: 'integer' },
+    streakDays: { type: 'integer' },
+    bestStreak: { type: 'integer' },
+    completedFasts: { type: 'integer' },
+    totalFasts: { type: 'integer' },
+    totalFastedMinutes: { type: 'integer' },
+    longestFastMinutes: { type: 'integer' },
+  },
+};
+
 export const progressSchema = {
   tags: ['user'],
-  summary: 'Seviye, seri, tamamlanan oruç',
+  summary: 'Seviye, XP, seri, oruç sayaçları',
+  security: bearer,
+  response: { 200: envelope(progressDto) },
+};
+
+export const userStatsSchema = {
+  tags: ['user'],
+  summary: 'Profil istatistikleri (aralık)',
+  security: bearer,
+  querystring: {
+    type: 'object',
+    additionalProperties: false,
+    properties: { range: { ...enumOf(['week', 'month', 'year', 'all']), default: 'all' } },
+  },
+  response: {
+    200: envelope({
+      type: 'object',
+      properties: {
+        range: { type: 'string' },
+        from: { type: ['string', 'null'] },
+        to: { type: 'string' },
+        ...statsTotalsSchema,
+        currentStreak: { type: 'integer' },
+        bestStreak: { type: 'integer' },
+        weightChangeKg: { type: ['number', 'null'] },
+        waterGoalDays: { type: 'integer' },
+        mealsLogged: { type: 'integer' },
+      },
+    }),
+  },
+};
+
+const nullableNumber = { type: ['number', 'null'] };
+
+export const summarySchema = {
+  tags: ['user'],
+  summary: 'Ana sayfa tek çağrı (profil başlığı, aktif oruç, hafta, bugün)',
   security: bearer,
   response: {
     200: envelope({
       type: 'object',
-      required: ['level', 'streakDays', 'completedFasts', 'xp'],
       properties: {
-        level: { type: 'integer' },
-        streakDays: { type: 'integer' },
-        completedFasts: { type: 'integer' },
-        xp: { type: 'integer' },
+        user: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            name: { type: ['string', 'null'] },
+            avatarUrl: { type: ['string', 'null'] },
+            isPremium: { type: 'boolean' },
+            isGuest: { type: 'boolean' },
+          },
+        },
+        progress: progressDto,
+        activeFast: { ...fastSchema, type: ['object', 'null'] },
+        eatingWindow: eatingWindowSchema,
+        plan: {
+          type: ['object', 'null'],
+          properties: {
+            planCode: { type: 'string' },
+            displayName: { type: 'string' },
+            fastMinutes: { type: 'integer' },
+            eatWindow: {
+              type: ['object', 'null'],
+              properties: { start: { type: 'string' }, end: { type: 'string' } },
+            },
+          },
+        },
+        pendingPlanCode: { type: ['string', 'null'] },
+        week: { type: 'array', items: weekDaySchema },
+        today: {
+          type: 'object',
+          properties: {
+            date: { type: 'string' },
+            water: {
+              type: 'object',
+              properties: { ml: { type: 'integer' }, goalMl: { type: ['integer', 'null'] } },
+            },
+            steps: {
+              type: 'object',
+              properties: { count: { type: 'integer' }, goal: { type: ['integer', 'null'] } },
+            },
+            nutrition: {
+              type: 'object',
+              properties: { kcal: { type: 'integer' }, kcalGoal: { type: ['integer', 'null'] } },
+            },
+            lastMeal: { type: ['object', 'null'], additionalProperties: true },
+            hunger: {
+              type: 'object',
+              properties: { physical: { type: 'integer' }, emotional: { type: 'integer' } },
+            },
+          },
+        },
+        weight: {
+          type: 'object',
+          properties: {
+            currentKg: nullableNumber,
+            startKg: nullableNumber,
+            goalKg: nullableNumber,
+            progress: nullableNumber,
+          },
+        },
+        featuredChallenge: { type: ['object', 'null'], additionalProperties: true },
+        unreadNotifications: { type: 'integer' },
+        serverTime: { type: 'string' },
       },
     }),
   },
