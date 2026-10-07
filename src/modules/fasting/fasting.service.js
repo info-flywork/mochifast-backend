@@ -5,6 +5,11 @@ import { decodeCursor, encodeCursor } from '../../shared/pagination.js';
 import { isValidTimezone, localDate } from '../../shared/time.js';
 import { writeAudit } from '../audit/audit.repository.js';
 import * as userRepo from '../user/user.repository.js';
+import * as notify from '../notifications/notify.js';
+import {
+  eatingWindowNotifications,
+  fastNotifications,
+} from '../notifications/notifications.rules.js';
 import * as repo from './fasting.repository.js';
 import {
   MANUAL_PAST_LIMIT_MS,
@@ -44,6 +49,14 @@ export function createFastingService({ db, crypto, plans, content, stats }) {
     const clash = await repo.findOverlapping(db, conn, userId, start, end, excludeId);
     if (clash.length > 0) {
       throw new AppError('FAST_OVERLAP', { details: { fastIds: clash.map((c) => c.id) } });
+    }
+  }
+
+  /** Aktif oruç bildirimleri; geçmişte kalanlar planlanmaz (ör. geriye dönük başlatılan oruç). */
+  async function scheduleFast(conn, userId, session) {
+    const now = Date.now();
+    for (const n of fastNotifications(session)) {
+      if (n.fireAt.getTime() > now) await notify.schedule(db, conn, userId, n);
     }
   }
 
@@ -164,6 +177,9 @@ export function createFastingService({ db, crypto, plans, content, stats }) {
             source: body.source ? toDbEnum(body.source) : 'app',
           };
           await repo.insert(db, conn, session);
+          // Yeni oruç: önceki yeme penceresi bildirimleri anlamını yitirir.
+          await notify.cancel(db, conn, userId, 'eat:');
+          await scheduleFast(conn, userId, session);
           await writeAudit(db, auditEntry(userId, 'fast.started', session.id, meta), conn);
           return { session: await repo.findById(db, userId, session.id, conn), replay: false };
         });
@@ -246,6 +262,15 @@ export function createFastingService({ db, crypto, plans, content, stats }) {
         // Bitiş ekranındaki kilo, o günün özetine ve kilo XP'sine yazılır.
         if (weightEntryId) await stats.applyDay(userId, endLocalDate, conn);
         const delta = await stats.recompute(userId, { from: endLocalDate, conn, now, tz });
+        await notify.cancel(db, conn, userId, `fast:${s.id}:`);
+        const plan = await plans.findCurrent(userId, conn);
+        for (const n of eatingWindowNotifications({
+          id: s.id,
+          endedAt,
+          eatMinutes: 1440 - (plan?.fastMinutes ?? s.targetMinutes),
+        })) {
+          await notify.schedule(db, conn, userId, n);
+        }
         await writeAudit(
           db,
           auditEntry(userId, 'fast.finished', s.id, meta, { status: outcome.status }),
@@ -274,6 +299,7 @@ export function createFastingService({ db, crypto, plans, content, stats }) {
         const s = await mustFind(userId, id, conn, { forUpdate: true });
         if (s.status !== 'active')
           throw new AppError('CONFLICT', { details: { reason: 'not_active' } });
+        await notify.cancel(db, conn, userId, `fast:${s.id}:`);
         if (cancelDeletes(s.startedAt, now)) {
           await repo.hardDelete(db, conn, s.id);
           return { id: s.id, deleted: true };
@@ -314,6 +340,14 @@ export function createFastingService({ db, crypto, plans, content, stats }) {
             targetMinutes,
             plannedEndAt: end,
             startLocalDate: localDate(startedAt, s.tz),
+          });
+          // Bildirimler yeni başlangıç/hedefe göre yeniden kurulur.
+          await notify.cancel(db, conn, userId, `fast:${s.id}:`);
+          await scheduleFast(conn, userId, {
+            id: s.id,
+            startedAt,
+            targetMinutes,
+            plannedEndAt: end,
           });
         } else {
           const endedAt = body.endedAt ? new Date(body.endedAt) : s.endedAt;
@@ -391,6 +425,7 @@ export function createFastingService({ db, crypto, plans, content, stats }) {
         if (s.status === 'active')
           throw new AppError('CONFLICT', { details: { reason: 'active_use_cancel' } });
         await repo.softDelete(db, conn, s.id);
+        await notify.cancel(db, conn, userId, `eat:${s.id}:`);
         if (s.endLocalDate) await stats.recompute(userId, { from: s.endLocalDate, conn });
         await writeAudit(db, auditEntry(userId, 'fast.deleted', s.id, meta), conn);
       });

@@ -32,4 +32,23 @@ export const SCHEDULES = [
     jobName: 'premiumDowngrade',
     everyMs: 3_600_000,
   },
+  // 10 §3: dağıtıcı 30 sn; günlük hatırlatıcılar saatlik (yerel gece yarısı dilimleri); bakım günlük.
+  {
+    id: 'notification-dispatch',
+    queue: 'notifications',
+    jobName: 'notificationDispatch',
+    everyMs: 30_000,
+  },
+  {
+    id: 'notification-planner',
+    queue: 'notifications',
+    jobName: 'notificationPlanner',
+    everyMs: 3_600_000,
+  },
+  {
+    id: 'notification-housekeeping',
+    queue: 'notifications',
+    jobName: 'notificationHousekeeping',
+    everyMs: 86_400_000,
+  },
 ];

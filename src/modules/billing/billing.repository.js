@@ -114,22 +114,6 @@ export async function userExists(db, userId) {
   );
 }
 
-export async function insertNotification(db, conn, userId, { type, params, refType, refId }) {
-  await db.run(
-    `INSERT INTO notifications (id, user_id, type, params, ref_type, ref_id)
-     VALUES (:id, :userId, :type, :params, :refType, :refId)`,
-    {
-      id: toBin(newId()),
-      userId: toBin(userId),
-      type,
-      params: params ? JSON.stringify(params) : null,
-      refType: refType ?? null,
-      refId: refId ? toBin(refId) : null,
-    },
-    conn,
-  );
-}
-
 /**
  * Aktif planı premium olup premium erişimi bitmiş kullanıcılar (premium kaybı akışı, 11 §5):
  * aboneliği `expired`/`refunded` ve bitişi en az `graceHours` önce.

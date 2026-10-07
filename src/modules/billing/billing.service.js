@@ -4,6 +4,7 @@ import { toBin } from '../../shared/ids.js';
 import { isValidTimezone, localDate } from '../../shared/time.js';
 import { writeAudit } from '../audit/audit.repository.js';
 import { FREE_FALLBACK_PLAN } from '../plans/plans.rules.js';
+import * as notify from '../notifications/notify.js';
 import * as userRepo from '../user/user.repository.js';
 import * as repo from './billing.repository.js';
 
@@ -209,9 +210,10 @@ export function createBillingService({
               { planCode: FREE_FALLBACK_PLAN },
               { conn, hasPremium: false, skipSafety: true, meta: {} },
             );
-            await repo.insertNotification(db, conn, r.userId, {
+            await notify.schedule(db, conn, r.userId, {
               type: 'premium_expired',
               params: { fromPlan: r.planCode, toPlan: FREE_FALLBACK_PLAN },
+              dedupeKey: `premium_expired:${localDate(now, tz)}`,
             });
           });
           downgraded += 1;

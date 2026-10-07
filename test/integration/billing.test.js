@@ -1,15 +1,22 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, inject, it } from 'vitest';
 import { billingJobs } from '../../src/jobs/billing.jobs.js';
+import { notificationJobs } from '../../src/jobs/notifications.jobs.js';
+import { createPushClient } from '../../src/infra/fcm.js';
 import { createRevenueCatClient } from '../../src/infra/revenuecat.js';
 import { billingServiceFor } from '../../src/modules/billing/billing.routes.js';
 import { toBin } from '../../src/shared/ids.js';
-import { createIntegrationApp } from '../helpers/app.js';
+import { createIntegrationApp, fakePush } from '../helpers/app.js';
 
 const mysqlUrl = inject('mysqlUrl');
 const WEBHOOK_AUTH = 'Bearer test-webhook-secret-0123456789';
 const errors = [];
-const silent = { info() {}, warn() {}, error: (o, m) => errors.push([m, o?.err?.message]) };
+const silent = {
+  info() {},
+  warn() {},
+  debug() {},
+  error: (o, m) => errors.push([m, o?.err?.message]),
+};
 const iso = (days) => new Date(Date.now() + days * 86_400_000).toISOString();
 
 const onboardingBody = (planCode = '16_8') => ({
@@ -229,12 +236,26 @@ describe.skipIf(!mysqlUrl)('abonelik: RevenueCat (gerçek MySQL, sahte REST)', (
     await jobs.premiumDowngrade();
     expect(errors).toEqual([]);
     expect((await get(token, '/plans/current')).plan).toMatchObject({ planCode: '16_8' });
-    const inbox = await ctx.db.one(
-      'SELECT type, CAST(params AS CHAR) AS params FROM notifications WHERE user_id = :u',
-      { u: toBin(userId) },
+    // Bildirim planlayıcıdan geçer: dağıt + gönder → gelen kutusu (dilde render edilmiş).
+    const notifications = notificationJobs({
+      db: ctx.db,
+      config: ctx.config,
+      logger: silent,
+      push: createPushClient({}, { sendImpl: fakePush().sendImpl }),
+    });
+    await notifications.notificationDispatch();
+    const job = await ctx.db.one(
+      "SELECT payload FROM jobs WHERE queue = 'notifications' AND name = 'pushSend' ORDER BY id DESC LIMIT 1",
     );
-    expect(inbox.type).toBe('premium_expired');
-    expect(JSON.parse(inbox.params)).toEqual({ fromPlan: '18_6', toPlan: '16_8' });
+    const payload = typeof job.payload === 'string' ? JSON.parse(job.payload) : job.payload;
+    await notifications.pushSend({ payload, attempt: 1, maxAttempts: 3 });
+    const inbox = (await get(token, '/notifications')).items;
+    expect(inbox[0]).toMatchObject({
+      type: 'premium_expired',
+      category: 'system',
+      params: { fromPlan: '18_6', toPlan: '16_8' },
+    });
+    expect(inbox[0].body).toContain('16:8');
   });
 
   it('sandbox satın alma: üretim dışında premium verir (ayarla); promosyon premium', async () => {

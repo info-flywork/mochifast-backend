@@ -1,0 +1,895 @@
+{
+  "zones": {
+    "en": {
+      "forest": "Forest",
+      "lake": "Lake",
+      "summit": "Summit",
+      "garden": "Garden"
+    },
+    "tr": {
+      "forest": "Orman",
+      "lake": "Göl",
+      "summit": "Zirve",
+      "garden": "Bahçe"
+    },
+    "de": {
+      "forest": "Wald",
+      "lake": "See",
+      "summit": "Gipfel",
+      "garden": "Garten"
+    },
+    "es": {
+      "forest": "Bosque",
+      "lake": "Lago",
+      "summit": "Cumbre",
+      "garden": "Jardín"
+    },
+    "fr": {
+      "forest": "Forêt",
+      "lake": "Lac",
+      "summit": "Sommet",
+      "garden": "Jardin"
+    },
+    "it": {
+      "forest": "Foresta",
+      "lake": "Lago",
+      "summit": "Vetta",
+      "garden": "Giardino"
+    },
+    "ru": {
+      "forest": "Лес",
+      "lake": "Озеро",
+      "summit": "Вершина",
+      "garden": "Сад"
+    }
+  },
+  "templates": [
+    {
+      "type": "fast_goal_reached",
+      "channel": [
+        "push",
+        "inbox"
+      ],
+      "category": "fasting",
+      "quietHours": "silent",
+      "maxDelayMin": null,
+      "priority": 1,
+      "deepLink": "fastingapp://fasting",
+      "iconKey": "goal",
+      "translations": {
+        "en": {
+          "title": "You did it! 🎉",
+          "body": "You reached your fasting goal. End your fast whenever you're ready."
+        },
+        "tr": {
+          "title": "Başardın! 🎉",
+          "body": "Oruç hedefine ulaştın. Hazır olduğunda orucunu bitirebilirsin."
+        },
+        "de": {
+          "title": "Geschafft! 🎉",
+          "body": "Du hast dein Fastenziel erreicht. Beende dein Fasten, wann immer du bereit bist."
+        },
+        "es": {
+          "title": "¡Lo lograste! 🎉",
+          "body": "Alcanzaste tu meta de ayuno. Termina tu ayuno cuando estés listo."
+        },
+        "fr": {
+          "title": "Bravo ! 🎉",
+          "body": "Vous avez atteint votre objectif de jeûne. Terminez votre jeûne quand vous êtes prêt."
+        },
+        "it": {
+          "title": "Ce l'hai fatta! 🎉",
+          "body": "Hai raggiunto l'obiettivo del digiuno. Concludi il digiuno quando sei pronto."
+        },
+        "ru": {
+          "title": "Получилось! 🎉",
+          "body": "Ты достиг цели голодания. Заверши его, когда будешь готов."
+        }
+      }
+    },
+    {
+      "type": "fast_halfway",
+      "channel": [
+        "push"
+      ],
+      "category": "fasting",
+      "quietHours": "defer",
+      "maxDelayMin": 90,
+      "priority": 3,
+      "deepLink": "fastingapp://fasting",
+      "iconKey": null,
+      "translations": {
+        "en": {
+          "title": "Halfway there 💪",
+          "body": "You're halfway through your fast. Keep going, squish!"
+        },
+        "tr": {
+          "title": "Yarı yoldasın 💪",
+          "body": "Orucunun yarısını geçtin. Devam et!"
+        },
+        "de": {
+          "title": "Halbzeit 💪",
+          "body": "Du hast die Hälfte deines Fastens geschafft. Weiter so!"
+        },
+        "es": {
+          "title": "Vas por la mitad 💪",
+          "body": "Ya llevas la mitad de tu ayuno. ¡Sigue así!"
+        },
+        "fr": {
+          "title": "À mi-chemin 💪",
+          "body": "Vous avez fait la moitié de votre jeûne. Continuez !"
+        },
+        "it": {
+          "title": "A metà strada 💪",
+          "body": "Sei a metà del digiuno. Continua così!"
+        },
+        "ru": {
+          "title": "Половина пути 💪",
+          "body": "Ты прошёл половину голодания. Так держать!"
+        }
+      }
+    },
+    {
+      "type": "fast_stage_reached",
+      "channel": [
+        "push"
+      ],
+      "category": "fasting",
+      "quietHours": "defer",
+      "maxDelayMin": 120,
+      "priority": 3,
+      "deepLink": "fastingapp://body-status",
+      "iconKey": null,
+      "translations": {
+        "en": {
+          "title": "New body stage ✨",
+          "body": "Your body just entered a new fasting stage. Tap to see what's happening."
+        },
+        "tr": {
+          "title": "Yeni vücut evresi ✨",
+          "body": "Vücudun yeni bir oruç evresine girdi. Neler olduğunu görmek için dokun."
+        },
+        "de": {
+          "title": "Neue Körperphase ✨",
+          "body": "Dein Körper ist in eine neue Fastenphase eingetreten. Tippe, um mehr zu sehen."
+        },
+        "es": {
+          "title": "Nueva etapa ✨",
+          "body": "Tu cuerpo entró en una nueva etapa del ayuno. Toca para ver qué está pasando."
+        },
+        "fr": {
+          "title": "Nouvelle étape ✨",
+          "body": "Votre corps vient d'entrer dans une nouvelle étape du jeûne. Touchez pour en savoir plus."
+        },
+        "it": {
+          "title": "Nuova fase ✨",
+          "body": "Il tuo corpo è entrato in una nuova fase del digiuno. Tocca per scoprire cosa succede."
+        },
+        "ru": {
+          "title": "Новый этап ✨",
+          "body": "Твоё тело перешло на новый этап голодания. Нажми, чтобы узнать подробнее."
+        }
+      }
+    },
+    {
+      "type": "fast_start_reminder",
+      "channel": [
+        "push"
+      ],
+      "category": "fasting",
+      "quietHours": "defer",
+      "maxDelayMin": 60,
+      "priority": 2,
+      "deepLink": "fastingapp://fasting",
+      "iconKey": null,
+      "translations": {
+        "en": {
+          "title": "Time to start your fast ⏱️",
+          "body": "Your eating window has closed. Start your {planName} fast now."
+        },
+        "tr": {
+          "title": "Oruç zamanı ⏱️",
+          "body": "Yeme pencereni kapattın. {planName} orucunu şimdi başlat."
+        },
+        "de": {
+          "title": "Zeit zu fasten ⏱️",
+          "body": "Dein Essensfenster ist geschlossen. Starte jetzt dein {planName}-Fasten."
+        },
+        "es": {
+          "title": "Hora de ayunar ⏱️",
+          "body": "Tu ventana de comida se cerró. Empieza ahora tu ayuno {planName}."
+        },
+        "fr": {
+          "title": "C'est l'heure de jeûner ⏱️",
+          "body": "Votre fenêtre alimentaire est fermée. Commencez votre jeûne {planName} maintenant."
+        },
+        "it": {
+          "title": "È ora di digiunare ⏱️",
+          "body": "La tua finestra alimentare è chiusa. Inizia ora il digiuno {planName}."
+        },
+        "ru": {
+          "title": "Пора начать голодание ⏱️",
+          "body": "Твоё окно питания закрылось. Начни голодание {planName} сейчас."
+        }
+      }
+    },
+    {
+      "type": "eating_window_ending",
+      "channel": [
+        "push"
+      ],
+      "category": "fasting",
+      "quietHours": "defer",
+      "maxDelayMin": 30,
+      "priority": 3,
+      "deepLink": "fastingapp://fasting",
+      "iconKey": null,
+      "translations": {
+        "en": {
+          "title": "30 minutes left 🍽️",
+          "body": "Your eating window closes soon. Finish with something filling."
+        },
+        "tr": {
+          "title": "30 dakika kaldı 🍽️",
+          "body": "Yeme pencerenin kapanmasına az kaldı. Doyurucu bir şeyle bitir."
+        },
+        "de": {
+          "title": "Noch 30 Minuten 🍽️",
+          "body": "Dein Essensfenster schließt bald. Iss noch etwas Sättigendes."
+        },
+        "es": {
+          "title": "Quedan 30 minutos 🍽️",
+          "body": "Tu ventana de comida cierra pronto. Termina con algo saciante."
+        },
+        "fr": {
+          "title": "Plus que 30 minutes 🍽️",
+          "body": "Votre fenêtre alimentaire se ferme bientôt. Terminez par quelque chose de rassasiant."
+        },
+        "it": {
+          "title": "Mancano 30 minuti 🍽️",
+          "body": "La tua finestra alimentare sta per chiudersi. Concludi con qualcosa di saziante."
+        },
+        "ru": {
+          "title": "Осталось 30 минут 🍽️",
+          "body": "Окно питания скоро закроется. Заверши чем-нибудь сытным."
+        }
+      }
+    },
+    {
+      "type": "meal_window_ended",
+      "channel": [
+        "inbox",
+        "push"
+      ],
+      "category": "fasting",
+      "quietHours": "silent",
+      "maxDelayMin": null,
+      "priority": 3,
+      "deepLink": "fastingapp://fasting",
+      "iconKey": "meal",
+      "translations": {
+        "en": {
+          "title": "Meal time is ended",
+          "body": "Prepare yourself, the fasting time is starting soon!"
+        },
+        "tr": {
+          "title": "Yemek zamanı bitti",
+          "body": "Hazırlan, oruç zamanı yakında başlıyor!"
+        },
+        "de": {
+          "title": "Essenszeit beendet",
+          "body": "Bereite dich vor, die Fastenzeit beginnt bald!"
+        },
+        "es": {
+          "title": "La hora de comer ha terminado",
+          "body": "¡Prepárate, pronto comienza el tiempo de ayuno!"
+        },
+        "fr": {
+          "title": "L'heure du repas est terminée",
+          "body": "Préparez-vous, le temps du jeûne commence bientôt !"
+        },
+        "it": {
+          "title": "Il tempo per mangiare è terminato",
+          "body": "Preparati, il digiuno inizierà presto!"
+        },
+        "ru": {
+          "title": "Время приёма пищи закончилось",
+          "body": "Приготовься, скоро начинается голодание!"
+        }
+      }
+    },
+    {
+      "type": "fast_overdue",
+      "channel": [
+        "push"
+      ],
+      "category": "fasting",
+      "quietHours": "defer",
+      "maxDelayMin": 720,
+      "priority": 2,
+      "deepLink": "fastingapp://fasting",
+      "iconKey": null,
+      "translations": {
+        "en": {
+          "title": "Did you forget to end your fast?",
+          "body": "Your fast is still running long after its goal. Tap to end it or fix the time."
+        },
+        "tr": {
+          "title": "Orucunu bitirmeyi unuttun mu?",
+          "body": "Orucun hedefinden çok sonra hâlâ sürüyor. Bitirmek ya da saati düzeltmek için dokun."
+        },
+        "de": {
+          "title": "Fasten vergessen zu beenden?",
+          "body": "Dein Fasten läuft lange nach dem Ziel noch. Tippe, um es zu beenden oder die Zeit zu korrigieren."
+        },
+        "es": {
+          "title": "¿Olvidaste terminar tu ayuno?",
+          "body": "Tu ayuno sigue activo mucho después de la meta. Toca para terminarlo o corregir la hora."
+        },
+        "fr": {
+          "title": "Avez-vous oublié de terminer votre jeûne ?",
+          "body": "Votre jeûne continue bien après l'objectif. Touchez pour le terminer ou corriger l'heure."
+        },
+        "it": {
+          "title": "Hai dimenticato di terminare il digiuno?",
+          "body": "Il digiuno è ancora attivo ben oltre l'obiettivo. Tocca per terminarlo o correggere l'orario."
+        },
+        "ru": {
+          "title": "Забыл завершить голодание?",
+          "body": "Голодание всё ещё идёт, хотя цель давно достигнута. Нажми, чтобы завершить или исправить время."
+        }
+      }
+    },
+    {
+      "type": "weight_update",
+      "channel": [
+        "inbox"
+      ],
+      "category": "weight",
+      "quietHours": "send",
+      "maxDelayMin": null,
+      "priority": 5,
+      "deepLink": "fastingapp://body-history",
+      "iconKey": "weight",
+      "translations": {
+        "en": {
+          "title": "Weight updates",
+          "body": "Your new recorded weight is {weightKg} kg"
+        },
+        "tr": {
+          "title": "Kilo güncellemeleri",
+          "body": "Yeni kaydedilen kilon: {weightKg} kg"
+        },
+        "de": {
+          "title": "Gewichtsupdates",
+          "body": "Dein neues Gewicht ist {weightKg} kg"
+        },
+        "es": {
+          "title": "Actualizaciones de peso",
+          "body": "Tu nuevo peso registrado es {weightKg} kg"
+        },
+        "fr": {
+          "title": "Mises à jour de poids",
+          "body": "Votre nouveau poids enregistré est {weightKg} kg"
+        },
+        "it": {
+          "title": "Aggiornamenti del peso",
+          "body": "Il tuo nuovo peso registrato è {weightKg} kg"
+        },
+        "ru": {
+          "title": "Обновления веса",
+          "body": "Твой новый записанный вес: {weightKg} кг"
+        }
+      }
+    },
+    {
+      "type": "weight_reminder",
+      "channel": [
+        "push"
+      ],
+      "category": "weight",
+      "quietHours": "defer",
+      "maxDelayMin": 180,
+      "priority": 6,
+      "deepLink": "fastingapp://body-history",
+      "iconKey": null,
+      "translations": {
+        "en": {
+          "title": "Time for a weigh-in ⚖️",
+          "body": "It's been a week. A quick weigh-in keeps your progress on track."
+        },
+        "tr": {
+          "title": "Tartılma zamanı ⚖️",
+          "body": "Bir hafta oldu. Kısa bir tartı ilerlemeni takipte tutar."
+        },
+        "de": {
+          "title": "Zeit zum Wiegen ⚖️",
+          "body": "Eine Woche ist vergangen. Kurz wiegen hält deinen Fortschritt im Blick."
+        },
+        "es": {
+          "title": "Hora de pesarte ⚖️",
+          "body": "Ha pasado una semana. Pesarte te ayuda a seguir tu progreso."
+        },
+        "fr": {
+          "title": "C'est l'heure de la pesée ⚖️",
+          "body": "Une semaine déjà. Une pesée rapide permet de suivre vos progrès."
+        },
+        "it": {
+          "title": "È ora di pesarti ⚖️",
+          "body": "È passata una settimana. Una pesata veloce tiene traccia dei tuoi progressi."
+        },
+        "ru": {
+          "title": "Пора взвеситься ⚖️",
+          "body": "Прошла неделя. Быстрое взвешивание поможет следить за прогрессом."
+        }
+      }
+    },
+    {
+      "type": "water_reminder",
+      "channel": [
+        "push"
+      ],
+      "category": "water",
+      "quietHours": "defer",
+      "maxDelayMin": 60,
+      "priority": 7,
+      "deepLink": "fastingapp://water",
+      "iconKey": null,
+      "translations": {
+        "en": {
+          "title": "Sip time 💧",
+          "body": "A glass of water now keeps hunger quiet and energy up."
+        },
+        "tr": {
+          "title": "Su zamanı 💧",
+          "body": "Şimdi bir bardak su açlığı bastırır, enerjini yüksek tutar."
+        },
+        "de": {
+          "title": "Zeit für einen Schluck 💧",
+          "body": "Ein Glas Wasser jetzt hält den Hunger leise und die Energie hoch."
+        },
+        "es": {
+          "title": "Hora de hidratarte 💧",
+          "body": "Un vaso de agua ahora calma el hambre y mantiene tu energía."
+        },
+        "fr": {
+          "title": "Pause hydratation 💧",
+          "body": "Un verre d'eau maintenant calme la faim et garde votre énergie."
+        },
+        "it": {
+          "title": "È ora di bere 💧",
+          "body": "Un bicchiere d'acqua adesso tiene a bada la fame e alta l'energia."
+        },
+        "ru": {
+          "title": "Время попить 💧",
+          "body": "Стакан воды сейчас приглушит голод и поддержит энергию."
+        }
+      }
+    },
+    {
+      "type": "streak_nudge",
+      "channel": [
+        "push"
+      ],
+      "category": "streak",
+      "quietHours": "defer",
+      "maxDelayMin": 60,
+      "priority": 4,
+      "deepLink": "fastingapp://fasting",
+      "iconKey": null,
+      "translations": {
+        "en": {
+          "title": "Keep your {streak}-day streak 🔥",
+          "body": "You haven't fasted yet today. There's still time!"
+        },
+        "tr": {
+          "title": "{streak} günlük serini koru 🔥",
+          "body": "Bugün henüz oruç tutmadın. Hâlâ vaktin var!"
+        },
+        "de": {
+          "title": "Halte deine {streak}-Tage-Serie 🔥",
+          "body": "Du hast heute noch nicht gefastet. Es ist noch Zeit!"
+        },
+        "es": {
+          "title": "Mantén tu racha de {streak} días 🔥",
+          "body": "Hoy aún no has ayunado. ¡Todavía estás a tiempo!"
+        },
+        "fr": {
+          "title": "Gardez votre série de {streak} jours 🔥",
+          "body": "Vous n'avez pas encore jeûné aujourd'hui. Il est encore temps !"
+        },
+        "it": {
+          "title": "Mantieni la serie di {streak} giorni 🔥",
+          "body": "Oggi non hai ancora digiunato. Sei ancora in tempo!"
+        },
+        "ru": {
+          "title": "Сохрани серию из {streak} дн. 🔥",
+          "body": "Сегодня ты ещё не голодал. Время ещё есть!"
+        }
+      }
+    },
+    {
+      "type": "streak_milestone",
+      "channel": [
+        "push",
+        "inbox"
+      ],
+      "category": "streak",
+      "quietHours": "silent",
+      "maxDelayMin": null,
+      "priority": 2,
+      "deepLink": "fastingapp://home",
+      "iconKey": "streak",
+      "translations": {
+        "en": {
+          "title": "{streak}-day streak! 🏆",
+          "body": "Amazing consistency, squish. Your streak just hit {streak} days."
+        },
+        "tr": {
+          "title": "{streak} günlük seri! 🏆",
+          "body": "Harika bir istikrar! Serin {streak} güne ulaştı."
+        },
+        "de": {
+          "title": "{streak} Tage in Folge! 🏆",
+          "body": "Großartige Ausdauer! Deine Serie hat {streak} Tage erreicht."
+        },
+        "es": {
+          "title": "¡Racha de {streak} días! 🏆",
+          "body": "¡Qué constancia! Tu racha llegó a {streak} días."
+        },
+        "fr": {
+          "title": "Série de {streak} jours ! 🏆",
+          "body": "Quelle régularité ! Votre série atteint {streak} jours."
+        },
+        "it": {
+          "title": "Serie di {streak} giorni! 🏆",
+          "body": "Che costanza! La tua serie ha raggiunto {streak} giorni."
+        },
+        "ru": {
+          "title": "Серия {streak} дн.! 🏆",
+          "body": "Отличная стабильность! Твоя серия достигла {streak} дн."
+        }
+      }
+    },
+    {
+      "type": "streak_lost",
+      "channel": [
+        "inbox"
+      ],
+      "category": "streak",
+      "quietHours": "send",
+      "maxDelayMin": null,
+      "priority": 6,
+      "deepLink": "fastingapp://home",
+      "iconKey": "streak",
+      "translations": {
+        "en": {
+          "title": "Your streak was reset",
+          "body": "No worries, every day is a fresh start. Your best streak is still saved."
+        },
+        "tr": {
+          "title": "Serin sıfırlandı",
+          "body": "Dert etme, her gün yeni bir başlangıç. En iyi serin kayıtlı duruyor."
+        },
+        "de": {
+          "title": "Deine Serie wurde zurückgesetzt",
+          "body": "Keine Sorge, jeder Tag ist ein Neuanfang. Deine beste Serie bleibt gespeichert."
+        },
+        "es": {
+          "title": "Tu racha se reinició",
+          "body": "No te preocupes, cada día es un nuevo comienzo. Tu mejor racha sigue guardada."
+        },
+        "fr": {
+          "title": "Votre série a été réinitialisée",
+          "body": "Pas d'inquiétude, chaque jour est un nouveau départ. Votre meilleure série reste enregistrée."
+        },
+        "it": {
+          "title": "La tua serie è stata azzerata",
+          "body": "Nessun problema, ogni giorno è un nuovo inizio. La tua serie migliore resta salvata."
+        },
+        "ru": {
+          "title": "Серия сброшена",
+          "body": "Не переживай, каждый день — новое начало. Твоя лучшая серия сохранена."
+        }
+      }
+    },
+    {
+      "type": "world_level_up",
+      "channel": [
+        "push",
+        "inbox"
+      ],
+      "category": "world",
+      "quietHours": "silent",
+      "maxDelayMin": null,
+      "priority": 4,
+      "deepLink": "fastingapp://mochi-world",
+      "iconKey": "world",
+      "translations": {
+        "en": {
+          "title": "Your {zone} grew! 🌱",
+          "body": "Your {zone} reached level {level} on Mochi's island."
+        },
+        "tr": {
+          "title": "{zone} büyüdü! 🌱",
+          "body": "Mochi'nin adasında {zone} {level}. seviyeye ulaştı."
+        },
+        "de": {
+          "title": "Dein {zone} ist gewachsen! 🌱",
+          "body": "Dein {zone} hat auf Mochis Insel Level {level} erreicht."
+        },
+        "es": {
+          "title": "¡Tu {zone} creció! 🌱",
+          "body": "Tu {zone} alcanzó el nivel {level} en la isla de Mochi."
+        },
+        "fr": {
+          "title": "Votre {zone} a grandi ! 🌱",
+          "body": "Votre {zone} a atteint le niveau {level} sur l'île de Mochi."
+        },
+        "it": {
+          "title": "Nuovo livello: {zone} 🌱",
+          "body": "{zone} ha raggiunto il livello {level} sull'isola di Mochi."
+        },
+        "ru": {
+          "title": "Новый уровень: {zone} 🌱",
+          "body": "{zone} на острове Мочи: уровень {level}."
+        }
+      }
+    },
+    {
+      "type": "world_health_changed",
+      "channel": [
+        "push",
+        "inbox"
+      ],
+      "category": "world",
+      "quietHours": "defer",
+      "maxDelayMin": 720,
+      "priority": 5,
+      "deepLink": "fastingapp://mochi-world",
+      "iconKey": "world",
+      "translations": {
+        "en": {
+          "title": "Mochi's island needs you 🥀",
+          "body": "Your island is starting to wilt. One fasting day brings it back to life."
+        },
+        "tr": {
+          "title": "Mochi'nin adası seni bekliyor 🥀",
+          "body": "Adan kurumaya başladı. Tek bir oruç günü onu yeniden canlandırır."
+        },
+        "de": {
+          "title": "Mochis Insel braucht dich 🥀",
+          "body": "Deine Insel beginnt zu welken. Ein Fastentag bringt sie zurück ins Leben."
+        },
+        "es": {
+          "title": "La isla de Mochi te necesita 🥀",
+          "body": "Tu isla empieza a marchitarse. Un día de ayuno la devuelve a la vida."
+        },
+        "fr": {
+          "title": "L'île de Mochi a besoin de vous 🥀",
+          "body": "Votre île commence à faner. Un jour de jeûne suffit à la raviver."
+        },
+        "it": {
+          "title": "L'isola di Mochi ha bisogno di te 🥀",
+          "body": "La tua isola sta appassendo. Un giorno di digiuno la riporta in vita."
+        },
+        "ru": {
+          "title": "Острову Мочи нужен ты 🥀",
+          "body": "Твой остров начинает увядать. Один день голодания вернёт его к жизни."
+        }
+      }
+    },
+    {
+      "type": "challenge_progress",
+      "channel": [
+        "inbox"
+      ],
+      "category": "challenge",
+      "quietHours": "send",
+      "maxDelayMin": null,
+      "priority": 6,
+      "deepLink": "fastingapp://home",
+      "iconKey": "challenge",
+      "translations": {
+        "en": {
+          "title": "Halfway through a challenge",
+          "body": "You're halfway through \"{challenge}\". Keep it up!"
+        },
+        "tr": {
+          "title": "Meydan okumanın yarısındasın",
+          "body": "\"{challenge}\" meydan okumasının yarısına geldin. Devam!"
+        },
+        "de": {
+          "title": "Challenge zur Hälfte geschafft",
+          "body": "Du hast \"{challenge}\" zur Hälfte geschafft. Weiter so!"
+        },
+        "es": {
+          "title": "Vas por la mitad del reto",
+          "body": "Ya vas por la mitad de \"{challenge}\". ¡Sigue así!"
+        },
+        "fr": {
+          "title": "Défi à mi-parcours",
+          "body": "Vous êtes à mi-parcours de « {challenge} ». Continuez !"
+        },
+        "it": {
+          "title": "Sei a metà della sfida",
+          "body": "Sei a metà di \"{challenge}\". Continua così!"
+        },
+        "ru": {
+          "title": "Половина челленджа",
+          "body": "Ты на полпути в челлендже «{challenge}». Так держать!"
+        }
+      }
+    },
+    {
+      "type": "challenge_completed",
+      "channel": [
+        "push",
+        "inbox"
+      ],
+      "category": "challenge",
+      "quietHours": "silent",
+      "maxDelayMin": null,
+      "priority": 3,
+      "deepLink": "fastingapp://home",
+      "iconKey": "challenge",
+      "translations": {
+        "en": {
+          "title": "Challenge complete! 🏅",
+          "body": "You completed \"{challenge}\" and earned XP. Well done!"
+        },
+        "tr": {
+          "title": "Meydan okuma tamam! 🏅",
+          "body": "\"{challenge}\" meydan okumasını tamamladın ve XP kazandın. Tebrikler!"
+        },
+        "de": {
+          "title": "Challenge geschafft! 🏅",
+          "body": "Du hast \"{challenge}\" abgeschlossen und XP verdient. Gut gemacht!"
+        },
+        "es": {
+          "title": "¡Reto completado! 🏅",
+          "body": "Completaste \"{challenge}\" y ganaste XP. ¡Bien hecho!"
+        },
+        "fr": {
+          "title": "Défi terminé ! 🏅",
+          "body": "Vous avez terminé « {challenge} » et gagné de l'XP. Bravo !"
+        },
+        "it": {
+          "title": "Sfida completata! 🏅",
+          "body": "Hai completato \"{challenge}\" e guadagnato XP. Ottimo lavoro!"
+        },
+        "ru": {
+          "title": "Челлендж пройден! 🏅",
+          "body": "Ты завершил «{challenge}» и получил XP. Отлично!"
+        }
+      }
+    },
+    {
+      "type": "premium_expired",
+      "channel": [
+        "inbox"
+      ],
+      "category": "system",
+      "quietHours": "send",
+      "maxDelayMin": null,
+      "priority": 5,
+      "deepLink": "fastingapp://plans",
+      "iconKey": "premium",
+      "translations": {
+        "en": {
+          "title": "Your Premium has ended",
+          "body": "Your plan switched to {planName}. Your data is safe; you can renew anytime."
+        },
+        "tr": {
+          "title": "Premium üyeliğin sona erdi",
+          "body": "Planın {planName} olarak değişti. Verilerin güvende, istediğin zaman yenileyebilirsin."
+        },
+        "de": {
+          "title": "Dein Premium ist abgelaufen",
+          "body": "Dein Plan wurde auf {planName} umgestellt. Deine Daten sind sicher; du kannst jederzeit verlängern."
+        },
+        "es": {
+          "title": "Tu Premium ha terminado",
+          "body": "Tu plan cambió a {planName}. Tus datos están a salvo; puedes renovar cuando quieras."
+        },
+        "fr": {
+          "title": "Votre Premium a pris fin",
+          "body": "Votre plan est passé à {planName}. Vos données sont en sécurité ; vous pouvez renouveler à tout moment."
+        },
+        "it": {
+          "title": "Il tuo Premium è scaduto",
+          "body": "Il tuo piano è passato a {planName}. I tuoi dati sono al sicuro; puoi rinnovare quando vuoi."
+        },
+        "ru": {
+          "title": "Твой Premium закончился",
+          "body": "Твой план изменён на {planName}. Данные в сохранности, продлить можно в любой момент."
+        }
+      }
+    },
+    {
+      "type": "data_export_ready",
+      "channel": [
+        "push",
+        "inbox"
+      ],
+      "category": "system",
+      "quietHours": "send",
+      "maxDelayMin": null,
+      "priority": 4,
+      "deepLink": "fastingapp://profile",
+      "iconKey": "export",
+      "translations": {
+        "en": {
+          "title": "Your data export is ready",
+          "body": "Your download is ready in your profile for 7 days."
+        },
+        "tr": {
+          "title": "Veri dışa aktarımın hazır",
+          "body": "İndirme bağlantın 7 gün boyunca profilinde hazır."
+        },
+        "de": {
+          "title": "Dein Datenexport ist fertig",
+          "body": "Dein Download liegt 7 Tage lang in deinem Profil bereit."
+        },
+        "es": {
+          "title": "Tu exportación de datos está lista",
+          "body": "Tu descarga está disponible en tu perfil durante 7 días."
+        },
+        "fr": {
+          "title": "Votre export de données est prêt",
+          "body": "Votre téléchargement est disponible dans votre profil pendant 7 jours."
+        },
+        "it": {
+          "title": "L'esportazione dei dati è pronta",
+          "body": "Il download è disponibile nel tuo profilo per 7 giorni."
+        },
+        "ru": {
+          "title": "Экспорт данных готов",
+          "body": "Файл доступен для скачивания в профиле в течение 7 дней."
+        }
+      }
+    },
+    {
+      "type": "account_deletion_scheduled",
+      "channel": [
+        "inbox"
+      ],
+      "category": "system",
+      "quietHours": "send",
+      "maxDelayMin": null,
+      "priority": 4,
+      "deepLink": "fastingapp://profile",
+      "iconKey": "account",
+      "translations": {
+        "en": {
+          "title": "Account deletion scheduled",
+          "body": "Your account will be deleted soon. Sign in again before then to cancel."
+        },
+        "tr": {
+          "title": "Hesap silme planlandı",
+          "body": "Hesabın yakında silinecek. İptal etmek için bu süre içinde tekrar giriş yap."
+        },
+        "de": {
+          "title": "Kontolöschung geplant",
+          "body": "Dein Konto wird bald gelöscht. Melde dich vorher erneut an, um abzubrechen."
+        },
+        "es": {
+          "title": "Eliminación de cuenta programada",
+          "body": "Tu cuenta se eliminará pronto. Inicia sesión antes para cancelarlo."
+        },
+        "fr": {
+          "title": "Suppression du compte programmée",
+          "body": "Votre compte sera bientôt supprimé. Reconnectez-vous d'ici là pour annuler."
+        },
+        "it": {
+          "title": "Eliminazione account programmata",
+          "body": "Il tuo account verrà eliminato a breve. Accedi di nuovo prima per annullare."
+        },
+        "ru": {
+          "title": "Удаление аккаунта запланировано",
+          "body": "Твой аккаунт скоро будет удалён. Войди снова до этого, чтобы отменить."
+        }
+      }
+    }
+  ]
+}

@@ -16,16 +16,15 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
       bilinçli kilit).
 - [ ] **Paylaşılan şifreleri değiştir:** DB şifresi ve Bunny storage şifresi sohbette açık yazıldı. Değiştirip
       `.env` / `.env.production`'a yeni değerleri koy.
-- [ ] **Branch'i push'la / merge et:** `feat/backend-f0-f1` (F0–F8 commit'leri) henüz uzakta yok.
-- [ ] **Sunucuda deploy:** `npm ci` → `npm run migrate` (0015'e kadar) → `npm run seed` → `npm run stats:recompute`
-      → PM2'de API **ve worker** yeniden başlat (yeni kuyruklar: `stats`, `media`, `ai`, `billing`).
+- [ ] **Branch'i push'la / merge et:** `feat/backend-f0-f1` (F0–F9 commit'leri) henüz uzakta yok.
+- [ ] **Sunucuda deploy:** `npm ci` → `npm run migrate` (0016'ya kadar) → `npm run seed` → `npm run stats:recompute`
+      → PM2'de API **ve worker** yeniden başlat (yeni kuyruklar: `stats`, `media`, `ai`, `billing`, `notifications`).
       `scripts/deploy.sh` migrate + seed + pm2'yi yapar; `stats:recompute`'u ilk seferde elle çalıştır.
 
 ## 1. `.env` ve `.env.production` — boş alanlar (dosyalara eklendi, değerleri sen gir)
 
 | Anahtar                          | Nereden                                                                                                                                                                    | Boşken ne olur                                                     |
 | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `FIREBASE_PROJECT_ID`            | Firebase projesi (Apple + Google girişi açık)                                                                                                                              | Apple/Google girişi kapalı, yalnızca misafir                       |
 | `BUNNY_PRIVATE_STORAGE_ZONE`     | Bunny → yeni storage zone (ör. `mochifast-private`, DE)                                                                                                                    | Geliştirmede `var/media`'ya yazar; üretim açılmaz                  |
 | `BUNNY_PRIVATE_STORAGE_PASSWORD` | Private zone → FTP & API Access → Password                                                                                                                                 | 〃                                                                 |
 | `BUNNY_PRIVATE_PULL_ZONE_HOST`   | Private zone'a bağlı **yeni** pull zone (ör. `mochifast-private.b-cdn.net`)                                                                                                | 〃                                                                 |
@@ -58,6 +57,19 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
 - [ ] Webhook: `https://mochifast-api.fly-work.com/v1/webhooks/revenuecat` + Authorization header (`REVENUECAT_WEBHOOK_AUTH`).
 - [ ] Sandbox satın alma testi: satın al → uygulama `POST /v1/subscription/sync` → `isPremium: true`.
 
+### Firebase Cloud Messaging
+
+- [x] Proje `mochifast-a3808`; `FIREBASE_PROJECT_ID` dolduruldu. `google-services.json` ve `GoogleService-Info.plist` uygulamaya kondu.
+- [x] Google girişi: SHA'lar eklendi, Android dosyası yenilendi; iOS'a `CLIENT_ID` / `REVERSED_CLIENT_ID`, URL şeması ve `GIDClientID` eklendi.
+      Release keystore ve Play App Signing SHA'ları da ekli olmalı (yayından önce kontrol).
+- [x] 2 adımlı doğrulama açık. Android'de Apple girişi yok (karar).
+- [x] Servis hesabı → `FCM_SERVICE_ACCOUNT_JSON` (`.env` ve `.env.production`, base64). FCM'e kimlik doğrulama denendi, çalışıyor.
+      İndirilen JSON'u (`Downloads`) parola yöneticisine taşı ve sil; sızarsa Firebase → Service accounts'tan anahtarı iptal et.
+- [ ] **APNs auth key (.p8) → Firebase:** Project settings → Cloud Messaging → Apple app configuration →
+      APNs Authentication Key → **development ve production satırlarının ikisine de** aynı dosyayı Upload (Key ID `Y8B7RXY4QT`, Team ID `JK42R39DT5`). .p8'i repoya koyma,
+      parola yöneticisinde sakla (Apple bir kez indirtiyor).
+- [ ] Gerçek cihazla test: token kaydı → oruç başlat (kısa hedef) → hedefte push geliyor mu, sessiz saatte erteleniyor mu.
+
 ### `app_config` (DB'de; yönetim paneli F10'a kadar SQL ya da seed + `--overwrite-config`)
 
 - [ ] `ai.pricing`: **OpenAI sohbet modelinin** fiyatını ekle (`{"<model>": {"inputPerMTok", "outputPerMTok", "cacheReadPerMTok", "cacheWritePerMTok"}}`).
@@ -81,6 +93,7 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
 - [ ] Benim yazdığım metinler (anadil kontrolü iyi olur):
   - açlık check-in güvenlik önerisi `safety_end_fast` (7 dil) — `scripts/extract-translations.js`
   - sohbet ret mesajı (7 dil) — `src/modules/chat/chat.service.js` `REFUSAL_TEXT`
+  - **20 bildirim şablonu × 7 dil** — `seeds/notifications.json` (çoğu yeni; ton ve uzunluk push için kısa olmalı)
   - 3 challenge'ın metinleri (`week_fasts_3`, `water_week_5`, `hunger_aware_5`) — `seeds/gamification.json`
 - [ ] Uygulama çevirileri: İspanyolca/Fransızca çevrilmemiş metinler (ayrı görev açılmıştı); İngilizce
       `home.challenge_title` "challange" yazım hatası (seed'de düzelttim, uygulamada duruyor).
@@ -98,11 +111,18 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
 - [ ] Mochi World `GET /v1/world` (seviyeyi sunucudan al); challenge kartı `featured` + `join`.
 - [ ] RevenueCat: `Purchases.logIn(userId)` (bizim UUID), paywall `purchases_ui_flutter`, satın alma/geri yükleme sonrası
       `POST /v1/subscription/sync`; 402 / 429 (`upgradeAvailable`) → paywall; profildeki sabit `isPremium: true`'yu kaldır.
+- [ ] Bildirimler: FCM izni (onboarding'de ya da ilk oruçta) → `PUT /v1/devices/current {pushToken, pushEnabled}`;
+      `onTokenRefresh`'te tekrar gönder. Android'de `quiet` kanalı (düşük önem) oluştur — sessiz saat push'ları oraya gider.
+- [ ] Inbox ekranı `GET /v1/notifications` + rozet `unread-count`; okundu / tümü okundu / kaydırarak sil.
+      Push verisindeki `deepLink` ile yönlendirme (`notificationId` gelirse okundu işaretle).
+- [ ] Bildirim ayarları ekranı: kategoriler (`fasting`, `streak`, `weight`, `water`, `challenges`, **`world`**), sessiz saatler,
+      su hatırlatma aralığı → `PATCH /v1/user/settings`. Uygulamadaki yerel oruç bildirimlerini kaldır (çift bildirim olur).
 
 ## 6. Bilinçli ertelenenler / açık kararlar
 
-- [ ] Olay altyapısı (`events.js`) ve `/user/summary` cache'i → F9 (bildirimler) ile.
-- [ ] `weight_update` inbox olayı, seri kaybı / dünya sağlığı bildirimleri → F9 (`notifications` tablosu hazır).
+- [ ] `/user/summary` cache'i: bildirimler domain servislerinden doğrudan planlandı, ayrı olay altyapısı gerekmedi; cache ihtiyaç olursa.
+- [ ] Widget yenilemesi için sessiz push (F9 opsiyonel) yapılmadı. `subscription_expiring`, dışa aktarma ve hesap silme
+      bildirimlerinin tetikleyicileri F10'da.
 - [ ] Challenge katılımcı avatarları: "challenge'larda görün" izin ayarı yok → liste boş, istemci maskot gösteriyor. İstersen ekleriz.
 - [ ] Fast Forecast v0 ve günlük ipucu (F7 opsiyonel) yapılmadı.
 - [ ] Saat dilimi değişimi / yaz saati (DST) test senaryoları → F11.

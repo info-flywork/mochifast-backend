@@ -268,6 +268,7 @@ describe.skipIf(!mysqlUrl)('kullanıcı & onboarding (gerçek MySQL)', () => {
         weight: true,
         water: false,
         challenges: true,
+        world: true,
         marketing: false,
       },
       waterReminderIntervalMin: 120,

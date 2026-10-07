@@ -429,6 +429,7 @@ const NOTIFICATION_COLUMNS = {
   weight: 'notif_weight',
   water: 'notif_water',
   challenges: 'notif_challenges',
+  world: 'notif_world',
   marketing: 'notif_marketing',
 };
 

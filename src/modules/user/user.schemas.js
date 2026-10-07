@@ -269,7 +269,15 @@ export const patchProfileSchema = {
   response: { 200: profileResponse(true) },
 };
 
-const notificationKeys = ['fasting', 'streak', 'weight', 'water', 'challenges', 'marketing'];
+const notificationKeys = [
+  'fasting',
+  'streak',
+  'weight',
+  'water',
+  'challenges',
+  'world',
+  'marketing',
+];
 const settingsSchema = {
   type: 'object',
   required: [

@@ -170,6 +170,25 @@ export function fakeRevenueCat() {
   };
 }
 
+/**
+ * Ağa çıkmayan FCM: gönderilen mesajları tutar; `fail[token] = 'messaging/…'` ile hata döner.
+ */
+export function fakePush() {
+  const sent = [];
+  const fail = {};
+  return {
+    sent,
+    fail,
+    async sendImpl(messages) {
+      return messages.map((m) => {
+        if (fail[m.token]) return { success: false, errorCode: fail[m.token] };
+        sent.push(m);
+        return { success: true, messageId: `msg-${sent.length}` };
+      });
+    },
+  };
+}
+
 /** Claude yanıtı biçiminde mesaj (yapılandırılmış çıktı JSON metin bloğunda). */
 export function aiMessage(
   body,

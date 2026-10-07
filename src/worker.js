@@ -11,6 +11,7 @@ import { createMediaStorage } from './infra/bunny.js';
 import { createFieldCrypto } from './infra/crypto.js';
 import { aiJobs } from './jobs/ai.jobs.js';
 import { billingJobs } from './jobs/billing.jobs.js';
+import { notificationJobs } from './jobs/notifications.jobs.js';
 import { mediaJobs } from './jobs/media.jobs.js';
 import { statsJobs } from './jobs/stats.jobs.js';
 import { systemJobs } from './jobs/system.jobs.js';
@@ -85,6 +86,15 @@ const workers = [
     queue: QUEUES.billing,
     handlers: billingJobs({ db, config, logger }),
     concurrency: 2,
+    pollMs: config.worker.pollMs,
+    logger,
+  }),
+  createWorker({
+    db,
+    queue: QUEUES.notifications,
+    handlers: notificationJobs({ db, config, logger }),
+    // Gönderim dış çağrıdır (FCM); paralel işlenir.
+    concurrency: 8,
     pollMs: config.worker.pollMs,
     logger,
   }),

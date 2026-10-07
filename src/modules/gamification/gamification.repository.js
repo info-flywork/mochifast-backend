@@ -1,5 +1,6 @@
 import { fromBin, toBin } from '../../shared/ids.js';
 import { isValidTimezone, localDate } from '../../shared/time.js';
+import * as notify from '../notifications/notify.js';
 import { ZONES, zoneState } from './world.rules.js';
 
 const THRESHOLD_TTL_MS = 5 * 60_000;
@@ -229,6 +230,19 @@ export async function syncChallenges(db, conn, userId, { now = new Date(), tz } 
         { userId: toBin(userId), ref: p.id, amount: p.rewardXp, day: localDate(now, zone) },
         conn,
       );
+    }
+    if (done) {
+      await notify.schedule(db, conn, userId, {
+        type: 'challenge_completed',
+        params: { challenge: p.code },
+        dedupeKey: `challenge:${p.id}:done`,
+      });
+    } else if (progress * 2 >= p.target && progress > p.progress) {
+      await notify.schedule(db, conn, userId, {
+        type: 'challenge_progress',
+        params: { challenge: p.code, progress, target: p.target },
+        dedupeKey: `challenge:${p.id}:half`,
+      });
     }
     out.push({ code: p.code, progress, target: p.target, status: done ? 'completed' : 'active' });
   }

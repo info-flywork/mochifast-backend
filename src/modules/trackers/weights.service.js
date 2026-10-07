@@ -4,6 +4,7 @@ import { decodeCursor, encodeCursor } from '../../shared/pagination.js';
 import { localDate } from '../../shared/time.js';
 import { bmi, projection, DEFAULT_WEEKLY_LOSS_KG } from '../user/onboarding.rules.js';
 import * as userRepo from '../user/user.repository.js';
+import * as notify from '../notifications/notify.js';
 import { assertInstant } from './context.js';
 import * as repo from './trackers.repository.js';
 import { bmiClass, bucketLabel, chartBuckets, weightProgress, yAxis } from './trackers.rules.js';
@@ -54,6 +55,12 @@ export function createWeightsService({ db, ctx, users }) {
         };
         await repo.insertWeight(db, conn, userId, entry);
         touch(entry.localDate);
+        // Gelen kutusu: "Weight updates" (değer yalnızca uygulama içinde; push yok).
+        await notify.schedule(db, conn, userId, {
+          type: 'weight_update',
+          params: { weightKg: entry.weightKg, refType: 'weight', refId: entry.id },
+          dedupeKey: `weight:${entry.id}`,
+        });
         return { created: true, entry: toDto(entry) };
       });
     },

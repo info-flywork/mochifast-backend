@@ -24,6 +24,7 @@ import chatRoutes from './modules/chat/chat.routes.js';
 import { challengesRoutes, worldRoutes } from './modules/gamification/gamification.routes.js';
 import { subscriptionRoutes, webhookRoutes } from './modules/billing/billing.routes.js';
 import hungerRoutes from './modules/hunger/hunger.routes.js';
+import notificationsRoutes from './modules/notifications/notifications.routes.js';
 import mediaRoutes, { localMediaFiles } from './modules/media/media.routes.js';
 import { mealsRoutes, nutritionRoutes } from './modules/meals/meals.routes.js';
 import {
@@ -117,6 +118,7 @@ export async function buildApp({ config, deps, logger, registerV1 }) {
       await v1.register(challengesRoutes, { prefix: '/challenges' });
       await v1.register(subscriptionRoutes, { prefix: '/subscription' });
       await v1.register(webhookRoutes, { prefix: '/webhooks' });
+      await v1.register(notificationsRoutes, { prefix: '/notifications' });
       if (registerV1) await registerV1(v1);
     },
     { prefix: API_PREFIX },

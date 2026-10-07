@@ -122,6 +122,9 @@ const schema = {
     // Sandbox (TestFlight / test satın alma) premium verir mi? Üretimde varsayılan: hayır.
     REVENUECAT_ALLOW_SANDBOX: { type: 'string', enum: ['', 'true', 'false'], default: '' },
 
+    // Push (FCM HTTP v1): Firebase servis hesabı JSON'u (ham ya da base64). Yoksa yalnızca inbox.
+    FCM_SERVICE_ACCOUNT_JSON: { type: 'string', default: '' },
+
     SENTRY_DSN: { type: 'string', default: '' },
     SENTRY_TRACES_SAMPLE_RATE: { type: 'number', minimum: 0, maximum: 1, default: 0 },
   },
@@ -213,6 +216,7 @@ export function loadConfig(env = process.env) {
       serverFallback: e.AI_SERVER_FALLBACK,
       analysisTimeoutMs: e.AI_ANALYSIS_TIMEOUT_MS,
     },
+    push: { serviceAccount: parseServiceAccountSafe(e.FCM_SERVICE_ACCOUNT_JSON) },
     billing: {
       secretApiKey: e.REVENUECAT_SECRET_API_KEY,
       webhookAuth: e.REVENUECAT_WEBHOOK_AUTH,
@@ -290,6 +294,19 @@ function mediaConfig(e) {
     },
     apiKey: e.BUNNY_API_KEY,
   };
+}
+
+/** FCM servis hesabı: ham JSON ya da base64 JSON. Bozuksa başlamaz (sessizce push kapanmasın). */
+function parseServiceAccountSafe(value) {
+  if (!value) return null;
+  try {
+    const text = value.trim().startsWith('{')
+      ? value
+      : Buffer.from(value, 'base64').toString('utf8');
+    return JSON.parse(text);
+  } catch {
+    throw new Error('FCM_SERVICE_ACCOUNT_JSON geçerli JSON (ya da base64 JSON) değil');
+  }
 }
 
 function parseTrustProxy(value) {

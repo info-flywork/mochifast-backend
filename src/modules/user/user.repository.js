@@ -34,6 +34,7 @@ const SETTINGS_COLUMNS = [
   'notif_weight',
   'notif_water',
   'notif_challenges',
+  'notif_world',
   'notif_marketing',
   'water_reminder_interval_min',
   'quiet_hours_start',
