@@ -347,5 +347,41 @@ describe.skipIf(!mysqlUrl)(
       );
       expect(Number(again.n)).toBe(rows.length);
     });
+
+    it('günlük planlayıcı (DST): gece yarısının yaşanmadığı gün ve kaçırılan saatte de bir kez planlar', async () => {
+      const u = await newUser();
+      await ctx.db.run("UPDATE users SET timezone = 'America/Santiago' WHERE id = :u", {
+        u: toBin(u.userId),
+      });
+      await ctx.db.run('UPDATE user_stats SET current_streak = 3 WHERE user_id = :u', {
+        u: toBin(u.userId),
+      });
+      const count = async () =>
+        Number(
+          (
+            await ctx.db.one(
+              "SELECT COUNT(*) AS n FROM scheduled_notifications WHERE user_id = :u AND dedupe_key = 'streak_nudge:2026-09-06'",
+              { u: toBin(u.userId) },
+            )
+          ).n,
+        );
+      // 6 Eylül 2026: Santiago'da 00:00 → 01:00; 23:30 (5 Eylül) ve 01:30 (6 Eylül) yerel.
+      await planDailyReminders(ctx.db, { now: new Date('2026-09-06T03:30:00Z') });
+      await planDailyReminders(ctx.db, { now: new Date('2026-09-06T04:30:00Z') });
+      expect(await count()).toBe(1);
+      // Aynı gün sonraki saatler tekrar planlamaz (dilim günü işaretli).
+      await ctx.db.run('DELETE FROM scheduled_notifications WHERE user_id = :u', {
+        u: toBin(u.userId),
+      });
+      await planDailyReminders(ctx.db, { now: new Date('2026-09-06T06:30:00Z') });
+      expect(await count()).toBe(0);
+      // Worker gece kapalıydı: ertesi günün ilk çalışması 03:10'da da planlar.
+      await planDailyReminders(ctx.db, { now: new Date('2026-09-07T06:10:00Z') });
+      const next = await ctx.db.one(
+        "SELECT COUNT(*) AS n FROM scheduled_notifications WHERE user_id = :u AND dedupe_key = 'streak_nudge:2026-09-07'",
+        { u: toBin(u.userId) },
+      );
+      expect(Number(next.n)).toBe(1);
+    });
   },
 );

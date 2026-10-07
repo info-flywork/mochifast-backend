@@ -83,7 +83,8 @@ export default async function chatRoutes(app) {
    */
   app.post(
     '/conversations/:id/messages',
-    { ...auth, schema: s.sendSchema },
+    // 06 §7: kullanıcı başına dakikada 20 mesaj (kota ayrıca günlük).
+    { ...auth, schema: s.sendSchema, config: { rateLimit: { max: 20, timeWindow: '1 minute' } } },
     async (request, reply) => {
       const turn = await chat.prepare(
         request.user.id,

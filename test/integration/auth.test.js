@@ -346,4 +346,37 @@ describe.skipIf(!mysqlUrl)('auth akışları (gerçek MySQL)', () => {
     expect(res.statusCode).toBe(403);
     expect((await guest()).statusCode).toBe(201); // başka kullanıcı etkilenmez
   });
+
+  it('yeni misafir: IP başına saatte 10 — /auth/register provider=guest de aynı sınıra takılır', async () => {
+    const ip = '198.51.100.77';
+    const create = (url, body) =>
+      ctx.app.inject({ method: 'POST', url, remoteAddress: ip, payload: body });
+    for (let i = 0; i < 5; i += 1) {
+      const r = await create('/v1/auth/guest', { installId: randomUUID(), platform: 'ios' });
+      expect(r.statusCode).toBe(201);
+    }
+    for (let i = 0; i < 5; i += 1) {
+      const r = await create('/v1/auth/register', {
+        provider: 'guest',
+        deviceId: randomUUID(),
+        platform: 'android',
+      });
+      expect(r.statusCode).toBe(201);
+    }
+    const blocked = await create('/v1/auth/register', {
+      provider: 'guest',
+      deviceId: randomUUID(),
+      platform: 'android',
+    });
+    expect(blocked.statusCode).toBe(429);
+    // Var olan misafirin tekrar girişi sınırdan etkilenmez.
+    const installId = randomUUID();
+    const other = await ctx.app.inject({
+      method: 'POST',
+      url: '/v1/auth/guest',
+      remoteAddress: '198.51.100.78',
+      payload: { installId, platform: 'ios' },
+    });
+    expect(other.statusCode).toBe(201);
+  });
 });

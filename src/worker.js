@@ -6,6 +6,7 @@ import { createLogger } from './infra/logger.js';
 import { initSentry, flushSentry } from './infra/sentry.js';
 import { createDatabase } from './infra/db.js';
 import { createScheduler, createWorker } from './infra/queue.js';
+import { createWorkerMetrics, startMetricsServer } from './infra/metrics.js';
 import { SCHEDULES } from './schedules.js';
 import { createMediaStorage } from './infra/bunny.js';
 import { createFieldCrypto } from './infra/crypto.js';
@@ -39,6 +40,15 @@ try {
 scheduler.start();
 
 const storage = createMediaStorage(config.media, { logger });
+const metrics = config.metrics.enabled
+  ? createWorkerMetrics({ db, dbPoolStats: db.poolStats })
+  : undefined;
+const metricsServer = metrics
+  ? await startMetricsServer(metrics, {
+      host: config.metrics.host,
+      port: config.metrics.workerPort,
+    })
+  : null;
 
 const workers = [
   createWorker({
@@ -48,6 +58,7 @@ const workers = [
     concurrency: config.worker.concurrency,
     pollMs: config.worker.pollMs,
     logger,
+    metrics,
   }),
   createWorker({
     db,
@@ -57,6 +68,7 @@ const workers = [
     concurrency: 1,
     pollMs: config.worker.pollMs,
     logger,
+    metrics,
   }),
   createWorker({
     db,
@@ -65,6 +77,7 @@ const workers = [
     concurrency: 1,
     pollMs: config.worker.pollMs,
     logger,
+    metrics,
   }),
   createWorker({
     db,
@@ -81,6 +94,7 @@ const workers = [
     timeoutMs: 120_000,
     pollMs: config.worker.pollMs,
     logger,
+    metrics,
   }),
   createWorker({
     db,
@@ -89,6 +103,7 @@ const workers = [
     concurrency: 2,
     pollMs: config.worker.pollMs,
     logger,
+    metrics,
   }),
   createWorker({
     db,
@@ -98,6 +113,7 @@ const workers = [
     concurrency: 8,
     pollMs: config.worker.pollMs,
     logger,
+    metrics,
   }),
   createWorker({
     db,
@@ -108,6 +124,7 @@ const workers = [
     timeoutMs: 600_000,
     pollMs: config.worker.pollMs,
     logger,
+    metrics,
   }),
 ];
 
@@ -118,6 +135,7 @@ closeWithGrace({ delay: config.server.shutdownGraceMs }, async ({ signal, err })
   logger.info({ signal }, 'worker kapanıyor (aktif işler bitirilecek)');
   await scheduler.close();
   await Promise.allSettled(workers.map((w) => w.close()));
+  metricsServer?.close();
   await db.close();
   await flushSentry();
 });

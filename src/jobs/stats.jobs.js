@@ -1,6 +1,6 @@
-import { DateTime } from 'luxon';
 import { fromBin } from '../shared/ids.js';
 import { addDays } from '../shared/time.js';
+import { markZoneDays, pendingZoneDays } from '../shared/zone-days.js';
 import { expireChallenges } from '../modules/gamification/challenges.service.js';
 import * as repo from '../modules/stats/stats.repository.js';
 
@@ -13,7 +13,7 @@ const BATCH = 200;
 /**
  * Türetilmiş verilerin işleri (05 §14). Hepsi idempotent: aynı iş iki kez çalışsa da sonuç aynıdır.
  * - fastAutoclose: 72 saati geçen aktif seansı hedefte bitmiş sayar.
- * - dayRollover  : yerel gece yarısını yeni geçen saat dilimlerinde serileri tazeler.
+ * - dayRollover  : yerel günü henüz işlenmemiş saat dilimlerinde serileri tazeler (zone-days).
  * - dailyRollup  : son 26 saatte oruç ya da takipçi kaydı değişen kullanıcıların son 3 gününü
  *                  baştan yazar, seri/sayaç/XP'yi tüm geçmişten hesaplar.
  */
@@ -58,11 +58,16 @@ export function statsJobs({ db, stats, logger, now = () => new Date() }) {
 
     async dayRollover() {
       const at = now();
-      const zones = (await repo.streakTimezones(db)).filter(
-        (tz) => DateTime.fromJSDate(at, { zone: tz }).hour === 0,
+      const zoneDays = await pendingZoneDays(
+        db,
+        'day-rollover',
+        await repo.streakTimezones(db),
+        at,
       );
+      const zones = zoneDays.map((z) => z.timezone);
       const users = await repo.usersWithStreakIn(db, zones);
       const refreshed = await eachUser(users, (userId) => stats.fresh(userId, at));
+      await markZoneDays(db, 'day-rollover', zoneDays);
       if (refreshed > 0) logger.info({ refreshed, zones }, 'gün dönümü: seriler tazelendi');
     },
 

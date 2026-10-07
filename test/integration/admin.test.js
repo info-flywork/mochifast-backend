@@ -36,6 +36,10 @@ describe.skipIf(!mysqlUrl)('yönetim API: giriş, yetki, içerik, destek, raporl
       const created = await auth.createAdmin({ email: `${role}@mochi.test`, role }, meta);
       admins[role] = { ...created, email: `${role}@mochi.test` };
     }
+    // Geçici şifre değişimi ayrı testte; diğer testler için kapatılır.
+    await ctx.db.run(
+      "UPDATE admin_users SET must_change_password = 0 WHERE email LIKE '%@mochi.test'",
+    );
   });
 
   afterAll(async () => {
@@ -68,7 +72,12 @@ describe.skipIf(!mysqlUrl)('yönetim API: giriş, yetki, içerik, destek, raporl
     expect(first.statusCode).toBe(200);
     expect(first.json().data).toMatchObject({
       expiresIn: 3600,
-      admin: { email: 'analyst@mochi.test', role: 'analyst', isActive: true },
+      admin: {
+        email: 'analyst@mochi.test',
+        role: 'analyst',
+        isActive: true,
+        mustChangePassword: false,
+      },
     });
     const token = first.json().data.token;
     expect((await call('GET', '/admin/auth/me', { token })).json().data.admin.role).toBe('analyst');
@@ -96,10 +105,11 @@ describe.skipIf(!mysqlUrl)('yönetim API: giriş, yetki, içerik, destek, raporl
     for (let i = 0; i < 5; i += 1) {
       expect((await attempt('wrong-password', '000000')).statusCode).toBe(401);
     }
+    // Kilitli: doğru bilgiler de reddedilir; yanıt bilinmeyen hesapla aynı (hesap varlığı sızmaz).
     const locked = await attempt(victim.password, code(victim.totp.secret));
-    expect(locked.statusCode).toBe(423);
-    expect(locked.json().error).toMatchObject({ code: 'ACCOUNT_LOCKED' });
-    expect(locked.json().error.details.retryAfterSec).toBeGreaterThan(800);
+    expect(locked.statusCode).toBe(401);
+    expect(locked.json().error).toEqual(expect.objectContaining({ code: 'UNAUTHENTICATED' }));
+    expect(locked.json().error.details).toBeUndefined();
 
     // Owner sıfırlayınca kilit kalkar, yeni şifre + TOTP ile girilir.
     const owner = await tokenFor('owner');
@@ -108,7 +118,38 @@ describe.skipIf(!mysqlUrl)('yönetim API: giriş, yetki, içerik, destek, raporl
     });
     expect(reset.statusCode).toBe(200);
     const { password, totp } = reset.json().data;
-    expect((await attempt(password, code(totp.secret))).statusCode).toBe(200);
+    const relogin = await attempt(password, code(totp.secret));
+    expect(relogin.statusCode).toBe(200);
+    expect(relogin.json().data.admin.mustChangePassword).toBe(true);
+
+    // Geçici şifre: yalnızca me/şifre/çıkış açık; değişince eski token iptal, yeni token döner.
+    const temp = relogin.json().data.token;
+    const blocked = await call('GET', '/admin/catalog', { token: temp });
+    expect(blocked.statusCode).toBe(403);
+    expect(blocked.json().error.details).toEqual({ reason: 'password_change_required' });
+    expect((await call('GET', '/admin/auth/me', { token: temp })).statusCode).toBe(200);
+    expect(
+      (
+        await call('POST', '/admin/auth/password', {
+          token: temp,
+          body: { currentPassword: password, newPassword: 'short' },
+        })
+      ).statusCode,
+    ).toBe(400);
+    await new Promise((r) => setTimeout(r, 1100)); // token iat saniye hassasiyetinde
+    const changed = await call('POST', '/admin/auth/password', {
+      token: temp,
+      body: { currentPassword: password, newPassword: 'a much longer passphrase 42' },
+    });
+    expect(changed.statusCode).toBe(200);
+    const fresh = changed.json().data.token;
+    expect((await call('GET', '/admin/catalog', { token: fresh })).statusCode).toBe(200);
+    expect((await call('GET', '/admin/auth/me', { token: temp })).statusCode).toBe(401);
+
+    // Çıkış: token'lar iptal.
+    await new Promise((r) => setTimeout(r, 1100));
+    expect((await call('POST', '/admin/auth/logout', { token: fresh })).statusCode).toBe(200);
+    expect((await call('GET', '/admin/auth/me', { token: fresh })).statusCode).toBe(401);
     // Bilinmeyen e-posta da aynı hata.
     expect(
       (
@@ -123,9 +164,10 @@ describe.skipIf(!mysqlUrl)('yönetim API: giriş, yetki, içerik, destek, raporl
     const editor = await tokenFor('editor');
     const analyst = await tokenFor('analyst');
     const support = await tokenFor('support');
-    expect((await call('GET', '/admin/users?q=someone@x.com', { token: editor })).statusCode).toBe(
-      403,
-    );
+    expect(
+      (await call('POST', '/admin/users/search', { token: editor, body: { q: 'someone@x.com' } }))
+        .statusCode,
+    ).toBe(403);
     expect((await call('GET', '/admin/catalog', { token: analyst })).statusCode).toBe(403);
     expect((await call('GET', '/admin/reports/overview', { token: support })).statusCode).toBe(403);
     expect((await call('GET', '/admin/admins', { token: editor })).statusCode).toBe(403);
@@ -142,6 +184,10 @@ describe.skipIf(!mysqlUrl)('yönetim API: giriş, yetki, içerik, destek, raporl
     expect(created.statusCode).toBe(201);
     expect(created.json().data.totp.otpauthUrl).toMatch(/^otpauth:\/\/totp\//);
     const tempId = created.json().data.admin.id;
+    expect(created.json().data.admin.mustChangePassword).toBe(true);
+    await ctx.db.run('UPDATE admin_users SET must_change_password = 0 WHERE id = :id', {
+      id: toBin(tempId),
+    });
     const tempToken = (
       await call('POST', '/admin/auth/login', {
         body: {
@@ -152,6 +198,7 @@ describe.skipIf(!mysqlUrl)('yönetim API: giriş, yetki, içerik, destek, raporl
       })
     ).json().data.token;
     expect((await call('GET', '/admin/auth/me', { token: tempToken })).statusCode).toBe(200);
+    await new Promise((r) => setTimeout(r, 1100));
     await call('PATCH', `/admin/admins/${tempId}`, { token: owner, body: { isActive: false } });
     expect((await call('GET', '/admin/auth/me', { token: tempToken })).statusCode).toBe(401);
     // Owner kendini pasifleştiremez.
@@ -290,13 +337,17 @@ describe.skipIf(!mysqlUrl)('yönetim API: giriş, yetki, içerik, destek, raporl
     });
     const { user, token } = login.json().data;
 
-    const search = await call('GET', '/admin/users?q=JANE.DOE@example.com', { token: support });
+    const search = await call('POST', '/admin/users/search', {
+      token: support,
+      body: { q: 'JANE.DOE@example.com' },
+    });
     expect(search.json().data.items).toEqual([
       expect.objectContaining({ id: user.id, email: 'j***@e***.com', name: 'J*** D***' }),
     ]);
     // Kısmi arama yok.
     expect(
-      (await call('GET', '/admin/users?q=jane', { token: support })).json().data.items,
+      (await call('POST', '/admin/users/search', { token: support, body: { q: 'jane' } })).json()
+        .data.items,
     ).toEqual([]);
     const detail = (await call('GET', `/admin/users/${user.id}`, { token: support })).json().data
       .user;

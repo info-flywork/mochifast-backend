@@ -150,6 +150,10 @@ export function createRetention({ db, logger }) {
         'DELETE FROM user_activity_daily WHERE activity_date < DATE_SUB(UTC_DATE(), INTERVAL :days DAY)',
         { days: RETENTION.activityDays },
       );
+      counts.zone_day_runs = await deleteInBatches(
+        db,
+        'DELETE FROM zone_day_runs WHERE local_date < DATE_SUB(UTC_DATE(), INTERVAL 14 DAY)',
+      );
       const total = Object.values(counts).reduce((a, n) => a + n, 0);
       if (total > 0) logger.info(counts, 'saklama süresi dolan kayıtlar silindi');
       return counts;

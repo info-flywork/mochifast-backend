@@ -32,7 +32,8 @@ sync() {
   rsync -az --delete \
     --exclude '.git/' --exclude 'node_modules/' --exclude '.husky/' --exclude 'coverage/' \
     --exclude 'test/' --exclude '.github/' --exclude '.env' --exclude '.env.*' \
-    --exclude 'deploy/deploy.env' --exclude 'openapi.json' --exclude '*.log' --exclude '.DS_Store' \
+    --exclude 'deploy/deploy.env' --exclude 'deploy/backup.env' --exclude 'logs/' \
+    --exclude 'loadtest/users.json' --exclude 'openapi.json' --exclude '*.log' --exclude '.DS_Store' \
     ./ "$DEPLOY_HOST:$DEPLOY_DIR/"
   if ((WITH_ENV)); then
     [[ -f .env.production ]] || { echo ".env.production yok" >&2; exit 1; }

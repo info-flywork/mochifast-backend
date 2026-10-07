@@ -1,7 +1,8 @@
 import { fromBin, newId, toBin } from '../../shared/ids.js';
 
 const COLUMNS = `id, email, password_hash, role, totp_secret_enc, totp_last_step, failed_attempts,
-                 locked_until, is_active, last_login_at, created_at`;
+                 locked_until, tokens_valid_after, must_change_password, is_active, last_login_at,
+                 created_at`;
 
 const toAdmin = (r) =>
   r && {
@@ -13,6 +14,8 @@ const toAdmin = (r) =>
     totpLastStep: r.totp_last_step === null ? null : Number(r.totp_last_step),
     failedAttempts: r.failed_attempts,
     lockedUntil: r.locked_until ?? null,
+    tokensValidAfter: r.tokens_valid_after ?? null,
+    mustChangePassword: Boolean(r.must_change_password),
     isActive: Boolean(r.is_active),
     lastLoginAt: r.last_login_at ?? null,
     createdAt: r.created_at,
@@ -56,6 +59,8 @@ export async function update(db, id, fields, conn) {
     totpLastStep: 'totp_last_step',
     failedAttempts: 'failed_attempts',
     lockedUntil: 'locked_until',
+    tokensValidAfter: 'tokens_valid_after',
+    mustChangePassword: 'must_change_password',
     lastLoginAt: 'last_login_at',
   };
   const sets = [];

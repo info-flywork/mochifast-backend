@@ -29,6 +29,7 @@ const adminSchema = {
     email: { type: 'string' },
     role: { type: 'string', enum: ADMIN_ROLES },
     isActive: { type: 'boolean' },
+    mustChangePassword: { type: 'boolean' },
     lastLoginAt: nullableDateTime,
     createdAt: isoDateTimeSchema,
   },
@@ -93,7 +94,8 @@ export const meSchema = {
 
 export const passwordSchema = {
   tags,
-  summary: 'Şifre değiştir',
+  summary:
+    "Şifre değiştir (eski token'lar iptal; yeni token döner). Geçici şifreyle girişte zorunlu",
   security: bearer,
   body: {
     type: 'object',
@@ -104,6 +106,19 @@ export const passwordSchema = {
       newPassword: { type: 'string', minLength: 1, maxLength: 200 },
     },
   },
+  response: {
+    200: envelope({
+      type: 'object',
+      required: ['token', 'expiresIn'],
+      properties: { token: { type: 'string' }, expiresIn: { type: 'integer' } },
+    }),
+  },
+};
+
+export const logoutSchema = {
+  tags,
+  summary: "Çıkış: bu yöneticinin verilmiş tüm token'ları geçersiz",
+  security: bearer,
   response: { 200: empty },
 };
 
@@ -368,9 +383,10 @@ const userSummary = {
 
 export const searchUsersSchema = {
   tags,
-  summary: 'Kullanıcı ara: kimlik (UUID) ya da tam e-posta; PII maskeli',
+  summary:
+    "Kullanıcı ara: kimlik (UUID) ya da tam e-posta; PII maskeli (POST: e-posta URL'de görünmez)",
   security: bearer,
-  querystring: {
+  body: {
     type: 'object',
     additionalProperties: false,
     required: ['q'],

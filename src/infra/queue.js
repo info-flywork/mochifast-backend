@@ -78,6 +78,7 @@ export function createJobQueue(db) {
 /**
  * Bir kuyruğun işlerini tüketen worker. İş adına göre handler seçer.
  * Handler imzası: `async ({ id, name, payload, attempt, maxAttempts }) => void`.
+ * `metrics.jobFinished(queue, name, outcome, ms)` verilirse her iş ölçülür (infra/metrics.js).
  */
 export function createWorker({
   db,
@@ -88,6 +89,7 @@ export function createWorker({
   timeoutMs = JOB_DEFAULTS.timeoutMs,
   reapEveryMs = 30_000,
   logger,
+  metrics,
   workerId = `${hostname()}:${process.pid}`,
 }) {
   const active = new Set();
@@ -168,6 +170,7 @@ export function createWorker({
           WHERE id = :id AND locked_by = :workerId`,
         { id: job.id, workerId },
       );
+      metrics?.jobFinished(queue, job.name, 'done', performance.now() - started);
       logger?.debug(
         { queue, job: job.name, jobId: job.id, ms: Math.round(performance.now() - started) },
         'iş tamamlandı',
@@ -187,6 +190,12 @@ export function createWorker({
       await db
         .run(sql, { id: job.id, workerId, message, delayUs: backoffMs(job.attempt) * 1000 })
         .catch(logError);
+      metrics?.jobFinished(
+        queue,
+        job.name,
+        final ? 'failed' : 'retry',
+        performance.now() - started,
+      );
       logger?.error(
         { queue, job: job.name, jobId: job.id, attempt: job.attempt, final, err },
         final ? 'iş başarısız (son deneme)' : 'iş başarısız; tekrar denenecek',

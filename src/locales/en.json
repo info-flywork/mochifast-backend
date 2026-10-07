@@ -22,7 +22,6 @@
     "ACCOUNT_PENDING_DELETION": "This account is scheduled for deletion. Do you want to restore it?",
     "REPLY_IN_PROGRESS": "Mochi is still answering. Please wait a moment.",
     "GONE": "This account is no longer available.",
-    "ACCOUNT_LOCKED": "Too many failed attempts. Try again later.",
     "PAYLOAD_TOO_LARGE": "The file or request is too large.",
     "UNSUPPORTED_MEDIA_TYPE": "This file type is not supported.",
     "NOT_FOOD": "This doesn't look like a meal. Try another photo.",

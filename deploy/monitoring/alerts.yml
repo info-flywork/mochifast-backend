@@ -1,0 +1,88 @@
+# Prometheus alarm kuralları (F11). Hedefler: API :9464, worker :9465 (/metrics, yalnızca iç ağ).
+# SLO'lar: docs/backend/07-cache-performans.md §8.1. Runbook: docs/runbooks.md.
+groups:
+  - name: mochifast-api
+    rules:
+      - alert: ApiDown
+        expr: up{job="mochifast-api"} == 0
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: API metrik ucuna ulaşılamıyor (process çökmüş olabilir)
+          runbook: docs/runbooks.md#api-yanıt-vermiyor
+      - alert: High5xxRate
+        expr: |
+          sum(rate(http_request_duration_seconds_count{status_code=~"5.."}[5m]))
+            / sum(rate(http_request_duration_seconds_count[5m])) > 0.001
+        for: 10m
+        labels: { severity: critical }
+        annotations:
+          summary: 5xx oranı %0.1'in üzerinde (SLO)
+          runbook: docs/runbooks.md#5xx-artışı
+      - alert: SlowReads
+        expr: |
+          histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{method="GET"}[10m]))) > 0.15
+        for: 15m
+        labels: { severity: warning }
+        annotations:
+          summary: Okuma p95 150 ms'nin üzerinde
+          runbook: docs/runbooks.md#yavaşlama
+      - alert: DbPoolSaturated
+        expr: db_pool_connections{state="queued"} > 5
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: DB havuzunda kuyruk birikiyor ({{ $labels.service }})
+          runbook: docs/runbooks.md#yavaşlama
+      - alert: LowCacheHitRate
+        expr: |
+          sum(rate(cache_requests_total{result="hit"}[15m])) / sum(rate(cache_requests_total[15m])) < 0.6
+        for: 30m
+        labels: { severity: info }
+        annotations:
+          summary: Cache isabet oranı %60'ın altında
+
+  - name: mochifast-worker
+    rules:
+      - alert: WorkerDown
+        expr: up{job="mochifast-worker"} == 0
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: Worker metrik ucuna ulaşılamıyor (bildirim, silme, analiz durur)
+          runbook: docs/runbooks.md#worker-durdu
+      - alert: QueueBacklog
+        expr: jobs_oldest_pending_seconds > 300
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "{{ $labels.queue }} kuyruğunda 5 dk'dan eski bekleyen iş"
+          runbook: docs/runbooks.md#kuyruk-birikiyor
+      - alert: JobFailures
+        expr: increase(jobs_runs_total{outcome="failed"}[1h]) > 10
+        labels: { severity: warning }
+        annotations:
+          summary: '{{ $labels.queue }}/{{ $labels.job }} son 1 saatte 10+ kalıcı hata'
+          runbook: docs/runbooks.md#kuyruk-birikiyor
+      - alert: NotificationsOverdue
+        expr: notifications_overdue > 100
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: Vadesi geçmiş planlı bildirimler birikiyor (dağıtıcı/FCM)
+          runbook: docs/runbooks.md#push-gitmiyor
+      - alert: PushFailures
+        expr: |
+          push_deliveries_last_hour{status="failed"}
+            / clamp_min(sum(push_deliveries_last_hour), 1) > 0.2
+        for: 30m
+        labels: { severity: warning }
+        annotations:
+          summary: Push teslimlerinin %20'sinden fazlası başarısız (FCM/APNs)
+          runbook: docs/runbooks.md#push-gitmiyor
+      - alert: AiCostSpike
+        expr: ai_cost_today_usd > 40
+        labels: { severity: critical }
+        annotations:
+          summary: Günlük AI maliyeti 40$'ı geçti (bütçe kapısı 50$'da keser)
+          runbook: docs/runbooks.md#ai-maliyet-patlaması

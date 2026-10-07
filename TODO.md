@@ -17,14 +17,32 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
 - [ ] **Paylaşılan şifreleri değiştir:** DB şifresi ve Bunny storage şifresi sohbette açık yazıldı. Değiştirip
       `.env` / `.env.production`'a yeni değerleri koy.
 - [ ] **Branch'i push'la / merge et:** `feat/backend-f0-f1` (F0–F10 commit'leri) henüz uzakta yok.
-- [ ] **Sunucuda deploy:** `npm ci` → `npm run migrate` (0018'e kadar) → `npm run seed` → `npm run stats:recompute`
-      → PM2'de API **ve worker** yeniden başlat (yeni kuyruklar: `stats`, `media`, `ai`, `billing`, `notifications`, `account`).
+- [ ] **Sunucuda deploy:** `npm ci` → `npm run migrate` (0020'ye kadar) → `npm run seed` → `npm run stats:recompute`
+      → PM2'de API **ve worker** yeniden başlat (yeni kuyruklar: `stats`, `media`, `ai`, `billing`, `notifications`, `account`; worker metrikleri `METRICS_WORKER_PORT`).
       `scripts/deploy.sh` migrate + seed + pm2'yi yapar; `stats:recompute`'u ilk seferde elle çalıştır.
 
 - [ ] **Sunucuda Node ≥ 24.7** olmalı (yönetici şifreleri yerleşik `crypto.argon2` ile; `.nvmrc` 24 → `nvm install 24`).
 - [ ] **İlk yönetici:** sunucuda `npm run admin:create -- <senin e-postan> owner` → çıkan geçici şifre + TOTP sırrını
       authenticator uygulamasına ekle, girişten sonra şifreyi değiştir (`POST /v1/admin/auth/password`). Kilitlenirsen
       `npm run admin:create -- <email> --reset`.
+
+- [ ] **Dev ve prod aynı DB kullanıcısını/şifresini ve `MEDIA_PATH_SECRET`'ı paylaşıyor** (güvenlik denetimi): geliştirme
+      bilgisayarı üretim hesabıyla internetten bağlanıyor demek. Lansmandan ÖNCE:
+  - geliştirme için ayrı bir veritabanı + kullanıcı aç (cPanel), `.env`'yi ona çevir;
+  - cPanel → Remote MySQL'de yalnızca VPS IP'si (ve gerekiyorsa senin IP'n — geliştirme DB'si için) kalsın;
+  - üretim DB şifresini değiştir; üretimde **farklı** bir `MEDIA_PATH_SECRET` kullan (`openssl rand -hex 32`).
+    ⚠️ Lansmandan SONRA `MEDIA_PATH_SECRET` değiştirilmez: medya yolları ondan türetilir, hesap silme eski dosyaları bulamaz.
+- [ ] **Yönetim API'si üretimde kapalı** (`ADMIN_IP_ALLOWLIST` boş): ya IP'ni yaz ya da bilinçli olarak `ADMIN_ALLOW_ANY_IP=true`
+      (şifre + TOTP + kilit yine zorunlu).
+- [ ] **Yedekleme:** Bunny'de yeni storage zone (`mochifast-backups`, pull zone BAĞLAMA) → sunucuda `deploy/backup.env`
+      (`deploy/backup.env.example`; `BACKUP_PASSPHRASE`'i parola yöneticisine de koy) → cron:
+      `15 * * * * cd <DEPLOY_DIR> && scripts/backup-db.sh >> logs/backup.log 2>&1` → ilk tatbikat
+      `scripts/restore-drill.sh mochifast_drill` ve sonucu `docs/runbooks.md` tablosuna yaz. Sunucuda `mysqldump`, `openssl`, `curl` olmalı.
+- [ ] **İzleme:** Prometheus (ya da Grafana Cloud agent) → `127.0.0.1:9470` (API) ve `:9471` (worker), kurallar
+      `deploy/monitoring/alerts.yml`; dışarıdan uptime (`/health/ready`); `SENTRY_DSN` + `SENTRY_TRACES_SAMPLE_RATE=0.05`.
+- [ ] **Yük testi** staging'de (`loadtest/README.md`); k6: `brew install k6`.
+- [ ] **Mağaza formları:** App Store gizlilik etiketi + Play Veri güvenliği → `../fastingapp/docs/backend/15-magaza-gizlilik.md`.
+- [ ] **Eski önek'siz yollar** (`/auth/register`, `/user/me`, …): uygulama mağazada olmadığı için lansmandan önce kaldırılabilir — karar ver.
 
 ## 1. `.env` ve `.env.production` — boş alanlar (dosyalara eklendi, değerleri sen gir)
 

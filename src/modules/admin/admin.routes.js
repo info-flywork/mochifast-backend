@@ -49,9 +49,14 @@ export default async function adminRoutes(app) {
   app.post('/auth/login', { ...need(null), schema: s.loginSchema }, (request) =>
     auth.login(request.body, meta(request)),
   );
-  app.get('/auth/me', { ...need('any'), schema: s.meSchema }, (request) => auth.me(actor(request)));
-  app.post('/auth/password', { ...need('any'), schema: s.passwordSchema }, (request) =>
+  app.get('/auth/me', { ...need('self'), schema: s.meSchema }, (request) =>
+    auth.me(actor(request)),
+  );
+  app.post('/auth/password', { ...need('self'), schema: s.passwordSchema }, (request) =>
     auth.changePassword(actor(request), request.body, meta(request)),
+  );
+  app.post('/auth/logout', { ...need('self'), schema: s.logoutSchema }, (request) =>
+    auth.logout(actor(request), meta(request)),
   );
 
   // ── Yöneticiler ──
@@ -134,8 +139,9 @@ export default async function adminRoutes(app) {
   );
 
   // ── Kullanıcılar (destek) ──
-  app.get('/users', { ...need('users.read'), schema: s.searchUsersSchema }, (request) =>
-    support.search(request.query.q, meta(request), actor(request)),
+  // Arama POST: e-posta URL'de (ve erişim loglarında) görünmez.
+  app.post('/users/search', { ...need('users.read'), schema: s.searchUsersSchema }, (request) =>
+    support.search(request.body.q, meta(request), actor(request)),
   );
   app.get('/users/:id', { ...need('users.read'), schema: s.userDetailSchema }, (request) =>
     support.detail(request.params.id, meta(request), actor(request)),

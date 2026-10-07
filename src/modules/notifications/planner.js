@@ -1,24 +1,31 @@
 import { DateTime } from 'luxon';
 import { fromBin } from '../../shared/ids.js';
 import { localDate } from '../../shared/time.js';
+import { markZoneDays, pendingZoneDays } from '../../shared/zone-days.js';
 import * as notify from './notify.js';
 import { atLocal, waterSlots } from './notifications.rules.js';
 
 const STREAK_NUDGE_AT = '20:00';
+const PLANNER_JOB = 'notification-planner';
 
 /**
- * Günlük hatırlatıcılar (docs/backend/10-bildirimler.md §4.2–4.4): yerel gece yarısını yeni geçen
- * saat dilimlerinde, push cihazı olan kullanıcılar için o günün su, kilo, seri dürtmesi ve oruç
+ * Günlük hatırlatıcılar (docs/backend/10-bildirimler.md §4.2–4.4): yerel günü henüz planlanmamış
+ * saat dilimlerinde (gün dönümünden sonraki ilk saatlik çalışma; shared/zone-days.js), push cihazı olan kullanıcılar için o günün su, kilo, seri dürtmesi ve oruç
  * başlatma hatırlatmaları planlanır. Gönderim anındaki geçerlilik kontrolü (ör. su içildi mi)
  * gönderim işindedir; burada yalnızca zaman.
  * @returns planlanan kullanıcı sayısı
  */
 export async function planDailyReminders(db, { now = new Date(), limit = 2000 } = {}) {
-  const zones = (await db.many('SELECT DISTINCT timezone FROM users WHERE deleted_at IS NULL'))
-    .map((r) => r.timezone)
-    .filter((tz) => DateTime.fromJSDate(now, { zone: tz }).isValid)
-    .filter((tz) => DateTime.fromJSDate(now, { zone: tz }).hour === 0);
-  if (zones.length === 0) return 0;
+  const zoneDays = await pendingZoneDays(
+    db,
+    PLANNER_JOB,
+    (await db.many('SELECT DISTINCT timezone FROM users WHERE deleted_at IS NULL')).map(
+      (r) => r.timezone,
+    ),
+    now,
+  );
+  if (zoneDays.length === 0) return 0;
+  const zones = zoneDays.map((z) => z.timezone);
 
   const params = Object.fromEntries(zones.map((tz, i) => [`z${i}`, tz]));
   const users = await db.many(
@@ -85,6 +92,9 @@ export async function planDailyReminders(db, { now = new Date(), limit = 2000 } 
       for (const n of due) await notify.schedule(db, conn, userId, n);
     });
   }
+  // Sınıra takıldıysa dilimler işaretlenmez: kalan kullanıcılar sonraki saatte planlanır
+  // (dedupe anahtarları tekrarları engeller).
+  if (users.length < limit) await markZoneDays(db, PLANNER_JOB, zoneDays);
   return users.length;
 }
 

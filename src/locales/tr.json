@@ -22,7 +22,6 @@
     "ACCOUNT_PENDING_DELETION": "Bu hesap silinmek üzere. Geri almak ister misin?",
     "REPLY_IN_PROGRESS": "Mochi hâlâ cevap yazıyor. Biraz bekle.",
     "GONE": "Bu hesap artık kullanılamıyor.",
-    "ACCOUNT_LOCKED": "Çok fazla hatalı deneme. Daha sonra tekrar dene.",
     "PAYLOAD_TOO_LARGE": "Dosya veya istek çok büyük.",
     "UNSUPPORTED_MEDIA_TYPE": "Bu dosya türü desteklenmiyor.",
     "NOT_FOOD": "Bu bir yemeğe benzemiyor. Başka bir fotoğraf dene.",

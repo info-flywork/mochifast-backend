@@ -10,6 +10,8 @@ const LIMIT_KEYS = Object.freeze({
   chat: ['freeChatDaily', 'premiumChatDaily'],
   photo_analysis: ['freePhotoDaily', 'premiumPhotoDaily'],
 });
+/** Kota türü → `app_config.features` bayrağı: `false` ise özellik sunucuda da kapalı (acil anahtar). */
+const FEATURE_KEYS = Object.freeze({ chat: 'chat', photo_analysis: 'photoAnalysis' });
 const BUDGET_CACHE_SEC = 60;
 
 /**
@@ -25,6 +27,7 @@ export function createAiGate({ db, catalog, cache, logger, entitlements }) {
       limits: config.limits ?? {},
       pricing: config['ai.pricing'] ?? {},
       dailyBudgetUsd: config['ai.daily_budget_usd'] ?? null,
+      features: config.features ?? {},
     };
   }
 
@@ -76,7 +79,10 @@ export function createAiGate({ db, catalog, cache, logger, entitlements }) {
      * saklanmalıdır (gün dönse bile aynı güne iade edilir).
      */
     async consume(userId, kind, { isPremium = false } = {}) {
-      const { limits } = await settings();
+      const { limits, features } = await settings();
+      if (features[FEATURE_KEYS[kind]] === false) {
+        throw new AppError('UNAVAILABLE', { details: { reason: 'feature_disabled' } });
+      }
       const limit = limitOf(limits, kind, isPremium);
       const { today, resetAt } = await zone(userId);
       const used = await repo.incrementQuota(db, userId, today, kind);

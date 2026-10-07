@@ -160,14 +160,16 @@ export async function upsertDevice(db, conn, device) {
 
 export async function insertSession(db, conn, session) {
   await db.run(
-    `INSERT INTO sessions (id, user_id, device_id, family_id, token_hash, expires_at, ip, user_agent, last_used_at)
-     VALUES (:id, :userId, :deviceId, :familyId, :tokenHash,
+    `INSERT INTO sessions (id, user_id, device_id, family_id, family_started_at, token_hash,
+                           expires_at, ip, user_agent, last_used_at)
+     VALUES (:id, :userId, :deviceId, :familyId, COALESCE(:familyStartedAt, NOW(3)), :tokenHash,
              DATE_ADD(NOW(3), INTERVAL :ttlDays DAY), INET6_ATON(:ip), :userAgent, NOW(3))`,
     {
       id: toBin(session.id),
       userId: toBin(session.userId),
       deviceId: session.deviceId ? toBin(session.deviceId) : null,
       familyId: toBin(session.familyId),
+      familyStartedAt: session.familyStartedAt ?? null,
       tokenHash: session.tokenHash,
       ttlDays: session.ttlDays,
       ip: session.ip ?? null,
@@ -182,6 +184,7 @@ export async function findSessionByHash(db, conn, tokenHash) {
   const row = await db.one(
     `SELECT s.id, s.user_id, s.device_id, s.family_id, s.revoked_at, s.revoke_reason,
             s.expires_at > NOW(3) AS live,
+            COALESCE(s.family_started_at, s.created_at) AS family_started_at,
             s.revoked_at > NOW(3) - INTERVAL 10 SECOND AS rotated_recently,
             u.status AS user_status
        FROM sessions s
@@ -197,6 +200,7 @@ export async function findSessionByHash(db, conn, tokenHash) {
       userId: fromBin(row.user_id),
       deviceId: row.device_id ? fromBin(row.device_id) : null,
       familyId: fromBin(row.family_id),
+      familyStartedAt: row.family_started_at,
       revoked: row.revoked_at !== null,
       revokeReason: row.revoke_reason,
       live: Boolean(row.live),

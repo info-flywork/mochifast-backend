@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { hashPassword, verifyPassword } from '../../src/infra/password.js';
 import { base32Decode, base32Encode, totpAt, verifyTotp } from '../../src/infra/totp.js';
-import { buildAllowlist, ipAllowed } from '../../src/modules/admin/admin.auth.js';
+import { buildAllowlist, createAdminAuth, ipAllowed } from '../../src/modules/admin/admin.auth.js';
+import { rateKeyForIp } from '../../src/shared/ip.js';
 import { can, maskEmail, maskName } from '../../src/modules/admin/admin.permissions.js';
 
 // RFC 6238 Ek B: ASCII "12345678901234567890" (SHA1)
@@ -61,5 +62,40 @@ describe('yönetici yetkileri ve maskeleme', () => {
     expect(ipAllowed(list, '2001:db8::1')).toBe(true);
     expect(ipAllowed(list, '198.51.100.1')).toBe(false);
     expect(ipAllowed(buildAllowlist([]), '198.51.100.1')).toBe(true);
+  });
+
+  it('üretimde allowlist boşsa admin API kapalı (ADMIN_ALLOW_ANY_IP ile açılır)', async () => {
+    const make = (admin) =>
+      createAdminAuth({
+        db: null,
+        cache: null,
+        tokens: null,
+        crypto: null,
+        config: { isProduction: true, admin },
+      });
+    const request = { ip: '203.0.113.9', headers: {} };
+    await expect(
+      make({ ipAllowlist: [], allowAnyIp: false }).guard(null)(request),
+    ).rejects.toMatchObject({
+      code: 'FORBIDDEN',
+      details: { reason: 'admin_disabled' },
+    });
+    await expect(
+      make({ ipAllowlist: [], allowAnyIp: true }).guard(null)(request),
+    ).resolves.toBeUndefined();
+    await expect(
+      make({ ipAllowlist: ['10.0.0.0/8'], allowAnyIp: false }).guard(null)(request),
+    ).rejects.toMatchObject({ details: { reason: 'ip_not_allowed' } });
+  });
+});
+
+describe('rate limit anahtarı', () => {
+  it('IPv6 /64 ağına indirgenir; IPv4 ve IPv4-mapped olduğu gibi', () => {
+    expect(rateKeyForIp('2001:db8:abcd:12:1:2:3:4')).toBe('2001:db8:abcd:12::/64');
+    expect(rateKeyForIp('2001:db8:abcd:12::99')).toBe('2001:db8:abcd:12::/64');
+    expect(rateKeyForIp('2001:db8::1')).toBe('2001:db8:0:0::/64');
+    expect(rateKeyForIp('::ffff:198.51.100.7')).toBe('198.51.100.7');
+    expect(rateKeyForIp('198.51.100.7')).toBe('198.51.100.7');
+    expect(rateKeyForIp(undefined)).toBe('unknown');
   });
 });

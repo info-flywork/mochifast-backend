@@ -57,10 +57,14 @@ const schema = {
     JWT_AUDIENCE: { type: 'string', default: 'mochifast-app' },
     JWT_ACCESS_TTL_SEC: { type: 'integer', minimum: 60, maximum: 3600, default: 900 },
     REFRESH_TTL_DAYS: { type: 'integer', minimum: 1, maximum: 365, default: 60 },
+    // Oturum ailesinin mutlak ömrü: bu süreden sonra yeniden giriş (misafir: installId ile otomatik).
+    REFRESH_ABSOLUTE_DAYS: { type: 'integer', minimum: 7, maximum: 730, default: 180 },
     JWT_ADMIN_AUDIENCE: { type: 'string', default: 'mochifast-admin' },
     ADMIN_TOKEN_TTL_SEC: { type: 'integer', minimum: 300, maximum: 3600, default: 3600 },
-    // Virgülle ayrılmış IP/CIDR (ör. 203.0.113.7,10.0.0.0/8). Boş = kısıt yok (uyarı loglanır).
+    // Virgülle ayrılmış IP/CIDR (ör. 203.0.113.7,10.0.0.0/8).
     ADMIN_IP_ALLOWLIST: { type: 'string', default: '' },
+    // Üretimde allowlist boşsa admin API kapalıdır; bilinçli olarak her IP'ye açmak için true.
+    ADMIN_ALLOW_ANY_IP: { type: 'boolean', default: false },
 
     FIELD_ENCRYPTION_KEYS_JSON: { type: 'string' },
     FIELD_ENCRYPTION_ACTIVE_KID: { type: 'integer', minimum: 1, maximum: 255 },
@@ -75,6 +79,7 @@ const schema = {
     METRICS_ENABLED: { type: 'boolean', default: true },
     METRICS_HOST: { type: 'string', default: '0.0.0.0' },
     METRICS_PORT: { type: 'integer', minimum: 1, maximum: 65535, default: 9464 },
+    METRICS_WORKER_PORT: { type: 'integer', minimum: 1, maximum: 65535, default: 9465 },
 
     DOCS_ENABLED: { type: 'boolean', default: false },
     DOCS_USER: { type: 'string', default: '' },
@@ -197,10 +202,11 @@ export function loadConfig(env = process.env) {
       audience: e.JWT_AUDIENCE,
       accessTtlSec: e.JWT_ACCESS_TTL_SEC,
       refreshTtlDays: e.REFRESH_TTL_DAYS,
+      refreshAbsoluteDays: e.REFRESH_ABSOLUTE_DAYS,
       adminAudience: e.JWT_ADMIN_AUDIENCE,
       adminTtlSec: e.ADMIN_TOKEN_TTL_SEC,
     },
-    admin: { ipAllowlist: splitList(e.ADMIN_IP_ALLOWLIST) },
+    admin: { ipAllowlist: splitList(e.ADMIN_IP_ALLOWLIST), allowAnyIp: e.ADMIN_ALLOW_ANY_IP },
     fieldEncryption: {
       keys: parseJson('FIELD_ENCRYPTION_KEYS_JSON', e.FIELD_ENCRYPTION_KEYS_JSON),
       activeKid: e.FIELD_ENCRYPTION_ACTIVE_KID,
@@ -211,7 +217,12 @@ export function loadConfig(env = process.env) {
     },
     cors: { origins: splitList(e.CORS_ORIGINS) },
     rateLimit: { globalMax: e.RATE_LIMIT_GLOBAL_MAX, window: e.RATE_LIMIT_WINDOW },
-    metrics: { enabled: e.METRICS_ENABLED, host: e.METRICS_HOST, port: e.METRICS_PORT },
+    metrics: {
+      enabled: e.METRICS_ENABLED,
+      host: e.METRICS_HOST,
+      port: e.METRICS_PORT,
+      workerPort: e.METRICS_WORKER_PORT,
+    },
     docs: { enabled: e.DOCS_ENABLED, user: e.DOCS_USER, password: e.DOCS_PASSWORD },
     sentry: { dsn: e.SENTRY_DSN, tracesSampleRate: e.SENTRY_TRACES_SAMPLE_RATE },
     media,

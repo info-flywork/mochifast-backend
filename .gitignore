@@ -18,3 +18,6 @@ eval/
 
 # Red-team çıktıları (model yanıtları; gözden geçirme notları)
 redteam/results/
+loadtest/users.json
+deploy/backup.env
+logs/

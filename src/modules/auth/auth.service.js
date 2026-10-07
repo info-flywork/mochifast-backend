@@ -3,6 +3,7 @@ import { hashRefreshToken, newRefreshToken } from '../../infra/tokens.js';
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '../../config/constants.js';
 import { AppError } from '../../shared/errors.js';
 import { newId } from '../../shared/ids.js';
+import { rateKeyForIp } from '../../shared/ip.js';
 import { isValidTimezone } from '../../shared/time.js';
 import { createWindowLimiter } from '../../shared/window-limiter.js';
 import { sessionCachePrefix } from '../../plugins/auth.js';
@@ -29,9 +30,13 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
     isPremium: (await entitlements?.isPremium(dto.id)) ?? false,
   });
   const refreshTtlDays = config.auth.refreshTtlDays;
+  const refreshAbsoluteDays = config.auth.refreshAbsoluteDays;
   // Verilen çift yalnızca 10 sn bellekte tutulur (ADR 0005: API tek process).
   const refreshGrace = createCache({ maxEntries: 10_000 });
   const installLimiter = createWindowLimiter({ max: 5, windowMs: 3_600_000 });
+  // Yeni misafir: IP başına saatte 10 — hangi uçtan gelirse gelsin (/auth/guest ya da
+  // /auth/register provider=guest). Her misafir ücretsiz AI kotası taşır (bütçe tüketme saldırısı).
+  const guestCreateLimiter = createWindowLimiter({ max: 10, windowMs: 3_600_000 });
 
   async function openSession(conn, { userId, deviceId, familyId, meta }) {
     const refreshToken = newRefreshToken();
@@ -159,6 +164,13 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
             userId = existing.userId;
             await repo.touchIdentity(db, conn, existing.id);
           } else {
+            const created = guestCreateLimiter.hit(rateKeyForIp(meta.ip));
+            if (!created.allowed) {
+              throw new AppError('RATE_LIMITED', {
+                details: { retryAfterSec: created.retryAfterSec },
+                headers: { 'retry-after': String(created.retryAfterSec) },
+              });
+            }
             userId = newId();
             await repo.createUser(db, conn, {
               id: userId,
@@ -319,6 +331,11 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
           return { error: 'UNAUTHENTICATED' };
         }
         if (s.userStatus !== 'active') return { error: 'UNAUTHENTICATED' };
+        // Mutlak ömür (ASVS 3.3.2): yenileme oturumu sonsuza kadar uzamaz.
+        if (Date.now() - s.familyStartedAt.getTime() > refreshAbsoluteDays * 86_400_000) {
+          await repo.revokeFamily(db, conn, s, 'logout');
+          return { error: 'UNAUTHENTICATED' };
+        }
 
         const nextId = newId();
         const nextToken = newRefreshToken();
@@ -327,6 +344,7 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
           userId: s.userId,
           deviceId: s.deviceId,
           familyId: s.familyId,
+          familyStartedAt: s.familyStartedAt,
           tokenHash: hashRefreshToken(nextToken),
           ttlDays: refreshTtlDays,
           ip: meta.ip,

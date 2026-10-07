@@ -35,8 +35,13 @@ export default [
     languageOptions: { sourceType: 'commonjs' },
   },
   {
-    files: ['scripts/**/*.js'],
+    files: ['scripts/**/*.js', 'loadtest/**/*.js'],
     rules: { 'no-console': 'off' },
+  },
+  {
+    // k6 çalışma zamanı (Node değil): open, __ENV, crypto global.
+    files: ['loadtest/*-peak.js'],
+    languageOptions: { globals: { open: 'readonly', __ENV: 'readonly', crypto: 'readonly' } },
   },
   {
     files: ['test/**/*.js'],

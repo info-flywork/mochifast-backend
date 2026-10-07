@@ -7,6 +7,7 @@ import {
 } from '../../infra/password.js';
 import { generateTotpSecret, otpauthUrl, verifyTotp } from '../../infra/totp.js';
 import { AppError } from '../../shared/errors.js';
+import { rateKeyForIp } from '../../shared/ip.js';
 import { newId } from '../../shared/ids.js';
 import { createWindowLimiter } from '../../shared/window-limiter.js';
 import { writeAudit } from '../audit/audit.repository.js';
@@ -48,6 +49,7 @@ export function adminDto(a) {
     email: a.email,
     role: a.role,
     isActive: a.isActive,
+    mustChangePassword: a.mustChangePassword,
     lastLoginAt: a.lastLoginAt?.toISOString() ?? null,
     createdAt: a.createdAt.toISOString(),
   };
@@ -65,7 +67,10 @@ function weakPassword(path) {
  */
 export function createAdminAuth({ db, cache, tokens, crypto, config, logger }) {
   const allowlist = buildAllowlist(config.admin.ipAllowlist);
-  if (!allowlist) logger?.warn("ADMIN_IP_ALLOWLIST boş: yönetici API her IP'den erişilebilir");
+  // Üretimde allowlist boşsa admin API kapalı (06 §12); bilinçli açmak: ADMIN_ALLOW_ANY_IP=true.
+  const disabled = config.isProduction && !allowlist && !config.admin.allowAnyIp;
+  if (disabled) logger?.warn('ADMIN_IP_ALLOWLIST boş: yönetici API kapalı (ADMIN_ALLOW_ANY_IP)');
+  else if (!allowlist) logger?.warn("ADMIN_IP_ALLOWLIST boş: yönetici API her IP'den erişilebilir");
   const loginLimiter = createWindowLimiter({ max: 20, windowMs: 15 * 60_000 });
 
   function audit(meta, action, adminId, extra = {}) {
@@ -93,9 +98,15 @@ export function createAdminAuth({ db, cache, tokens, crypto, config, logger }) {
   const service = {
     audit,
 
-    /** preHandler fabrikası: IP kısıtı + token + izin. `permission = null` → yalnızca IP. */
+    /**
+     * preHandler fabrikası: IP kısıtı + token + izin.
+     * - `null`  : yalnızca IP (giriş)
+     * - `'self'`: oturumdaki yönetici, geçici şifre olsa da (me, şifre, çıkış)
+     * - `'any'` : her rol; diğerleri `PERMISSIONS` anahtarı
+     */
     guard(permission) {
       return async function requireAdmin(request) {
+        if (disabled) throw new AppError('FORBIDDEN', { details: { reason: 'admin_disabled' } });
         if (!ipAllowed(allowlist, request.ip)) {
           throw new AppError('FORBIDDEN', { details: { reason: 'ip_not_allowed' } });
         }
@@ -103,23 +114,43 @@ export function createAdminAuth({ db, cache, tokens, crypto, config, logger }) {
         const header = request.headers.authorization;
         const match = typeof header === 'string' ? /^Bearer\s+(\S+)$/i.exec(header) : null;
         if (!match) throw new AppError('UNAUTHENTICATED', { message: 'Bearer token yok' });
-        const { adminId } = await tokens.verifyAdmin(match[1]);
+        const { adminId, issuedAt } = await tokens.verifyAdmin(match[1]);
         const admin = await cache.getOrSet(
           adminCacheKey(adminId),
           ADMIN_CACHE_TTL_SEC,
           async () => {
             const a = await repo.findById(db, adminId);
-            return a ? { id: a.id, email: a.email, role: a.role, isActive: a.isActive } : null;
+            return a
+              ? {
+                  id: a.id,
+                  email: a.email,
+                  role: a.role,
+                  isActive: a.isActive,
+                  mustChangePassword: a.mustChangePassword,
+                  // JWT iat saniye hassasiyetinde: karşılaştırma saniyeye yuvarlanır.
+                  validAfterSec: a.tokensValidAfter
+                    ? Math.floor(a.tokensValidAfter.getTime() / 1000)
+                    : 0,
+                }
+              : null;
           },
         );
         if (!admin?.isActive) throw new AppError('UNAUTHENTICATED', { message: 'yönetici pasif' });
-        if (permission !== 'any' && !can(admin.role, permission)) throw new AppError('FORBIDDEN');
+        if (issuedAt.getTime() / 1000 < admin.validAfterSec) {
+          throw new AppError('UNAUTHENTICATED', { message: 'oturum sonlandırılmış' });
+        }
+        if (permission !== 'self') {
+          if (admin.mustChangePassword) {
+            throw new AppError('FORBIDDEN', { details: { reason: 'password_change_required' } });
+          }
+          if (permission !== 'any' && !can(admin.role, permission)) throw new AppError('FORBIDDEN');
+        }
         request.admin = admin;
       };
     },
 
     async login({ email, password, totp }, meta) {
-      const limit = loginLimiter.hit(meta.ip ?? 'unknown');
+      const limit = loginLimiter.hit(rateKeyForIp(meta.ip));
       if (!limit.allowed) {
         throw new AppError('RATE_LIMITED', {
           details: { retryAfterSec: limit.retryAfterSec },
@@ -135,13 +166,10 @@ export function createAdminAuth({ db, cache, tokens, crypto, config, logger }) {
           await burnPasswordCheck(password);
           return { error: invalid(), reason: 'unknown_or_inactive' };
         }
+        // Kilitli hesap ayrı hata döndürmez ve aynı süreyi harcar: hesap varlığı sızmaz.
         if (admin.lockedUntil && admin.lockedUntil > new Date()) {
-          const retryAfterSec = Math.ceil((admin.lockedUntil.getTime() - Date.now()) / 1000);
-          return {
-            admin,
-            error: new AppError('ACCOUNT_LOCKED', { details: { retryAfterSec } }),
-            reason: 'locked',
-          };
+          await burnPasswordCheck(password);
+          return { admin, error: invalid(), reason: 'locked' };
         }
         const passwordOk = await verifyPassword(password, admin.passwordHash);
         const step = passwordOk
@@ -194,14 +222,37 @@ export function createAdminAuth({ db, cache, tokens, crypto, config, logger }) {
       return { admin: adminDto(a) };
     },
 
+    /** Şifre değişir, eski token'lar iptal olur; yanıtta yeni token döner. */
     async changePassword(adminId, { currentPassword, newPassword }, meta) {
+      const limit = loginLimiter.hit(`pw:${adminId}`);
+      if (!limit.allowed) {
+        throw new AppError('RATE_LIMITED', { details: { retryAfterSec: limit.retryAfterSec } });
+      }
       const a = await repo.findById(db, adminId);
       if (!a || !(await verifyPassword(currentPassword, a.passwordHash))) {
         throw new AppError('UNAUTHENTICATED', { message: 'mevcut şifre hatalı' });
       }
       if (newPassword.length < MIN_PASSWORD_LENGTH) throw weakPassword('newPassword');
-      await repo.update(db, adminId, { passwordHash: await hashPassword(newPassword) });
+      if (newPassword === currentPassword) {
+        throw new AppError('VALIDATION_FAILED', {
+          details: { fields: [{ path: 'newPassword', message: 'must differ from current' }] },
+        });
+      }
+      await repo.update(db, adminId, {
+        passwordHash: await hashPassword(newPassword),
+        mustChangePassword: false,
+        tokensValidAfter: new Date(),
+      });
+      await cache.del(adminCacheKey(adminId));
       await audit(meta, 'admin.password_changed', adminId);
+      return tokens.signAdmin({ adminId });
+    },
+
+    /** Çıkış: bu yöneticinin bu ana kadar verilmiş tüm token'ları geçersiz. */
+    async logout(adminId, meta) {
+      await repo.update(db, adminId, { tokensValidAfter: new Date() });
+      await cache.del(adminCacheKey(adminId));
+      await audit(meta, 'admin.logout', adminId);
       return {};
     },
 
@@ -243,7 +294,12 @@ export function createAdminAuth({ db, cache, tokens, crypto, config, logger }) {
       if (id === actorId && (isActive === false || (role && role !== 'owner'))) {
         throw new AppError('CONFLICT', { details: { reason: 'cannot_demote_self' } });
       }
-      await repo.update(db, id, { role, isActive });
+      await repo.update(db, id, {
+        role,
+        isActive,
+        // Pasifleştirme ve rol değişikliği açık oturumları kapatır.
+        tokensValidAfter: isActive === false || role ? new Date() : undefined,
+      });
       await cache.del(adminCacheKey(id));
       await audit(meta, 'admin.admin_updated', actorId, {
         entityType: 'admin_user',
@@ -265,12 +321,15 @@ export function createAdminAuth({ db, cache, tokens, crypto, config, logger }) {
         totpLastStep: null,
         failedAttempts: 0,
         lockedUntil: null,
+        mustChangePassword: true,
+        tokensValidAfter: new Date(),
       });
+      await cache.del(adminCacheKey(id));
       await audit(meta, 'admin.credentials_reset', actorId, {
         entityType: 'admin_user',
         entityId: id,
       });
-      return { admin: adminDto(a), password, totp: mfa.setup };
+      return { admin: adminDto(await repo.findById(db, id)), password, totp: mfa.setup };
     },
   };
   return service;

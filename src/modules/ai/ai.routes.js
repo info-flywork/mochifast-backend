@@ -1,6 +1,6 @@
 import { memoizeByDeps } from '../../shared/legacy.js';
 import { catalogServiceFor } from '../catalog/catalog.routes.js';
-import { mediaServiceFor, readUpload, uploadRateLimit } from '../media/media.routes.js';
+import { mediaServiceFor, readUpload } from '../media/media.routes.js';
 import { createAiGate } from './ai.gate.js';
 import { createPhotoAnalysisService } from './photo-analysis.service.js';
 import * as s from './ai.schemas.js';
@@ -34,7 +34,8 @@ export async function photoAnalysisRoutes(app) {
   const auth = { preHandler: app.requireAuth };
   app.post(
     '/photo-analyses',
-    { ...auth, schema: s.submitSchema, config: uploadRateLimit },
+    // 06 §7: kullanıcı başına dakikada 10 analiz.
+    { ...auth, schema: s.submitSchema, config: { rateLimit: { max: 10, timeWindow: '1 minute' } } },
     async (request, reply) => {
       const buffer = await readUpload(request);
       reply.code(202);
