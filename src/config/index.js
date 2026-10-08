@@ -104,16 +104,17 @@ const schema = {
     BUNNY_TOKEN_AUTH_KEY: { type: 'string', default: '' },
     BUNNY_API_KEY: { type: 'string', default: '' },
 
-    // Yapay zekâ (docs/backend/09-yapay-zeka.md). Anahtar yoksa AI uçları 503 döner.
+    // Yapay zekâ (docs/backend/09-yapay-zeka.md). OpenAI anahtarı yoksa AI uçları 503 döner.
+    // Eski Claude ayarları (opsiyonel; fotoğraf analizi artık OpenAI kullanır).
     ANTHROPIC_API_KEY: { type: 'string', default: '' },
-    AI_CHAT_MODEL: { type: 'string', default: 'claude-opus-5-5' },
-    AI_VISION_MODEL: { type: 'string', default: 'claude-opus-5-5' },
-    // Sunucu tarafı yedek model (refusal → Anthropic'in önerdiği modelle yeniden dene).
-    AI_SERVER_FALLBACK: { type: 'boolean', default: true },
+    AI_CHAT_MODEL: { type: 'string', default: '' },
+    AI_VISION_MODEL: { type: 'string', default: '' },
+    AI_SERVER_FALLBACK: { type: 'boolean', default: false },
     AI_ANALYSIS_TIMEOUT_MS: { type: 'integer', minimum: 5_000, default: 45_000 },
-    // Sohbet (Coach Mochi): OpenAI. Anahtar ve model birlikte verilmezse sohbet 503 döner.
+    // Sohbet + fotoğraf analizi: OpenAI. Anahtar + ilgili model verilmezse o özellik 503 döner.
     OPENAI_API_KEY: { type: 'string', default: '' },
     OPENAI_CHAT_MODEL: { type: 'string', default: '' },
+    OPENAI_VISION_MODEL: { type: 'string', default: 'gpt-4o' },
     // Yalnızca akıl yürüten (reasoning) modellerde gönderilir: low | medium | high; boş = gönderme.
     OPENAI_REASONING_EFFORT: {
       type: 'string',
@@ -227,12 +228,14 @@ export function loadConfig(env = process.env) {
     sentry: { dsn: e.SENTRY_DSN, tracesSampleRate: e.SENTRY_TRACES_SAMPLE_RATE },
     media,
     ai: {
-      apiKey: e.ANTHROPIC_API_KEY,
-      enabled: e.ANTHROPIC_API_KEY.length > 0,
-      chatModel: e.AI_CHAT_MODEL,
-      visionModel: e.AI_VISION_MODEL,
-      serverFallback: e.AI_SERVER_FALLBACK,
+      apiKey: e.OPENAI_API_KEY,
+      enabled: e.OPENAI_API_KEY.length > 0 && e.OPENAI_VISION_MODEL.length > 0,
+      visionModel: e.OPENAI_VISION_MODEL,
+      reasoningEffort: e.OPENAI_REASONING_EFFORT || null,
       analysisTimeoutMs: e.AI_ANALYSIS_TIMEOUT_MS,
+      // Geriye dönük alanlar (Claude yolu kaldırıldı; test/eski kod için boş).
+      chatModel: e.AI_CHAT_MODEL || e.OPENAI_CHAT_MODEL,
+      serverFallback: e.AI_SERVER_FALLBACK,
     },
     push: { serviceAccount: parseServiceAccountSafe(e.FCM_SERVICE_ACCOUNT_JSON) },
     billing: {

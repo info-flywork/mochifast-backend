@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, inject, it } from 'vitest';
 import { aiJobs } from '../../src/jobs/ai.jobs.js';
@@ -48,7 +48,7 @@ const photo = () =>
     .jpeg()
     .toBuffer();
 
-describe.skipIf(!mysqlUrl)('fotoğraftan öğün analizi (gerçek MySQL, sahte Claude)', () => {
+describe.skipIf(!mysqlUrl)('fotoğraftan öğün analizi (gerçek MySQL, sahte OpenAI)', () => {
   let ctx;
   let jobs;
 
@@ -106,12 +106,12 @@ describe.skipIf(!mysqlUrl)('fotoğraftan öğün analizi (gerçek MySQL, sahte C
       code: 'CONSENT_REQUIRED',
       details: { consent: 'aiProcessing' },
     });
-    expect(ctx.anthropic.calls).toHaveLength(0);
+    expect(ctx.openai.calls).toHaveLength(0);
   });
 
   it('gönder → 202 → işle → sonuç; istek biçimi; kullanım ve maliyet kaydı; öğüne bağla', async () => {
     const { token, userId } = await newUser();
-    ctx.anthropic.respond(() => aiMessage(MEAL));
+    ctx.openai.respond(() => aiMessage(MEAL));
     const res = await submit(token);
     expect(res.statusCode).toBe(202);
     const { analysisId, status, pollAfterMs } = res.json().data;
@@ -126,17 +126,22 @@ describe.skipIf(!mysqlUrl)('fotoğraftan öğün analizi (gerçek MySQL, sahte C
     expect(payload.analysisId).toBe(analysisId);
 
     // Bu kullanıcının cevaplanmış rıza isteği sonrasına bakılır.
-    const before = ctx.anthropic.calls.length;
+    const before = ctx.openai.calls.length;
     await runJob(analysisId);
-    const request = ctx.anthropic.calls[before];
+    const request = ctx.openai.calls[before];
     expect(request).toMatchObject({
-      model: 'claude-opus-5-5',
-      fallbacks: 'default',
-      output_config: { effort: 'medium', format: { type: 'json_schema' } },
+      model: 'gpt-4o',
+      response_format: {
+        type: 'json_schema',
+        json_schema: { name: 'meal_analysis', strict: true },
+      },
     });
-    const [image, instruction] = request.messages[0].content;
-    expect(image.source).toMatchObject({ type: 'base64', media_type: 'image/webp' });
-    expect((await sharp(Buffer.from(image.source.data, 'base64')).metadata()).width).toBe(1200);
+    const userMsg = request.messages.find((m) => m.role === 'user');
+    const [image, instruction] = userMsg.content;
+    expect(image.type).toBe('image_url');
+    expect(image.image_url.url).toMatch(/^data:image\/webp;base64,/);
+    const b64 = image.image_url.url.split(',')[1];
+    expect((await sharp(Buffer.from(b64, 'base64')).metadata()).width).toBe(1200);
     expect(instruction.text).toContain('Language: Turkish');
 
     const done = await getAnalysis(token, analysisId);
@@ -152,8 +157,8 @@ describe.skipIf(!mysqlUrl)('fotoğraftan öğün analizi (gerçek MySQL, sahte C
         WHERE user_id = :id AND feature = 'photo_analysis'`,
       { id: toBin(userId) },
     );
-    // 1500 × $4 + 400 × $20 (MTok başına) = 14 000 µUSD
-    expect(usage).toMatchObject({ requests: 1, input_tokens: 1500, cost_micro_usd: 14000 });
+    // 1500 × $2.5 + 400 × $10 (MTok başına) = 7 750 µUSD
+    expect(usage).toMatchObject({ requests: 1, input_tokens: 1500, cost_micro_usd: 7750 });
 
     const meal = await ctx.call('POST', '/meals', {
       token,
@@ -173,7 +178,7 @@ describe.skipIf(!mysqlUrl)('fotoğraftan öğün analizi (gerçek MySQL, sahte C
 
   it('kabul kriteri: ücretsiz kullanıcı günde 2 analiz; 3. → 429 (resetAt); aynı fotoğraf yeni hak düşmez', async () => {
     const { token } = await newUser();
-    ctx.anthropic.respond(() => aiMessage(MEAL));
+    ctx.openai.respond(() => aiMessage(MEAL));
     const img = await photo();
     const first = (await submit(token, img)).json().data.analysisId;
     const again = await submit(token, img);
@@ -197,7 +202,7 @@ describe.skipIf(!mysqlUrl)('fotoğraftan öğün analizi (gerçek MySQL, sahte C
 
   it('ret (refusal) → failed REFUSED, hak iade; yemek değil → notFood, hak düşer', async () => {
     const { token } = await newUser();
-    ctx.anthropic.respond(() => aiMessage('', { stopReason: 'refusal' }));
+    ctx.openai.respond(() => aiMessage('', { finishReason: 'stop', refusal: 'refused' }));
     const refused = (await submit(token)).json().data.analysisId;
     await runJob(refused);
     expect(await getAnalysis(token, refused)).toMatchObject({
@@ -206,7 +211,7 @@ describe.skipIf(!mysqlUrl)('fotoğraftan öğün analizi (gerçek MySQL, sahte C
     });
     expect((await quota(token)).used).toBe(0);
 
-    ctx.anthropic.respond(() => aiMessage({ ...MEAL, isFood: false, items: [] }));
+    ctx.openai.respond(() => aiMessage({ ...MEAL, isFood: false, items: [] }));
     const notFood = (await submit(token)).json().data.analysisId;
     await runJob(notFood);
     expect(await getAnalysis(token, notFood)).toMatchObject({ status: 'notFood', result: null });
@@ -215,8 +220,8 @@ describe.skipIf(!mysqlUrl)('fotoğraftan öğün analizi (gerçek MySQL, sahte C
 
   it('geçici hata: son deneme değilse yeniden denenir; son denemede failed + iade; geçersiz çıktı', async () => {
     const { token } = await newUser();
-    ctx.anthropic.respond(() => {
-      throw Object.create(Anthropic.RateLimitError.prototype);
+    ctx.openai.respond(() => {
+      throw Object.create(OpenAI.RateLimitError.prototype);
     });
     const id = (await submit(token)).json().data.analysisId;
     await expect(runJob(id, { attempt: 1, maxAttempts: 3 })).rejects.toBeTruthy();
@@ -228,7 +233,7 @@ describe.skipIf(!mysqlUrl)('fotoğraftan öğün analizi (gerçek MySQL, sahte C
     });
     expect((await quota(token)).used).toBe(0);
 
-    ctx.anthropic.respond(() => aiMessage('not json {'));
+    ctx.openai.respond(() => aiMessage('not json {'));
     const bad = (await submit(token)).json().data.analysisId;
     await runJob(bad);
     expect((await getAnalysis(token, bad)).error).toEqual({ code: 'INVALID_OUTPUT' });

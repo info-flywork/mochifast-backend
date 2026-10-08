@@ -51,7 +51,7 @@ export function createAiGate({ db, catalog, cache, logger, entitlements }) {
       return entitlements ? entitlements.isPremium(userId) : false;
     },
 
-    /** `ai_processing` rızası yoksa 403 (fotoğraf/metin Anthropic'e gönderilmez). */
+    /** `ai_processing` rızası yoksa 403 (fotoğraf/metin OpenAI'ye gönderilmez). */
     async assertConsent(userId) {
       if (!(await repo.aiConsentGranted(db, userId))) {
         throw new AppError('CONSENT_REQUIRED', { details: { consent: 'aiProcessing' } });

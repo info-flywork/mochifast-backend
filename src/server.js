@@ -5,9 +5,8 @@ import { loadConfig } from './config/index.js';
 import { createLogger } from './infra/logger.js';
 import { initSentry, flushSentry } from './infra/sentry.js';
 import { createDatabase } from './infra/db.js';
-import { createAiClient } from './infra/anthropic.js';
+import { createChatClient, createVisionClient } from './infra/openai.js';
 import { createMediaStorage } from './infra/bunny.js';
-import { createChatClient } from './infra/openai.js';
 import { createRevenueCatClient } from './infra/revenuecat.js';
 import { createEntitlements } from './modules/billing/billing.service.js';
 import { createCache } from './infra/cache.js';
@@ -36,8 +35,8 @@ const storage = createMediaStorage(config.media, {
   logger,
   baseUrl: config.server.publicBaseUrl || `http://localhost:${config.server.port}`,
 });
-const ai = createAiClient(config.ai, { logger });
-if (!ai.enabled) logger.warn('ANTHROPIC_API_KEY yok: fotoğraf analizi 503 döner');
+const ai = createVisionClient(config.ai, { logger });
+if (!ai.enabled) logger.warn('OPENAI_API_KEY/OPENAI_VISION_MODEL yok: fotoğraf analizi 503 döner');
 const chat = createChatClient(config.chatAi, { logger });
 if (!chat.enabled) logger.warn('OPENAI_API_KEY/OPENAI_CHAT_MODEL yok: sohbet 503 döner');
 const revenuecat = createRevenueCatClient(config.billing, { logger });

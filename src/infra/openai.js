@@ -3,8 +3,8 @@ import { AppError } from '../shared/errors.js';
 import { createBreaker } from './breaker.js';
 
 /**
- * Sohbet (Coach Mochi) için OpenAI istemcisi (Chat Completions, akış). Fotoğraf analizi
- * Claude'da kalır (infra/anthropic.js). Hatalar SDK'nın tipli sınıflarıyla sınıflandırılır.
+ * OpenAI istemcileri (Chat Completions): sohbet akışı + fotoğraf analizi (görüntü + JSON Schema).
+ * Hatalar SDK'nın tipli sınıflarıyla sınıflandırılır.
  */
 
 /** @returns 'aborted' | 'timeout' | 'connection' | 'rate_limited' | 'overloaded' | 'permanent' */
@@ -122,6 +122,65 @@ export function createChatClient(config, { logger, clientImpl, now = Date.now } 
           finishReason: choice?.finish_reason ?? null,
           usage: res.usage,
           model: res.model,
+        };
+      } catch (err) {
+        breaker.failure(err);
+        throw err;
+      }
+    },
+  };
+}
+
+/**
+ * Fotoğraf analizi için OpenAI istemcisi (görüntü + yapılandırılmış JSON çıktı).
+ * @param config config.ai (`apiKey`, `visionModel`, …)
+ * @param deps.clientImpl testte sahte istemci (`chat.completions.create`)
+ */
+export function createVisionClient(config, { logger, clientImpl, now = Date.now } = {}) {
+  const client =
+    clientImpl ?? (config.enabled ? new OpenAI({ apiKey: config.apiKey, maxRetries: 2 }) : null);
+  const breaker = createBreaker({
+    name: 'vision',
+    isTransient: (err) => TRANSIENT.has(classifyOpenAiError(err)),
+    now,
+    logger,
+  });
+
+  return {
+    enabled: Boolean(client),
+    model: config.visionModel,
+    config,
+
+    guard() {
+      if (!client) throw new AppError('UNAVAILABLE', { details: { reason: 'ai_disabled' } });
+      breaker.guard();
+    },
+
+    /**
+     * Tek çağrı. `params`: `{ model?, messages, max_tokens?, response_format? }`.
+     * Dönüş: `{ text, refusal, finishReason, usage (ortak biçim), model }`.
+     */
+    async create(params, { timeoutMs } = {}) {
+      this.guard();
+      try {
+        const res = await client.chat.completions.create(
+          {
+            model: params.model ?? config.visionModel,
+            messages: params.messages,
+            max_completion_tokens: params.max_tokens ?? 8000,
+            ...(params.response_format ? { response_format: params.response_format } : {}),
+            ...(config.reasoningEffort ? { reasoning_effort: config.reasoningEffort } : {}),
+          },
+          { timeout: timeoutMs },
+        );
+        breaker.success();
+        const choice = res.choices?.[0];
+        return {
+          text: choice?.message?.content ?? '',
+          refusal: choice?.message?.refusal ?? null,
+          finishReason: choice?.finish_reason ?? null,
+          usage: normalizeOpenAiUsage(res.usage),
+          model: res.model ?? config.visionModel,
         };
       } catch (err) {
         breaker.failure(err);

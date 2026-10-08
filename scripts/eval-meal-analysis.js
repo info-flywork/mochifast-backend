@@ -3,7 +3,8 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { loadConfig } from '../src/config/index.js';
-import { costMicroUsd, createAiClient } from '../src/infra/anthropic.js';
+import { costMicroUsd } from '../src/infra/anthropic.js';
+import { createVisionClient } from '../src/infra/openai.js';
 import { PROMPT_VERSION } from '../src/modules/ai/meal-analysis.rules.js';
 import { processImage } from '../src/modules/media/media.pipeline.js';
 import { analysisRequest, interpret } from '../src/modules/ai/photo-analysis.service.js';
@@ -34,10 +35,10 @@ if (!values.dir) {
 
 const config = loadConfig();
 if (!config.ai.enabled) {
-  console.error('ANTHROPIC_API_KEY yok.');
+  console.error('OPENAI_API_KEY / OPENAI_VISION_MODEL yok.');
   process.exit(1);
 }
-const ai = createAiClient(config.ai);
+const ai = createVisionClient(config.ai);
 const pricing =
   JSON.parse(await readFile(new URL('../seeds/app_config.json', import.meta.url))).find(
     (r) => r.key === 'ai.pricing',

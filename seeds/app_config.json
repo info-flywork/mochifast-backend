@@ -85,6 +85,12 @@
     "key": "ai.pricing",
     "platform": "all",
     "value": {
+      "gpt-4o": {
+        "inputPerMTok": 2.5,
+        "outputPerMTok": 10,
+        "cacheReadPerMTok": 1.25,
+        "cacheWritePerMTok": 0
+      },
       "claude-opus-5-5": {
         "inputPerMTok": 4,
         "outputPerMTok": 20,
@@ -92,7 +98,7 @@
         "cacheWritePerMTok": 5
       }
     },
-    "description": "Model başına USD / milyon token; yedek model eklenmezse maliyeti 0 sayılır (log uyarısı)"
+    "description": "Model başına USD / milyon token; fiyatı olmayan model maliyeti 0 sayılır (log uyarısı)"
   },
   {
     "key": "ai.daily_budget_usd",

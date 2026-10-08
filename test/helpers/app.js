@@ -5,9 +5,8 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SignJWT, createLocalJWKSet, exportJWK, generateKeyPair } from 'jose';
 import { buildApp } from '../../src/app.js';
-import { createAiClient } from '../../src/infra/anthropic.js';
 import { createMediaStorage } from '../../src/infra/bunny.js';
-import { createChatClient } from '../../src/infra/openai.js';
+import { createChatClient, createVisionClient } from '../../src/infra/openai.js';
 import { createRevenueCatClient } from '../../src/infra/revenuecat.js';
 import { createEntitlements } from '../../src/modules/billing/billing.service.js';
 import { createCache } from '../../src/infra/cache.js';
@@ -189,19 +188,27 @@ export function fakePush() {
   };
 }
 
-/** Claude yanıtı biçiminde mesaj (yapılandırılmış çıktı JSON metin bloğunda). */
+/** OpenAI Chat Completions yanıtı (fotoğraf analizi testleri). */
 export function aiMessage(
   body,
-  { stopReason = 'end_turn', model = 'claude-opus-5-5', usage } = {},
+  { finishReason = 'stop', refusal = null, model = 'gpt-4o', usage } = {},
 ) {
+  const text = typeof body === 'string' ? body : JSON.stringify(body);
   return {
-    id: 'msg_test',
-    type: 'message',
-    role: 'assistant',
+    id: 'chatcmpl_test',
     model,
-    content: [{ type: 'text', text: typeof body === 'string' ? body : JSON.stringify(body) }],
-    stop_reason: stopReason,
-    usage: usage ?? { input_tokens: 1500, output_tokens: 400, cache_read_input_tokens: 0 },
+    choices: [
+      {
+        index: 0,
+        message: { role: 'assistant', content: text, refusal },
+        finish_reason: finishReason,
+      },
+    ],
+    usage: usage ?? {
+      prompt_tokens: 1500,
+      completion_tokens: 400,
+      prompt_tokens_details: { cached_tokens: 0 },
+    },
   };
 }
 
@@ -225,9 +232,11 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
     { ...config.media, localDir: mediaDir },
     { baseUrl: 'http://media.test' },
   );
-  const anthropic = fakeAnthropic();
-  const ai = createAiClient({ ...config.ai, enabled: true }, { clientImpl: anthropic });
   const openai = fakeOpenAI();
+  const ai = createVisionClient(
+    { ...config.ai, enabled: true, visionModel: 'gpt-4o', apiKey: 'test' },
+    { clientImpl: openai },
+  );
   const chat = createChatClient(
     {
       ...config.chatAi,
@@ -313,9 +322,8 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
     storage,
     mediaDir,
     ai,
-    anthropic,
-    chat,
     openai,
+    chat,
     revenuecatApi,
     entitlements,
     config,

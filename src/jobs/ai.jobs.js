@@ -1,5 +1,4 @@
-import { createAiClient } from '../infra/anthropic.js';
-import { createChatClient } from '../infra/openai.js';
+import { createChatClient, createVisionClient } from '../infra/openai.js';
 import { createCache } from '../infra/cache.js';
 import { createJobQueue } from '../infra/queue.js';
 import { createAiGate } from '../modules/ai/ai.gate.js';
@@ -17,7 +16,7 @@ const STUCK_MINUTES = 15;
  * `ai` kuyruğu (docs/backend/09-yapay-zeka.md §3.1). Bağımlılıklar testte enjekte edilebilir.
  */
 export function aiJobs({ db, storage, config, logger, ai, chat, crypto, cache = createCache() }) {
-  const client = ai ?? createAiClient(config.ai, { logger });
+  const client = ai ?? createVisionClient(config.ai, { logger });
   const chatClient = chat ?? createChatClient(config.chatAi, { logger });
   const gate = createAiGate({ db, catalog: createCatalogService({ db, cache }), cache, logger });
   const media = createMediaService({ db, storage, config: config.media, logger });

@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { classifyAiError, isTransient } from '../../infra/anthropic.js';
+import { classifyOpenAiError } from '../../infra/openai.js';
 import { AppError, isAppError } from '../../shared/errors.js';
 import { newId } from '../../shared/ids.js';
 import * as repo from './photo-analysis.repository.js';
@@ -14,27 +14,36 @@ const PROMPT = readFileSync(
   new URL(`../../../prompts/${PROMPT_VERSION}.md`, import.meta.url),
   'utf8',
 );
-/** Düşünme token'ları da bu bütçeden harcanır (effort: medium). */
 const MAX_TOKENS = 8000;
 export const POLL_AFTER_MS = 1500;
 export const ANALYSIS_MAX_ATTEMPTS = 3;
 
 const STATUS_API = { not_food: 'notFood' };
+const TRANSIENT = new Set(['timeout', 'connection', 'rate_limited', 'overloaded']);
 
-/** Claude isteği (servis ve eval betiği aynısını kullanır: ölçülen = üretimde çalışan). */
+/** OpenAI isteği (servis ve eval betiği aynısını kullanır: ölçülen = üretimde çalışan). */
 export function analysisRequest(image, locale, config) {
   return {
     model: config.visionModel,
     max_tokens: MAX_TOKENS,
-    output_config: { effort: 'medium', format: { type: 'json_schema', schema: ANALYSIS_SCHEMA } },
-    system: [{ type: 'text', text: PROMPT, cache_control: { type: 'ephemeral' } }],
+    response_format: {
+      type: 'json_schema',
+      json_schema: {
+        name: 'meal_analysis',
+        strict: true,
+        schema: ANALYSIS_SCHEMA,
+      },
+    },
     messages: [
+      { role: 'system', content: PROMPT },
       {
         role: 'user',
         content: [
           {
-            type: 'image',
-            source: { type: 'base64', media_type: 'image/webp', data: image.toString('base64') },
+            type: 'image_url',
+            image_url: {
+              url: `data:image/webp;base64,${image.toString('base64')}`,
+            },
           },
           {
             type: 'text',
@@ -46,14 +55,14 @@ export function analysisRequest(image, locale, config) {
   };
 }
 
-/** Claude yanıtı → {status, result} ya da {status:'failed', errorCode}. */
+/** OpenAI yanıtı → {status, result} ya da {status:'failed', errorCode}. */
 export function interpret(message) {
-  // Ret ve kesik çıktıda içerik okunmaz (şemaya uymayabilir).
-  if (message.stop_reason === 'refusal') return { status: 'failed', errorCode: 'REFUSED' };
-  if (message.stop_reason === 'max_tokens') return { status: 'failed', errorCode: 'TRUNCATED' };
+  if (message.refusal || message.finishReason === 'content_filter') {
+    return { status: 'failed', errorCode: 'REFUSED' };
+  }
+  if (message.finishReason === 'length') return { status: 'failed', errorCode: 'TRUNCATED' };
   try {
-    const text = message.content.find((b) => b.type === 'text')?.text;
-    const n = normalizeAnalysis(JSON.parse(text));
+    const n = normalizeAnalysis(JSON.parse(message.text));
     return { status: n.isFood ? 'succeeded' : 'not_food', result: n.result };
   } catch {
     return { status: 'failed', errorCode: 'INVALID_OUTPUT' };
@@ -62,7 +71,7 @@ export function interpret(message) {
 
 /**
  * Fotoğraftan öğün analizi (docs/backend/09-yapay-zeka.md §3). API: rıza → bütçe → kota →
- * yükle → kuyruk, 202. Worker: Claude çağrısı → ret/biçim kontrolü → sunucu tarafı doğrulama.
+ * yükle → kuyruk, 202. Worker: OpenAI çağrısı → ret/biçim kontrolü → sunucu tarafı doğrulama.
  * Başarısız analizde kota iade edilir; "yemek değil" sonucu hak düşer (AI maliyeti oluştu).
  */
 export function createPhotoAnalysisService({ db, jobs, gate, media, ai, storage, config, logger }) {
@@ -162,8 +171,8 @@ export function createPhotoAnalysisService({ db, jobs, gate, media, ai, storage,
           timeoutMs: config.analysisTimeoutMs,
         });
       } catch (err) {
-        const kind = isAppError(err) ? 'unavailable' : classifyAiError(err);
-        const retry = (kind === 'unavailable' || isTransient(kind)) && attempt < maxAttempts;
+        const kind = isAppError(err) ? 'unavailable' : classifyOpenAiError(err);
+        const retry = (kind === 'unavailable' || TRANSIENT.has(kind)) && attempt < maxAttempts;
         logger?.warn({ analysisId, kind, attempt, retry }, 'fotoğraf analizi çağrısı başarısız');
         if (retry) throw err;
         return fail(a, kind === 'permanent' ? 'AI_ERROR' : 'AI_UNAVAILABLE');
