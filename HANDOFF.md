@@ -1,6 +1,6 @@
 # HANDOFF — MochiFast (devam edecek geliştirici / yapay zekâ için)
 
-Son güncelleme: 2026-10-07. Bu dosya, işi yarıda devralan birinin bağlamı hızla kurması için yazıldı.
+Son güncelleme: 2026-10-08. Bu dosya, işi yarıda devralan birinin bağlamı hızla kurması için yazıldı.
 Ayrıntılı tasarım: `../fastingapp/docs/backend/*.md` (Türkçe). Kullanıcının yapacakları: `TODO.md`.
 Operasyon: `docs/runbooks.md`, `docs/deploy.md`.
 
@@ -51,13 +51,13 @@ Tuzaklar:
 ## 4. Durum
 
 Yol haritası: `../fastingapp/docs/backend/12-yol-haritasi.md`. Backend F0–F10 tamam, F11 1. hafta tamam.
-Son backend commit'leri: `0b50836` (misafir sırrı), `3b20902` (kullanılmayan şablon), `9ec59e5` (günün ipucu),
+Son backend commit'leri: `d345846` (AI: Anthropic → OpenAI), `0b50836` (misafir sırrı), `3b20902` (kullanılmayan şablon), `9ec59e5` (günün ipucu),
 `bf58398` (refresh aile limiti), `d99a0df` (Fast Forecast), `a14d31a` (bu dosya), `4d03412` (eski önek'siz yollar silindi),
 `df0d871` (F11 sertleştirme), `0ad5487`, `77748b7` (F10), `d85c836`, `3d1e84c` (F9).
-Testler: 43 dosya / 388 test geçiyor. Uzak DB migration'ları 0021'e kadar uygulandı; seed güncel.
+Testler: 43 dosya / 389 test geçiyor (2026-10-08). Uzak DB migration'ları 0021'e kadar uygulandı; seed güncel.
 
 Modüller (`src/modules`): auth, user, account (silme/dışa aktarma/saklama), admin, devices, catalog, plans, fasting,
-stats, trackers (kilo/su/adım/uyku), meals, hunger, ai (fotoğraf analizi, Claude), chat (OpenAI, SSE), gamification
+stats, trackers (kilo/su/adım/uyku), meals, hunger, ai (fotoğraf analizi, OpenAI vision), chat (OpenAI, SSE), gamification
 (Mochi World, challenge), billing (RevenueCat), notifications (FCM + inbox), media (Bunny), app (config).
 İşler: `src/jobs/*.jobs.js`, zamanlama `src/schedules.js`, worker `src/worker.js`.
 
@@ -104,14 +104,16 @@ Yapıldı (commit edilmedi, `fastingapp` çalışma ağacında):
 
 Uçtan uca doğrulanan: misafir girişi → `/v1/user/me`, `/v1/user/progress` 200. **Onboarding gönderimi henüz simülatörde denenmedi.**
 
+Backend'de commit edilmemiş değişiklik var (2026-10-08, OpenAI geçişinin devamı: `src/infra/openai.js` signal/timeout, chat servisi, media pipeline, `prompts/coach_mochi.v1.md`, `seeds/app_config.json`). Kullanıcı commit edecek; üzerine yazma. Testler buna uyarlandı (commit edilmedi): kota testleri `setFeatureFlag(ctx, 'chatQuota', true)` ile kotayı açar (`test/helpers/app.js`; seed'de `features.chatQuota: false`), kapalı kota için ayrı test var; lint/prettier temiz.
+
 Kalan (önerilen sıra; her birinde sahte veriyi kaldır, gerçek uca bağla):
 
 1. [ ] Onboarding'i simülatörde sonuna kadar dene; `POST /v1/user/onboarding` 200 olmalı.
-2. [~] Ana sayfa → `GET /v1/user/summary`: **yapıldı** — `HomeBloc` tek çağrı (`lib/data/model/user/home_summary.dart`, `UserRepository.getSummary`), hata → `HomeError` (sahte "Squish"/seri 3 kaldırıldı), su/adım kartları ve kilo kartı gerçek veri. **Kalan:** `home_fasting_card` (activeFast + serverTime), `home_week_strip` (week), `home_meal_records_card` (lastMeal), `home_challenge_card` (featuredChallenge + join), oruç ekranındaki metrik kartları (şimdilik 0/varsayılan hedef). Modele ilgili alanları ekle.
-3. [ ] Oruç: `GET /v1/fasts/active`, `POST /v1/fasts`, `POST /v1/fasts/:id/finish`, `GET /v1/plans/current`, evreler `GET /v1/catalog/stages`.
-4. [ ] Su / kilo / adım / uyku / öğün / açlık ekranları (trackers, meals, hunger uçları).
-5. [ ] Sohbet (SSE) `/v1/chat/*`; fotoğraf analizi `/v1/meals/photo-analyses`.
+2. [~] Ana sayfa → `GET /v1/user/summary`: `HomeBloc` tek çağrı (`lib/data/model/user/home_summary.dart`, `UserRepository.getSummary`), hata → `HomeError`, yükleniyor → shimmer (`lib/core/widgets/app_shimmer.dart`). Su/adım, kilo, oruç kartı (activeFast + serverTime), hafta şeridi (week), son öğün kartı (lastMeal) gerçek veri. **Kalan:** `home_challenge_card` (modelde `featuredChallenge` yok; alanı ekle + join).
+3. [x] Oruç (2026-10-08, simülatörde denenmedi): `lib/domain/fasting/fasting_repository.dart` (`/fasts/active`, `POST /fasts`, `/fasts/:id/finish`, `/plans/current`, `/catalog/stages`) + `lib/presentation/fasting/bloc/fasting_session_cubit.dart`; oruç, bitirme, vücut durumu ekranları ve `HomeBloc` bu cubit'i kullanır.
+4. [x] Tracker ekranları (2026-10-08, simülatörde denenmedi): `lib/domain/trackers/trackers_repository.dart` (su `/water`, kilo `/weights*`, adım `/steps`, uyku `/sleep/summary`) → su, kilo geçmişi, adım, uyku ekranları; `lib/domain/hunger/hunger_repository.dart` (`/hunger-checkins*`) → açlık akışı; `lib/domain/nutrition/` (`/meals*`, `/nutrition/day|week`) → öğün kayıtları, kalori, protein. `steps_view.dart` içindeki `_StepsControls` artık kullanılmıyor (analyze uyarısı) — sil ya da bağla.
+5. [x] Sohbet + fotoğraf analizi (2026-10-08, simülatörde denenmedi): `lib/domain/chat/chat_repository.dart` (`/chat/conversations*`, SSE) → `ChatSessionCubit`; `MealsRepository.analyzePhoto/pollAnalysis` (`/meals/photo-analyses`) → kalori sonuç ekranı.
 6. [ ] Mochi World `GET /v1/world`, challenge'lar; profil; bildirim kutusu + rozet ✓ (sayfalama kaldı); FCM token kaydı `PUT /v1/devices/current`.
-7. [ ] RevenueCat: `Purchases.logIn(userId)`, paywall, `POST /v1/subscription/sync`.
+7. [~] RevenueCat (2026-10-08, istemci kodu hazır; cihazda satın alma denenmedi): `lib/domain/revenue_cat/revenue_cat_service.dart` — açılışta `configure` (önbellekteki kullanıcı UUID'si, yoksa anonim; `main.dart`), her girişte `logIn` (`AuthRepository._save`, onboarding misafiri dahil), çıkışta `logOut` (`endLocalSession`), `POST /v1/subscription/sync` (oturum yoksa çağrılmaz, 1 dk kısma; 503'te CustomerInfo'ya düşer), `isPremium` ValueNotifier, RevenueCat Paywall (`default` offering, kapatma düğmeli), geri yükleme (Profil → "Satın alımları geri yükle"). Anahtarlar `lib/core/utils/constants/revenue_cat_constants.dart` (public SDK anahtarları; `REVENUECAT_IOS_KEY`/`REVENUECAT_ANDROID_KEY` define'ı ezer), entitlement `mochifast_pro` (sunucu `.env`/`.env.production` `REVENUECAT_ENTITLEMENT=mochifast_pro` yapıldı; kod varsayılanı testler için `premium` kaldı). Paywall tetikleri: ana sayfa ve oruç ekranı "Premium" hapı, Profil premium kartı (premium'da gizli; başlık rozeti artık gerçek), kilitli planlar (Planlar sekmesi + oruç plan sayfası; premium'da kilit kalkar), sohbet ve fotoğraf `QUOTA_EXCEEDED` + `upgradeAvailable` / `PREMIUM_REQUIRED` (`RevenueCatService.needsUpgrade`). Sohbet akış isteğinde hata gövdesi artık okunuyor (önceden kod kayboluyordu). Android `MainActivity` → `FlutterFragmentActivity` (Paywalls için). **Kullanıcıda kalan:** sunucu `.env`'lerine `REVENUECAT_SECRET_API_KEY` (sk_…) ve `REVENUECAT_WEBHOOK_AUTH`; RevenueCat panelinde webhook `https://mochifast-api.fly-work.com/v1/webhooks/revenuecat` + Authorization alanına `REVENUECAT_WEBHOOK_AUTH`'un birebir aynısı (sunucu ham başlığı tam eşleşmeyle karşılaştırır; `Bearer` öneki eklenmez); `default` offering'e paket + Paywall tasarımı; App Store Connect / Play Console ürünleri; sandbox hesapla fiziksel cihazda satın alma testi. Ayrıca `PUT /plans/current` istemcide henüz yok (seçilen premium plan sunucuya gitmiyor).
 8. [ ] Sağlık verisi ve AI işleme için açık rıza ekranları; engeller çoklu seçim; `requiredConsents` yeniden onay ekranı.
 9. [ ] Liste yanıtları için `PagedResponse` (`data.items` + `data.pageInfo`).
