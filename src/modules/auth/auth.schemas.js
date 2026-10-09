@@ -67,7 +67,6 @@ const registerResult = authResult(
   {
     isNewUser: { type: 'boolean' },
     linkedFromGuest: { type: 'boolean' },
-    mergedFromGuest: { type: 'boolean' },
   },
   guestSecretField,
 );
@@ -76,7 +75,7 @@ export const registerSchema = {
   tags: ['auth'],
   summary: 'Firebase (Apple/Google) ile giriş, kayıt veya misafir yükseltme',
   description:
-    'Authorization header’ında misafir oturumu varsa hesap yükseltilir. Sosyal kimlik başka bir hesaba bağlıysa 409 ACCOUNT_LINK_CONFLICT; tekrar `mergeGuest: false` (hesaba geç) ya da `true` (misafir verisini taşı) ile çağrılır.',
+    'Authorization header’ında misafir oturumu varsa ve sosyal kimlik henüz bir hesaba bağlı değilse misafir hesap yükseltilir. Kimlik başka bir hesaba bağlıysa o hesaba geçilir (birleştirme yok; misafir hesap silinmez, yalnızca oturumu kapanır).',
   body: {
     type: 'object',
     additionalProperties: false,
@@ -98,7 +97,6 @@ export const registerSchema = {
       platform,
       locale,
       timezone,
-      mergeGuest: { type: 'boolean' },
       restoreAccount: { type: 'boolean' },
       guestSecret: { type: 'string', minLength: 1, maxLength: 64 },
     },

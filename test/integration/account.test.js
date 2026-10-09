@@ -408,35 +408,13 @@ describe.skipIf(!mysqlUrl)('hesap: silme, dışa aktarma, rıza, saklama (gerçe
   });
 
   // ── Saklama ─────────────────────────────────────────────────────────
-  it('saklama: inaktif misafir ve birleştirmede kapanan misafir silinmeye planlanır; eski kayıtlar silinir', async () => {
+  it('saklama: misafir hesaplar süreyle silinmez (kalıcı); eski kayıtlar silinir', async () => {
     const idle = (await ctx.guest(randomUUID(), { timezone: TZ })).json().data;
-    const active = (await ctx.guest(randomUUID(), { timezone: TZ })).json().data;
     await ctx.db.run(
-      `UPDATE users SET created_at = DATE_SUB(NOW(3), INTERVAL 120 DAY), last_active_at = NULL
-        WHERE id IN (:a, :b)`,
-      { a: toBin(idle.user.id), b: toBin(active.user.id) },
+      `UPDATE users SET created_at = DATE_SUB(NOW(3), INTERVAL 400 DAY), last_active_at = NULL
+        WHERE id = :id`,
+      { id: toBin(idle.user.id) },
     );
-    // Etkin misafir: istek last_active_at'i yazar (saatte bir).
-    await call('GET', '/user/me', { token: active.token.accessToken });
-    await new Promise((r) => setTimeout(r, 100));
-
-    // Birleştirme: misafir oturumuyla mevcut hesaba geçiş → misafir kapanır, 30 gün sonra silinir.
-    const ownerUid = `apple-${randomUUID()}`;
-    expect((await ctx.firebaseLogin({ uid: ownerUid })).statusCode).toBe(201);
-    const merging = (await ctx.guest()).json().data;
-    const switched = await ctx.firebaseLogin({
-      uid: ownerUid,
-      token: merging.token.accessToken,
-      mergeGuest: false,
-    });
-    expect(switched.statusCode).toBe(200);
-    const retired = await ctx.db.one(
-      `SELECT source, TIMESTAMPDIFF(DAY, NOW(3), scheduled_for) AS days
-         FROM account_deletion_requests WHERE user_id = :id`,
-      { id: toBin(merging.user.id) },
-    );
-    expect(retired).toMatchObject({ source: 'guest_retired' });
-    expect(Number(retired.days)).toBeGreaterThanOrEqual(29);
 
     // Eski yumuşak silinmiş kayıt ve eski denetim izi.
     const u = await richUser();
@@ -455,16 +433,15 @@ describe.skipIf(!mysqlUrl)('hesap: silme, dışa aktarma, rıza, saklama (gerçe
 
     await runJob('accountRetention', {});
 
-    const status = async (id) =>
-      (await ctx.db.one('SELECT status FROM users WHERE id = :id', { id: toBin(id) })).status;
-    expect(await status(idle.user.id)).toBe('pending_deletion');
-    expect(await status(active.user.id)).toBe('active');
-    const req = await ctx.db.one(
-      'SELECT source, status, scheduled_for <= NOW(3) AS due FROM account_deletion_requests WHERE user_id = :id',
+    const idleUser = await ctx.db.one('SELECT status FROM users WHERE id = :id', {
+      id: toBin(idle.user.id),
+    });
+    expect(idleUser.status).toBe('active');
+    const requests = await ctx.db.one(
+      'SELECT COUNT(*) AS n FROM account_deletion_requests WHERE user_id = :id',
       { id: toBin(idle.user.id) },
     );
-    expect(req).toMatchObject({ source: 'inactive_guest', status: 'scheduled' });
-    expect(Number(req.due)).toBe(1);
+    expect(Number(requests.n)).toBe(0);
     expect(
       (await ctx.db.one('SELECT COUNT(*) AS n FROM weight_entries WHERE id = :id', { id: w.id })).n,
     ).toBe(0);
@@ -473,6 +450,7 @@ describe.skipIf(!mysqlUrl)('hesap: silme, dışa aktarma, rıza, saklama (gerçe
         (await ctx.db.one("SELECT COUNT(*) AS n FROM audit_logs WHERE action = 'test.old'")).n,
       ),
     ).toBe(0);
-    expect((await call('GET', '/user/me', { token: idle.token.accessToken })).statusCode).toBe(410);
+    // Uzun süre kullanılmayan misafir hâlâ açılır.
+    expect((await call('GET', '/user/me', { token: idle.token.accessToken })).statusCode).toBe(200);
   });
 });

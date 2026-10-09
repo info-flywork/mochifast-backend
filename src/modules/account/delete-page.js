@@ -22,7 +22,7 @@ const TEXT = {
     subscription:
       'Aboneliğin varsa Google Play veya App Store’dan ayrıca iptal etmelisin; hesap silmek aboneliği iptal etmez.',
     guest:
-      'Misafir hesaplar uygulamadan silinebilir; uygulama kaldırılırsa 90 gün sonra otomatik silinir.',
+      'Misafir hesaplar uygulamadan (Profil → Profili Düzenle → Hesabı Sil) silinir; kendiliğinden silinmez.',
   },
   en: {
     title: 'Delete your MochiFast account',
@@ -40,7 +40,7 @@ const TEXT = {
     subscription:
       'If you have a subscription, cancel it separately in Google Play or the App Store; deleting your account does not cancel it.',
     guest:
-      'Guest accounts can be deleted in the app; if the app is uninstalled they are deleted automatically after 90 days.',
+      'Guest accounts are deleted in the app (Profile → Edit Profile → Delete Account); they are not deleted automatically.',
   },
 };
 

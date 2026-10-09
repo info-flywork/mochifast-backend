@@ -1,7 +1,6 @@
 import { randomBytes, randomUUID } from 'node:crypto';
 import { SignJWT, importJWK } from 'jose';
-import { afterAll, afterEach, beforeAll, describe, expect, inject, it } from 'vitest';
-import { GUEST_MERGE_STEPS } from '../../src/modules/auth/guest-merge.js';
+import { afterAll, beforeAll, describe, expect, inject, it } from 'vitest';
 import { toBin } from '../../src/shared/ids.js';
 import { createIntegrationApp } from '../helpers/app.js';
 import { TEST_SECRETS } from '../helpers/infra.js';
@@ -20,10 +19,6 @@ describe.skipIf(!mysqlUrl)('auth akışları (gerçek MySQL)', () => {
   beforeAll(async () => {
     ctx = await createIntegrationApp(mysqlUrl);
     ({ db, app, firebase, call, guest, firebaseLogin } = ctx);
-  });
-
-  afterEach(() => {
-    GUEST_MERGE_STEPS.length = 0;
   });
 
   afterAll(async () => {
@@ -299,40 +294,40 @@ describe.skipIf(!mysqlUrl)('auth akışları (gerçek MySQL)', () => {
     expect(again.json().data.user.id).not.toBe(g.user.id);
   });
 
-  it('çakışma: misafir + başka hesaba bağlı Firebase kimliği → 409; mergeGuest:false ile hesaba geçilir', async () => {
+  it('misafir + başka hesaba bağlı Firebase kimliği → o hesaba geçilir; misafir silinmez, aynı cihazda tekrar açılır', async () => {
     const uid = `fb-${randomUUID()}`;
     const owner = (await firebaseLogin({ uid })).json().data.user;
-    const g = (await guest()).json().data;
+    const installId = randomUUID();
+    const g = (await guest(installId)).json().data;
+    await call('POST', '/water', { token: g.token.accessToken, body: { amountMl: 300 } });
 
-    const conflict = await firebaseLogin({ uid, token: g.token.accessToken });
-    expect(conflict.statusCode).toBe(409);
-    expect(conflict.json().error).toMatchObject({
-      code: 'ACCOUNT_LINK_CONFLICT',
-      details: { options: ['switch_account', 'merge'] },
-    });
-    expect((await userRow(g.user.id)).status).toBe('active');
-
-    const switched = await firebaseLogin({ uid, token: g.token.accessToken, mergeGuest: false });
+    const switched = await firebaseLogin({ uid, token: g.token.accessToken });
     expect(switched.statusCode).toBe(200);
-    expect(switched.json().data).toMatchObject({ mergedFromGuest: false, user: { id: owner.id } });
-    expect((await userRow(g.user.id)).status).toBe('pending_deletion');
+    expect(switched.json().data).toMatchObject({ linkedFromGuest: false, user: { id: owner.id } });
+    expect(switched.json().data).not.toHaveProperty('mergedFromGuest');
+    // Birleştirme yok: misafirin verisi hedefe geçmez.
+    const water = (id) =>
+      db.one('SELECT COUNT(*) AS n FROM water_entries WHERE user_id = :id', { id: toBin(id) });
+    expect(Number((await water(owner.id)).n)).toBe(0);
+    // Misafir kalıcı: kapanmaz, silme talebi açılmaz; yalnızca oturumu düşer.
+    expect((await userRow(g.user.id)).status).toBe('active');
+    const requests = await db.one(
+      'SELECT COUNT(*) AS n FROM account_deletion_requests WHERE user_id = :id',
+      { id: toBin(g.user.id) },
+    );
+    expect(Number(requests.n)).toBe(0);
     const old = await call('GET', '/auth/sessions', { token: g.token.accessToken });
-    expect(old.statusCode).toBe(410);
-  });
-
-  it('çakışma: mergeGuest:true birleştirme adımlarını aynı transaction’da çalıştırır', async () => {
-    const uid = `fb-${randomUUID()}`;
-    const owner = (await firebaseLogin({ uid })).json().data.user;
-    const g = (await guest()).json().data;
-    const calls = [];
-    GUEST_MERGE_STEPS.push(async (conn, { fromUserId, toUserId }) => {
-      calls.push({ fromUserId, toUserId, inTx: Boolean(conn) });
+    expect([401, 410]).toContain(old.statusCode);
+    // "Misafir olarak devam et": aynı misafir, verisiyle.
+    const again = await guest(installId);
+    expect(again.statusCode).toBe(200);
+    expect(again.json().data.user.id).toBe(g.user.id);
+    expect(Number((await water(g.user.id)).n)).toBe(1);
+    // Eski istemcinin gönderdiği alan reddedilir.
+    const legacy = await call('POST', '/auth/register', {
+      body: { provider: 'firebase', idToken: 'x'.repeat(20), mergeGuest: true },
     });
-
-    const merged = await firebaseLogin({ uid, token: g.token.accessToken, mergeGuest: true });
-    expect(merged.statusCode).toBe(200);
-    expect(merged.json().data.mergedFromGuest).toBe(true);
-    expect(calls).toEqual([{ fromUserId: g.user.id, toUserId: owner.id, inTx: true }]);
+    expect(legacy.statusCode).toBe(400);
   });
 
   it('çıkış: oturum + refresh geçersiz, cihazın push token’ı silinir', async () => {

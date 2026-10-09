@@ -363,7 +363,12 @@ export function createChatService({ db, crypto, chat, gate, contexts, content, j
         if (stopReason === 'first_token_timeout' || stopReason === 'total_timeout')
           status = 'failed';
         logger?.warn(
-          { kind, stopReason, conversationId: conversation.id },
+          {
+            kind,
+            stopReason,
+            conversationId: conversation.id,
+            err: failure?.message ?? String(failure),
+          },
           'sohbet yanıtı yarıda kaldı',
         );
       } else if (final.refusal || final.finishReason === 'content_filter') {
@@ -378,7 +383,8 @@ export function createChatService({ db, crypto, chat, gate, contexts, content, j
         await gate.recordUsage(userId, 'chat', { model: final.model, usage });
       }
       // Hiç yanıt üretilemediyse hak iade edilir; yarıda kesilen (kullanıcı kapattı) hak düşer.
-      if (status === 'failed') await gate.refund(userId, 'chat', quota.localDate);
+      if (status === 'failed' && quota.limit !== null)
+        await gate.refund(userId, 'chat', quota.localDate);
       await repo.finishMessage(db, assistantMessageId, {
         contentEnc: enc(text, AAD.content(assistantMessageId)),
         status,
@@ -403,7 +409,9 @@ export function createChatService({ db, crypto, chat, gate, contexts, content, j
         assistantMessageId,
         status,
         safety: turn.safety,
-        usage: { remainingToday: Math.max(0, quota.limit - quota.used) },
+        usage: {
+          remainingToday: quota.limit === null ? null : Math.max(0, quota.limit - quota.used),
+        },
       });
       await service
         .maybeSummarize(userId, conversation.id)

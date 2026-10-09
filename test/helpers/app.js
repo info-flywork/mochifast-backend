@@ -54,35 +54,6 @@ export async function fakeFirebase(kid = 'firebase-1') {
 }
 
 /**
- * Ağa çıkmayan Claude istemcisi: `respond(fn)` ile yanıt (ya da hata) test belirler,
- * `calls` gönderilen parametreleri tutar.
- */
-export function fakeAnthropic() {
-  const calls = [];
-  let handler = () => {
-    throw new Error('fakeAnthropic: yanıt tanımlanmadı');
-  };
-  return {
-    calls,
-    respond(fn) {
-      handler = fn;
-    },
-    beta: {
-      messages: {
-        async create(params, options) {
-          calls.push(params);
-          return handler(params, options);
-        },
-        stream(params, options) {
-          calls.push(params);
-          return handler(params, options);
-        },
-      },
-    },
-  };
-}
-
-/**
  * Ağa çıkmayan OpenAI istemcisi. `respond(fn)`: fn(params, options) → async iterable parça listesi
  * (akış) ya da tamamlanmış yanıt (stream olmayan çağrı). `chunks(...)` yardımcıyla parça üretir.
  */
@@ -215,6 +186,20 @@ export function aiMessage(
 /**
  * Gerçek MySQL (geçici veritabanı, tüm migration'lar) üzerinde tam uygulama + istek yardımcıları.
  */
+/**
+ * `app_config.features` içinde bir bayrağı değiştirir ve önbelleği temizler
+ * (seed'deki geliştirme ayarları testlerin varsayımlarından farklı olabilir).
+ */
+export async function setFeatureFlag(ctx, key, enabled) {
+  const where = `config_key = 'features' AND platform = 'all'`;
+  const row = await ctx.db.one(`SELECT value FROM app_config WHERE ${where}`);
+  const value = typeof row.value === 'string' ? JSON.parse(row.value) : row.value;
+  await ctx.db.run(`UPDATE app_config SET value = :value WHERE ${where}`, {
+    value: JSON.stringify({ ...value, [key]: enabled }),
+  });
+  await ctx.app.deps.cache.delPrefix('');
+}
+
 export async function createIntegrationApp(mysqlUrl, env = {}) {
   const testDb = await createTestDatabase(mysqlUrl);
   const config = testConfig({
@@ -301,7 +286,7 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
   };
 
   /** Firebase ile (varsayılan Apple) giriş: POST /v1/auth/register { provider: 'firebase' }. */
-  async function firebaseLogin({ uid, token, mergeGuest, provider, fullName, ...claims }) {
+  async function firebaseLogin({ uid, token, provider, fullName, ...claims }) {
     const idToken = await firebaseKeys.sign({ uid, provider, ...claims });
     return call('POST', '/auth/register', {
       token,
@@ -311,7 +296,6 @@ export async function createIntegrationApp(mysqlUrl, env = {}) {
         deviceId: randomUUID(),
         platform: 'ios',
         ...(fullName ? { fullName } : {}),
-        ...(mergeGuest === undefined ? {} : { mergeGuest }),
       },
     });
   }

@@ -5,7 +5,7 @@ import { aiJobs } from '../../src/jobs/ai.jobs.js';
 import * as chatRepo from '../../src/modules/chat/chat.repository.js';
 import { chatServiceFor } from '../../src/modules/chat/chat.routes.js';
 import { newId, toBin } from '../../src/shared/ids.js';
-import { createIntegrationApp, openAiChunks } from '../helpers/app.js';
+import { createIntegrationApp, openAiChunks, setFeatureFlag } from '../helpers/app.js';
 
 const mysqlUrl = inject('mysqlUrl');
 const silent = { info() {}, warn() {}, error() {} };
@@ -24,8 +24,12 @@ function parseSse(body) {
 describe.skipIf(!mysqlUrl)('Coach Mochi sohbeti (gerçek MySQL, sahte OpenAI)', () => {
   let ctx;
 
+  const setChatQuota = (enabled) => setFeatureFlag(ctx, 'chatQuota', enabled);
+
   beforeAll(async () => {
     ctx = await createIntegrationApp(mysqlUrl);
+    // Kota kabul kriterleri kota açıkken test edilir; kapalı durum ayrı testte.
+    await setChatQuota(true);
   });
 
   afterAll(async () => {
@@ -134,6 +138,26 @@ describe.skipIf(!mysqlUrl)('Coach Mochi sohbeti (gerçek MySQL, sahte OpenAI)', 
     });
     const quota = (await ctx.call('GET', '/chat/quota', { token })).json().data.chat;
     expect(quota).toMatchObject({ used: 3, remaining: 0 });
+  });
+
+  it('features.chatQuota kapalı: limit uygulanmaz, sayaç düşmez, kalan hak null', async () => {
+    await setChatQuota(false);
+    try {
+      const { token } = await newUser();
+      const conv = await conversation(token);
+      ctx.openai.respond(() => openAiChunks(['Tamam!']));
+      let last;
+      for (const text of ['Bir', 'İki', 'Üç', 'Dört']) {
+        last = await send(token, conv.id, { text });
+        expect(last.statusCode).toBe(200);
+      }
+      const completed = parseSse(last.body).find((e) => e.event === 'message.completed');
+      expect(completed.data.usage).toEqual({ remainingToday: null });
+      const quota = (await ctx.call('GET', '/chat/quota', { token })).json().data.chat;
+      expect(quota).toMatchObject({ used: 0, limit: null, remaining: null });
+    } finally {
+      await setChatQuota(true);
+    }
   });
 
   it('aynı konuşmada eşzamanlı ikinci istek → 409 REPLY_IN_PROGRESS', async () => {

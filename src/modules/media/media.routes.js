@@ -75,7 +75,9 @@ export async function localMediaFiles(app) {
     } catch {
       throw new AppError('NOT_FOUND');
     }
-    reply.header('content-type', 'image/webp').header('cache-control', 'private, max-age=3600');
+    reply
+      .header('content-type', 'image/webp')
+      .header('cache-control', checkToken ? 'private, max-age=3600' : 'public, max-age=86400');
     return reply.send(createReadStream(file));
   };
   app.get('/media-files/*', serve(storage.private, true));

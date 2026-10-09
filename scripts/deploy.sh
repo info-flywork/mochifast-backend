@@ -3,10 +3,12 @@
 #
 #   npm run deploy                 kodu gönder + yayına al (sync + release)
 #   npm run deploy -- sync         yalnızca kodu gönder
-#   npm run deploy -- sync --env   kodu ve .env.production'ı (sunucuda .env olarak) gönder
 #   npm run deploy -- release      sunucudaki kodla: npm ci → migrate → seed → pm2 reload → sağlık kontrolü
 #   npm run deploy -- check        sunucuyu kontrol et (hiçbir şey değiştirmez)
 #   npm run deploy -- logs         PM2 loglarını izle
+#
+# Sunucunun `.env`'i deploy ile gönderilmez: sunucuda elle oluşturulur ve düzenlenir
+# (`.env.example`'dan; izin 600). sync onu silmez/ezmez.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -17,8 +19,6 @@ cd "$(dirname "$0")/.."
 : "${DEPLOY_DIR:?deploy/deploy.env içinde DEPLOY_DIR tanımlı değil}"
 
 CMD=${1:-all}
-WITH_ENV=0
-[[ ${2:-} == --env ]] && WITH_ENV=1
 
 # Sunucuda nvm ile kurulmuş node/pm2 etkileşimsiz SSH'ta PATH'e girmez; önce yükle.
 REMOTE_PRELUDE='set -euo pipefail; [ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"; cd '"$DEPLOY_DIR"
@@ -35,18 +35,12 @@ sync() {
     --exclude 'deploy/deploy.env' --exclude 'deploy/backup.env' --exclude 'logs/' \
     --exclude 'loadtest/users.json' --exclude 'openapi.json' --exclude '*.log' --exclude '.DS_Store' \
     ./ "$DEPLOY_HOST:$DEPLOY_DIR/"
-  if ((WITH_ENV)); then
-    [[ -f .env.production ]] || { echo ".env.production yok" >&2; exit 1; }
-    echo "▶ .env.production → sunucuda .env (izin 600)"
-    scp -q .env.production "$DEPLOY_HOST:$DEPLOY_DIR/.env"
-    ssh "$DEPLOY_HOST" "chmod 600 '$DEPLOY_DIR/.env'"
-  fi
 }
 
 release() {
   echo "▶ Yayına alınıyor"
   remote '
-    [ -f .env ] || { echo "Sunucuda .env yok: npm run deploy -- sync --env" >&2; exit 1; }
+    [ -f .env ] || { echo "Sunucuda .env yok: .env.example dosyasından oluştur (chmod 600)" >&2; exit 1; }
     echo "  · bağımlılıklar"; npm ci --omit=dev --ignore-scripts --no-audit --no-fund --loglevel=error
     echo "  · migration";     node scripts/migrate.js
     echo "  · seed";          node scripts/seed.js
@@ -71,5 +65,5 @@ case $CMD in
   release) release ;;
   check) ssh "$DEPLOY_HOST" "bash -s" <deploy/check-server.sh ;;
   logs) remote 'pm2 logs mochifast-api mochifast-worker --lines 50' ;;
-  *) echo "Bilinmeyen komut: $CMD (all | sync [--env] | release | check | logs)" >&2; exit 1 ;;
+  *) echo "Bilinmeyen komut: $CMD (all | sync | release | check | logs)" >&2; exit 1 ;;
 esac

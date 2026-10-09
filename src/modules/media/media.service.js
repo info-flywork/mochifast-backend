@@ -5,7 +5,7 @@ import { PURPOSES, ownerKey, processImage, storagePrefix } from './media.pipelin
 
 /**
  * Medya: yükleme, imzalı URL ile sunma ve silme (docs/backend/08-medya-bunny.md).
- * Kullanıcı fotoğrafları yalnızca private zone'a yazılır; yanıtlara imzalı URL gömülür.
+ * Öğün fotoğrafları private zone + imzalı URL; avatar public zone (kalıcı URL).
  */
 export function createMediaService({ db, storage, config, logger }) {
   const zoneOf = (m) => (m.visibility === 'public' ? storage.public : storage.private);

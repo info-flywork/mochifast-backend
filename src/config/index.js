@@ -105,11 +105,6 @@ const schema = {
     BUNNY_API_KEY: { type: 'string', default: '' },
 
     // Yapay zekâ (docs/backend/09-yapay-zeka.md). OpenAI anahtarı yoksa AI uçları 503 döner.
-    // Eski Claude ayarları (opsiyonel; fotoğraf analizi artık OpenAI kullanır).
-    ANTHROPIC_API_KEY: { type: 'string', default: '' },
-    AI_CHAT_MODEL: { type: 'string', default: '' },
-    AI_VISION_MODEL: { type: 'string', default: '' },
-    AI_SERVER_FALLBACK: { type: 'boolean', default: false },
     AI_ANALYSIS_TIMEOUT_MS: { type: 'integer', minimum: 5_000, default: 45_000 },
     // Sohbet + fotoğraf analizi: OpenAI. Anahtar + ilgili model verilmezse o özellik 503 döner.
     OPENAI_API_KEY: { type: 'string', default: '' },
@@ -124,6 +119,8 @@ const schema = {
     AI_CHAT_MAX_OUTPUT_TOKENS: { type: 'integer', minimum: 100, default: 1200 },
     AI_CHAT_FIRST_TOKEN_MS: { type: 'integer', minimum: 1_000, default: 15_000 },
     AI_CHAT_TOTAL_MS: { type: 'integer', minimum: 5_000, default: 90_000 },
+    // false: sohbet günlük kotası uygulanmaz (geliştirme / geçici kapatma).
+    AI_CHAT_QUOTA_ENABLED: { type: 'boolean', default: true },
 
     // Abonelik: RevenueCat (docs/backend/11-abonelik.md). Paywall istemcide (RevenueCat Paywalls).
     REVENUECAT_SECRET_API_KEY: { type: 'string', default: '' },
@@ -233,9 +230,6 @@ export function loadConfig(env = process.env) {
       visionModel: e.OPENAI_VISION_MODEL,
       reasoningEffort: e.OPENAI_REASONING_EFFORT || null,
       analysisTimeoutMs: e.AI_ANALYSIS_TIMEOUT_MS,
-      // Geriye dönük alanlar (Claude yolu kaldırıldı; test/eski kod için boş).
-      chatModel: e.AI_CHAT_MODEL || e.OPENAI_CHAT_MODEL,
-      serverFallback: e.AI_SERVER_FALLBACK,
     },
     push: { serviceAccount: parseServiceAccountSafe(e.FCM_SERVICE_ACCOUNT_JSON) },
     billing: {
@@ -256,6 +250,7 @@ export function loadConfig(env = process.env) {
       maxOutputTokens: e.AI_CHAT_MAX_OUTPUT_TOKENS,
       firstTokenMs: e.AI_CHAT_FIRST_TOKEN_MS,
       totalMs: e.AI_CHAT_TOTAL_MS,
+      quotaEnabled: e.AI_CHAT_QUOTA_ENABLED,
     },
   };
   return deepFreeze(config);
@@ -265,8 +260,8 @@ export function loadConfig(env = process.env) {
 const DEV_MEDIA_PATH_SECRET = 'dev-only-media-path-secret-not-for-production!';
 
 /**
- * Medya ayarları. Kullanıcı fotoğrafları yalnızca token korumalı private zone'a yazılır:
- * private pull zone public olanla aynıysa (token'sız CDN) process başlamaz.
+ * Medya ayarları. Öğün fotoğrafları token korumalı private zone'da; avatar public zone'da.
+ * private pull zone public olanla aynıysa (öğün fotoğrafları token'sız yayınlanır) process başlamaz.
  */
 function mediaConfig(e) {
   const prod = e.NODE_ENV === 'production';

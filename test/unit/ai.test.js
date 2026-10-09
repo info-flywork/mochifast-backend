@@ -1,15 +1,6 @@
-import Anthropic from '@anthropic-ai/sdk';
 import { describe, expect, it } from 'vitest';
-import {
-  FALLBACK_BETA,
-  classifyAiError,
-  costMicroUsd,
-  createAiClient,
-  isTransient,
-} from '../../src/infra/anthropic.js';
+import { costMicroUsd, priceFor } from '../../src/modules/ai/ai.cost.js';
 import { ANALYSIS_SCHEMA, normalizeAnalysis } from '../../src/modules/ai/meal-analysis.rules.js';
-
-const sdkError = (Class) => Object.create(Class.prototype);
 
 const meal = (overrides = {}) => ({
   isFood: true,
@@ -86,18 +77,7 @@ describe('analiz doğrulaması (09 §3.3)', () => {
   });
 });
 
-describe('Claude istemcisi', () => {
-  it('hata sınıflandırması tipli SDK sınıflarıyla', () => {
-    expect(classifyAiError(sdkError(Anthropic.RateLimitError))).toBe('rate_limited');
-    expect(classifyAiError(sdkError(Anthropic.APIConnectionTimeoutError))).toBe('timeout');
-    expect(classifyAiError(sdkError(Anthropic.APIConnectionError))).toBe('connection');
-    expect(classifyAiError(sdkError(Anthropic.InternalServerError))).toBe('overloaded');
-    expect(classifyAiError(sdkError(Anthropic.APIUserAbortError))).toBe('aborted');
-    expect(classifyAiError(sdkError(Anthropic.BadRequestError))).toBe('permanent');
-    expect(isTransient('rate_limited')).toBe(true);
-    expect(isTransient('permanent')).toBe(false);
-  });
-
+describe('AI maliyeti', () => {
   it('maliyet: token × USD/MTok → mikro-USD', () => {
     const price = {
       inputPerMTok: 4,
@@ -116,45 +96,13 @@ describe('Claude istemcisi', () => {
     expect(costMicroUsd(usage, undefined)).toBe(0);
   });
 
-  it('yedek model parametreleri eklenir; kapatılabilir', async () => {
-    const seen = [];
-    const impl = { beta: { messages: { create: async (p) => (seen.push(p), { ok: 1 }) } } };
-    await createAiClient({ serverFallback: true }, { clientImpl: impl }).create({ model: 'm' });
-    expect(seen[0]).toMatchObject({ fallbacks: 'default', betas: [FALLBACK_BETA] });
-    await createAiClient({ serverFallback: false }, { clientImpl: impl }).create({ model: 'm' });
-    expect(seen[1].fallbacks).toBeUndefined();
-  });
-
-  it('devre kesici: 5 geçici hatadan sonra 30 sn hızlı başarısızlık; kalıcı hata saymaz', async () => {
-    let t = 0;
-    let calls = 0;
-    let error = sdkError(Anthropic.InternalServerError);
-    const impl = {
-      beta: {
-        messages: {
-          create: async () => {
-            calls += 1;
-            throw error;
-          },
-        },
-      },
-    };
-    const ai = createAiClient({ serverFallback: false }, { clientImpl: impl, now: () => t });
-    for (let i = 0; i < 5; i += 1) await expect(ai.create({})).rejects.toBe(error);
-    await expect(ai.create({})).rejects.toMatchObject({
-      code: 'UNAVAILABLE',
-      details: { reason: 'ai_circuit_open' },
-    });
-    expect(calls).toBe(5);
-    t = 31_000;
-    error = sdkError(Anthropic.BadRequestError);
-    for (let i = 0; i < 6; i += 1) await expect(ai.create({})).rejects.toBe(error);
-    expect(calls).toBe(11);
-  });
-
-  it('anahtar yoksa 503 ai_disabled', async () => {
-    const ai = createAiClient({ enabled: false });
-    expect(ai.enabled).toBe(false);
-    await expect(ai.create({})).rejects.toMatchObject({ details: { reason: 'ai_disabled' } });
+  it('fiyat: tarihli sürüm adı (OpenAI yanıtı) taban modelin fiyatını bulur; önek eşleşmez', () => {
+    const pricing = { 'gpt-4o': { inputPerMTok: 2.5 }, 'gpt-4o-mini': { inputPerMTok: 0.15 } };
+    expect(priceFor(pricing, 'gpt-4o')).toBe(pricing['gpt-4o']);
+    expect(priceFor(pricing, 'gpt-4o-2024-08-06')).toBe(pricing['gpt-4o']);
+    expect(priceFor(pricing, 'gpt-4o-mini-2024-07-18')).toBe(pricing['gpt-4o-mini']);
+    expect(priceFor(pricing, 'gpt-4.1-2025-04-14')).toBeUndefined();
+    expect(priceFor(pricing, 'gpt-4o-audio')).toBeUndefined();
+    expect(priceFor(pricing, undefined)).toBeUndefined();
   });
 });

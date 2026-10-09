@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon';
-import { costMicroUsd } from '../../infra/anthropic.js';
 import { AppError } from '../../shared/errors.js';
 import { isValidTimezone, localDate } from '../../shared/time.js';
 import { userTimezone } from '../stats/stats.repository.js';
+import { costMicroUsd, priceFor } from './ai.cost.js';
 import * as repo from './ai.repository.js';
 
 /** Kota türü → `app_config.limits` anahtarları (ücretsiz, premium). */
@@ -19,7 +19,14 @@ const BUDGET_CACHE_SEC = 60;
  * gün), global maliyet sigortası ve kullanım kaydı. Değerler `app_config`'ten okunur (deploy'suz
  * ayarlanır).
  */
-export function createAiGate({ db, catalog, cache, logger, entitlements }) {
+export function createAiGate({
+  db,
+  catalog,
+  cache,
+  logger,
+  entitlements,
+  chatQuotaEnabled = true,
+}) {
   const unpriced = new Set();
   async function settings() {
     const config = await catalog.appConfig('all');
@@ -83,8 +90,12 @@ export function createAiGate({ db, catalog, cache, logger, entitlements }) {
       if (features[FEATURE_KEYS[kind]] === false) {
         throw new AppError('UNAVAILABLE', { details: { reason: 'feature_disabled' } });
       }
-      const limit = limitOf(limits, kind, isPremium);
       const { today, resetAt } = await zone(userId);
+      // Sohbet kotası kapalıysa sayaç düşülmez; limit uygulanmaz.
+      if (kind === 'chat' && chatQuotaOff(features, chatQuotaEnabled)) {
+        return { localDate: today, used: 0, limit: null, resetAt };
+      }
+      const limit = limitOf(limits, kind, isPremium);
       const used = await repo.incrementQuota(db, userId, today, kind);
       if (used > limit) {
         await repo.decrementQuota(db, userId, today, kind);
@@ -109,9 +120,15 @@ export function createAiGate({ db, catalog, cache, logger, entitlements }) {
     /** GET /v1/chat/quota ve /v1/ai/quota. */
     async status(userId, options = {}) {
       const isPremium = options.isPremium ?? (await gate.isPremium(userId));
-      const [{ limits }, { today, resetAt }] = await Promise.all([settings(), zone(userId)]);
+      const [{ limits, features }, { today, resetAt }] = await Promise.all([
+        settings(),
+        zone(userId),
+      ]);
       const used = await repo.quotaUsage(db, userId, today);
       const entry = (kind) => {
+        if (kind === 'chat' && chatQuotaOff(features, chatQuotaEnabled)) {
+          return { used: used[kind] ?? 0, limit: null, remaining: null, resetAt };
+        }
         const limit = limitOf(limits, kind, isPremium);
         return {
           used: used[kind] ?? 0,
@@ -127,7 +144,7 @@ export function createAiGate({ db, catalog, cache, logger, entitlements }) {
     async recordUsage(userId, feature, message) {
       const { pricing } = await settings();
       const usage = message?.usage ?? {};
-      const price = pricing[message?.model];
+      const price = priceFor(pricing, message?.model);
       // Fiyatı tanımsız model (ör. yedek model, yeni sohbet modeli): maliyet 0 sayılır, bir kez uyarılır.
       if (!price && message?.model && !unpriced.has(message.model)) {
         unpriced.add(message.model);
@@ -145,3 +162,9 @@ export function createAiGate({ db, catalog, cache, logger, entitlements }) {
 }
 
 const toApi = (kind) => (kind === 'photo_analysis' ? 'photoAnalysis' : kind);
+
+/** Env kapalıysa veya `features.chatQuota === false` ise sohbet kotası yok. */
+function chatQuotaOff(features, chatQuotaEnabled) {
+  if (chatQuotaEnabled === false) return true;
+  return features?.chatQuota === false;
+}

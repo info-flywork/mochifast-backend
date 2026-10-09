@@ -40,7 +40,6 @@ export default async function authRoutes(app) {
       user: result.user,
       isNewUser: result.outcome === 'created',
       linkedFromGuest: result.outcome === 'upgraded',
-      mergedFromGuest: result.outcome === 'merged',
       guestSecret: result.guestSecret ?? null,
     };
   };

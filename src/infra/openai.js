@@ -84,8 +84,8 @@ export function createChatClient(config, { logger, clientImpl, now = Date.now } 
       };
       try {
         const stream = await client.chat.completions.create(params(messages, { stream: true }), {
-          signal,
-          timeout: timeoutMs,
+          ...(signal ? { signal } : {}),
+          ...(Number.isFinite(timeoutMs) ? { timeout: timeoutMs } : {}),
         });
         for await (const chunk of stream) {
           const choice = chunk.choices?.[0];
@@ -112,7 +112,7 @@ export function createChatClient(config, { logger, clientImpl, now = Date.now } 
       this.guard();
       try {
         const res = await client.chat.completions.create(params(messages, { maxTokens }), {
-          timeout: timeoutMs,
+          ...(Number.isFinite(timeoutMs) ? { timeout: timeoutMs } : {}),
         });
         breaker.success();
         const choice = res.choices?.[0];
@@ -171,7 +171,9 @@ export function createVisionClient(config, { logger, clientImpl, now = Date.now 
             ...(params.response_format ? { response_format: params.response_format } : {}),
             ...(config.reasoningEffort ? { reasoning_effort: config.reasoningEffort } : {}),
           },
-          { timeout: timeoutMs },
+          {
+            ...(Number.isFinite(timeoutMs) ? { timeout: timeoutMs } : {}),
+          },
         );
         breaker.success();
         const choice = res.choices?.[0];

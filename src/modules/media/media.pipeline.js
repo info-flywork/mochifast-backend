@@ -18,7 +18,8 @@ const WEBP = { quality: 80, effort: 4 };
 
 /** Amaç → varyantlar (uzun kenar, px) ve görünürlük. */
 export const PURPOSES = Object.freeze({
-  avatar: { visibility: 'private', variants: { md: 512, thumb: 128 }, main: 'md' },
+  // Profil fotoğrafı public zone'da (ayrı private pull zone yok); öğün fotoğrafları private kalır.
+  avatar: { visibility: 'public', variants: { md: 512, thumb: 128 }, main: 'md' },
   meal_photo: {
     visibility: 'private',
     variants: { lg: 1600, md: 1024, thumb: 256 },

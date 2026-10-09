@@ -3,8 +3,8 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { loadConfig } from '../src/config/index.js';
-import { costMicroUsd } from '../src/infra/anthropic.js';
 import { createVisionClient } from '../src/infra/openai.js';
+import { costMicroUsd, priceFor } from '../src/modules/ai/ai.cost.js';
 import { PROMPT_VERSION } from '../src/modules/ai/meal-analysis.rules.js';
 import { processImage } from '../src/modules/media/media.pipeline.js';
 import { analysisRequest, interpret } from '../src/modules/ai/photo-analysis.service.js';
@@ -63,7 +63,7 @@ async function runCase(c) {
       errorCode: outcome.errorCode ?? null,
       predicted: outcome.result ?? null,
       model: message.model,
-      costMicroUsd: costMicroUsd(message.usage, pricing[message.model]),
+      costMicroUsd: costMicroUsd(message.usage, priceFor(pricing, message.model)),
     };
   } catch (err) {
     return { ...c, latencyMs: Date.now() - started, status: 'error', errorCode: err.message };

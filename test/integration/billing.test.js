@@ -6,7 +6,7 @@ import { createPushClient } from '../../src/infra/fcm.js';
 import { createRevenueCatClient } from '../../src/infra/revenuecat.js';
 import { billingServiceFor } from '../../src/modules/billing/billing.routes.js';
 import { toBin } from '../../src/shared/ids.js';
-import { createIntegrationApp, fakePush } from '../helpers/app.js';
+import { createIntegrationApp, fakePush, setFeatureFlag } from '../helpers/app.js';
 
 const mysqlUrl = inject('mysqlUrl');
 const WEBHOOK_AUTH = 'Bearer test-webhook-secret-0123456789';
@@ -58,6 +58,8 @@ describe.skipIf(!mysqlUrl)('abonelik: RevenueCat (gerçek MySQL, sahte REST)', (
   beforeAll(async () => {
     ctx = await createIntegrationApp(mysqlUrl, { REVENUECAT_WEBHOOK_AUTH: WEBHOOK_AUTH });
     ({ call } = ctx);
+    // Premium sohbet limiti kota açıkken görünür (seed'de kapalı olabilir).
+    await setFeatureFlag(ctx, 'chatQuota', true);
     jobs = billingJobs({
       db: ctx.db,
       config: ctx.config,
@@ -106,7 +108,10 @@ describe.skipIf(!mysqlUrl)('abonelik: RevenueCat (gerçek MySQL, sahte REST)', (
       willRenew: true,
       productId: 'mochifast_premium_monthly',
     });
-    expect((await get(token, '/user/me')).isPremium).toBe(true);
+    expect(await get(token, '/user/me')).toMatchObject({
+      isPremium: true,
+      entitlements: ['premium'],
+    });
     expect(
       (await call('PUT', '/plans/current', { token, body: { planCode: '18_6' } })).statusCode,
     ).toBe(200);

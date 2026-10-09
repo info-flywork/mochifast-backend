@@ -10,7 +10,6 @@ import { createWindowLimiter } from '../../shared/window-limiter.js';
 import { sessionCachePrefix } from '../../plugins/auth.js';
 import { writeAudit } from '../audit/audit.repository.js';
 import * as accountRepo from '../account/account.repository.js';
-import { GUEST_MERGE_STEPS } from './guest-merge.js';
 import * as repo from './auth.repository.js';
 
 const ER_DUP_ENTRY = 1062;
@@ -18,7 +17,6 @@ const ER_DUP_ENTRY = 1062;
 const REFRESH_GRACE_SEC = 10;
 
 /** Hesap birleştirmede kapatılan misafirin silinmesine kalan süre (05 §11). */
-const GUEST_RETIRED_DAYS = 30;
 
 /**
  * Kimlik doğrulama iş kuralları (docs/backend/04-api.md §1, 06-guvenlik.md §2, 05-is-kurallari.md §11).
@@ -109,18 +107,6 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
       locale: localeOf(input, meta),
       timezone: timezoneOf(input, meta),
     });
-  }
-
-  /** Misafir/terk edilen hesabı kapatır: installId ile girilemez, oturumları iptal, 30 gün sonra silinir. */
-  async function retireGuest(conn, guestId) {
-    await repo.setUserStatus(db, conn, guestId, 'pending_deletion');
-    await accountRepo.insertDeletionRequest(db, conn, {
-      userId: guestId,
-      source: 'guest_retired',
-      scheduledFor: new Date(Date.now() + GUEST_RETIRED_DAYS * 86_400_000),
-    });
-    await repo.deleteGuestIdentities(db, conn, guestId);
-    await repo.revokeUserSessions(db, conn, guestId, 'account_switched');
   }
 
   /**
@@ -222,7 +208,7 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
     /**
      * Firebase (Apple/Google) ile giriş, kayıt ya da misafir yükseltme.
      * @param currentUser geçerli misafir oturumu varsa request.user
-     * @returns { outcome, token, user } — outcome: created | login | upgraded | switched | merged
+     * @returns { outcome, token, user } — outcome: created | login | upgraded | switched
      */
     async register(input, meta, currentUser) {
       if (input.provider === 'guest') {
@@ -259,19 +245,12 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
             await admitExisting(conn, existing, input, meta);
             userId = existing.userId;
             outcome = 'login';
+            // Misafir oturumu varken başka hesaba bağlı kimlik: o hesaba geçilir. Hesap
+            // birleştirme yok, misafir silinmez (kullanıcı kararı): cihazda kalıcı ayrı hesaptır,
+            // yalnızca oturumu kapanır; "misafir olarak devam et" aynı misafiri açar.
             if (guestUser && guestUser.id !== userId) {
-              if (input.mergeGuest === undefined) {
-                throw new AppError('ACCOUNT_LINK_CONFLICT', {
-                  details: { options: ['switch_account', 'merge'] },
-                });
-              }
-              if (input.mergeGuest) {
-                for (const step of GUEST_MERGE_STEPS) {
-                  await step(conn, { db, fromUserId: guestUser.id, toUserId: userId });
-                }
-              }
-              await retireGuest(conn, guestUser.id);
-              outcome = input.mergeGuest ? 'merged' : 'switched';
+              await repo.revokeUserSessions(db, conn, guestUser.id, 'account_switched');
+              outcome = 'switched';
             }
             await repo.touchIdentity(db, conn, existing.id, identity);
           } else if (guestUser) {

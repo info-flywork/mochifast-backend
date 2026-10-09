@@ -12,6 +12,7 @@ export const aiGateFor = memoizeByDeps((app) =>
     cache: app.deps.cache,
     logger: app.log,
     entitlements: app.deps.entitlements,
+    chatQuotaEnabled: app.config.chatAi.quotaEnabled,
   }),
 );
 

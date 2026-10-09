@@ -18,7 +18,6 @@
     "ACTIVE_FAST_EXISTS": "You already have an active fast.",
     "FAST_OVERLAP": "This fast overlaps with another one.",
     "IDEMPOTENCY_KEY_REUSED": "This request was already sent with different data.",
-    "ACCOUNT_LINK_CONFLICT": "This sign-in is already linked to another MochiFast account.",
     "ACCOUNT_PENDING_DELETION": "This account is scheduled for deletion. Do you want to restore it?",
     "REPLY_IN_PROGRESS": "Mochi is still answering. Please wait a moment.",
     "GONE": "This account is no longer available.",

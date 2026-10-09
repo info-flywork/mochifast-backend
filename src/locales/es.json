@@ -18,7 +18,6 @@
     "ACTIVE_FAST_EXISTS": "Ya tienes un ayuno activo.",
     "FAST_OVERLAP": "Este ayuno se solapa con otro.",
     "IDEMPOTENCY_KEY_REUSED": "Esta solicitud ya se envió con otros datos.",
-    "ACCOUNT_LINK_CONFLICT": "Este inicio de sesión ya está vinculado a otra cuenta de MochiFast.",
     "ACCOUNT_PENDING_DELETION": "Esta cuenta está programada para eliminarse. ¿Quieres restaurarla?",
     "REPLY_IN_PROGRESS": "Mochi todavía está respondiendo. Espera un momento.",
     "GONE": "Esta cuenta ya no está disponible.",

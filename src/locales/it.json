@@ -18,7 +18,6 @@
     "ACTIVE_FAST_EXISTS": "Hai già un digiuno in corso.",
     "FAST_OVERLAP": "Questo digiuno si sovrappone a un altro.",
     "IDEMPOTENCY_KEY_REUSED": "Questa richiesta è già stata inviata con dati diversi.",
-    "ACCOUNT_LINK_CONFLICT": "Questo accesso è già collegato a un altro account MochiFast.",
     "ACCOUNT_PENDING_DELETION": "Questo account è in attesa di eliminazione. Vuoi ripristinarlo?",
     "REPLY_IN_PROGRESS": "Mochi sta ancora rispondendo. Attendi un momento.",
     "GONE": "Questo account non è più disponibile.",

@@ -67,17 +67,20 @@ describe.skipIf(!mysqlUrl)('medya: avatar, öğün fotoğrafı, imzalı URL (ger
     const u = new URL(url);
     return ctx.app.inject({ method: 'GET', url: u.pathname + u.search });
   };
-  const fileOf = (url) =>
+  const privateFileOf = (url) =>
     join(ctx.mediaDir, 'private', new URL(url).pathname.slice('/media-files/'.length));
+  const publicFileOf = (url) =>
+    join(ctx.mediaDir, 'public', new URL(url).pathname.slice('/media-public/'.length));
 
-  it("avatar: yükle → imzalı URL, EXIF yok; token'sız/bozuk/süresi geçmiş 403; değişince eskisi silinir", async () => {
+  it('avatar: yükle → public URL, EXIF yok; değişince eskisi silinir', async () => {
     const { token } = await newUser();
     const res = await upload('PUT', '/user/me/avatar', token, await photo());
     expect(res.statusCode).toBe(200);
     const avatar = res.json().data.avatar;
     expect(avatar.url).toMatch(
-      /^http:\/\/media\.test\/media-files\/u\/[0-9a-f]{20}\/avatar\/[\w-]+_512\.webp\?token=[\w-]+&expires=\d+$/,
+      /^http:\/\/media\.test\/media-public\/u\/[0-9a-f]{20}\/avatar\/[\w-]+_512\.webp$/,
     );
+    expect(avatar.expiresAt).toBeNull();
     expect(Object.keys(avatar.variants).sort()).toEqual(['md', 'thumb']);
     expect(avatar).toMatchObject({ width: 512, height: 366 });
     expect(avatar.blurhash).toBeTruthy();
@@ -88,19 +91,16 @@ describe.skipIf(!mysqlUrl)('medya: avatar, öğün fotoğrafı, imzalı URL (ger
     const file = await download(avatar.url);
     expect(file.statusCode).toBe(200);
     expect(file.headers['content-type']).toBe('image/webp');
+    expect(file.headers['cache-control']).toMatch(/^public/);
     const meta = await sharp(file.rawPayload).metadata();
     expect(meta.exif).toBeUndefined();
     expect(file.rawPayload.includes(Buffer.from('iPhone'))).toBe(false);
 
+    // Public zone: token gerekmez.
     const u = new URL(avatar.url);
-    expect((await ctx.app.inject({ method: 'GET', url: u.pathname })).statusCode).toBe(403);
-    u.searchParams.set('token', 'x'.repeat(43));
-    expect((await download(u.toString())).statusCode).toBe(403);
-    const expired = new URL(avatar.url);
-    expired.searchParams.set('expires', String(Math.floor(Date.now() / 1000) - 60));
-    expect((await download(expired.toString())).statusCode).toBe(403);
+    expect((await ctx.app.inject({ method: 'GET', url: u.pathname })).statusCode).toBe(200);
 
-    const oldFile = fileOf(avatar.url);
+    const oldFile = publicFileOf(avatar.url);
     expect(await exists(oldFile)).toBe(true);
     const second = (
       await upload('PUT', '/user/me/avatar', token, await photo({ r: 1, g: 2, b: 3 }))
@@ -110,7 +110,7 @@ describe.skipIf(!mysqlUrl)('medya: avatar, öğün fotoğrafı, imzalı URL (ger
 
     expect((await ctx.call('DELETE', '/user/me/avatar', { token })).statusCode).toBe(200);
     expect((await ctx.call('GET', '/user/me', { token })).json().data.avatarUrl).toBeNull();
-    expect(await exists(fileOf(second.url))).toBe(false);
+    expect(await exists(publicFileOf(second.url))).toBe(false);
   });
 
   it('öğün fotoğrafı: yükle (yineleme aynı kaydı döner) → öğüne bağla → listede imzalı URL', async () => {
@@ -196,7 +196,7 @@ describe.skipIf(!mysqlUrl)('medya: avatar, öğün fotoğrafı, imzalı URL (ger
     const status = async (id) =>
       (await ctx.db.one('SELECT status FROM media WHERE id = :id', { id: toBin(id) })).status;
     expect(await status(loose.id)).toBe('deleted');
-    expect(await exists(fileOf(loose.url))).toBe(false);
+    expect(await exists(privateFileOf(loose.url))).toBe(false);
     expect(await status(kept.id)).toBe('ready');
     expect((await ctx.call('GET', `/media/${loose.id}`, { token })).statusCode).toBe(404);
   });

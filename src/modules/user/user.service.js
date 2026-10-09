@@ -75,10 +75,13 @@ export function createUserService({ db, cache, catalog, plans, stats, media, ent
     async getMe(userId) {
       const row = await requireUser(userId);
       const dto = toMeDto(row);
+      const isPremium = (await entitlements?.isPremium(userId)) ?? false;
       return {
         ...dto,
         avatarUrl: (await media?.avatarUrl(userId)) ?? null,
-        isPremium: (await entitlements?.isPremium(userId)) ?? false,
+        isPremium,
+        // Ürün düzeyindeki ad (RevenueCat entitlement kimliğinden bağımsız; 04 §3).
+        entitlements: isPremium ? ['premium'] : [],
         requiredConsents: row.onboarding_completed_at ? await requiredConsents(userId) : [],
       };
     },

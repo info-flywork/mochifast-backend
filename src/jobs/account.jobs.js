@@ -121,13 +121,8 @@ export function accountJobs({ db, storage, config, logger, crypto, firebaseUsers
       }
     },
 
-    /** Günlük: misafir saklama süreleri + süresi dolan kayıtlar (06 §8.4). */
+    /** Günlük: süresi dolan kayıtlar (06 §8.4). Misafir hesaplar süreyle silinmez. */
     async accountRetention() {
-      const retired = await retention.scheduleRetiredGuests();
-      const inactive = await retention.scheduleInactiveGuests();
-      if (retired + inactive > 0) {
-        logger.info({ retired, inactive }, 'misafir hesaplar silme için planlandı');
-      }
       await retention.purgeExpiredRecords();
     },
   };

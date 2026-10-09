@@ -11,7 +11,7 @@ Redis ya da Docker **gerekmez**.
 | PM2 süreçleri  | `mochifast-api`, `mochifast-worker`                                          |
 | Sunucu klasörü | `deploy/deploy.env` → `DEPLOY_DIR` (varsayılan `/var/www/mochifast-backend`) |
 
-Alan adı ya da port değişirse üç yeri birlikte güncelle: `.env.production` (`PORT`, `PUBLIC_BASE_URL`), `deploy/nginx/mochifast-api.conf` (`server_name`, `upstream`).
+Alan adı ya da port değişirse üç yeri birlikte güncelle: sunucudaki `.env` (`PORT`, `PUBLIC_BASE_URL`), `deploy/nginx/mochifast-api.conf` (`server_name`, `upstream`).
 
 ## İlk kurulum (bir kez)
 
@@ -40,11 +40,24 @@ Bakılacaklar:
 - **rsync** olmalı. Yoksa: `apt install rsync` / `dnf install rsync`.
 - **3070** ve **9470** portları boş olmalı.
 
-### 4. Kodu ve `.env`'i gönder, yayına al
+### 4. Kodu gönder, sunucuda `.env`'i oluştur, yayına al
 
 ```bash
-npm run deploy -- sync --env   # kod + .env.production → sunucuda .env (izin 600)
-npm run deploy -- release      # npm ci → migrate → pm2 → /health/ready kontrolü
+npm run deploy -- sync      # yalnızca kod (sunucudaki .env'e dokunmaz)
+```
+
+Sunucuda `.env`'i `.env.example`'dan oluştur ve üretim değerlerini gir (`NODE_ENV=production`, `PORT`,
+`PUBLIC_BASE_URL`, `MEDIA_DRIVER=bunny`, `TRUST_PROXY`, anahtarlar…). Deploy bu dosyayı göndermez, silmez, ezmez:
+
+```bash
+ssh root@SUNUCU_IP
+cd /var/www/mochifast-backend && cp .env.example .env && chmod 600 .env && nano .env
+```
+
+Sonra bilgisayarından:
+
+```bash
+npm run deploy -- release   # npm ci → migrate → pm2 → /health/ready kontrolü
 ```
 
 `release` sonunda `✔ /health/ready 200` ve PM2 listesini görmelisin.
@@ -84,10 +97,10 @@ API tek process çalıştığı için yeniden başlarken 1–2 sn kesinti olur. 
 
 ## `.env` değiştirmek
 
-`.env.production`'ı bilgisayarında düzenle, sonra:
+Sunucudaki `.env`'i sunucuda düzenle (`nano /var/www/mochifast-backend/.env`), sonra:
 
 ```bash
-npm run deploy -- sync --env && npm run deploy -- release
+npm run deploy -- release
 ```
 
 ## Sorun giderme

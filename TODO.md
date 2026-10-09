@@ -11,11 +11,11 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
       öğün, analiz) API'ye ulaşmaz. `deploy/nginx/mochifast-api.conf`'taki iki `location` bloğunu (yükleme yolları
       11 MB, sohbet SSE `proxy_buffering off` + 120 sn) sunucudaki dosyaya ekle (certbot'un eklediği 443 bloğu dahil),
       sonra `nginx -t && systemctl reload nginx`.
-- [ ] **Bunny private zone kur** (bkz. §2). Kurulmadan **üretim açılmaz**: `.env.production`'da
+- [ ] **Bunny private zone kur** (bkz. §2). Kurulmadan **üretim açılmaz**: sunucudaki `.env`'de
       `MEDIA_DRIVER=bunny` ve private zone ayarları zorunlu (kullanıcı fotoğrafları token'sız CDN'e yazılmasın diye
       bilinçli kilit).
 - [ ] **Paylaşılan şifreleri değiştir:** DB şifresi ve Bunny storage şifresi sohbette açık yazıldı. Değiştirip
-      `.env` / `.env.production`'a yeni değerleri koy.
+      yerel `.env`'e ve sunucudaki `.env`'e yeni değerleri koy.
 - [ ] **Branch'i push'la / merge et:** `feat/backend-f0-f1` (F0–F10 commit'leri) henüz uzakta yok.
 - [ ] **Sunucuda deploy:** `npm ci` → `npm run migrate` (0020'ye kadar) → `npm run seed` → `npm run stats:recompute`
       → PM2'de API **ve worker** yeniden başlat (yeni kuyruklar: `stats`, `media`, `ai`, `billing`, `notifications`, `account`; worker metrikleri `METRICS_WORKER_PORT`).
@@ -43,7 +43,9 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
 - [ ] **Yük testi** staging'de (`loadtest/README.md`); k6: `brew install k6`.
 - [ ] **Mağaza formları:** App Store gizlilik etiketi + Play Veri güvenliği → `../fastingapp/docs/backend/15-magaza-gizlilik.md`.
 
-## 1. `.env` ve `.env.production` — boş alanlar (dosyalara eklendi, değerleri sen gir)
+## 1. `.env` — boş alanlar (yerelde ve sunucudaki `.env`'de; değerleri sen gir)
+
+Tek ortam dosyası `.env` (şablon `.env.example`). Sunucunun `.env`'i sunucuda tutulur; deploy göndermez.
 
 | Anahtar                          | Nereden                                                                                                                                                                    | Boşken ne olur                                                     |
 | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
@@ -52,8 +54,7 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
 | `BUNNY_PRIVATE_PULL_ZONE_HOST`   | Private zone'a bağlı **yeni** pull zone (ör. `mochifast-private.b-cdn.net`)                                                                                                | 〃                                                                 |
 | `BUNNY_TOKEN_AUTH_KEY`           | **Private** pull zone → Security → Token Authentication → URL Token Authentication Key (şu an boş)                                                                         | 〃 (imzalı URL doğrulanamaz)                                       |
 | `BUNNY_API_KEY`                  | Bunny → Account → API key (şu an boş)                                                                                                                                      | Avatar değişince / silmede CDN purge yapılmaz (dosya yine silinir) |
-| `ANTHROPIC_API_KEY`              | console.anthropic.com                                                                                                                                                      | Fotoğraftan kalori analizi 503                                     |
-| `OPENAI_API_KEY`                 | platform.openai.com                                                                                                                                                        | Coach Mochi sohbeti 503                                            |
+| `OPENAI_API_KEY`                 | platform.openai.com                                                                                                                                                        | Coach Mochi sohbeti ve fotoğraf analizi 503                        |
 | `OPENAI_CHAT_MODEL`              | Kullanmak istediğin OpenAI sohbet modeli (varsayılan yok, bilinçli)                                                                                                        | Sohbet 503                                                         |
 | `OPENAI_REASONING_EFFORT`        | Yalnızca reasoning model seçersen: `minimal\|low\|medium\|high`                                                                                                            | Gönderilmez (normal modelde boş kalsın)                            |
 | `REVENUECAT_SECRET_API_KEY`      | RevenueCat → Project settings → API keys → **Secret** key (`sk_…`)                                                                                                         | Herkes ücretsiz; `/subscription/sync` 503                          |
@@ -93,7 +94,7 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
 - [x] Google girişi: SHA'lar eklendi, Android dosyası yenilendi; iOS'a `CLIENT_ID` / `REVERSED_CLIENT_ID`, URL şeması ve `GIDClientID` eklendi.
       Release keystore ve Play App Signing SHA'ları da ekli olmalı (yayından önce kontrol).
 - [x] 2 adımlı doğrulama açık. Android'de Apple girişi yok (karar).
-- [x] Servis hesabı → `FCM_SERVICE_ACCOUNT_JSON` (`.env` ve `.env.production`, base64). FCM'e kimlik doğrulama denendi, çalışıyor.
+- [x] Servis hesabı → `FCM_SERVICE_ACCOUNT_JSON` (`.env`, base64). FCM'e kimlik doğrulama denendi, çalışıyor.
       İndirilen JSON'u (`Downloads`) parola yöneticisine taşı ve sil; sızarsa Firebase → Service accounts'tan anahtarı iptal et.
 - [ ] **APNs auth key (.p8) → Firebase:** Project settings → Cloud Messaging → Apple app configuration →
       APNs Authentication Key → **development ve production satırlarının ikisine de** aynı dosyayı Upload (Key ID `Y8B7RXY4QT`, Team ID `JK42R39DT5`). .p8'i repoya koyma,
@@ -103,7 +104,7 @@ Sırası önemli olanlar üstte. Ayrıntılar `../fastingapp/docs/backend/` alt�
 ### `app_config` (DB'de; yönetim paneli F10'a kadar SQL ya da seed + `--overwrite-config`)
 
 - [ ] `ai.pricing`: **OpenAI sohbet modelinin** fiyatını ekle (`{"<model>": {"inputPerMTok", "outputPerMTok", "cacheReadPerMTok", "cacheWritePerMTok"}}`).
-      Yoksa sohbet maliyeti 0 görünür ve günlük bütçe sigortası sohbeti saymaz. Claude yedek modeli (fallback) kullanılırsa onun fiyatı da.
+      Yoksa sohbet maliyeti 0 görünür ve günlük bütçe sigortası sohbeti saymaz.
 - [ ] `ai.daily_budget_usd` (varsayılan 50) — gerçek bütçene göre ayarla.
 - [ ] `limits` — ücretsiz/premium günlük kotalar (sohbet 3/100, fotoğraf 2/30): karar #7.
 - [ ] `legal.termsUrl` / `legal.privacyUrl` — şu an `null`; kullanım şartları ve gizlilik metni URL'leri.

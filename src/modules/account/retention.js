@@ -1,12 +1,6 @@
-import { fromBin } from '../../shared/ids.js';
-import { clearPushTokens, revokeUserSessions } from '../auth/auth.repository.js';
-import * as notify from '../notifications/notify.js';
-import * as repo from './account.repository.js';
-
 /** Saklama süreleri (docs/backend/06-guvenlik.md §8.4, 14 #11). */
+/** Misafir hesaplar süreyle silinmez: cihazda kalıcıdır (kullanıcı kararı 2026-10-08). */
 export const RETENTION = Object.freeze({
-  inactiveGuestDays: 90,
-  retiredGuestDays: 30,
   softDeletedDays: 30,
   readNotificationDays: 90,
   auditMonths: 13,
@@ -16,7 +10,6 @@ export const RETENTION = Object.freeze({
 
 const BATCH = 1_000;
 const USER_BATCH = 200;
-const DAY_MS = 86_400_000;
 
 /** Yumuşak silinen kayıtlar (deleted_at) bu süreden sonra kalıcı silinir. */
 const SOFT_DELETE_TABLES = Object.freeze([
@@ -45,58 +38,6 @@ async function deleteInBatches(db, sql, params = {}) {
  */
 export function createRetention({ db, logger }) {
   return {
-    /** Hesap birleştirmede kapatılan misafirler: kapanıştan 30 gün sonra silinir (05 §11). */
-    async scheduleRetiredGuests() {
-      const rows = await db.many(
-        `SELECT u.id, u.updated_at FROM users u
-          WHERE u.status = 'pending_deletion'
-            AND NOT EXISTS (SELECT 1 FROM account_deletion_requests r
-                             WHERE r.user_id = u.id AND r.status IN ('scheduled', 'failed'))
-          LIMIT :limit`,
-        { limit: String(USER_BATCH) },
-      );
-      for (const r of rows) {
-        await db.withTransaction((conn) =>
-          repo.insertDeletionRequest(db, conn, {
-            userId: fromBin(r.id),
-            source: 'guest_retired',
-            scheduledFor: new Date(r.updated_at.getTime() + RETENTION.retiredGuestDays * DAY_MS),
-          }),
-        );
-      }
-      return rows.length;
-    },
-
-    /** 90 gündür kullanılmayan misafir hesaplar (aktif aboneliği olan hariç). */
-    async scheduleInactiveGuests() {
-      const rows = await db.many(
-        `SELECT u.id FROM users u
-          WHERE u.status = 'active' AND u.is_guest = 1
-            AND COALESCE(u.last_active_at, u.created_at) < DATE_SUB(NOW(3), INTERVAL :days DAY)
-            AND NOT EXISTS (SELECT 1 FROM subscriptions s
-                             WHERE s.user_id = u.id
-                               AND s.status IN ('active', 'in_grace', 'billing_issue')
-                               AND (s.expires_at IS NULL OR s.expires_at > NOW(3)))
-          LIMIT :limit`,
-        { days: RETENTION.inactiveGuestDays, limit: String(USER_BATCH) },
-      );
-      for (const r of rows) {
-        const userId = fromBin(r.id);
-        await db.withTransaction(async (conn) => {
-          await repo.insertDeletionRequest(db, conn, {
-            userId,
-            source: 'inactive_guest',
-            scheduledFor: new Date(),
-          });
-          await repo.setUserStatus(db, conn, userId, 'pending_deletion');
-          await revokeUserSessions(db, conn, userId, 'account_deleted');
-          await clearPushTokens(db, conn, userId, null);
-          await notify.cancel(db, conn, userId, '');
-        });
-      }
-      return rows.length;
-    },
-
     /** Yumuşak silinmiş kayıtlar, okunmuş bildirimler, eski denetim izi ve kapanmış oturumlar. */
     async purgeExpiredRecords() {
       const counts = {};

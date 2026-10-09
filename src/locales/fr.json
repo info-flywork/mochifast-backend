@@ -18,7 +18,6 @@
     "ACTIVE_FAST_EXISTS": "Tu as déjà un jeûne en cours.",
     "FAST_OVERLAP": "Ce jeûne chevauche un autre jeûne.",
     "IDEMPOTENCY_KEY_REUSED": "Cette requête a déjà été envoyée avec d'autres données.",
-    "ACCOUNT_LINK_CONFLICT": "Cette connexion est déjà liée à un autre compte MochiFast.",
     "ACCOUNT_PENDING_DELETION": "Ce compte doit être supprimé. Veux-tu le restaurer ?",
     "REPLY_IN_PROGRESS": "Mochi répond encore. Patiente un instant.",
     "GONE": "Ce compte n'est plus disponible.",

@@ -18,7 +18,7 @@ curl -s localhost:3070/health/ready
 1. `pm2 ls`: `mochifast-api` `errored` / sürekli yeniden başlıyorsa `pm2 logs mochifast-api --err --lines 200`.
 2. `/health/ready` 503 ve `db` hatası → DB'ye erişim (cPanel Remote MySQL'de sunucu IP'si izinli mi, şifre değişti mi).
 3. Bellek: `max_memory_restart: 512M` döngüsü → son deploy'u geri al (aşağıda), sızıntıyı staging'de ara.
-4. Yapılandırma hatası (yeni `.env` anahtarı eksik) açılışta loglanır ve süreç çıkar → `.env.production`'ı düzelt, `npm run deploy -- sync --env && npm run deploy -- release`.
+4. Yapılandırma hatası (yeni `.env` anahtarı eksik) açılışta loglanır ve süreç çıkar → sunucudaki `.env`'i düzelt, `npm run deploy -- release`.
 
 ## 5xx artışı
 
@@ -67,7 +67,7 @@ Bütçe kapısı günlük `app_config.ai.daily_budget_usd`'de AI'yı keser (503 
 1. Kim: `SELECT user_id, feature, SUM(requests), SUM(cost_micro_usd)/1e6 FROM ai_usage_daily WHERE usage_date = UTC_DATE() GROUP BY user_id, feature ORDER BY 4 DESC LIMIT 20;`
 2. Tek kullanıcı kötüye kullanıyorsa: panelden oturumlarını kapat (`POST /v1/admin/users/:id/sessions/revoke`); gerekirse `users.status = 'banned'`.
 3. Genel artışta kotaları düşür: `PUT /v1/admin/config/limits` (`freeChatDaily`, `premiumChatDaily`…) ya da AI'yı geçici kapat: `PUT /v1/admin/config/features` (`chat: false`, `photoAnalysis: false`).
-4. Sağlayıcı panelinden (Anthropic/OpenAI) aylık harcama limiti zaten tanımlı olmalı.
+4. Sağlayıcı panelinden (OpenAI) aylık harcama limiti zaten tanımlı olmalı.
 
 ## Kötü deploy geri alma
 
@@ -114,8 +114,8 @@ RPO: saatlik yedek → ≤ 1 sa veri kaybı (cPanel MariaDB'de PITR yok). RTO he
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
 | JWT (`JWT_PRIVATE_JWK`)                          | `npm run keys:jwt` → yeni özel anahtar `JWT_PRIVATE_JWK`, açık anahtarı `JWT_PUBLIC_JWKS`'e **ekle** (eskisi kalır) → deploy → 15 dk sonra (access ömrü) eski açık anahtarı listeden çıkar → deploy                                               | Yok                               |
 | Alan şifreleme (`FIELD_ENCRYPTION_KEYS_JSON`)    | `npm run keys:field` → yeni kid'i JSON'a **ekle**, `FIELD_ENCRYPTION_ACTIVE_KID` yeni kid → deploy. Eski kayıtlar eski kid'le çözülmeye devam eder; eski anahtar **asla silinmez** (sızıntıda: yeni kid + eski verileri yeniden şifreleyen betik) | Yok                               |
-| Bunny (storage şifresi, token auth key, API key) | Panelde yenile → `.env.production` → deploy. Token key değişince eski imzalı URL'ler 403 olur; istemci yeniler                                                                                                                                    | İmzalı URL'ler ≤ 1 sa             |
-| Anthropic / OpenAI                               | Konsolda yeni anahtar → `.env.production` → deploy → eskisini iptal et                                                                                                                                                                            | Yok                               |
+| Bunny (storage şifresi, token auth key, API key) | Panelde yenile → sunucudaki `.env` → `npm run deploy -- release`. Token key değişince eski imzalı URL'ler 403 olur; istemci yeniler                                                                                                               | İmzalı URL'ler ≤ 1 sa             |
+| OpenAI                                           | Konsolda yeni anahtar → sunucudaki `.env` → `npm run deploy -- release` → eskisini iptal et                                                                                                                                                       | Yok                               |
 | RevenueCat secret / webhook auth                 | Panelde yenile; webhook Authorization değerini panel ve `.env`'de birlikte değiştir                                                                                                                                                               | Webhook birkaç dk (senkron sürer) |
 | FCM servis hesabı                                | Firebase → Service accounts → yeni anahtar → `FCM_SERVICE_ACCOUNT_JSON` (base64) → deploy → eskisini sil                                                                                                                                          | Yok                               |
 | Yönetici şifresi/TOTP                            | `npm run admin:create -- <email> --reset` ya da owner panelden                                                                                                                                                                                    | Yok                               |

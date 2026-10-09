@@ -76,8 +76,8 @@ const quotaEntry = {
   type: 'object',
   properties: {
     used: { type: 'integer' },
-    limit: { type: 'integer' },
-    remaining: { type: 'integer' },
+    limit: { type: ['integer', 'null'] },
+    remaining: { type: ['integer', 'null'] },
     resetAt: { type: 'string' },
   },
 };
