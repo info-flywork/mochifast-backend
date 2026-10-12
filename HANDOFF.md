@@ -316,15 +316,17 @@ iki satır (watch + node) göstermeli.
 
 ### 8.2 Yüksek
 
-- [ ] Çıkış / hesap değişiminde sohbet sıfırlanmıyor: B kullanıcısı A'nın konuşmasını görür, mesajı A'nın konuşmasına gider
+- [x] (`_clearHomeCache`: `ChatSessionCubit.reset`, öneriler, `FastingSessionCubit.reset`, su günü önbelleği,
+      `FastingWidgetSync.clear` / `WaterWidgetSync.clear`) Çıkış / hesap değişiminde sohbet sıfırlanmıyor: B kullanıcısı A'nın konuşmasını görür, mesajı A'nın konuşmasına gider
       (`auth_bloc.dart` `_clearHomeCache`, `ChatSessionCubit` lazy singleton). Aynı yerde `FastingSessionCubit`, su günü
       önbelleği, öneriler, ana ekran widget verileri de temizlenmiyor.
-- [ ] Plan detayında yeme penceresi yanlış (16-8 → 12:00–18:00 = 6 sa; sunucu 8 sa ister) ve diyalog değişmese bile `custom`
+- [x] (pencere = 24 − oruç saati, başlangıç sunucu `TIMING_EAT_START`; diyalogda yalnız başlangıç, bitiş hesaplanır;
+      yalnızca başlangıç değişirse `custom`) Plan detayında yeme penceresi yanlış (16-8 → 12:00–18:00 = 6 sa; sunucu 8 sa ister) ve diyalog değişmese bile `custom`
       gönderiyor → `VALIDATION_FAILED` (`plan_detail_args.dart`, `plan_detail_view_mixin.dart`).
-- [ ] OMAD / 23_1 hiç kaydedilemiyor: sunucu `defaultTiming=custom`, istemci pencere göndermiyor; `"OMAD".split('-')` → 6 sa.
-- [ ] Onboarding'de 18 yaş altı 16:8/18:6/20:4/OMAD/5:2 seçebiliyor; sunucu `minAge: 18` ile en sonda `UNSAFE_REQUEST` veriyor.
-- [ ] Adım ekranında 600 ms içinde gün değiştirilirse bugünün değeri kaybolur / düne yazılır (`steps_view_mixin.dart` `_selectStepsDate`).
-- [ ] Ana sayfa iyimser kilo hatada geri alınmıyor (`lastSummaryUnchanged` emit'i engelliyor).
+- [x] (Profil plan değişimi mevcut timing'i korur; OMAD/23_1 → `custom` + `18:00`) OMAD / 23_1 hiç kaydedilemiyor: sunucu `defaultTiming=custom`, istemci pencere göndermiyor; `"OMAD".split('-')` → 6 sa.
+- [x] (`FastingPlanOptionsList(age:)`, 18 altı yalnız 14:10 + not; profil de) Onboarding'de 18 yaş altı 16:8/18:6/20:4/OMAD/5:2 seçebiliyor; sunucu `minAge: 18` ile en sonda `UNSAFE_REQUEST` veriyor.
+- [x] (bekleyen kayıt tarih+değerle yakalanır, gün değişmeden gönderilir; PUT yanıtından kcal/km/dk) Adım ekranında 600 ms içinde gün değiştirilirse bugünün değeri kaybolur / düne yazılır (`steps_view_mixin.dart` `_selectStepsDate`).
+- [x] (`_locallyEdited` → yanıt aynı olsa da emit; aynı kilo da kaydedilir) Ana sayfa iyimser kilo hatada geri alınmıyor (`lastSummaryUnchanged` emit'i engelliyor).
 
 ### 8.3 Orta
 
