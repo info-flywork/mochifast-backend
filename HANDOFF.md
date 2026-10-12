@@ -242,5 +242,26 @@ iki satır (watch + node) göstermeli.
 
 ### 7.5 Hâlâ sahte veri
 
-- [ ] Tamamen: Mochi World (`/v1/world`), Insights (`/v1/insights/*`), challenge kartı (`8954` sabit, Katıl boş → `featuredChallenge` + `POST /challenges/:code/join`), metabolik kart (faz 7'ye kadar gizle), SSS (`/catalog/faq`), zorlanma akışı (`/catalog/struggle`, `POST /fasts/:id/struggles`).
-- [ ] Kısmen: adımlar (HealthKit/Fit yok, elle giriş kullanılmıyor), uyku kaydı yok, açlık hafta şeridi sabit + değerlendirme hatasında uydurma sonuç + `recommendations`/`safetyFlag` yok sayılıyor, hızlı kcal gönderilmiyor, forecast eğrisi, plan kataloğu (`/catalog/plans`), profil push/sağlık anahtarları (`/user/settings`), kilo kartı sahte 70 kg, sohbet öneri çipleri (`/chat/suggestions`), onboarding pazarlama sayıları (`/app/config.marketing`).
+- [x] Challenge kartı: `HomeSummary.featuredChallenge` (`lib/domain/gamification/challenges_repository.dart`), sayı/avatarlar sunucudan,
+      Katıl → `POST /challenges/:code/join` (402 → paywall), katıldıysa "x/y tamamlandı"; challenge yoksa kart gizli.
+- [x] Metabolik kart gizlendi (değerler sabitti; faz 7). Kilo kartı veri yoksa "–" (sahte 70 kg kalktı).
+- [x] Plan kataloğu: `PlanCatalogRepository` (`/catalog/plans`, splash'te yüklenir) → `PlansCardData.isLocked` ve
+      `planRequiresSafetyAck` sunucu bayrağından (yüklenemezse yerel yedek). Kart tasarımı/satırlar istemcide kaldı.
+- [x] Açlık: hafta şeridi `/hunger-checkins/summary.week`; değerlendirme hatasında uydurma sonuç yerine snackbar; sonuç ekranı
+      sunucu `recommendations` + `safetyFlag` uyarısı (`hunger_result_page.safety_note`).
+- [x] Adımlar: elle giriş (`_StepsControls`) ekranda (yalnızca bugün), PUT'lar 600 ms birleştirilir, yanıt haftayı ezmez, hata →
+      snackbar + yeniden yükleme; ekran özetten tohumlanır. HealthKit/Google Fit hâlâ yok.
+- [x] Uyku: başlıkta "+" → yatış/kalkış (`AppDialogs.showSleepTime`) → `POST /sleep`; hafta etiketleri tarihten (son 7 gün).
+- [x] Kalori: elle kcal → "X kcal ekle" → `POST /meals` (`source: quickKcal`).
+- [x] Sohbet önerileri `/chat/suggestions` (dile göre önbellek). SSS `/catalog/faq` (`ContentRepository`).
+- [x] Zorlanma: ipucu seçilince `POST /fasts/:id/struggles` (oruç yoksa `/struggles`) — forecast "en zor saat" bunlardan.
+      Zorlanma ekranı metinleri hâlâ yerel çeviri (`/catalog/struggle` bağlanmadı).
+- [x] Profil push / sağlık anahtarları `GET/PATCH /user/settings` (iyimser, hata → geri al).
+- [x] Mochi World `/v1/world` (`WorldRepository`): bölgeler (seviye sunucudan), sağlık, dünya ilerlemesi, seviye, hafta.
+      Not: son seviyede hedef = en büyük eşik ("12.5/10 kg" gibi aşılmış görünebilir).
+- [x] Insights: kategori başlık/açıklama `/insights/categories`, detay `/insights/articles?category=` → `/articles/:slug`
+      (kicker, başlık, alıntı, ipucu, bölümler). Görseller/renkler yerel; yüklenene kadar yerel metin.
+- [x] Forecast grafiği: eğri şablonu zorluğa göre, tepe `toughestAt` saatine kaydırılır (saatlik risk verisi sunucuda yok).
+- [x] GoodCompany sayıları `/app/config.marketing`. (Profil premium kartındaki "200K+" hâlâ çeviri metni.)
+- [ ] Kalan: HealthKit/Google Fit, zorlanma metinleri kataloğu, oruç geçmişi ekranı, öğün silme, bildirim sayfalama,
+      onboarding seçenekleri kataloğu (`/catalog/onboarding-options`).
