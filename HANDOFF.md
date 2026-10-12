@@ -172,6 +172,8 @@ Flutter değişiklikleri commit edilmez (kullanıcı eder).
 
 - [x] AI rızası: sessiz grant kaldırıldı → `AiConsent.ensure` + `AppDialogs.showAiProcessingConsent` (sohbet gönderimi /
       kalori kamerası); `GET/POST /user/consents` (`aiProcessing`).
+      Onboarding gövdesi artık `consents.aiProcessing` göndermez (önceden `true` gidiyordu → diyalog hiç çıkmazdı).
+      HealthKit yalnızca okuma (`NSHealthUpdateUsageDescription` kaldırıldı, `HealthDataAccess.READ` açık).
 - [x] Geçici ağ hatası oturumu kapatıyordu → `expired_token_interceptor.dart`: refresh yalnızca 400/401/403/410 ile reddedilirse oturum biter; ağ/5xx/429'da istek hatayla döner.
 - [x] `safetyAcknowledged` gönderilmiyordu (20_4, omad, 5_2 seçilemiyordu) → `lib/domain/fasting/plan_safety.dart` (sabit liste; katalog bağlanınca oradan), `AppDialogs.showPlanSafetyAck` (7 dil `plans.safety_ack_*`), `plan_change_flow.dart` ve Profili Düzenle plan seçimi önce uyarı gösterir, iki repository de alanı gönderir.
 - [x] Özet `plan`'ında `timing` yoktu, `applyFromSummary` planı eziyordu → backend `1858ffb`: `/user/summary.plan` artık `/plans/current` ile aynı DTO (`userPlanSchema`).
