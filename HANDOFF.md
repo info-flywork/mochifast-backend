@@ -303,7 +303,9 @@ iki satır (watch + node) göstermeli.
 
 - [x] At nalı aşamaları: `lib/presentation/fasting/fasting_arc_stages.dart` (saf mantık + `test/presentation/fasting_arc_stages_test.dart`).
       Vücut: `startHour` (0,2,5,8,12,16,18,24,48) `/ hedef saat` konumunda, hedefe kadar olanlar; yakın olanlar seyreltilir
-      (min. 0.11). Yeme: sunucu `eatingStage` kuralının sınırları (ilk %20 / en az 30 dk, son 60 dk). Ulaşılan ikon renkli,
+      (min. 0.11). Öğün sekmesi (kullanıcı kararı): 24 saatlik döngü tek yayda — başta kum saati, oruç bitişinde
+      "orucunu boz", pencerede "besle" (ilk %20 / en az 30 dk sonrası), sonda "sonraki oruç" (son 60 dk); oruçta da ilerler
+      (`mealCycleArc`). Ulaşılan ikon renkli,
       mevcut aşama hafif büyük, gelmeyen gri. Metin/görseller yerel 7 dil (`body_status.*`, `eating_window.*`).
 - [x] Üst kart mevcut aşamayı gösterir (başlık + açıklama + görsel, aşama değişince geçiş animasyonu).
 - [x] Sekme durumu gerçek duruma bağlı: oruç → vücut, yeme penceresi → öğün, ikisi yok → vücut (boşta: "Oruca hazır mısın?",
