@@ -294,3 +294,71 @@ iki satır (watch + node) göstermeli.
       `AppSyncScope` + adım ekranı senkronlar.
 - Onboarding seçenekleri **bilinçli olarak uygulamada sabit** (kullanıcı kararı 2026-10-12): kodlar sunucu enum'larıyla birebir,
   `/catalog/onboarding-options` bağlanmayacak (ilk açılışa ağ bağımlılığı eklemesin).
+
+## 8. Mantık denetimi 2026-10-12 (ikinci tur) — iş listesi
+
+Üç inceleme + oruç sekmesi. Sırayla ilerle; bitirince `[x]`. Dosya:satır bulguların ilk görüldüğü yer.
+
+### 8.1 Oruç sekmesi (kullanıcının öncelikli istediği)
+
+- [ ] At nalı aşama ikonları sabit oranlarda (`fasting_view.dart` `_FastingArc`, 0.44/0.66/0.92). Vücut aşamaları
+      `/catalog/stages?type=body` (`startHour`: 0,2,5,8,12,16,18,24,48) → ikon konumu `startHour / hedef saat`, geçilen ikon
+      `*_light`, gelmeyen gri; çakışanlar seyreltilir.
+- [ ] Üstteki kart ilerlemeye bağlı değil: başlık sunucu `fast.stage.title`, açıklama hep `fasting_page.body_body`. Mevcut aşamanın
+      başlık + açıklama + görseli gösterilmeli.
+- [ ] Yeme modu hep "Öğün vakti / Orucunu boz": `eatingWindow.stage.key` (break → nourish → next; sunucu kuralı ilk %20 / son 60 dk)
+      kart ve at nalı ikonları buna göre; ikon konumları aynı kurala göre.
+- [ ] Oruç yokken vücut sekmesi "Orucu erken bitir" + "Zorlanıyorum" gösteriyor → boşta durumu (başlat butonu, %0, aşamalar gri).
+- [ ] Oruç planlanan bitişi geçince ana sayfa kartı 00:00:00'da donuyor; aşım gösterilmiyor; yeme penceresinde başlık hâlâ "Oruç".
+
+### 8.2 Yüksek
+
+- [ ] Çıkış / hesap değişiminde sohbet sıfırlanmıyor: B kullanıcısı A'nın konuşmasını görür, mesajı A'nın konuşmasına gider
+      (`auth_bloc.dart` `_clearHomeCache`, `ChatSessionCubit` lazy singleton). Aynı yerde `FastingSessionCubit`, su günü
+      önbelleği, öneriler, ana ekran widget verileri de temizlenmiyor.
+- [ ] Plan detayında yeme penceresi yanlış (16-8 → 12:00–18:00 = 6 sa; sunucu 8 sa ister) ve diyalog değişmese bile `custom`
+      gönderiyor → `VALIDATION_FAILED` (`plan_detail_args.dart`, `plan_detail_view_mixin.dart`).
+- [ ] OMAD / 23_1 hiç kaydedilemiyor: sunucu `defaultTiming=custom`, istemci pencere göndermiyor; `"OMAD".split('-')` → 6 sa.
+- [ ] Onboarding'de 18 yaş altı 16:8/18:6/20:4/OMAD/5:2 seçebiliyor; sunucu `minAge: 18` ile en sonda `UNSAFE_REQUEST` veriyor.
+- [ ] Adım ekranında 600 ms içinde gün değiştirilirse bugünün değeri kaybolur / düne yazılır (`steps_view_mixin.dart` `_selectStepsDate`).
+- [ ] Ana sayfa iyimser kilo hatada geri alınmıyor (`lastSummaryUnchanged` emit'i engelliyor).
+
+### 8.3 Orta
+
+- [ ] Onboarding: ücretsiz kullanıcı premium plan seçince kilit yok, sonunda plan sessizce `pendingPlanCode`; engeller tek seçim
+      ("hepsini seç" diyor); hedef BMI < 17.5 ve öğün penceresi başlangıç = bitiş en sonda reddediliyor; kilo alma/koruma hedefinde
+      hedef kilo mevcut kilonun üstüne çıkamıyor; projeksiyon tarihi sunucudan birkaç gün farklı.
+- [ ] Dil: uygulamada dil değişince `PATCH /user/me {locale}` yok (push İngilizce gelir); it/ru `supportedLocales`'te yok,
+      listedeki pt/ko/hi/ja seçilince hiçbir şey olmuyor.
+- [ ] Bildirim izni yalnızca onboarding sonunda; mevcut hesapla girişte hiç istenmiyor (iOS/Android 13+ push gelmez).
+- [ ] Silinmek üzere olan misafir hesapla yeniden onboarding → en sonda sabit Türkçe "Hesap silinmek üzere" hatası, çıkış yok.
+- [ ] Widget: yeme penceresinde "Eating 00:00 left", plan widget'ları sabit 20:00; uygulama kapalıyken geri sayım donuk; widget'a
+      dokununca soğuk açılışta Su yerine Home; onboarding bitmemiş kullanıcıda push/widget korumalı ekran açıyor.
+- [ ] Fotoğraf analizi istemci 30 sn'de vazgeçiyor (sunucu 45 sn × 3 deneme) → hak boşa gider; hata/`notFood`'da başlık örnek metin
+      "Grilled Chicken…"; kaydet sonrası kamera ekranına dönüyor; hızlı kcal ve AI öğünde "orucu bitir?" sorulmuyor.
+- [ ] Profil plan değişimi timing'i sıfırlıyor; profil 15_9 / 19_5 planlarını tanımıyor ("–").
+- [ ] Sohbet: hata olunca yazılan metin kayboluyor; akış sürerken ikinci mesaj / başka konuşma açılabiliyor (yanıt yanlış
+      konuşmaya akıyor); SSE parça sınırında Türkçe/Rusça harf bozuluyor (`utf8.decode` parça parça).
+- [ ] Mochi World yalnızca ilk açılışta yükleniyor (sekme canlı kalıyor, oruç sonrası güncellenmiyor).
+- [ ] Su: oz birimi seçilse de her yerde "ml"; gece yarısını geçince açık ekranda + çalışmıyor.
+- [ ] Adım: sağlık senkronlu günde +/− 409 alıyor (butonlar gizlenmeli); +/− sonrası kcal/km/dk güncellenmiyor.
+- [ ] Uyku: "dün gece" satırı gerçek yatış/kalkış değil program saatlerini gösteriyor; kayıt düzenlenemiyor/silinemiyor (409 tuzağı);
+      adım/uyku hedefleri değiştirilemiyor.
+- [ ] Açlık: geçmişten "Log my hunger" hep "Fiziksel"; "Full check" geçmiş listesini açıyor (`mode: full` hiç gitmiyor);
+      güvenlik bayrağında "orucu bitir" kısayolu yok.
+- [ ] Kilo almak isteyen kullanıcıda vücut geçmişi ilerlemesi hep %0 (`body_history_view.dart` işaretsiz `span`).
+- [ ] Öğün tarih seçici 2 yıl geri / gelecek saat izin veriyor (sunucu 30 gün); 30 günden eski öğünün notu düzenlenemiyor.
+- [ ] Sağlık izni geri alınırsa Android her ön plana dönüşte izin ekranı açıyor.
+- [ ] `requiredConsents` (şartlar/gizlilik sürümü değişince yeniden onay) hiç okunmuyor.
+
+### 8.4 Düşük
+
+- [ ] Premium alındıktan sonra ana sayfa "Premium" hapı özet yenilenene kadar duruyor; satın alma sonrası ilk tekrar 402 alabilir.
+- [ ] Bildirimler hepsi "Bugün" başlığı altında, "72 saat önce", tüm tipler "meal" ikonu, hata boş durum gibi.
+- [ ] Profil "Değerlendir" ve "Paylaş" satırları boş; açlık başarı ekranı "Insights" kartı boş.
+- [ ] AI rıza kaydı ağ hatasında sessiz; `CONSENT_REQUIRED` gelince yerel önbellek temizlenmiyor.
+- [ ] Kalori ekranı yeme bozukluğu bayrağında "0 kcal over" gösteriyor; kalan kcal hiç yok; "Eated {}".
+- [ ] Oruç geçmişinde aktif oruç "— / 16h"; insight premium kilidi okunmuyor; `fastingapp://plans` push'u sekmeye geçmiyor.
+- [ ] Aynı kilo tekrar girilince kayıt atılmıyor; vücut geçmişi iyimser nokta yanlış kovaya yazılabiliyor; su 6000 ml uyarısı yok;
+      haftalık planlarda widget hafta çubukları yanlış payda; kilo birimi (lb) yok sayılıyor, başlangıç = hedef → %0.
+- [ ] Çıkış sırasında hızlı yeniden giriş yarışı; geri alma reddedilince başka oturum token'ı silinebiliyor.
