@@ -39,12 +39,8 @@ export function createSummaryService({ db, users, plans, fasting, stats, challen
         progress,
         activeFast: active.fast,
         eatingWindow: active.eatingWindow,
-        plan: current.plan && {
-          planCode: current.plan.planCode,
-          displayName: current.plan.displayName,
-          fastMinutes: current.plan.fastMinutes,
-          eatWindow: current.plan.eatWindow,
-        },
+        // `/plans/current` ile aynı DTO: istemci planı (timing dahil) özetten güncelleyebilir.
+        plan: current.plan,
         pendingPlanCode: current.pendingPlanCode,
         week: week.days,
         today: {

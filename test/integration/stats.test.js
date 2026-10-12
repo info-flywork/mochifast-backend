@@ -170,6 +170,8 @@ describe.skipIf(!mysqlUrl)('seri, XP ve özetler (gerçek MySQL)', () => {
     expect(s.user).toMatchObject({ id: userId, isGuest: true, isPremium: false });
     expect(s.progress).toMatchObject({ level: 1, streakDays: 0 });
     expect(s.plan).toMatchObject({ planCode: '16_8', fastMinutes: 960 });
+    // `/plans/current` ile aynı DTO (timing dahil): istemci planı özetten ezince bilgi kaybolmaz.
+    expect(s.plan).toEqual((await get(token, '/plans/current')).plan);
     expect(s.pendingPlanCode).toBeNull();
     expect(s.activeFast).toBeNull();
     expect(s.week).toHaveLength(7);

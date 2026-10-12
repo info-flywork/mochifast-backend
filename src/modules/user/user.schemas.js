@@ -5,6 +5,7 @@ import {
   weekDaySchema,
 } from '../fasting/fasting.schemas.js';
 import { challengeSchema } from '../gamification/gamification.schemas.js';
+import { userPlanSchema } from '../plans/plans.schemas.js';
 import {
   CONSENT_TYPES,
   DIETS,
@@ -509,18 +510,7 @@ export const summarySchema = {
         progress: progressDto,
         activeFast: { ...fastSchema, type: ['object', 'null'] },
         eatingWindow: eatingWindowSchema,
-        plan: {
-          type: ['object', 'null'],
-          properties: {
-            planCode: { type: 'string' },
-            displayName: { type: 'string' },
-            fastMinutes: { type: 'integer' },
-            eatWindow: {
-              type: ['object', 'null'],
-              properties: { start: { type: 'string' }, end: { type: 'string' } },
-            },
-          },
-        },
+        plan: userPlanSchema,
         pendingPlanCode: { type: ['string', 'null'] },
         week: { type: 'array', items: weekDaySchema },
         today: {

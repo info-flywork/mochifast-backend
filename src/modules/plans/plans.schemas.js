@@ -16,7 +16,8 @@ const scheduleDay = {
   },
 };
 
-const userPlan = {
+/** Kullanıcı planı DTO'su (`/plans/current` ve `/user/summary.plan`). */
+export const userPlanSchema = {
   type: ['object', 'null'],
   properties: {
     id: { type: 'string' },
@@ -42,7 +43,7 @@ const userPlan = {
 const currentResponse = envelope({
   type: 'object',
   required: ['plan', 'pendingPlanCode'],
-  properties: { plan: userPlan, pendingPlanCode: nstr },
+  properties: { plan: userPlanSchema, pendingPlanCode: nstr },
 });
 
 export const getCurrentSchema = {
@@ -113,5 +114,5 @@ export const historySchema = {
   summary: 'Plan geçmişi',
   security: bearer,
   querystring: pageQuerySchema,
-  response: { 200: pagedEnvelope(userPlan) },
+  response: { 200: pagedEnvelope(userPlanSchema) },
 };
