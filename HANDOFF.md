@@ -299,20 +299,22 @@ iki satır (watch + node) göstermeli.
 
 Üç inceleme + oruç sekmesi. Sırayla ilerle; bitirince `[x]`. Dosya:satır bulguların ilk görüldüğü yer.
 
-### 8.1 Oruç sekmesi
+### 8.1 Oruç sekmesi (kullanıcı ile anlaşılan tarif, 2026-10-12)
 
-- [x] At nalı aşamaları: `lib/presentation/fasting/fasting_arc_stages.dart` (saf mantık + `test/presentation/fasting_arc_stages_test.dart`).
-      Vücut: `startHour` (0,2,5,8,12,16,18,24,48) `/ hedef saat` konumunda, hedefe kadar olanlar; yakın olanlar seyreltilir
-      (min. 0.11). Öğün sekmesi (kullanıcı kararı): 24 saatlik döngü tek yayda — başta kum saati, oruç bitişinde
-      "orucunu boz", pencerede "besle" (ilk %20 / en az 30 dk sonrası), sonda "sonraki oruç" (son 60 dk); oruçta da ilerler
-      (`mealCycleArc`). Ulaşılan ikon renkli,
-      mevcut aşama hafif büyük, gelmeyen gri. Metin/görseller yerel 7 dil (`body_status.*`, `eating_window.*`).
-- [x] Üst kart mevcut aşamayı gösterir (başlık + açıklama + görsel, aşama değişince geçiş animasyonu).
-- [x] Sekme durumu gerçek duruma bağlı: oruç → vücut, yeme penceresi → öğün, ikisi yok → vücut (boşta: "Oruca hazır mısın?",
-      %0, gri, yalnızca başlat). Oruçta öğün sekmesi "Öğün vakti henüz gelmedi" önizlemesi. Butonlar sekmeye değil gerçek
-      oruca bağlı (oruç yokken "erken bitir / zorlanıyorum" yok). Kum saati kısayolu yalnızca oruç yokken.
-- [x] Ana sayfa oruç kartı: hedef geçince "Hedefe ulaştın" + toplam süre ileri sayar; yeme penceresinde başlık
-      "Öğün penceresi"; pencere sıfıra inince bir kez özet yenilenir.
+- [x] Sekmeler kullanıcınındır: başlat/bitir sekmeyi değiştirmez; son seçim uygulama açıkken hatırlanır (ilk: vücut).
+- [x] Kart yalnızca ilerleme bir aşamaya ulaştıysa görünür (boşta / oruçta öğün sekmesinde kart yok).
+- [x] Vücut sekmesi: yay orucun başından hedefe; aşamalar `startHour < hedef` olanlar (`fasting_arc_stages.dart`,
+      yakın olanlar gizlenir — kullanıcı kararı). Hedef aşılınca yay dolu, sayaç sürer, üstte "Hedef +hh:mm:ss",
+      kart sonraki aşamalara geçer.
+- [x] Öğün sekmesi: 24 sa döngü (`mealCycleArc`): orucun bittiği noktada "orucunu boz", pencerede "besle", uçta kum saati;
+      başta işaret yok. Oruçta yay tabağa doğru dolar; kart pencere açılınca. Boşta: "Planına göre orucun HH:mm'de başlar".
+- [x] Butonlar duruma bağlı: boşta "X orucunu başlat", oruçta "Orucu erken bitir" + "Zorlanıyorum", hedef geçince
+      "Orucu bitir" (onay diyaloğu yok), yeme penceresinde "Sonraki orucu başlat". Gizli kum saati kısayolu kaldırıldı.
+- [x] Bitirmede bitiş, planlanan bitişi 12 sa'ten fazla aşarsa "Bu saatte mi bitirdin?" onayı (`LONG_OVERRUN`).
+- [x] Ana sayfa oruç kartı: hedef geçince "Hedefe ulaştın" + toplam süre; yeme penceresinde "Öğün penceresi".
+- Kullanıcı kararı: yanlışlıkla başlatılan oruç için iptal seçeneği **olmayacak**.
+- [ ] Haftalık planlar (5:2, 6:1, gün aşırı): düşük kalorili günde sayaç yerine check-in kartı (`/fasts/week` `dayType`,
+      `PUT /plans/days/:date`). Sonraya bırakıldı.
 
 ### 8.2 Yüksek
 
