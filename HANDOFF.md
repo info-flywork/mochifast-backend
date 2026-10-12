@@ -292,4 +292,5 @@ iki satır (watch + node) göstermeli.
 - [x] HealthKit / Health Connect: `HealthSyncService` → `POST /steps/sync` (iOS `appleHealth`,
       Android `googleFit` kaynağı; Google Fit API değil Health Connect). Profil anahtarı izin ister;
       `AppSyncScope` + adım ekranı senkronlar.
-- [ ] Kalan: onboarding seçenekleri kataloğu (`/catalog/onboarding-options`).
+- Onboarding seçenekleri **bilinçli olarak uygulamada sabit** (kullanıcı kararı 2026-10-12): kodlar sunucu enum'larıyla birebir,
+  `/catalog/onboarding-options` bağlanmayacak (ilk açılışa ağ bağımlılığı eklemesin).
