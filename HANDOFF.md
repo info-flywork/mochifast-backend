@@ -215,16 +215,30 @@ Flutter değişiklikleri commit edilmez (kullanıcı eder).
 
 ### 7.4 Loading / performans
 
-- [ ] Splash en az 1,4 sn + özet için 8 sn'ye kadar; 6 sn auth zaman aşımı girişli kullanıcıyı login'e atıyor (`splash_bloc.dart` ~31,51,100) → son özeti diske yaz, hemen geç, arkada tazele; zaman aşımı yedeğini kaldır.
-- [ ] `withLoading` gereksiz: paylaş (`fasting_view.dart` ~548, `fasting_first_time_view.dart` ~134), plan değişimi (`plan_change_flow.dart`; PUT dönünce bırak), BuildingPlan (yalnızca 300 ms'den uzun sürerse).
-- [ ] Her girişte iskelet/spinner: öğün kayıtları, açlık geçmişi (her filtre; bir kez yükle, istemcide süz), vücut geçmişi (aralıkları önbellekle).
-- [ ] Su ekranı her karede tüm sayfayı çiziyor (`water_view.dart` ~101; 5 controller, `ImageFiltered` kabarcıklar) → katman başına `AnimatedBuilder` + `RepaintBoundary`, önceden bulanık görsel.
-- [ ] Oruç sekmesi saniyede bir tüm ekranı `setState` (`fasting_view.dart` ~62) → sayaç küçük widget'a.
-- [ ] Sonsuz animasyonlar: dalgalar (`home_metric_cards.dart` ~242), sohbet rozeti (`ai_chat_header_icon.dart` ~77). Tüm uygulamada tek `RepaintBoundary`.
-- [ ] Widget görselleri uygulama açıkken her dakika 6 PNG (25σ blur) UI isolate'te (`fasting_widget_sync.dart` ~397) → yalnızca durum değişince; geri sayımı native taraf `start_ms/end_ms`'ten yapsın.
-- [ ] İlk açılışta 241 görsel (10,5 MB) + SHA-256 UI isolate'te (`app_init.dart` ~25, `remote_image_store.dart` ~179) → `Isolate.run`, home yüklendikten sonra başlat. `app_image.dart` `cacheWidth` yok. `app_init` sıralı await → `Future.wait`.
-- [ ] Mochi World: 3 `BackdropFilter` + ~24 görsel precache. Bildirim/açlık listeleri `for` (builder + sayfalama yok). `HomeLoaded` `Equatable` değil.
-- [ ] Ağ: güvenli depo her istekte okunuyor (`auth_interceptor.dart` ~15 → bellekte önbellek); `LogInterceptor` gövde + `Authorization` basıyor; refresh sonrası tekrar ayrı `Dio` (`_plain`) ile.
+- [x] Splash: min. 900 ms (logo animasyonu), özet en fazla 2 sn beklenir; 6 sn auth yedeği (girişliyi login'e atıyordu) kaldırıldı.
+      Son özet cihazda (`SharedPrefManager.homeSummary`, `serverTime` atılmış, yalnızca bugün + aynı kullanıcı; çıkışta silinir):
+      `HomeBloc` önce onu çizer, ağ yanıtıyla sessizce yeniler. Veri değişmediyse (`UserRepository.lastSummaryUnchanged`) emit yok.
+- [x] `withLoading(showAfter:)`: kısa işlerde dialog hiç açılmaz (plan değişimi, BuildingPlan 300 ms). Paylaş'ta loading kaldırıldı.
+      Oruçta plan değişiminde son `refresh` dialog'u bekletmez.
+- [x] İskelet yalnızca ilk yükte: öğün kayıtları gün önbelleği (`MealsRepository.cachedDay`, çıkışta temizlenir), açlık geçmişi bir
+      kez yüklenir + istemcide süzülür (kayıt saati artık görünür), vücut geçmişi aralık önbelleği + diğer aralıklar önceden yüklenir.
+      Hatalar boş liste yerine snackbar.
+- [x] Su ekranı: sayfa yalnızca dolum/kutlama animasyonunda kurulur; dalga+balon, maskot salınımı ayrı `AnimatedBuilder` +
+      `RepaintBoundary`; her balon kendi katmanında (blur her karede yeniden çizilmez).
+- [x] Oruç sekmesi: saniyelik sayaç `ValueNotifier` → yalnızca yay/sayaç bölümü yeniden kurulur.
+- [x] Ana sayfa sıvı çubuğu 2 tur dalgalanıp durur (değer değişince tekrar), `RepaintBoundary`; sohbet rozeti 4 nabız.
+- [x] Widget'lar: dakikalık zamanlayıcı kaldırıldı; durum değişince + uygulama arka plana geçerken (`AppSyncScope` `onHide`)
+      çizilir. Açılışta dil senkronu resim üretmez (yalnızca etiket). Not: geri sayım resmin içinde; uygulama kapalıyken widget
+      metni ilerlemez (native tarafın `fasting_start_ms/end_ms` ile kendisi sayması ayrı iş).
+- [x] Açılış: Firebase/localization/prefs/manifest paralel; uzak görsel senkronu ilk kareden 3 sn sonra. `appImage` genişlik
+      biliniyorsa `width × dpr × 2` ile çözer (cover/fill/fitHeight hariç).
+- [x] Ağ: erişim token'ı bellekte (`AuthCacheManager`), debug `LogInterceptor` gövde/başlık basmaz.
+- [ ] (Kalan) Mochi World (`BackdropFilter` ×3 + ~24 precache; ekran zaten sahte, `/v1/world` bağlanırken ele al), bildirim listesi
+      sayfalama + builder, refresh sonrası ayrı `Dio` havuzu.
+
+Not (2026-10-12): yerel `npm run worker:dev`'in alt süreci düşmüştü (`--watch` ebeveyni ayakta, çocuk yok) → zamanlanmış işler
+9 Ekim'den beri çalışmamış (72 sa üstü oruçlar açık kalmış). `touch src/worker.js` ile yeniden başlatıldı. `pgrep -fl src/worker.js`
+iki satır (watch + node) göstermeli.
 
 ### 7.5 Hâlâ sahte veri
 
