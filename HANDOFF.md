@@ -181,16 +181,25 @@ Flutter değişiklikleri commit edilmez (kullanıcı eder).
 - [x] Su senkronu hata sonrası hizalanmıyordu (`_waterFlushing` açıkken `loadWaterDay` dönüyordu) → `water_view_mixin.dart` catch'te bayrak önce kapanır.
 - [x] Oruçta plan değişince önce oruç iptal ediliyordu → `FastingSessionCubit.changePlanWhileFasting`: önce plan (`_putPlan`, paywall/ret olursa oruç bozulmaz), sonra iptal (+ aynı başlangıçla yeniden başlat), tek `refresh` + tek `afterWrite`.
 
-### 7.2 Sözleşme uyumsuzlukları (kalan)
+### 7.2 Sözleşme uyumsuzlukları
 
-- [ ] `PUT /steps/:date` tek gün döner; istemci haftalık grafiği siliyor (`steps_view_mixin.dart` ~159). Adım PUT'ları yarışıyor, hatalar yutuluyor.
-- [ ] `PATCH /user/onboarding` 404 (`user_repository.dart` ~38 `saveAnsweredQuestions`, `language_level_bloc`).
-- [ ] `customGlassSizes` en fazla 5 ve 50–2000 aralığı (`water_reminder_view.dart` ~121); kilo diyaloğu aralığı (profil 30–300, tartı 25–350).
-- [ ] Sohbet SSE `safety` olayı atılıyor (`chat_repository.dart` ~262); akış ortasında hata sonrası geçmiş yeniden yüklenmiyor.
-- [ ] Su bildirim/birim/bardak ayarları hiç yüklenmiyor (`GET /user/goals` çağrılmıyor).
-- [ ] Hatalar boş durum gibi gösteriliyor (öğün kayıtları, uyku, açlık geçmişi); `HomeBloc` yalnızca `Exception` yakalıyor.
-- [ ] `fasting_view` çift hata snackbar'ı; paywall sunucu senkronu bitmeden premium=false; açlık belirti eşlemesi yanlış; uyku hafta etiketleri yanlış.
-- [ ] Backend küçükler: hesap değiştirmede misafirin push token'ı silinmeli (`auth.service.js` ~251 `clearPushTokens`); üretimde `AI_CHAT_QUOTA_ENABLED=false` koruması ve public Bunny değişkenleri zorunlu değil; dokümanlarda Anthropic kalıntıları (CONTRIBUTING, 09/12); vision istemcisi birim testleri kayboldu; `image_url.detail` yok.
+- [x] `PUT /steps/:date` haftayı ezmesi + yarışan PUT'lar (bkz. 7.5 adımlar).
+- [x] `PATCH /user/onboarding` 404: çağıran "dil seviyesi" ekranı şablondan kalma ölü koddu (hiçbir akış açmıyordu) →
+      `language_level` ekranı/bloc/rota/DI ve `UserRepository.saveAnsweredQuestions` silindi.
+- [x] Su: özel bardak en fazla 5 + 50–2000 ml (`water_reminder_view.dart`, snackbar); birim/hatırlatma/özel bardaklar artık
+      yüklenir (`TrackersRepository.getWaterPrefs`: `/user/me.units`, `/user/settings`, `/user/goals`).
+- [x] Kilo diyaloğu 30–300 kg (profil ve tartı aralıklarının ortak kısmı), dışında satır içi uyarı.
+- [x] Sohbet SSE `safety`: `message.created/completed` okunur; `urgent` ise yanıtın altında yardım kutusu (`chat.safety_urgent`),
+      geçmişten açılan konuşmada da. Akış ortasında hata olursa (kullanıcı mesajı sunucuda saklıysa) konuşma yeniden yüklenir.
+- [x] Hatalar boş durum gibi gösterilmiyor (öğün kayıtları, uyku, açlık geçmişi); `HomeBloc` `on Object`.
+- [x] Oruç ekranı çift hata snackbar'ı: ekran dinleyicisi hata göstermez, işlemi başlatan gösterir.
+- [x] Paywall: satın alma sonrası sunucu henüz premium demese de yerel premium düşmez (`sync(keepPremium:)`, 3/10/30 sn yeniden
+      dene; `RevenueCatService.applyServerPremium` özetten gelen `false`'u bu sırada yok sayar).
+- [x] Açlık belirti eşlemesi: "halsizlik" → `lowEnergy` (önceden `nothingPhysical` = duygusal puan), baş ağrısı/uykusuzluk
+      karşılıksız; istek yalnızca 3. sorudaki gerçek `bodyNotices`'u gönderir (belirtiler ayrıca `symptoms` ile gider).
+- [x] Backend: hesap değiştirmede misafirin push token'ları silinir (`ddd6a04`).
+- [ ] Backend küçükler: üretimde `AI_CHAT_QUOTA_ENABLED=false` koruması ve public Bunny değişkenleri zorunlu değil; dokümanlarda
+      Anthropic kalıntıları (CONTRIBUTING, 09/12); vision istemcisi birim testleri kayboldu; `image_url.detail` yok.
 
 ### 7.3 Senkron
 
@@ -262,6 +271,7 @@ iki satır (watch + node) göstermeli.
 - [x] Insights: kategori başlık/açıklama `/insights/categories`, detay `/insights/articles?category=` → `/articles/:slug`
       (kicker, başlık, alıntı, ipucu, bölümler). Görseller/renkler yerel; yüklenene kadar yerel metin.
 - [x] Forecast grafiği: eğri şablonu zorluğa göre, tepe `toughestAt` saatine kaydırılır (saatlik risk verisi sunucuda yok).
-- [x] GoodCompany sayıları `/app/config.marketing`. (Profil premium kartındaki "200K+" hâlâ çeviri metni.)
+- Pazarlama sayıları (GoodCompany "2M+ / 4.8", premium kartı "200K+") **bilinçli olarak sabit çeviri metni** (kullanıcı kararı
+  2026-10-12); `/app/config.marketing`'e bağlama.
 - [ ] Kalan: HealthKit/Google Fit, zorlanma metinleri kataloğu, oruç geçmişi ekranı, öğün silme, bildirim sayfalama,
       onboarding seçenekleri kataloğu (`/catalog/onboarding-options`).
