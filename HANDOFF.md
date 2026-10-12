@@ -194,14 +194,24 @@ Flutter değişiklikleri commit edilmez (kullanıcı eder).
 
 ### 7.3 Senkron
 
-- [ ] Ön plana dönüş / gece yarısı / yeniden bağlanmada yenileme yok → kökte `AppLifecycleListener(onResume)`: `HomeRefreshRequested`, `FastingSessionCubit.refresh(showLoading:false)`, okunmamış sayısı (~30 sn kısma) + gece yarısı zamanlayıcısı + `ConnectivityService` reconnect.
-- [ ] Ana sayfa oruç sayacı kart yeniden kurulunca kayıyor (`home_fasting_card.dart` ~22; `_anchor = now`) → `FastingSessionCubit.state` `fetchedAt`/`clockOffset` kullan.
-- [ ] `HomeBloc` yenilemeleri yarışıyor → `bloc_concurrency` `restartable()`; `DataSync.afterWrite` ~300 ms birleştir.
-- [ ] Ana ekran widget'ı yalnızca oruç ekranından yayınlanıyor → uygulama düzeyinde `BlocListener<FastingSessionCubit>` → `FastingWidgetSync.publish`. Widget hafta yedeği sahte (`fasting_widget_sync.dart` ~299), su widget toplamı tarihsiz, dünü gezerken bugün eziliyor (`water_view_mixin.dart` `_applyWaterDay` → yalnızca bugünse yayınla).
-- [ ] Her yazma beslenme önbelleğini siliyor (`data_sync.dart` ~13) → bayat işaretle, göstermeye devam et.
-- [ ] Çift istekler: oruç sekmesi `initState` `refresh()`; `startFast` ara `refresh`; bitirme ekranı kilo için tüm özeti çekiyor; forecast kartı başlat/bitir sonrası bayat.
-- [ ] Soğuk açılış push yönlendirmesi splash `go(home)` ile eziliyor (`push_open_handler.dart` ~79 sabit 900 ms).
-- [ ] `app.dart` ~23 her `build`'de `AuthCheckRequested` (dil değişince cihaz yeniden kaydı) → `main`'e taşı. Saat dilimi başlığı oturum boyu önbellekte.
+- [x] Yenileme: `lib/core/sync/app_sync_scope.dart` (`AppSyncScope`, `app.dart` builder'ında) — ön plana dönüş (30 sn kısma, gün
+      değiştiyse hemen), gece yarısı zamanlayıcısı ve `ConnectivityService.reconnects` → `HomeRefreshRequested` (+ beslenme bayat).
+      Yalnızca `HomeBloc` en az bir kez yüklendiyse çalışır. Özet oruç durumunu cubit'e zaten taşır.
+- [x] Ana sayfa oruç sayacı: `home_fasting_card.dart` kalan süreyi `FastingSessionCubit.state.liveMetrics`'ten (fetchedAt + saat farkı) alır.
+- [x] `HomeBloc` yarışı: uçuşta tek istek + en fazla bir "sonra tekrar" (`_inFlight/_again`), `HomeCleared` sonrası eski yanıt
+      atılır (`_epoch`), `on Object` (ayrıştırma hataları da `HomeError`). `afterWrite` yağmuru bu sayede tek isteğe katlanır.
+- [x] Oruç widget'ı: yayın mantığı `lib/core/home_widgets/fasting_widget_publisher.dart`; `AppSyncScope` cubit'te oruç/plan/yeme
+      penceresi değişince yayınlar (oruç ekranı açık olmasa da). Widget haftası sahte diziden kurtuldu: özet `week`'ten
+      (`FastingWidgetSync.saveWeek`, hedef = plan süresi), hafta dönünce sıfırlanır (`fasting_week_start`).
+- [x] Su widget'ı: `water_date` anahtarı (gün dönünce eski toplam 0 sayılır), varsayılan 100 → 0, `updateToday` ile özetten
+      güncellenir, su ekranında geçmiş gün gezilirken widget yayınlanmaz.
+- [x] Beslenme önbelleği yazmada silinmiyor, bayat işaretleniyor (`invalidate`); çıkış/hesap değişiminde `clear()` (`AuthBloc`).
+- [x] Çift istekler: oruç sekmesi `initState` yalnızca veri yoksa / 1 dk'dan eskiyse tazeler; `startFast` POST yanıtını kullanır;
+      bitirme ekranı kiloyu `HomeBloc`'tan okur; forecast kartı oruç başlayınca/bitince yeniden yüklenir.
+- [x] Soğuk açılış push: sabit 900 ms yerine router splash'ten çıkana kadar beklenir (`push_open_handler.dart` `_leftSplash`).
+- [x] `AuthCheckRequested` yalnızca bir kez (`MyApp` `initState`). `X-Timezone` 10 dk'da bir yeniden okunur.
+- [ ] (Kalan) Ana sayfada iyimser güncelleme yok (kilo girişi özet dönene kadar eski değer). Okunmamış bildirim sayısı yalnızca
+      profil ekranında tazelenir.
 
 ### 7.4 Loading / performans
 
