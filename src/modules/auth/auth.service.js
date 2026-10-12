@@ -250,6 +250,8 @@ export function createAuthService({ db, cache, tokens, firebase, config, logger,
             // yalnızca oturumu kapanır; "misafir olarak devam et" aynı misafiri açar.
             if (guestUser && guestUser.id !== userId) {
               await repo.revokeUserSessions(db, conn, guestUser.id, 'account_switched');
+              // Cihaz artık diğer hesapta: misafirin bildirimleri bu cihaza gitmesin.
+              await repo.clearPushTokens(db, conn, guestUser.id, null);
               outcome = 'switched';
             }
             await repo.touchIdentity(db, conn, existing.id, identity);

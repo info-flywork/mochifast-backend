@@ -300,6 +300,9 @@ describe.skipIf(!mysqlUrl)('auth akışları (gerçek MySQL)', () => {
     const installId = randomUUID();
     const g = (await guest(installId)).json().data;
     await call('POST', '/water', { token: g.token.accessToken, body: { amountMl: 300 } });
+    await db.run("UPDATE devices SET push_token = 'fcm-token' WHERE install_id = :installId", {
+      installId,
+    });
 
     const switched = await firebaseLogin({ uid, token: g.token.accessToken });
     expect(switched.statusCode).toBe(200);
@@ -318,6 +321,11 @@ describe.skipIf(!mysqlUrl)('auth akışları (gerçek MySQL)', () => {
     expect(Number(requests.n)).toBe(0);
     const old = await call('GET', '/auth/sessions', { token: g.token.accessToken });
     expect([401, 410]).toContain(old.statusCode);
+    // Cihaz artık diğer hesapta: misafirin push token'ı silinir.
+    const guestDevice = await db.one('SELECT push_token FROM devices WHERE user_id = :id', {
+      id: toBin(g.user.id),
+    });
+    expect(guestDevice.push_token).toBeNull();
     // "Misafir olarak devam et": aynı misafir, verisiyle.
     const again = await guest(installId);
     expect(again.statusCode).toBe(200);
