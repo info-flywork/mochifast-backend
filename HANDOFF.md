@@ -299,17 +299,18 @@ iki satır (watch + node) göstermeli.
 
 Üç inceleme + oruç sekmesi. Sırayla ilerle; bitirince `[x]`. Dosya:satır bulguların ilk görüldüğü yer.
 
-### 8.1 Oruç sekmesi (kullanıcının öncelikli istediği)
+### 8.1 Oruç sekmesi
 
-- [ ] At nalı aşama ikonları sabit oranlarda (`fasting_view.dart` `_FastingArc`, 0.44/0.66/0.92). Vücut aşamaları
-      `/catalog/stages?type=body` (`startHour`: 0,2,5,8,12,16,18,24,48) → ikon konumu `startHour / hedef saat`, geçilen ikon
-      `*_light`, gelmeyen gri; çakışanlar seyreltilir.
-- [ ] Üstteki kart ilerlemeye bağlı değil: başlık sunucu `fast.stage.title`, açıklama hep `fasting_page.body_body`. Mevcut aşamanın
-      başlık + açıklama + görseli gösterilmeli.
-- [ ] Yeme modu hep "Öğün vakti / Orucunu boz": `eatingWindow.stage.key` (break → nourish → next; sunucu kuralı ilk %20 / son 60 dk)
-      kart ve at nalı ikonları buna göre; ikon konumları aynı kurala göre.
-- [ ] Oruç yokken vücut sekmesi "Orucu erken bitir" + "Zorlanıyorum" gösteriyor → boşta durumu (başlat butonu, %0, aşamalar gri).
-- [ ] Oruç planlanan bitişi geçince ana sayfa kartı 00:00:00'da donuyor; aşım gösterilmiyor; yeme penceresinde başlık hâlâ "Oruç".
+- [x] At nalı aşamaları: `lib/presentation/fasting/fasting_arc_stages.dart` (saf mantık + `test/presentation/fasting_arc_stages_test.dart`).
+      Vücut: `startHour` (0,2,5,8,12,16,18,24,48) `/ hedef saat` konumunda, hedefe kadar olanlar; yakın olanlar seyreltilir
+      (min. 0.11). Yeme: sunucu `eatingStage` kuralının sınırları (ilk %20 / en az 30 dk, son 60 dk). Ulaşılan ikon renkli,
+      mevcut aşama hafif büyük, gelmeyen gri. Metin/görseller yerel 7 dil (`body_status.*`, `eating_window.*`).
+- [x] Üst kart mevcut aşamayı gösterir (başlık + açıklama + görsel, aşama değişince geçiş animasyonu).
+- [x] Sekme durumu gerçek duruma bağlı: oruç → vücut, yeme penceresi → öğün, ikisi yok → vücut (boşta: "Oruca hazır mısın?",
+      %0, gri, yalnızca başlat). Oruçta öğün sekmesi "Öğün vakti henüz gelmedi" önizlemesi. Butonlar sekmeye değil gerçek
+      oruca bağlı (oruç yokken "erken bitir / zorlanıyorum" yok). Kum saati kısayolu yalnızca oruç yokken.
+- [x] Ana sayfa oruç kartı: hedef geçince "Hedefe ulaştın" + toplam süre ileri sayar; yeme penceresinde başlık
+      "Öğün penceresi"; pencere sıfıra inince bir kez özet yenilenir.
 
 ### 8.2 Yüksek
 
