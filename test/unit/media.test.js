@@ -170,7 +170,7 @@ describe('yükleme hattı', () => {
     expect(
       storagePrefix('meal_photo', { ownerKey: key, mediaId: 'm1', now: new Date('2026-03-04') }),
     ).toBe(`u/${key}/meals/2026/03/m1`);
-    expect(storagePrefix('avatar', { ownerKey: key, mediaId: 'm1' })).toBe(`u/${key}/avatar/m1`);
+    expect(storagePrefix('avatar', { ownerKey: key, mediaId: 'm1' })).toBe(`avatars/${key}/m1`);
   });
 });
 

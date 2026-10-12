@@ -125,7 +125,7 @@ const schema = {
     AI_CHAT_MAX_OUTPUT_TOKENS: { type: 'integer', minimum: 100, default: 1200 },
     AI_CHAT_FIRST_TOKEN_MS: { type: 'integer', minimum: 1_000, default: 15_000 },
     AI_CHAT_TOTAL_MS: { type: 'integer', minimum: 5_000, default: 90_000 },
-    // false: sohbet günlük kotası uygulanmaz (geliştirme / geçici kapatma).
+    // false: sohbet günlük kotası yok — yalnızca non-production. Üretimde false → process başlamaz.
     AI_CHAT_QUOTA_ENABLED: { type: 'boolean', default: true },
 
     // Abonelik: RevenueCat (docs/backend/11-abonelik.md). Paywall istemcide (RevenueCat Paywalls).
@@ -167,6 +167,10 @@ export function loadConfig(env = process.env) {
     throw new Error(
       'Üretimde DB_SSL_VERIFY=false kullanılamaz (sertifika doğrulanmalı; DB_SSL_CA verin).',
     );
+  }
+  // Sohbet kotası üretimde yanlışlıkla kapanmasın (yerelde AI_CHAT_QUOTA_ENABLED=false OK).
+  if (e.NODE_ENV === 'production' && e.AI_CHAT_QUOTA_ENABLED === false) {
+    throw new Error('Üretimde AI_CHAT_QUOTA_ENABLED=false kullanılamaz (sohbet kotası zorunlu).');
   }
 
   const media = mediaConfig(e);
@@ -276,7 +280,11 @@ function mediaConfig(e) {
     throw new Error('Üretimde en az 32 karakterlik MEDIA_PATH_SECRET zorunlu.');
   }
   if (e.MEDIA_DRIVER === 'bunny') {
+    // Private: öğün fotoğrafları. Public: avatar + uygulama görselleri (zorunlu).
     const missing = [
+      'BUNNY_STORAGE_ZONE',
+      'BUNNY_STORAGE_PASSWORD',
+      'BUNNY_PULL_ZONE_HOST',
       'BUNNY_PRIVATE_STORAGE_ZONE',
       'BUNNY_PRIVATE_STORAGE_PASSWORD',
       'BUNNY_PRIVATE_PULL_ZONE_HOST',

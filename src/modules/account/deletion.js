@@ -7,21 +7,29 @@ import * as repo from './account.repository.js';
  * idempotenttir: iş yarıda kalırsa baştan tekrar çalışır.
  *
  * 1. Firebase Authentication kullanıcısı silinir (Apple/Google token iptali istemcide yapılır).
- * 2. Private zone'daki `u/<ownerKey>/` dizini silinir ve CDN önbelleği temizlenir.
+ * 2. Private zone'daki `u/<ownerKey>/` ve public zone'daki `avatars/<ownerKey>/` dizinleri silinir,
+ *    CDN önbelleği temizlenir.
  * 3. RevenueCat müşteri kaydı silinir.
  * 4. Kullanıcı satırı silinir: kişisel tablolar FK cascade ile gider; denetim izi anonimleşir.
  */
 export function createAccountDeletion({ db, storage, firebaseUsers, revenuecat, config, logger }) {
-  async function deleteFiles(userId) {
-    const prefix = `u/${ownerKey(userId, config.media.pathSecret)}/`;
-    const paths = await storage.private.list(prefix);
-    for (const path of paths) await storage.private.delete(path);
+  async function deleteDir(zone, prefix) {
+    const paths = await zone.list(prefix);
+    for (const path of paths) await zone.delete(path);
     if (paths.length > 0) {
-      await storage.private
+      await zone
         .purge(`${prefix}*`)
         .catch((err) => logger.warn({ err }, 'hesap silme: CDN purge başarısız'));
     }
     return paths.length;
+  }
+
+  async function deleteFiles(userId) {
+    const key = ownerKey(userId, config.media.pathSecret);
+    return (
+      (await deleteDir(storage.private, `u/${key}/`)) +
+      (await deleteDir(storage.public, `avatars/${key}/`))
+    );
   }
 
   return {

@@ -111,8 +111,8 @@ Yapıldı (commit edilmedi, `fastingapp` çalışma ağacında):
 - Oturum: `AuthBloc` açılışta önbellekten; `AuthSessionEnded`; çıkış `POST /auth/logout`; router'da yalnızca giriş/onboarding rotaları herkese açık; splash onboarding'i bitmişse home'a.
 - Onboarding: `lib/domain/onboarding/` (`OnboardingDraft` + `OnboardingRepository`); "Başla"da misafir oturumu, her adım taslağa yazar, BuildingPlan'da `POST /v1/user/onboarding`, WeightProjection sunucu projeksiyonuyla; GoodCompany sahte oturum kaldırıldı.
 - Misafir sırrı: `DeviceManager` Keychain'de saklar; `AuthRepository.loginAsGuest` gönderir, `guest_secret_invalid`'de kurulum kimliğini sıfırlayıp yeni misafir açar.
-- Oruç ekranı Forecast kartı → `GET /v1/fasts/forecast` (`lib/domain/fasting/forecast_repository.dart`); güven %, en zor saat, risk aralığı, oruç süresi gerçek; veri yoksa kart gizli. Grafik eğrisi hâlâ örnek. Günün ipucu (`/v1/fasts/daily-tip`) için uygun kart yok (Mochi plan kartı plan yayı; ipucu metni eklenecekse orası).
-- Bildirim kutusu (Profil → Bildirimler) → `GET /v1/notifications` (sunucu metinleri), açılınca `read-all`, kaydırarak silme `DELETE /v1/notifications/:id` (`lib/domain/notification/notifications_repository.dart`). Profildeki Bildirimler satırında okunmamış rozeti (`unread-count`, dönüşte tazelenir). Sayfalama henüz yok.
+- Oruç ekranı Forecast kartı → `GET /v1/fasts/forecast` (`lib/domain/fasting/forecast_repository.dart`); güven %, en zor saat, risk aralığı, oruç süresi gerçek; veri yoksa kart gizli. Grafik eğrisi hâlâ örnek. Günün ipucu → Mochi plan kartı insight kutusu (`GET /v1/fasts/daily-tip`, `FastingRepository.getDailyTip`; yoksa yerel çeviri).
+- Bildirim kutusu (Profil → Bildirimler) → `GET /v1/notifications` (sunucu metinleri, `cursor`/`pageInfo` sayfalama), açılınca `read-all`, kaydırarak silme `DELETE /v1/notifications/:id` (`lib/domain/notification/notifications_repository.dart`). Profildeki Bildirimler satırında okunmamış rozeti (`unread` notifier + `refreshUnread`).
 - Cihaz kaydı: açılışta (oturum varsa) ve her girişte `PUT /v1/devices/current` (installId, platform, sürüm, OS, saat dilimi, dil; `AuthRepository.registerDevice`, `AuthBloc`). Push: `firebase_messaging` + `lib/domain/notification/push_service.dart`; izin onboarding sonunda (GoodCompany) istenir, token ve `pushEnabled` aynı kayıtla gider, `onTokenRefresh`'te tekrar kaydedilir. Yeni native eklenti → ilk çalıştırmada `pod install` (`LANG=en_US.UTF-8`). Gerçek push testi fiziksel cihaz + APNs key ister (Firebase'e yüklendi). Dokunma: `lib/core/push/push_open_handler.dart` (`main.dart`'ta başlar) → `POST /notifications/:id/read` + `deepLink` (`fastingapp://water` → `/water`; sekmeler `go`, diğerleri `push`; soğuk açılışta oturum + splash beklenir). Ön planda: iOS sistem afişi (`setForegroundNotificationPresentationOptions`), Android uygulama içi şerit (`AppSnackbar`). Android kanalları `MainActivity.kt`'da (paket yok): `default` (yüksek) ve `quiet` (düşük, sessiz); manifest varsayılan kanal `default`. Android debug derlemesi doğrulandı (`flutter build apk --debug`).
 - Hesabı sil: Profili Düzenle en altında (`ProfileDangerCard`, `ConfirmDialog`).
 - Profil: global `ProfileBloc` (`lib/presentation/profile/bloc/`, singleton) — splash'te (oturum + onboarding bitmişse) ve
@@ -170,7 +170,8 @@ Flutter değişiklikleri commit edilmez (kullanıcı eder).
 
 ### 7.1 Kritik
 
-- [ ] (Kullanıcı şimdilik ertledi) AI rızası kullanıcıya sorulmadan veriliyor: `chat_session_cubit` `_ensureConsent`, `meals_repository.dart` ~53.
+- [x] AI rızası: sessiz grant kaldırıldı → `AiConsent.ensure` + `AppDialogs.showAiProcessingConsent` (sohbet gönderimi /
+      kalori kamerası); `GET/POST /user/consents` (`aiProcessing`).
 - [x] Geçici ağ hatası oturumu kapatıyordu → `expired_token_interceptor.dart`: refresh yalnızca 400/401/403/410 ile reddedilirse oturum biter; ağ/5xx/429'da istek hatayla döner.
 - [x] `safetyAcknowledged` gönderilmiyordu (20_4, omad, 5_2 seçilemiyordu) → `lib/domain/fasting/plan_safety.dart` (sabit liste; katalog bağlanınca oradan), `AppDialogs.showPlanSafetyAck` (7 dil `plans.safety_ack_*`), `plan_change_flow.dart` ve Profili Düzenle plan seçimi önce uyarı gösterir, iki repository de alanı gönderir.
 - [x] Özet `plan`'ında `timing` yoktu, `applyFromSummary` planı eziyordu → backend `1858ffb`: `/user/summary.plan` artık `/plans/current` ile aynı DTO (`userPlanSchema`).
@@ -198,8 +199,13 @@ Flutter değişiklikleri commit edilmez (kullanıcı eder).
 - [x] Açlık belirti eşlemesi: "halsizlik" → `lowEnergy` (önceden `nothingPhysical` = duygusal puan), baş ağrısı/uykusuzluk
       karşılıksız; istek yalnızca 3. sorudaki gerçek `bodyNotices`'u gönderir (belirtiler ayrıca `symptoms` ile gider).
 - [x] Backend: hesap değiştirmede misafirin push token'ları silinir (`ddd6a04`).
-- [ ] Backend küçükler: üretimde `AI_CHAT_QUOTA_ENABLED=false` koruması ve public Bunny değişkenleri zorunlu değil; dokümanlarda
-      Anthropic kalıntıları (CONTRIBUTING, 09/12); vision istemcisi birim testleri kayboldu; `image_url.detail` yok.
+- [x] Backend küçükler (2026-10-12): üretimde `AI_CHAT_QUOTA_ENABLED=false` → process başlamaz; `MEDIA_DRIVER=bunny`
+      iken public zone (`BUNNY_STORAGE_ZONE` / `PASSWORD` / `PULL_ZONE_HOST`) zorunlu; CONTRIBUTING + docs 09/12 Anthropic
+      kalıntıları OpenAI'ye çekildi; `createVisionClient` birim testleri (`test/unit/openai.test.js`) + `image_url.detail: high`.
+- [x] Avatarlar public zone'da `avatars/<ownerKey>/<mediaId>_*.webp` (kullanıcı kararı 2026-10-12; önceden `u/<key>/avatar/`).
+      Hesap silme public `avatars/<key>/` önekini de siler. Eski avatarlar DB'deki yollarıyla çalışmaya devam eder.
+- [x] Android `minSdk = 26` (`health` / Health Connect paketi zorunlu kılıyor; önceden `flutter build apk` kırıktı).
+      Kullanıcıda: Apple Developer'da App ID'ye HealthKit capability; Play Console'da Health Connect izin beyanı.
 
 ### 7.3 Senkron
 
@@ -219,8 +225,10 @@ Flutter değişiklikleri commit edilmez (kullanıcı eder).
       bitirme ekranı kiloyu `HomeBloc`'tan okur; forecast kartı oruç başlayınca/bitince yeniden yüklenir.
 - [x] Soğuk açılış push: sabit 900 ms yerine router splash'ten çıkana kadar beklenir (`push_open_handler.dart` `_leftSplash`).
 - [x] `AuthCheckRequested` yalnızca bir kez (`MyApp` `initState`). `X-Timezone` 10 dk'da bir yeniden okunur.
-- [ ] (Kalan) Ana sayfada iyimser güncelleme yok (kilo girişi özet dönene kadar eski değer). Okunmamış bildirim sayısı yalnızca
-      profil ekranında tazelenir.
+- [x] Ana sayfa kilo iyimser: `HomeWeightOptimistic` (özet dönene kadar kart güncel; hata → yenile).
+- [x] Okunmamış bildirim rozeti: `NotificationsRepository.unread` (`ValueNotifier`) + `refreshUnread`;
+      `AppSyncScope` ön plana / yeniden bağlanınca; profil dinler; push okuma/ön plan + `markRead`/`markAllRead`/`remove`
+      günceller; çıkışta `clearUnread`.
 
 ### 7.4 Loading / performans
 
@@ -242,8 +250,12 @@ Flutter değişiklikleri commit edilmez (kullanıcı eder).
 - [x] Açılış: Firebase/localization/prefs/manifest paralel; uzak görsel senkronu ilk kareden 3 sn sonra. `appImage` genişlik
       biliniyorsa `width × dpr × 2` ile çözer (cover/fill/fitHeight hariç).
 - [x] Ağ: erişim token'ı bellekte (`AuthCacheManager`), debug `LogInterceptor` gövde/başlık basmaz.
-- [ ] (Kalan) Mochi World (`BackdropFilter` ×3 + ~24 precache; ekran zaten sahte, `/v1/world` bağlanırken ele al), bildirim listesi
-      sayfalama + builder, refresh sonrası ayrı `Dio` havuzu.
+- [x] Bildirim listesi sayfalama (`cursor`/`pageInfo`, scroll + kısa ekranda doldurma).
+- [x] Refresh sonrası ayrı Dio: `ExpiredTokenInterceptor` içinde `_refreshDio` (yalnızca
+      `/auth/refresh`) + `_retryDio` (401 sonrası tekrar); ana interceptor kuyruğuna girmez;
+      FormData `clone()` ile yeniden denenir.
+- [x] Mochi World: `_GlassCard` BackdropFilter kaldırıldı (yarı saydam dolgu); precache yalnızca
+      görünen ada + immersive girişte demo sahneleri.
 
 Not (2026-10-12): yerel `npm run worker:dev`'in alt süreci düşmüştü (`--watch` ebeveyni ayakta, çocuk yok) → zamanlanmış işler
 9 Ekim'den beri çalışmamış (72 sa üstü oruçlar açık kalmış). `touch src/worker.js` ile yeniden başlatıldı. `pgrep -fl src/worker.js`
@@ -264,7 +276,7 @@ iki satır (watch + node) göstermeli.
 - [x] Kalori: elle kcal → "X kcal ekle" → `POST /meals` (`source: quickKcal`).
 - [x] Sohbet önerileri `/chat/suggestions` (dile göre önbellek). SSS `/catalog/faq` (`ContentRepository`).
 - [x] Zorlanma: ipucu seçilince `POST /fasts/:id/struggles` (oruç yoksa `/struggles`) — forecast "en zor saat" bunlardan.
-      Zorlanma ekranı metinleri hâlâ yerel çeviri (`/catalog/struggle` bağlanmadı).
+      Metinler `GET /catalog/struggle` (`ContentRepository.struggle`); yüklenemezse yerel çeviri.
 - [x] Profil push / sağlık anahtarları `GET/PATCH /user/settings` (iyimser, hata → geri al).
 - [x] Mochi World `/v1/world` (`WorldRepository`): bölgeler (seviye sunucudan), sağlık, dünya ilerlemesi, seviye, hafta.
       Not: son seviyede hedef = en büyük eşik ("12.5/10 kg" gibi aşılmış görünebilir).
@@ -273,5 +285,9 @@ iki satır (watch + node) göstermeli.
 - [x] Forecast grafiği: eğri şablonu zorluğa göre, tepe `toughestAt` saatine kaydırılır (saatlik risk verisi sunucuda yok).
 - Pazarlama sayıları (GoodCompany "2M+ / 4.8", premium kartı "200K+") **bilinçli olarak sabit çeviri metni** (kullanıcı kararı
   2026-10-12); `/app/config.marketing`'e bağlama.
-- [ ] Kalan: HealthKit/Google Fit, zorlanma metinleri kataloğu, oruç geçmişi ekranı, öğün silme, bildirim sayfalama,
-      onboarding seçenekleri kataloğu (`/catalog/onboarding-options`).
+- [x] Öğün silme: meal detail → onay diyaloğu → `DELETE /meals/:id` + gün önbelleği / `DataSync`.
+- [x] Oruç geçmişi: Profil → `FastingHistoryView` (`GET /fasts` + `/fasts/stats`).
+- [x] HealthKit / Health Connect: `HealthSyncService` → `POST /steps/sync` (iOS `appleHealth`,
+      Android `googleFit` kaynağı; Google Fit API değil Health Connect). Profil anahtarı izin ister;
+      `AppSyncScope` + adım ekranı senkronlar.
+- [ ] Kalan: onboarding seçenekleri kataloğu (`/catalog/onboarding-options`).

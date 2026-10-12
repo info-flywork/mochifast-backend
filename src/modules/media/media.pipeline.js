@@ -38,7 +38,8 @@ export function ownerKey(userId, secret) {
 
 /** Varyantların ortak öneki (uzantısız). */
 export function storagePrefix(purpose, { ownerKey: key, mediaId, now = new Date() }) {
-  if (purpose === 'avatar') return `u/${key}/avatar/${mediaId}`;
+  // Avatarlar public zone'da kendi klasöründe (kullanıcı kararı 2026-10-12); hesap silmede önekle silinir.
+  if (purpose === 'avatar') return `avatars/${key}/${mediaId}`;
   const yyyy = now.getUTCFullYear();
   const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
   // Public içerik görselleri kullanıcıya bağlı değildir.

@@ -5,7 +5,7 @@
 ```
 route ──► service ──► repository ──► mysql2
             ├──► başka modülün SERVICE'i (asla repository'si değil)
-            ├──► infra (cache, queue, bunny, anthropic…)
+            ├──► infra (cache, queue, bunny, openai…)
             └──► domain olayı yayınla
 ```
 

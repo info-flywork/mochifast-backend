@@ -43,6 +43,7 @@ export function analysisRequest(image, locale, config) {
             type: 'image_url',
             image_url: {
               url: `data:image/webp;base64,${image.toString('base64')}`,
+              detail: 'high',
             },
           },
           {

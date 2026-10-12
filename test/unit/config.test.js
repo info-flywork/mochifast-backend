@@ -16,6 +16,7 @@ const prodMedia = {
   MEDIA_DRIVER: 'bunny',
   MEDIA_PATH_SECRET: 'x'.repeat(32),
   BUNNY_STORAGE_ZONE: 'mochifast',
+  BUNNY_STORAGE_PASSWORD: 'public-secret',
   BUNNY_PULL_ZONE_HOST: 'mochifast.b-cdn.net',
   BUNNY_PRIVATE_STORAGE_ZONE: 'mochifast-private',
   BUNNY_PRIVATE_STORAGE_PASSWORD: 'secret',
@@ -77,6 +78,8 @@ describe('loadConfig', () => {
     );
     const { BUNNY_TOKEN_AUTH_KEY: _k, ...noToken } = prodMedia;
     expect(() => loadConfig({ ...prod, ...noToken })).toThrow(/BUNNY_TOKEN_AUTH_KEY/);
+    const { BUNNY_STORAGE_PASSWORD: _p, ...noPublic } = prodMedia;
+    expect(() => loadConfig({ ...prod, ...noPublic })).toThrow(/BUNNY_STORAGE_PASSWORD/);
     // Token'sız public CDN'e kullanıcı fotoğrafı yazılmasın.
     expect(() =>
       loadConfig({ ...prod, ...prodMedia, BUNNY_PRIVATE_PULL_ZONE_HOST: 'mochifast.b-cdn.net' }),
@@ -84,6 +87,18 @@ describe('loadConfig', () => {
     const c = loadConfig({ ...base });
     expect(c.media).toMatchObject({ driver: 'local', uploadMaxBytes: 10 * 1024 * 1024 });
     expect(c.media.pathSecret.length).toBeGreaterThanOrEqual(32);
+  });
+
+  it('üretimde AI_CHAT_QUOTA_ENABLED=false reddedilir; geliştirmede serbest', () => {
+    expect(loadConfig({ ...base, AI_CHAT_QUOTA_ENABLED: 'false' }).chatAi.quotaEnabled).toBe(false);
+    expect(() =>
+      loadConfig({
+        ...base,
+        ...prodMedia,
+        NODE_ENV: 'production',
+        AI_CHAT_QUOTA_ENABLED: 'false',
+      }),
+    ).toThrow(/AI_CHAT_QUOTA_ENABLED/);
   });
 
   it('belgeler açıksa güçlü basic auth ister', () => {

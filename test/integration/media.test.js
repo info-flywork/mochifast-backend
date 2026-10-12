@@ -78,7 +78,7 @@ describe.skipIf(!mysqlUrl)('medya: avatar, öğün fotoğrafı, imzalı URL (ger
     expect(res.statusCode).toBe(200);
     const avatar = res.json().data.avatar;
     expect(avatar.url).toMatch(
-      /^http:\/\/media\.test\/media-public\/u\/[0-9a-f]{20}\/avatar\/[\w-]+_512\.webp$/,
+      /^http:\/\/media\.test\/media-public\/avatars\/[0-9a-f]{20}\/[\w-]+_512\.webp$/,
     );
     expect(avatar.expiresAt).toBeNull();
     expect(Object.keys(avatar.variants).sort()).toEqual(['md', 'thumb']);
