@@ -84,5 +84,5 @@ groups:
         expr: ai_cost_today_usd > 40
         labels: { severity: critical }
         annotations:
-          summary: Günlük AI maliyeti 40$'ı geçti (bütçe kapısı 50$'da keser)
+          summary: Günlük AI maliyeti 40$'ı geçti (yalnızca uyarı; bütçe sınırı yok)
           runbook: docs/runbooks.md#ai-maliyet-patlaması

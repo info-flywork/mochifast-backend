@@ -110,8 +110,14 @@ const schema = {
     OPENAI_API_KEY: { type: 'string', default: '' },
     OPENAI_CHAT_MODEL: { type: 'string', default: '' },
     OPENAI_VISION_MODEL: { type: 'string', default: 'gpt-4o' },
-    // Yalnızca akıl yürüten (reasoning) modellerde gönderilir: low | medium | high; boş = gönderme.
+    // Sohbet modeli için; yalnızca akıl yürüten (reasoning) modellerde gönderilir. Boş = gönderme.
     OPENAI_REASONING_EFFORT: {
+      type: 'string',
+      enum: ['', 'minimal', 'low', 'medium', 'high'],
+      default: '',
+    },
+    // Fotoğraf analizi için ayrı: gpt-4o gibi reasoning olmayan modeller bu alanı 400 ile reddeder.
+    OPENAI_VISION_REASONING_EFFORT: {
       type: 'string',
       enum: ['', 'minimal', 'low', 'medium', 'high'],
       default: '',
@@ -228,7 +234,7 @@ export function loadConfig(env = process.env) {
       apiKey: e.OPENAI_API_KEY,
       enabled: e.OPENAI_API_KEY.length > 0 && e.OPENAI_VISION_MODEL.length > 0,
       visionModel: e.OPENAI_VISION_MODEL,
-      reasoningEffort: e.OPENAI_REASONING_EFFORT || null,
+      reasoningEffort: e.OPENAI_VISION_REASONING_EFFORT || null,
       analysisTimeoutMs: e.AI_ANALYSIS_TIMEOUT_MS,
     },
     push: { serviceAccount: parseServiceAccountSafe(e.FCM_SERVICE_ACCOUNT_JSON) },

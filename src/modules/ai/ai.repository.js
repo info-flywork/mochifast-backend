@@ -55,14 +55,6 @@ export async function recordUsage(db, userId, feature, u) {
   );
 }
 
-/** Bugünün (UTC) toplam AI maliyeti, tüm kullanıcılar (global bütçe sigortası). */
-export async function todaysCostMicroUsd(db) {
-  const row = await db.one(
-    'SELECT COALESCE(SUM(cost_micro_usd), 0) AS cost FROM ai_usage_daily WHERE usage_date = UTC_DATE()',
-  );
-  return Number(row.cost);
-}
-
 export async function aiConsentGranted(db, userId) {
   const row = await db.one(
     `SELECT granted FROM user_consents

@@ -18,7 +18,12 @@ const STUCK_MINUTES = 15;
 export function aiJobs({ db, storage, config, logger, ai, chat, crypto, cache = createCache() }) {
   const client = ai ?? createVisionClient(config.ai, { logger });
   const chatClient = chat ?? createChatClient(config.chatAi, { logger });
-  const gate = createAiGate({ db, catalog: createCatalogService({ db, cache }), cache, logger });
+  const gate = createAiGate({
+    db,
+    catalog: createCatalogService({ db, cache }),
+    logger,
+    chatQuotaEnabled: config.chatAi?.quotaEnabled,
+  });
   const media = createMediaService({ db, storage, config: config.media, logger });
   const analyses = createPhotoAnalysisService({
     db,

@@ -12,28 +12,19 @@ const LIMIT_KEYS = Object.freeze({
 });
 /** Kota türü → `app_config.features` bayrağı: `false` ise özellik sunucuda da kapalı (acil anahtar). */
 const FEATURE_KEYS = Object.freeze({ chat: 'chat', photo_analysis: 'photoAnalysis' });
-const BUDGET_CACHE_SEC = 60;
 
 /**
  * AI özelliklerinin ortak kapısı (docs/backend/09-yapay-zeka.md §4): rıza, günlük kota (yerel
- * gün), global maliyet sigortası ve kullanım kaydı. Değerler `app_config`'ten okunur (deploy'suz
+ * gün) ve kullanım kaydı. Global maliyet/bütçe sınırı yoktur (kullanıcı kararı 2026-10-12). Değerler `app_config`'ten okunur (deploy'suz
  * ayarlanır).
  */
-export function createAiGate({
-  db,
-  catalog,
-  cache,
-  logger,
-  entitlements,
-  chatQuotaEnabled = true,
-}) {
+export function createAiGate({ db, catalog, logger, entitlements, chatQuotaEnabled = true }) {
   const unpriced = new Set();
   async function settings() {
     const config = await catalog.appConfig('all');
     return {
       limits: config.limits ?? {},
       pricing: config['ai.pricing'] ?? {},
-      dailyBudgetUsd: config['ai.daily_budget_usd'] ?? null,
       features: config.features ?? {},
     };
   }
@@ -62,22 +53,6 @@ export function createAiGate({
     async assertConsent(userId) {
       if (!(await repo.aiConsentGranted(db, userId))) {
         throw new AppError('CONSENT_REQUIRED', { details: { consent: 'aiProcessing' } });
-      }
-    },
-
-    /**
-     * Günlük maliyet sınırı aşıldıysa ücretsiz kullanıcılara AI geçici kapanır (503).
-     * Toplam 60 sn önbelleklenir: her istekte tüm kullanıcıların toplamı okunmaz.
-     */
-    async assertBudget(isPremium) {
-      if (isPremium) return;
-      const { dailyBudgetUsd } = await settings();
-      if (!dailyBudgetUsd) return;
-      const spent = await cache.getOrSet('ai:cost:today', BUDGET_CACHE_SEC, () =>
-        repo.todaysCostMicroUsd(db),
-      );
-      if (spent >= dailyBudgetUsd * 1e6) {
-        throw new AppError('UNAVAILABLE', { details: { reason: 'ai_budget' } });
       }
     },
 

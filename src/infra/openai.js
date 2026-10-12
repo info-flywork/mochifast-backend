@@ -54,7 +54,7 @@ export function createChatClient(config, { logger, clientImpl, now = Date.now } 
       model: config.model,
       messages,
       max_completion_tokens: maxTokens ?? config.maxOutputTokens,
-      ...(config.reasoningEffort ? { reasoning_effort: config.reasoningEffort } : {}),
+      ...reasoningParam(config.reasoningEffort, config.model),
       ...(stream ? { stream: true, stream_options: { include_usage: true } } : {}),
     };
   }
@@ -169,7 +169,7 @@ export function createVisionClient(config, { logger, clientImpl, now = Date.now 
             messages: params.messages,
             max_completion_tokens: params.max_tokens ?? 8000,
             ...(params.response_format ? { response_format: params.response_format } : {}),
-            ...(config.reasoningEffort ? { reasoning_effort: config.reasoningEffort } : {}),
+            ...reasoningParam(config.reasoningEffort, params.model ?? config.visionModel),
           },
           {
             ...(Number.isFinite(timeoutMs) ? { timeout: timeoutMs } : {}),
@@ -190,4 +190,10 @@ export function createVisionClient(config, { logger, clientImpl, now = Date.now 
       }
     },
   };
+}
+
+/** `reasoning_effort` yalnızca reasoning modellerine (o-serisi, gpt-5) gönderilir; gpt-4o 400 döner. */
+export function reasoningParam(effort, model) {
+  if (!effort || !/^(o\d|gpt-5)/i.test(model ?? '')) return {};
+  return { reasoning_effort: effort };
 }

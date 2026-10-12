@@ -9,7 +9,6 @@ export const aiGateFor = memoizeByDeps((app) =>
   createAiGate({
     db: app.deps.db,
     catalog: catalogServiceFor(app),
-    cache: app.deps.cache,
     logger: app.log,
     entitlements: app.deps.entitlements,
     chatQuotaEnabled: app.config.chatAi.quotaEnabled,

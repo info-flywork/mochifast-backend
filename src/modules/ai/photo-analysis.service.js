@@ -98,7 +98,6 @@ export function createPhotoAnalysisService({ db, jobs, gate, media, ai, storage,
       if (!ai.enabled) throw new AppError('UNAVAILABLE', { details: { reason: 'ai_disabled' } });
       await gate.assertConsent(userId);
       const isPremium = await gate.isPremium(userId);
-      await gate.assertBudget(isPremium);
       const quota = await gate.consume(userId, 'photo_analysis', { isPremium });
       try {
         const { media: photo } = await media.upload(userId, 'meal_photo', buffer);

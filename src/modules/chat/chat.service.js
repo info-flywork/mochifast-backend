@@ -227,7 +227,6 @@ export function createChatService({ db, crypto, chat, gate, contexts, content, j
       inflight.add(conversationId);
       try {
         const isPremium = await gate.isPremium(userId);
-        await gate.assertBudget(isPremium);
         const quota = await gate.consume(userId, 'chat', { isPremium });
         const safety = classifySafety(body.text);
         const context = await contexts.build(userId, conversation, locale);

@@ -62,7 +62,7 @@ Etkisi: bildirim, hesap silme, fotoğraf analizi, istatistik, abonelik senkronu 
 
 ## AI maliyet patlaması
 
-Bütçe kapısı günlük `app_config.ai.daily_budget_usd`'de AI'yı keser (503 `ai_budget`); alarm 40$'da.
+Global AI bütçe sınırı yoktur (kullanıcı kararı 2026-10-12); maliyet yalnızca `ai_usage_daily`'de izlenir.
 
 1. Kim: `SELECT user_id, feature, SUM(requests), SUM(cost_micro_usd)/1e6 FROM ai_usage_daily WHERE usage_date = UTC_DATE() GROUP BY user_id, feature ORDER BY 4 DESC LIMIT 20;`
 2. Tek kullanıcı kötüye kullanıyorsa: panelden oturumlarını kapat (`POST /v1/admin/users/:id/sessions/revoke`); gerekirse `users.status = 'banned'`.

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { reasoningParam } from '../../src/infra/openai.js';
 import { costMicroUsd, priceFor } from '../../src/modules/ai/ai.cost.js';
 import { ANALYSIS_SCHEMA, normalizeAnalysis } from '../../src/modules/ai/meal-analysis.rules.js';
 
@@ -104,5 +105,15 @@ describe('AI maliyeti', () => {
     expect(priceFor(pricing, 'gpt-4.1-2025-04-14')).toBeUndefined();
     expect(priceFor(pricing, 'gpt-4o-audio')).toBeUndefined();
     expect(priceFor(pricing, undefined)).toBeUndefined();
+  });
+});
+
+describe('reasoningParam', () => {
+  it('yalnızca reasoning modellerine gönderilir', () => {
+    expect(reasoningParam('low', 'gpt-4o')).toEqual({});
+    expect(reasoningParam('low', 'gpt-4o-2024-08-06')).toEqual({});
+    expect(reasoningParam(null, 'gpt-5')).toEqual({});
+    expect(reasoningParam('low', 'gpt-5-mini')).toEqual({ reasoning_effort: 'low' });
+    expect(reasoningParam('high', 'o4-mini')).toEqual({ reasoning_effort: 'high' });
   });
 });

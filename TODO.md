@@ -104,8 +104,8 @@ Tek ortam dosyası `.env` (şablon `.env.example`). Sunucunun `.env`'i sunucuda 
 ### `app_config` (DB'de; yönetim paneli F10'a kadar SQL ya da seed + `--overwrite-config`)
 
 - [ ] `ai.pricing`: **OpenAI sohbet modelinin** fiyatını ekle (`{"<model>": {"inputPerMTok", "outputPerMTok", "cacheReadPerMTok", "cacheWritePerMTok"}}`).
-      Yoksa sohbet maliyeti 0 görünür ve günlük bütçe sigortası sohbeti saymaz.
-- [ ] `ai.daily_budget_usd` (varsayılan 50) — gerçek bütçene göre ayarla.
+      Yoksa sohbet maliyeti 0 görünür (bütçe sınırı yok; yalnızca raporlama/alarm).
+- [ ] Canlı DB `app_config.ai.pricing`'e `gpt-4o` fiyatını ekle (seed yalnızca eksik anahtarı ekler, mevcut satırı güncellemez).
 - [ ] `limits` — ücretsiz/premium günlük kotalar (sohbet 3/100, fotoğraf 2/30): karar #7.
 - [ ] `legal.termsUrl` / `legal.privacyUrl` — şu an `null`; kullanım şartları ve gizlilik metni URL'leri.
 
