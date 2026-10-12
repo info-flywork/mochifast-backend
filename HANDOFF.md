@@ -1,6 +1,6 @@
 # HANDOFF — MochiFast (devam edecek geliştirici / yapay zekâ için)
 
-Son güncelleme: 2026-10-08. Bu dosya, işi yarıda devralan birinin bağlamı hızla kurması için yazıldı.
+Son güncelleme: 2026-10-12. Bu dosya, işi yarıda devralan birinin bağlamı hızla kurması için yazıldı.
 Ayrıntılı tasarım: `../fastingapp/docs/backend/*.md` (Türkçe). Kullanıcının yapacakları: `TODO.md`.
 Operasyon: `docs/runbooks.md`, `docs/deploy.md`.
 
@@ -23,6 +23,7 @@ Kullanıcı Türkçe konuşur, samimi dil ("kanka") kullanır. Cevaplar Türkçe
 - `.env` dosyalarına yeni anahtar eklerken yalnızca **eksik** anahtarı ekle, değerleri ekrana basma.
 - **Hesap birleştirme yok, misafir kalıcı** (kullanıcı kararı 2026-10-08): misafir cihazda ayrı, kalıcı bir hesaptır; başka hesaba
   geçişte veri taşınmaz, misafir silinmez (yalnızca oturumu kapanır). Misafirler süreyle de silinmez (90 gün kuralı kaldırıldı).
+- **AI bütçe sınırı yok** (kullanıcı kararı 2026-10-12): günlük maliyet kapısı kaldırıldı; maliyet yalnızca `ai_usage_daily`'de kaydedilir. Geri ekleme.
 - Admin API üretimde **kapalı kalacak** (kullanıcı kararı). Firebase **Web app istenmiyor** (kullanıcı kararı).
 - DB şifresi/`MEDIA_PATH_SECRET` ayrımını kullanıcı üretimde kendisi yapacak; dokunma.
 - Uygulanmış migration dosyasını düzenleme; yeni migration ekle (`npm run migrate:new`). Uzak DB'ye `npm run migrate` ile uygula (`.env` uzak cPanel DB'yi gösterir).
@@ -54,10 +55,10 @@ Tuzaklar:
 ## 4. Durum
 
 Yol haritası: `../fastingapp/docs/backend/12-yol-haritasi.md`. Backend F0–F10 tamam, F11 1. hafta tamam.
-Son backend commit'leri: `d345846` (AI: Anthropic → OpenAI), `0b50836` (misafir sırrı), `3b20902` (kullanılmayan şablon), `9ec59e5` (günün ipucu),
+Son backend commit'leri: `eb9f72b` (reasoning_effort yalnızca reasoning modellerine, bütçe kapısı kaldırıldı), `1858ffb` (özet `plan` = tam plan DTO'su), `fd0b95d`/`d345846` (AI: Anthropic → OpenAI), `0b50836` (misafir sırrı), `3b20902` (kullanılmayan şablon), `9ec59e5` (günün ipucu),
 `bf58398` (refresh aile limiti), `d99a0df` (Fast Forecast), `a14d31a` (bu dosya), `4d03412` (eski önek'siz yollar silindi),
 `df0d871` (F11 sertleştirme), `0ad5487`, `77748b7` (F10), `d85c836`, `3d1e84c` (F9).
-Testler: 43 dosya / 385 test geçiyor (2026-10-08). Uzak DB migration'ları 0021'e kadar uygulandı; seed güncel.
+Testler: 43 dosya / 386 test geçiyor (2026-10-12). Uzak DB migration'ları 0021'e kadar uygulandı; seed güncel.
 
 Modüller (`src/modules`): auth, user, account (silme/dışa aktarma/saklama), admin, devices, catalog, plans, fasting,
 stats, trackers (kilo/su/adım/uyku), meals, hunger, ai (fotoğraf analizi, OpenAI vision), chat (OpenAI, SSE), gamification
@@ -83,7 +84,7 @@ Durumu güncelle: bitirince `[x]` yap.
 5. [x] `account_deletion_scheduled` bildirim şablonu kullanılmıyor (silme talebinde push token'lar silindiği için
        gönderilemez). Ya şablonu kaldır ya da talepten önce anlık push gönder.
 6. [x] (2026-10-08) **AI maliyet hatası:** OpenAI yanıtındaki tarihli model adı (`gpt-4o-2024-08-06`) fiyat tablosunda
-       bulunmuyordu → maliyet 0, günlük bütçe sigortası çalışmıyordu. `src/modules/ai/ai.cost.js` `priceFor` tarih ekini atar.
+       bulunmuyordu → maliyet 0 kaydediliyordu. `src/modules/ai/ai.cost.js` `priceFor` tarih ekini atar.
 7. [x] (2026-10-08) **Anthropic kaldırıldı:** `src/infra/anthropic.js`, `@anthropic-ai/sdk`, `ANTHROPIC_API_KEY`/`AI_CHAT_MODEL`/
        `AI_VISION_MODEL`/`AI_SERVER_FALLBACK`; dokümanlar (02, 06, 07, 09, 14, 15, README) OpenAI'ye göre güncellendi.
 8. [x] (2026-10-08) **Seed `features.chatQuota: true`** (üretim güvenli); yerelde kota `.env` `AI_CHAT_QUOTA_ENABLED=false` ile kapalı.
@@ -128,7 +129,7 @@ Yapıldı (commit edilmedi, `fastingapp` çalışma ağacında):
 
 Uçtan uca doğrulanan: misafir girişi → `/v1/user/me`, `/v1/user/progress` 200. **Onboarding gönderimi henüz simülatörde denenmedi.**
 
-Backend'de commit edilmemiş değişiklik var (2026-10-08, OpenAI geçişinin devamı: `src/infra/openai.js` signal/timeout, chat servisi, media pipeline, `prompts/coach_mochi.v1.md`, `seeds/app_config.json`). Kullanıcı commit edecek; üzerine yazma. Testler buna uyarlandı (commit edilmedi): kota testleri `setFeatureFlag(ctx, 'chatQuota', true)` ile kotayı açar (`test/helpers/app.js`; seed'de `features.chatQuota: false`), kapalı kota için ayrı test var; lint/prettier temiz.
+OpenAI geçişi commit edildi (`d345846`, `fd0b95d`). Kota testleri `setFeatureFlag(ctx, 'chatQuota', true)` ile kotayı açar (`test/helpers/app.js`).
 
 - Oruç + plan + senkron düzeltmeleri (2026-10-08, simülatörde denenmedi; API yükleri curl ile doğrulandı):
   - Yazma sonrası tazeleme: `lib/core/sync/data_sync.dart` `DataSync.afterWrite({profile})` → `HomeRefreshRequested`
@@ -161,3 +162,61 @@ Kalan (önerilen sıra; her birinde sahte veriyi kaldır, gerçek uca bağla):
 7. [~] RevenueCat (2026-10-08, istemci kodu hazır; cihazda satın alma denenmedi): `lib/domain/revenue_cat/revenue_cat_service.dart` — açılışta `configure` (önbellekteki kullanıcı UUID'si, yoksa anonim; `main.dart`), her girişte `logIn` (`AuthRepository._save`, onboarding misafiri dahil), çıkışta `logOut` (`endLocalSession`), `POST /v1/subscription/sync` (oturum yoksa çağrılmaz, 1 dk kısma; 503'te CustomerInfo'ya düşer), `isPremium` ValueNotifier, RevenueCat Paywall (`default` offering, kapatma düğmeli), geri yükleme (Profil → "Satın alımları geri yükle"). Anahtarlar `lib/core/utils/constants/revenue_cat_constants.dart` (public SDK anahtarları; `REVENUECAT_IOS_KEY`/`REVENUECAT_ANDROID_KEY` define'ı ezer), entitlement `mochifast_pro` (sunucu `.env` `REVENUECAT_ENTITLEMENT=mochifast_pro` yapıldı; kod varsayılanı testler için `premium` kaldı). Paywall tetikleri: ana sayfa ve oruç ekranı "Premium" hapı, Profil premium kartı (premium'da gizli; başlık rozeti artık gerçek), kilitli planlar (Planlar sekmesi + oruç plan sayfası; premium'da kilit kalkar), sohbet ve fotoğraf `QUOTA_EXCEEDED` + `upgradeAvailable` / `PREMIUM_REQUIRED` (`RevenueCatService.needsUpgrade`). Sohbet akış isteğinde hata gövdesi artık okunuyor (önceden kod kayboluyordu). Android `MainActivity` → `FlutterFragmentActivity` (Paywalls için). **Kullanıcıda kalan:** `.env`'de `REVENUECAT_SECRET_API_KEY` (sk_…) boş (`REVENUECAT_WEBHOOK_AUTH` girildi, sunucu `.env`'ine de aynısı); RevenueCat panelinde webhook `https://mochifast-api.fly-work.com/v1/webhooks/revenuecat` + Authorization alanına `REVENUECAT_WEBHOOK_AUTH`'un birebir aynısı (sunucu ham başlığı tam eşleşmeyle karşılaştırır; `Bearer` öneki eklenmez); `default` offering'e paket + Paywall tasarımı; App Store Connect / Play Console ürünleri; sandbox hesapla fiziksel cihazda satın alma testi. Ayrıca `PUT /plans/current` istemcide henüz yok (seçilen premium plan sunucuya gitmiyor).
 8. [ ] Sağlık verisi ve AI işleme için açık rıza ekranları; engeller çoklu seçim; `requiredConsents` yeniden onay ekranı.
 9. [ ] Liste yanıtları için `PagedResponse` (`data.items` + `data.pageInfo`).
+
+## 7. Denetim 2026-10-12 — iş listesi (Cursor agent işinin incelemesi sonrası)
+
+Üç inceleme yapıldı (backend, istemci↔sunucu sözleşmesi, sahte veri/senkron/performans). Sırayla ilerle; bitirince `[x]`.
+Flutter değişiklikleri commit edilmez (kullanıcı eder).
+
+### 7.1 Kritik
+
+- [ ] (Kullanıcı şimdilik ertledi) AI rızası kullanıcıya sorulmadan veriliyor: `chat_session_cubit` `_ensureConsent`, `meals_repository.dart` ~53.
+- [x] Geçici ağ hatası oturumu kapatıyordu → `expired_token_interceptor.dart`: refresh yalnızca 400/401/403/410 ile reddedilirse oturum biter; ağ/5xx/429'da istek hatayla döner.
+- [x] `safetyAcknowledged` gönderilmiyordu (20_4, omad, 5_2 seçilemiyordu) → `lib/domain/fasting/plan_safety.dart` (sabit liste; katalog bağlanınca oradan), `AppDialogs.showPlanSafetyAck` (7 dil `plans.safety_ack_*`), `plan_change_flow.dart` ve Profili Düzenle plan seçimi önce uyarı gösterir, iki repository de alanı gönderir.
+- [x] Özet `plan`'ında `timing` yoktu, `applyFromSummary` planı eziyordu → backend `1858ffb`: `/user/summary.plan` artık `/plans/current` ile aynı DTO (`userPlanSchema`).
+- [x] Fotoğraf analizine `reasoning_effort` gidiyordu (gpt-4o 400) → `OPENAI_VISION_REASONING_EFFORT` ayrı; `reasoningParam()` yalnızca o-serisi/gpt-5'e gönderir.
+- [x] Bütçe kapısı kaldırıldı (`assertBudget`, `ai.daily_budget_usd` seed, `todaysCostMicroUsd`); seed `ai.pricing`'den eski `claude-opus-5-5` silindi.
+      Kullanıcıda: canlı DB `app_config.ai.pricing`'e `gpt-4o` fiyatını eklemek (seed mevcut anahtarı güncellemez; `--overwrite-config` tüm config'i ezer, dikkat).
+- [ ] (En sona bırakıldı, kullanıcı kararı) Deploy: `deploy.sh` rsync `.env.example`'ı göndermiyor ama dokümanlar sunucuda `cp .env.example .env` diyor.
+- [x] Su senkronu hata sonrası hizalanmıyordu (`_waterFlushing` açıkken `loadWaterDay` dönüyordu) → `water_view_mixin.dart` catch'te bayrak önce kapanır.
+- [x] Oruçta plan değişince önce oruç iptal ediliyordu → `FastingSessionCubit.changePlanWhileFasting`: önce plan (`_putPlan`, paywall/ret olursa oruç bozulmaz), sonra iptal (+ aynı başlangıçla yeniden başlat), tek `refresh` + tek `afterWrite`.
+
+### 7.2 Sözleşme uyumsuzlukları (kalan)
+
+- [ ] `PUT /steps/:date` tek gün döner; istemci haftalık grafiği siliyor (`steps_view_mixin.dart` ~159). Adım PUT'ları yarışıyor, hatalar yutuluyor.
+- [ ] `PATCH /user/onboarding` 404 (`user_repository.dart` ~38 `saveAnsweredQuestions`, `language_level_bloc`).
+- [ ] `customGlassSizes` en fazla 5 ve 50–2000 aralığı (`water_reminder_view.dart` ~121); kilo diyaloğu aralığı (profil 30–300, tartı 25–350).
+- [ ] Sohbet SSE `safety` olayı atılıyor (`chat_repository.dart` ~262); akış ortasında hata sonrası geçmiş yeniden yüklenmiyor.
+- [ ] Su bildirim/birim/bardak ayarları hiç yüklenmiyor (`GET /user/goals` çağrılmıyor).
+- [ ] Hatalar boş durum gibi gösteriliyor (öğün kayıtları, uyku, açlık geçmişi); `HomeBloc` yalnızca `Exception` yakalıyor.
+- [ ] `fasting_view` çift hata snackbar'ı; paywall sunucu senkronu bitmeden premium=false; açlık belirti eşlemesi yanlış; uyku hafta etiketleri yanlış.
+- [ ] Backend küçükler: hesap değiştirmede misafirin push token'ı silinmeli (`auth.service.js` ~251 `clearPushTokens`); üretimde `AI_CHAT_QUOTA_ENABLED=false` koruması ve public Bunny değişkenleri zorunlu değil; dokümanlarda Anthropic kalıntıları (CONTRIBUTING, 09/12); vision istemcisi birim testleri kayboldu; `image_url.detail` yok.
+
+### 7.3 Senkron
+
+- [ ] Ön plana dönüş / gece yarısı / yeniden bağlanmada yenileme yok → kökte `AppLifecycleListener(onResume)`: `HomeRefreshRequested`, `FastingSessionCubit.refresh(showLoading:false)`, okunmamış sayısı (~30 sn kısma) + gece yarısı zamanlayıcısı + `ConnectivityService` reconnect.
+- [ ] Ana sayfa oruç sayacı kart yeniden kurulunca kayıyor (`home_fasting_card.dart` ~22; `_anchor = now`) → `FastingSessionCubit.state` `fetchedAt`/`clockOffset` kullan.
+- [ ] `HomeBloc` yenilemeleri yarışıyor → `bloc_concurrency` `restartable()`; `DataSync.afterWrite` ~300 ms birleştir.
+- [ ] Ana ekran widget'ı yalnızca oruç ekranından yayınlanıyor → uygulama düzeyinde `BlocListener<FastingSessionCubit>` → `FastingWidgetSync.publish`. Widget hafta yedeği sahte (`fasting_widget_sync.dart` ~299), su widget toplamı tarihsiz, dünü gezerken bugün eziliyor (`water_view_mixin.dart` `_applyWaterDay` → yalnızca bugünse yayınla).
+- [ ] Her yazma beslenme önbelleğini siliyor (`data_sync.dart` ~13) → bayat işaretle, göstermeye devam et.
+- [ ] Çift istekler: oruç sekmesi `initState` `refresh()`; `startFast` ara `refresh`; bitirme ekranı kilo için tüm özeti çekiyor; forecast kartı başlat/bitir sonrası bayat.
+- [ ] Soğuk açılış push yönlendirmesi splash `go(home)` ile eziliyor (`push_open_handler.dart` ~79 sabit 900 ms).
+- [ ] `app.dart` ~23 her `build`'de `AuthCheckRequested` (dil değişince cihaz yeniden kaydı) → `main`'e taşı. Saat dilimi başlığı oturum boyu önbellekte.
+
+### 7.4 Loading / performans
+
+- [ ] Splash en az 1,4 sn + özet için 8 sn'ye kadar; 6 sn auth zaman aşımı girişli kullanıcıyı login'e atıyor (`splash_bloc.dart` ~31,51,100) → son özeti diske yaz, hemen geç, arkada tazele; zaman aşımı yedeğini kaldır.
+- [ ] `withLoading` gereksiz: paylaş (`fasting_view.dart` ~548, `fasting_first_time_view.dart` ~134), plan değişimi (`plan_change_flow.dart`; PUT dönünce bırak), BuildingPlan (yalnızca 300 ms'den uzun sürerse).
+- [ ] Her girişte iskelet/spinner: öğün kayıtları, açlık geçmişi (her filtre; bir kez yükle, istemcide süz), vücut geçmişi (aralıkları önbellekle).
+- [ ] Su ekranı her karede tüm sayfayı çiziyor (`water_view.dart` ~101; 5 controller, `ImageFiltered` kabarcıklar) → katman başına `AnimatedBuilder` + `RepaintBoundary`, önceden bulanık görsel.
+- [ ] Oruç sekmesi saniyede bir tüm ekranı `setState` (`fasting_view.dart` ~62) → sayaç küçük widget'a.
+- [ ] Sonsuz animasyonlar: dalgalar (`home_metric_cards.dart` ~242), sohbet rozeti (`ai_chat_header_icon.dart` ~77). Tüm uygulamada tek `RepaintBoundary`.
+- [ ] Widget görselleri uygulama açıkken her dakika 6 PNG (25σ blur) UI isolate'te (`fasting_widget_sync.dart` ~397) → yalnızca durum değişince; geri sayımı native taraf `start_ms/end_ms`'ten yapsın.
+- [ ] İlk açılışta 241 görsel (10,5 MB) + SHA-256 UI isolate'te (`app_init.dart` ~25, `remote_image_store.dart` ~179) → `Isolate.run`, home yüklendikten sonra başlat. `app_image.dart` `cacheWidth` yok. `app_init` sıralı await → `Future.wait`.
+- [ ] Mochi World: 3 `BackdropFilter` + ~24 görsel precache. Bildirim/açlık listeleri `for` (builder + sayfalama yok). `HomeLoaded` `Equatable` değil.
+- [ ] Ağ: güvenli depo her istekte okunuyor (`auth_interceptor.dart` ~15 → bellekte önbellek); `LogInterceptor` gövde + `Authorization` basıyor; refresh sonrası tekrar ayrı `Dio` (`_plain`) ile.
+
+### 7.5 Hâlâ sahte veri
+
+- [ ] Tamamen: Mochi World (`/v1/world`), Insights (`/v1/insights/*`), challenge kartı (`8954` sabit, Katıl boş → `featuredChallenge` + `POST /challenges/:code/join`), metabolik kart (faz 7'ye kadar gizle), SSS (`/catalog/faq`), zorlanma akışı (`/catalog/struggle`, `POST /fasts/:id/struggles`).
+- [ ] Kısmen: adımlar (HealthKit/Fit yok, elle giriş kullanılmıyor), uyku kaydı yok, açlık hafta şeridi sabit + değerlendirme hatasında uydurma sonuç + `recommendations`/`safetyFlag` yok sayılıyor, hızlı kcal gönderilmiyor, forecast eğrisi, plan kataloğu (`/catalog/plans`), profil push/sağlık anahtarları (`/user/settings`), kilo kartı sahte 70 kg, sohbet öneri çipleri (`/chat/suggestions`), onboarding pazarlama sayıları (`/app/config.marketing`).
