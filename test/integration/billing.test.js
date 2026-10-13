@@ -146,6 +146,16 @@ describe.skipIf(!mysqlUrl)('abonelik: RevenueCat (gerçek MySQL, sahte REST)', (
     });
   });
 
+  it('onboarding haftalık plan (5:2) premium kullanıcıda şablonla etkin', async () => {
+    const { token, userId } = await newUser();
+    ctx.revenuecatApi.subscribers[userId] = premium();
+    await call('POST', '/subscription/sync', { token });
+    await call('POST', '/user/onboarding', { token, body: onboardingBody('5_2') });
+    const { plan } = await get(token, '/plans/current');
+    expect(plan.planCode).toBe('5_2');
+    expect(plan.weeklySchedule.filter((d) => d.type === 'reduced')).toHaveLength(2);
+  });
+
   it('kabul kriteri: aynı webhook iki kez → tek kez işlenir; yetkisiz 401', async () => {
     const { token, userId } = await newUser('16_8');
     ctx.revenuecatApi.subscribers[userId] = premium();

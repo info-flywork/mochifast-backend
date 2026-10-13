@@ -191,10 +191,13 @@ export function createUserService({ db, cache, catalog, plans, stats, media, ent
         // Ücretsiz plan (ya da premium kullanıcının planı) hemen aktif olur; premium plan
         // satın alınınca etkinleşir, o zamana kadar profilde bekler
         // (GET /v1/plans/current → pendingPlanCode).
-        if ((!plan.isPremium || hasPremium) && summary.eatWindow) {
+        // Haftalık planlar (5:2, gün aşırı…) yeme penceresi olmadan, katalog şablonuyla.
+        if (!plan.isPremium || hasPremium) {
           await plans.activate(
             userId,
-            { planCode: plan.code, timing: 'custom', eatWindow: summary.eatWindow },
+            summary.eatWindow
+              ? { planCode: plan.code, timing: 'custom', eatWindow: summary.eatWindow }
+              : { planCode: plan.code },
             { conn, hasPremium, skipSafety: true, meta },
           );
         }

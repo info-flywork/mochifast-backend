@@ -313,8 +313,16 @@ iki satır (watch + node) göstermeli.
 - [x] Bitirmede bitiş, planlanan bitişi 12 sa'ten fazla aşarsa "Bu saatte mi bitirdin?" onayı (`LONG_OVERRUN`).
 - [x] Ana sayfa oruç kartı: hedef geçince "Hedefe ulaştın" + toplam süre; yeme penceresinde "Öğün penceresi".
 - Kullanıcı kararı: yanlışlıkla başlatılan oruç için iptal seçeneği **olmayacak**.
-- [ ] Haftalık planlar (5:2, 6:1, gün aşırı): düşük kalorili günde sayaç yerine check-in kartı (`/fasts/week` `dayType`,
-      `PUT /plans/days/:date`). Sonraya bırakıldı.
+- [x] Haftalık planlar (2026-10-13). Kullanıcı kararları: beş plan da (5:2, 6:1, gün aşırı, Crescendo, özel hafta);
+      serbest günde bilgi kartı + isteğe bağlı oruç (sunucu 16 sa varsayılanı); 500 kcal gününde yalnızca
+      "Tamamladım / Atladım" (kalori hedefi değişmez). - İstemci: `domain/fasting/weekly_schedule.dart` (`WeeklyDay`, `WeeklyRules.template/validate` — sunucu kurallarıyla
+      aynı, testli); `UserFastingPlan.weeklySchedule` + `dayFor`; `setCurrentPlan(weeklySchedule:)`;
+      `checkinPlanDay` (`PUT /plans/days/:date`). Planlar sekmesi + oruç ekranı plan listesinde "Haftalık Planlar"
+      bölümü; `WeeklyPlanDetailView` (7 günlük düzenleyici, Crescendo/özel hafta için saat ayarı, kural hatası
+      uyarısı) → `openWeeklyPlan` (paywall → gün seçimi → `applyPlanChange`). Oruç sekmesinde bugün oruç günü
+      değilse `FastingPlanDayCard`; Crescendo/özel haftada yay ve Mochi kartı günün süresiyle. - Hafta: `SummaryWeekDay` `dayType/isRequiredDay/checkin/progress`; ana sayfa şeridinde işaretli azaltılmış gün ✓;
+      widget hafta çubukları sunucu ilerlemesi, serbest gün soluk, payda yalnızca planın istediği günler. - Backend: onboarding'de haftalık plan (5:2…) artık etkinleşiyor (önceden yeme penceresi olmadığı için hiç plan
+      kalmıyordu; premium kullanıcıda katalog şablonuyla).
 
 ### 8.2 Yüksek
 
@@ -392,9 +400,9 @@ iki satır (watch + node) göstermeli.
 - [x] (hedef yoksa yenilen kcal, aşıldıysa fazlası, değilse kalan; "Eaten {}") Kalori ekranı yeme bozukluğu bayrağında "0 kcal over" gösteriyor; kalan kcal hiç yok; "Eated {}".
 - [x] (aktif oruçta geçen süre; insight kategorisi `isLocked` → taç + paywall; `fastingapp://plans` sekmeye geçer)
       Oruç geçmişinde aktif oruç "— / 16h"; insight premium kilidi okunmuyor; `fastingapp://plans` push'u sekmeye geçmiyor.
-- [~] (aynı kilo kaydedilir; iyimser nokta bugünün kovasına; su 6000 ml eşiğinde uyarı; kilo dialogu kg/lb tercihiyle
-  açılır, değişince `units.weight` yazılır — diğer ekranlar hâlâ kg; başlangıç = hedef: hedefe ±1 kg tamam,
-  tek `weightProgressOf`. **Kalan:** haftalık planlarda widget hafta paydası — haftalık planlarla birlikte) Aynı kilo tekrar girilince kayıt atılmıyor; vücut geçmişi iyimser nokta yanlış kovaya yazılabiliyor; su 6000 ml uyarısı yok;
-  haftalık planlarda widget hafta çubukları yanlış payda; kilo birimi (lb) yok sayılıyor, başlangıç = hedef → %0.
+- [x] (aynı kilo kaydedilir; iyimser nokta bugünün kovasına; su 6000 ml eşiğinde uyarı; kilo dialogu kg/lb tercihiyle
+      açılır, değişince `units.weight` yazılır — diğer ekranlar hâlâ kg; başlangıç = hedef: hedefe ±1 kg tamam,
+      tek `weightProgressOf`; haftalık planlarda widget paydası haftalık planlarla birlikte yapıldı) Aynı kilo tekrar girilince kayıt atılmıyor; vücut geçmişi iyimser nokta yanlış kovaya yazılabiliyor; su 6000 ml uyarısı yok;
+      haftalık planlarda widget hafta çubukları yanlış payda; kilo birimi (lb) yok sayılıyor, başlangıç = hedef → %0.
 - [x] (çıkışta önce yerel token silinir, sunucu `/auth/logout` eski token'la arka planda; geri alma reddedilince
       yalnızca sosyal giriş kapatılır) Çıkış sırasında hızlı yeniden giriş yarışı; geri alma reddedilince başka oturum token'ı silinebiliyor.
