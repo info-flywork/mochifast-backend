@@ -381,12 +381,20 @@ iki satır (watch + node) göstermeli.
 
 ### 8.4 Düşük
 
-- [ ] Premium alındıktan sonra ana sayfa "Premium" hapı özet yenilenene kadar duruyor; satın alma sonrası ilk tekrar 402 alabilir.
-- [ ] Bildirimler hepsi "Bugün" başlığı altında, "72 saat önce", tüm tipler "meal" ikonu, hata boş durum gibi.
-- [ ] Profil "Değerlendir" ve "Paylaş" satırları boş; açlık başarı ekranı "Insights" kartı boş.
-- [ ] AI rıza kaydı ağ hatasında sessiz; `CONSENT_REQUIRED` gelince yerel önbellek temizlenmiyor.
-- [ ] Kalori ekranı yeme bozukluğu bayrağında "0 kcal over" gösteriyor; kalan kcal hiç yok; "Eated {}".
-- [ ] Oruç geçmişinde aktif oruç "— / 16h"; insight premium kilidi okunmuyor; `fastingapp://plans` push'u sekmeye geçmiyor.
-- [ ] Aynı kilo tekrar girilince kayıt atılmıyor; vücut geçmişi iyimser nokta yanlış kovaya yazılabiliyor; su 6000 ml uyarısı yok;
-      haftalık planlarda widget hafta çubukları yanlış payda; kilo birimi (lb) yok sayılıyor, başlangıç = hedef → %0.
-- [ ] Çıkış sırasında hızlı yeniden giriş yarışı; geri alma reddedilince başka oturum token'ı silinebiliyor.
+- [x] (hap `RevenueCatService.isPremium`'u da dinler; satın alma sonrası tekrarlar `retryAfterUpgrade`: 402'de 2/4 sn
+      senkron + yeniden dene — plan, profil planı, meydan okuma, fotoğraf analizi) Premium alındıktan sonra ana sayfa "Premium" hapı özet yenilenene kadar duruyor; satın alma sonrası ilk tekrar 402 alabilir.
+- [x] (gün gün bölümler — Bugün/Dün/tarih; `category`'ye göre ikon; bugün "ŞİMDİ / dk / saat önce", eskiler saat;
+      ilk yükleme hatası tekrar dene ekranı) Bildirimler hepsi "Bugün" başlığı altında, "72 saat önce", tüm tipler "meal" ikonu, hata boş durum gibi.
+- [x] (`in_app_review` eklendi: uygulama içi değerlendirme, olmazsa mağaza; paylaş metni + mağaza bağlantısı —
+      iOS bağlantısı için `--dart-define=APP_STORE_ID=` gerekli, boşken yalnızca metin; açlık "Insights" → geçmiş)
+      Profil "Değerlendir" ve "Paylaş" satırları boş; açlık başarı ekranı "Insights" kartı boş.
+- [x] (hata snackbar; `CONSENT_REQUIRED` gelince önbellek sıfırlanır — sohbet + fotoğraf) AI rıza kaydı ağ hatasında sessiz; `CONSENT_REQUIRED` gelince yerel önbellek temizlenmiyor.
+- [x] (hedef yoksa yenilen kcal, aşıldıysa fazlası, değilse kalan; "Eaten {}") Kalori ekranı yeme bozukluğu bayrağında "0 kcal over" gösteriyor; kalan kcal hiç yok; "Eated {}".
+- [x] (aktif oruçta geçen süre; insight kategorisi `isLocked` → taç + paywall; `fastingapp://plans` sekmeye geçer)
+      Oruç geçmişinde aktif oruç "— / 16h"; insight premium kilidi okunmuyor; `fastingapp://plans` push'u sekmeye geçmiyor.
+- [~] (aynı kilo kaydedilir; iyimser nokta bugünün kovasına; su 6000 ml eşiğinde uyarı; kilo dialogu kg/lb tercihiyle
+  açılır, değişince `units.weight` yazılır — diğer ekranlar hâlâ kg; başlangıç = hedef: hedefe ±1 kg tamam,
+  tek `weightProgressOf`. **Kalan:** haftalık planlarda widget hafta paydası — haftalık planlarla birlikte) Aynı kilo tekrar girilince kayıt atılmıyor; vücut geçmişi iyimser nokta yanlış kovaya yazılabiliyor; su 6000 ml uyarısı yok;
+  haftalık planlarda widget hafta çubukları yanlış payda; kilo birimi (lb) yok sayılıyor, başlangıç = hedef → %0.
+- [x] (çıkışta önce yerel token silinir, sunucu `/auth/logout` eski token'la arka planda; geri alma reddedilince
+      yalnızca sosyal giriş kapatılır) Çıkış sırasında hızlı yeniden giriş yarışı; geri alma reddedilince başka oturum token'ı silinebiliyor.
