@@ -335,16 +335,20 @@ iki satır (watch + node) göstermeli.
 - [ ] Onboarding: ücretsiz kullanıcı premium plan seçince kilit yok, sonunda plan sessizce `pendingPlanCode`; engeller tek seçim
       ("hepsini seç" diyor); hedef BMI < 17.5 ve öğün penceresi başlangıç = bitiş en sonda reddediliyor; kilo alma/koruma hedefinde
       hedef kilo mevcut kilonun üstüne çıkamıyor; projeksiyon tarihi sunucudan birkaç gün farklı.
-- [ ] Dil: uygulamada dil değişince `PATCH /user/me {locale}` yok (push İngilizce gelir); it/ru `supportedLocales`'te yok,
+- [x] (it/ru açıldı + eksik 4 metin; pt/ko/hi/ja listeden çıktı; dil seçince `PATCH /user/me {locale}` + cihaz kaydı +
+      özet; istekler cihaz dili değil uygulama dili; iOS `CFBundleLocalizations`) Dil: uygulamada dil değişince `PATCH /user/me {locale}` yok (push İngilizce gelir); it/ru `supportedLocales`'te yok,
       listedeki pt/ko/hi/ja seçilince hiçbir şey olmuyor.
-- [ ] Bildirim izni yalnızca onboarding sonunda; mevcut hesapla girişte hiç istenmiyor (iOS/Android 13+ push gelmez).
+- [x] (onboarding'i olan hesapla girişte izin + cihaz kaydı, `WelcomeBloc`) Bildirim izni yalnızca onboarding sonunda; mevcut hesapla girişte hiç istenmiyor (iOS/Android 13+ push gelmez).
 - [ ] Silinmek üzere olan misafir hesapla yeniden onboarding → en sonda sabit Türkçe "Hesap silinmek üzere" hatası, çıkış yok.
 - [ ] Widget: yeme penceresinde "Eating 00:00 left", plan widget'ları sabit 20:00; uygulama kapalıyken geri sayım donuk; widget'a
       dokununca soğuk açılışta Su yerine Home; onboarding bitmemiş kullanıcıda push/widget korumalı ekran açıyor.
-- [ ] Fotoğraf analizi istemci 30 sn'de vazgeçiyor (sunucu 45 sn × 3 deneme) → hak boşa gider; hata/`notFood`'da başlık örnek metin
+- [x] (yoklama 150 sn, ağ hatasında sürer; süre dolarsa `PhotoAnalysisPending` + "Tekrar kontrol et" aynı analizi
+      yoklar; notFood/failed metinleri; örnek başlık yok; kaydedince takip ekranına; AI + hızlı kcal'de "orucu bitir?")
+      Fotoğraf analizi istemci 30 sn'de vazgeçiyor (sunucu 45 sn × 3 deneme) → hak boşa gider; hata/`notFood`'da başlık örnek metin
       "Grilled Chicken…"; kaydet sonrası kamera ekranına dönüyor; hızlı kcal ve AI öğünde "orucu bitir?" sorulmuyor.
 - [ ] Profil plan değişimi timing'i sıfırlıyor; profil 15_9 / 19_5 planlarını tanımıyor ("–").
-- [ ] Sohbet: hata olunca yazılan metin kayboluyor; akış sürerken ikinci mesaj / başka konuşma açılabiliyor (yanıt yanlış
+- [x] (gönderilemezse metin geri; akış sürerken `isBusy` kilit + `openConversation` token; SSE `Utf8Decoder`
+      akış dönüşümü) Sohbet: hata olunca yazılan metin kayboluyor; akış sürerken ikinci mesaj / başka konuşma açılabiliyor (yanıt yanlış
       konuşmaya akıyor); SSE parça sınırında Türkçe/Rusça harf bozuluyor (`utf8.decode` parça parça).
 - [ ] Mochi World yalnızca ilk açılışta yükleniyor (sekme canlı kalıyor, oruç sonrası güncellenmiyor).
 - [ ] Su: oz birimi seçilse de her yerde "ml"; gece yarısını geçince açık ekranda + çalışmıyor.
