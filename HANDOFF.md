@@ -355,8 +355,11 @@ iki satır (watch + node) göstermeli.
       Silinmek üzere olan misafir hesapla yeniden onboarding → en sonda sabit Türkçe "Hesap silinmek üzere" hatası, çıkış yok.
 - [x] (yeme penceresinde geri sayım pencerenin sonuna; plan/detay widget'ları sürmekte olan ya da sıradaki orucu gösterir;
       push + widget dokunuşu `DeepLinkGate`: oturum + onboarding bitmiş + splash'ten çıkış beklenir; router onboarding'i
-      bitmemiş oturumu korumalı ekrandan onboarding'e atar. **Kalan:** uygulama kapalıyken geri sayım donuk — widget görseli
-      uygulama çalışırken çiziliyor; canlı sayaç için yerel widget kodu (iOS `Text(timerInterval:)`, Android `Chronometer`) gerekli)
+      bitmemiş oturumu korumalı ekrandan onboarding'e atar. Canlı geri sayım (2026-10-13): sayaç sürerken Flutter küçük /
+      kart / özet görsellerini süre metni ve yay olmadan çizer, konumları `fasting_live_spec`'e yazar (`*WidgetView.liveSpec`);
+      iOS `WaterWidget.swift` `LiveOverlay` — `Text(timerInterval:countsDown:)` + yerel yay, ~5 dk'lık zaman çizelgesi;
+      Android `FastingLive.kt` — `Chronometer` geri sayım + bitmap üstüne yay, `setWindow` ile ~10 dk'da bir ve bitişte
+      yenileme. Sayaç saniyeli (H:MM:SS); bitişte 0:00'da durur. Cihazda konum kontrolü gerekli)
       Widget: yeme penceresinde "Eating 00:00 left", plan widget'ları sabit 20:00; uygulama kapalıyken geri sayım donuk; widget'a
       dokununca soğuk açılışta Su yerine Home; onboarding bitmemiş kullanıcıda push/widget korumalı ekran açıyor.
 - [x] (yoklama 150 sn, ağ hatasında sürer; süre dolarsa `PhotoAnalysisPending` + "Tekrar kontrol et" aynı analizi
