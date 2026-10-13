@@ -345,7 +345,11 @@ iki satır (watch + node) göstermeli.
 - [x] (onboarding'i olan hesapla girişte izin + cihaz kaydı, `WelcomeBloc`) Bildirim izni yalnızca onboarding sonunda; mevcut hesapla girişte hiç istenmiyor (iOS/Android 13+ push gelmez).
 - [x] (gönderimde geri alma sorusu: evet → hesap açılır ve cevaplar ona yazılır; hayır → yeni kurulum kimliğiyle yeni misafir)
       Silinmek üzere olan misafir hesapla yeniden onboarding → en sonda sabit Türkçe "Hesap silinmek üzere" hatası, çıkış yok.
-- [ ] Widget: yeme penceresinde "Eating 00:00 left", plan widget'ları sabit 20:00; uygulama kapalıyken geri sayım donuk; widget'a
+- [x] (yeme penceresinde geri sayım pencerenin sonuna; plan/detay widget'ları sürmekte olan ya da sıradaki orucu gösterir;
+      push + widget dokunuşu `DeepLinkGate`: oturum + onboarding bitmiş + splash'ten çıkış beklenir; router onboarding'i
+      bitmemiş oturumu korumalı ekrandan onboarding'e atar. **Kalan:** uygulama kapalıyken geri sayım donuk — widget görseli
+      uygulama çalışırken çiziliyor; canlı sayaç için yerel widget kodu (iOS `Text(timerInterval:)`, Android `Chronometer`) gerekli)
+      Widget: yeme penceresinde "Eating 00:00 left", plan widget'ları sabit 20:00; uygulama kapalıyken geri sayım donuk; widget'a
       dokununca soğuk açılışta Su yerine Home; onboarding bitmemiş kullanıcıda push/widget korumalı ekran açıyor.
 - [x] (yoklama 150 sn, ağ hatasında sürer; süre dolarsa `PhotoAnalysisPending` + "Tekrar kontrol et" aynı analizi
       yoklar; notFood/failed metinleri; örnek başlık yok; kaydedince takip ekranına; AI + hızlı kcal'de "orucu bitir?")
@@ -371,8 +375,9 @@ iki satır (watch + node) göstermeli.
 - [x] (ilerleme hedef yönüne göre) Kilo almak isteyen kullanıcıda vücut geçmişi ilerlemesi hep %0 (`body_history_view.dart` işaretsiz `span`).
 - [x] (öğün düzenlemede seçici 30 gün, gelecek saat seçilemez; `eatenAt` yalnızca değiştiyse gönderilir)
       Öğün tarih seçici 2 yıl geri / gelecek saat izin veriyor (sunucu 30 gün); 30 günden eski öğünün notu düzenlenemiyor.
-- [ ] Sağlık izni geri alınırsa Android her ön plana dönüşte izin ekranı açıyor.
-- [ ] `requiredConsents` (şartlar/gizlilik sürümü değişince yeniden onay) hiç okunmuyor.
+- [x] (arka plan senkronu izin istemez; yalnızca Profil anahtarı) Sağlık izni geri alınırsa Android her ön plana dönüşte izin ekranı açıyor.
+- [x] (ana kabukta açılışta bir kez `GET /user/me` → güncelleme diyaloğu → `POST /user/consents` her tür için; "Sonra"
+      denirse sonraki açılışta tekrar) `requiredConsents` (şartlar/gizlilik sürümü değişince yeniden onay) hiç okunmuyor.
 
 ### 8.4 Düşük
 
