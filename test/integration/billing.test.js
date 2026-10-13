@@ -135,6 +135,17 @@ describe.skipIf(!mysqlUrl)('abonelik: RevenueCat (gerçek MySQL, sahte REST)', (
     });
   });
 
+  it('onboarding bitmeden premium olan kullanıcının premium planı hemen etkin', async () => {
+    const { token, userId } = await newUser();
+    ctx.revenuecatApi.subscribers[userId] = premium();
+    await call('POST', '/subscription/sync', { token });
+    await call('POST', '/user/onboarding', { token, body: onboardingBody('18_6') });
+    expect(await get(token, '/plans/current')).toMatchObject({
+      plan: { planCode: '18_6' },
+      pendingPlanCode: null,
+    });
+  });
+
   it('kabul kriteri: aynı webhook iki kez → tek kez işlenir; yetkisiz 401', async () => {
     const { token, userId } = await newUser('16_8');
     ctx.revenuecatApi.subscribers[userId] = premium();

@@ -127,6 +127,8 @@ export function createUserService({ db, cache, catalog, plans, stats, media, ent
       }
 
       const plan = await resolvePlan(body.planCode);
+      // Onboarding sırasında satın alan kullanıcıda premium plan hemen etkin.
+      const hasPremium = plan.isPremium && ((await entitlements?.isPremium(userId)) ?? false);
       const healthFlags = [...(body.healthFlags ?? []).map(toDbEnum)];
       if (body.age < 18) healthFlags.push('under_18');
       const warnings = [
@@ -186,13 +188,14 @@ export function createUserService({ db, cache, catalog, plans, stats, media, ent
         });
         if (timezone !== userRow.timezone) await repo.updateUser(db, conn, userId, { timezone });
         await repo.markOnboarded(db, conn, userId);
-        // Ücretsiz plan hemen aktif olur; premium plan F8'de (abonelik) satın alınınca etkinleşir,
-        // o zamana kadar profilde bekler (GET /v1/plans/current → pendingPlanCode).
-        if (!plan.isPremium && summary.eatWindow) {
+        // Ücretsiz plan (ya da premium kullanıcının planı) hemen aktif olur; premium plan
+        // satın alınınca etkinleşir, o zamana kadar profilde bekler
+        // (GET /v1/plans/current → pendingPlanCode).
+        if ((!plan.isPremium || hasPremium) && summary.eatWindow) {
           await plans.activate(
             userId,
             { planCode: plan.code, timing: 'custom', eatWindow: summary.eatWindow },
-            { conn, skipSafety: true, meta },
+            { conn, hasPremium, skipSafety: true, meta },
           );
         }
         // Onboarding kilosu bugünün özetine ve kilo XP'sine yazılır.

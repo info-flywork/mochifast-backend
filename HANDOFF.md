@@ -332,14 +332,19 @@ iki satır (watch + node) göstermeli.
 
 ### 8.3 Orta
 
-- [ ] Onboarding: ücretsiz kullanıcı premium plan seçince kilit yok, sonunda plan sessizce `pendingPlanCode`; engeller tek seçim
+- [x] (premium planlarda taç + dokununca paywall, satın alınmazsa seçilmez — onboarding ve Profili Düzenle; onboarding'i
+      premium bitirenin premium planı artık hemen etkin (önceden hiç aktif plan olmuyordu, `user.service.js`); engeller çoklu
+      seçim + Devam; hedef kilo alt sınırı BMI 17.5, kilo vermede üst sınır mevcut kilo, diğer hedeflerde serbest; mevcut kilo
+      zaten düşükse uyarı + buton kapalı; öğün penceresi başlangıç = bitiş uyarısı; projeksiyon tarihi sunucudan)
+      Onboarding: ücretsiz kullanıcı premium plan seçince kilit yok, sonunda plan sessizce `pendingPlanCode`; engeller tek seçim
       ("hepsini seç" diyor); hedef BMI < 17.5 ve öğün penceresi başlangıç = bitiş en sonda reddediliyor; kilo alma/koruma hedefinde
       hedef kilo mevcut kilonun üstüne çıkamıyor; projeksiyon tarihi sunucudan birkaç gün farklı.
 - [x] (it/ru açıldı + eksik 4 metin; pt/ko/hi/ja listeden çıktı; dil seçince `PATCH /user/me {locale}` + cihaz kaydı +
       özet; istekler cihaz dili değil uygulama dili; iOS `CFBundleLocalizations`) Dil: uygulamada dil değişince `PATCH /user/me {locale}` yok (push İngilizce gelir); it/ru `supportedLocales`'te yok,
       listedeki pt/ko/hi/ja seçilince hiçbir şey olmuyor.
 - [x] (onboarding'i olan hesapla girişte izin + cihaz kaydı, `WelcomeBloc`) Bildirim izni yalnızca onboarding sonunda; mevcut hesapla girişte hiç istenmiyor (iOS/Android 13+ push gelmez).
-- [ ] Silinmek üzere olan misafir hesapla yeniden onboarding → en sonda sabit Türkçe "Hesap silinmek üzere" hatası, çıkış yok.
+- [x] (gönderimde geri alma sorusu: evet → hesap açılır ve cevaplar ona yazılır; hayır → yeni kurulum kimliğiyle yeni misafir)
+      Silinmek üzere olan misafir hesapla yeniden onboarding → en sonda sabit Türkçe "Hesap silinmek üzere" hatası, çıkış yok.
 - [ ] Widget: yeme penceresinde "Eating 00:00 left", plan widget'ları sabit 20:00; uygulama kapalıyken geri sayım donuk; widget'a
       dokununca soğuk açılışta Su yerine Home; onboarding bitmemiş kullanıcıda push/widget korumalı ekran açıyor.
 - [x] (yoklama 150 sn, ağ hatasında sürer; süre dolarsa `PhotoAnalysisPending` + "Tekrar kontrol et" aynı analizi
