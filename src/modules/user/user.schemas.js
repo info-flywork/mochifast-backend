@@ -505,6 +505,7 @@ export const summarySchema = {
             avatarUrl: { type: ['string', 'null'] },
             isPremium: { type: 'boolean' },
             isGuest: { type: 'boolean' },
+            units: unitsSchema,
           },
         },
         progress: progressDto,

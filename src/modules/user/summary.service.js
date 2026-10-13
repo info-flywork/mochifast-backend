@@ -35,6 +35,8 @@ export function createSummaryService({ db, users, plans, fasting, stats, challen
           avatarUrl: me.avatarUrl,
           isPremium: me.isPremium,
           isGuest: me.isGuest,
+          // Birim tercihleri (kg/lb, ml/oz): ana sayfa kartları ve widget'lar için.
+          units: me.units,
         },
         progress,
         activeFast: active.fast,

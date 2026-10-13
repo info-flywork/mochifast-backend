@@ -324,6 +324,24 @@ iki satır (watch + node) göstermeli.
       widget hafta çubukları sunucu ilerlemesi, serbest gün soluk, payda yalnızca planın istediği günler. - Backend: onboarding'de haftalık plan (5:2…) artık etkinleşiyor (önceden yeme penceresi olmadığı için hiç plan
       kalmıyordu; premium kullanıcıda katalog şablonuyla).
 
+### 8.1b Senkron taraması (2026-10-13)
+
+- [x] Yazma sürerken ekrandan çıkılınca `DataSync.afterWrite` atlanıyordu (su, kilo, hedef, hızlı kcal, foto öğün, öğün
+      düzenle/sil, açlık) → yazma başarılı olur olmaz, `mounted` kontrolünden önce.
+- [x] Sağlık adım senkronu ana sayfayı yenilemiyordu; soğuk açılışta hiç çalışmıyordu; eşzamanlı çağrılar bekliyor.
+- [x] Aynı planın saati / haftalık günleri değişince oruç durumu ve widget güncellenmiyordu (`UserFastingPlan.signature`).
+- [x] Tahmin ve günün ipucu kartları plan değişimi ve gün dönümünde yeniden yüklenir.
+- [x] Premium ana sayfa dışında alınınca bekleyen plan her yerde tazelenir (`RevenueCatService` sunucu premium'a geçince).
+- [x] Protein ekranından öğün eklenince kalori ekranı tazelenir.
+- [x] Yazmadan önce başlamış özet yanıtı yeni durumu ezmez (`DataSync.generation`).
+- [x] Birimler: `/user/summary.user.units` (backend) → ana sayfa / oruç sekmesi su (oz) ve kilo (lb) kartları, su widget'ı;
+      birim değişince özet yenilenir; kilo birimi kaydedilemezse geri alınır.
+- [x] Çıkışta widget plan anahtarları, hafta önbelleği, insight önbelleği, sağlık senkron kısıtı temizlenir.
+- [x] Vücut geçmişi: yazmadan sonra yanlış aralığın grafiği / eski ön yükleme.
+- [x] Su hedefi değişince su günü önbelleği; öğün kayıtları önbelleği oluşturma / düzenlemede bırakılır.
+- [x] Bildirim silinemezse geri konur; profil tazelemesi araya giren düzenlemeyi ezmez, yükleme sürerken gelen zorunlu
+      tazeleme sıraya alınır.
+
 ### 8.2 Yüksek
 
 - [x] (`_clearHomeCache`: `ChatSessionCubit.reset`, öneriler, `FastingSessionCubit.reset`, su günü önbelleği,

@@ -167,7 +167,12 @@ describe.skipIf(!mysqlUrl)('seri, XP ve özetler (gerçek MySQL)', () => {
   it('özet: profil, ilerleme, plan, hafta ve bugün tek yanıtta', async () => {
     const { token, userId } = await newUser();
     const s = await get(token, '/user/summary');
-    expect(s.user).toMatchObject({ id: userId, isGuest: true, isPremium: false });
+    expect(s.user).toMatchObject({
+      id: userId,
+      isGuest: true,
+      isPremium: false,
+      units: { weight: 'kg', water: 'ml' },
+    });
     expect(s.progress).toMatchObject({ level: 1, streakDays: 0 });
     expect(s.plan).toMatchObject({ planCode: '16_8', fastMinutes: 960 });
     // `/plans/current` ile aynı DTO (timing dahil): istemci planı özetten ezince bilgi kaybolmaz.
