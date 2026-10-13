@@ -351,19 +351,26 @@ iki satır (watch + node) göstermeli.
       yoklar; notFood/failed metinleri; örnek başlık yok; kaydedince takip ekranına; AI + hızlı kcal'de "orucu bitir?")
       Fotoğraf analizi istemci 30 sn'de vazgeçiyor (sunucu 45 sn × 3 deneme) → hak boşa gider; hata/`notFood`'da başlık örnek metin
       "Grilled Chicken…"; kaydet sonrası kamera ekranına dönüyor; hızlı kcal ve AI öğünde "orucu bitir?" sorulmuyor.
-- [ ] Profil plan değişimi timing'i sıfırlıyor; profil 15_9 / 19_5 planlarını tanımıyor ("–").
+- [x] (timing korunuyor; profil sunucu plan kodunu tutup Planlar kataloğundan başlık gösteriyor — 15:9, 19:5, early_tre…;
+      Profilden değişince oruç sekmesi de tazelenir)
+      Profil plan değişimi timing'i sıfırlıyor; profil 15_9 / 19_5 planlarını tanımıyor ("–").
 - [x] (gönderilemezse metin geri; akış sürerken `isBusy` kilit + `openConversation` token; SSE `Utf8Decoder`
       akış dönüşümü) Sohbet: hata olunca yazılan metin kayboluyor; akış sürerken ikinci mesaj / başka konuşma açılabiliyor (yanıt yanlış
       konuşmaya akıyor); SSE parça sınırında Türkçe/Rusça harf bozuluyor (`utf8.decode` parça parça).
-- [ ] Mochi World yalnızca ilk açılışta yükleniyor (sekme canlı kalıyor, oruç sonrası güncellenmiyor).
-- [ ] Su: oz birimi seçilse de her yerde "ml"; gece yarısını geçince açık ekranda + çalışmıyor.
-- [ ] Adım: sağlık senkronlu günde +/− 409 alıyor (butonlar gizlenmeli); +/− sonrası kcal/km/dk güncellenmiyor.
-- [ ] Uyku: "dün gece" satırı gerçek yatış/kalkış değil program saatlerini gösteriyor; kayıt düzenlenemiyor/silinemiyor (409 tuzağı);
+- [x] (sekme her görünür olduğunda `/world` yeniden; `TickerMode` ile) Mochi World yalnızca ilk açılışta yükleniyor (sekme canlı kalıyor, oruç sonrası güncellenmiyor).
+- [x] (su ekranı sayı/hedef/ekle düğmesi seçili birimde, `water_units.dart`; ekran açıkken gün değişince bugüne geçer.
+      Ana sayfa kartı ve widget hâlâ ml — widget yerel kodu değişmeli) Su: oz birimi seçilse de her yerde "ml"; gece yarısını geçince açık ekranda + çalışmıyor.
+- [x] (gün `source` sağlık ise +/− gizli; kcal/km/dk PUT yanıtından) Adım: sağlık senkronlu günde +/− 409 alıyor (butonlar gizlenmeli); +/− sonrası kcal/km/dk güncellenmiyor.
+- [x] (yay altı gecenin gerçek yatış/kalkışı; satıra dokununca düzenle/sil — `PATCH/DELETE /sleep/:id`; program kartları
+      ve uyku hedefi düzenlenebilir; adım hedefine dokununca 1.000–50.000 düzenlenir; `GoalStepperDialog`)
+      Uyku: "dün gece" satırı gerçek yatış/kalkış değil program saatlerini gösteriyor; kayıt düzenlenemiyor/silinemiyor (409 tuzağı);
       adım/uyku hedefleri değiştirilemiyor.
-- [ ] Açlık: geçmişten "Log my hunger" hep "Fiziksel"; "Full check" geçmiş listesini açıyor (`mode: full` hiç gitmiyor);
+- [x] ("Log my hunger" soru akışını açar; Full check aynı sorular + `mode: full`; güvenlik bayrağında oruç sürüyorsa
+      "Orucumu bitir" düğmesi) Açlık: geçmişten "Log my hunger" hep "Fiziksel"; "Full check" geçmiş listesini açıyor (`mode: full` hiç gitmiyor);
       güvenlik bayrağında "orucu bitir" kısayolu yok.
-- [ ] Kilo almak isteyen kullanıcıda vücut geçmişi ilerlemesi hep %0 (`body_history_view.dart` işaretsiz `span`).
-- [ ] Öğün tarih seçici 2 yıl geri / gelecek saat izin veriyor (sunucu 30 gün); 30 günden eski öğünün notu düzenlenemiyor.
+- [x] (ilerleme hedef yönüne göre) Kilo almak isteyen kullanıcıda vücut geçmişi ilerlemesi hep %0 (`body_history_view.dart` işaretsiz `span`).
+- [x] (öğün düzenlemede seçici 30 gün, gelecek saat seçilemez; `eatenAt` yalnızca değiştiyse gönderilir)
+      Öğün tarih seçici 2 yıl geri / gelecek saat izin veriyor (sunucu 30 gün); 30 günden eski öğünün notu düzenlenemiyor.
 - [ ] Sağlık izni geri alınırsa Android her ön plana dönüşte izin ekranı açıyor.
 - [ ] `requiredConsents` (şartlar/gizlilik sürümü değişince yeniden onay) hiç okunmuyor.
 
