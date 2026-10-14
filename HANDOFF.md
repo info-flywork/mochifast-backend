@@ -342,6 +342,27 @@ iki satır (watch + node) göstermeli.
 - [x] Bildirim silinemezse geri konur; profil tazelemesi araya giren düzenlemeyi ezmez, yükleme sürerken gelen zorunlu
       tazeleme sıraya alınır.
 
+### 8.1c Eksik özellikler (2026-10-14)
+
+- [x] Oruç bitince kazanımlar: `FinishFastResult` seri / XP / seviye / ada / meydan okuma → `FastRewardDialog`.
+- [x] Oruç geçmişi: kayda dokun → saat düzenle (`PATCH /fasts/:id`) / sil (`DELETE`); "+" → geçmiş oruç
+      (`POST /fasts/manual`); son 30 gün, en fazla 72 sa.
+- [x] Kilo kayıtları: vücut geçmişinde liste (`GET /weights`), dokun → düzenle, kaydır → sil; ekran kg/lb tercihine göre.
+- [x] Zorunlu / önerilen güncelleme: `AppUpdateGate` (`/app/config` `updateRequired/updateAvailable`) + herhangi bir
+      istekte 426 → kapatılamaz "Güncelle" (mağaza sayfası `in_app_review` ile).
+- [x] Bildirim kutusu kayıtları `deepLink` ile açılır; Profil → Bildirim ayarları (6 kategori + sessiz saatler).
+      Pazarlama push'u sunucuda koşulsuz kapalı (`notifications.service.js:183`), anahtar konmadı.
+- [x] Sağlık verisi açık rızası: gizlilik ekranında işaretlenmeden devam edilmez, gerçek değer gönderilir.
+- [x] Su hatırlatma aralığı (30–480 dk); kalori (800–5000) ve protein (20–400 g) hedefi düzenlenir (hedef gizliyse değil).
+- [x] Meydan okumadan ayrılma (`POST /challenges/:code/leave`, ilerleme düğmesine dokununca onay).
+- [x] Hata metinleri: `errorMessageOf` + çevrili genel / bağlantı yok mesajı; `toString()` / Dio İngilizcesi /
+      sabit Türkçe sohbet hataları kalktı.
+- [x] Sohbet: ücretsiz kullanıcıya "bugün N mesaj hakkın kaldı" (`/chat/quota`); geçmiş ekranındaki boş düğme yeni sohbet.
+- [x] Su widget'ı hafta çubukları `/water/week`'ten.
+- [ ] Kalanlar: kullanım koşulları / gizlilik URL'leri ve `url_launcher` (URL'ler bekleniyor); sağlık durumu
+      (`healthFlags`) onboarding adımı + Profil yaş / sağlık satırları; es / fr çevirileri; widget adları ve Android
+      bildirim kanalları, iOS izin metinleri yerelleştirme.
+
 ### 8.2 Yüksek
 
 - [x] (`_clearHomeCache`: `ChatSessionCubit.reset`, öneriler, `FastingSessionCubit.reset`, su günü önbelleği,
