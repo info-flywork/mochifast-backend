@@ -67,12 +67,12 @@
     "key": "legal",
     "platform": "all",
     "value": {
-      "termsUrl": null,
-      "privacyUrl": null,
+      "termsUrl": "https://fly-work.com/mochifast/terms/",
+      "privacyUrl": "https://fly-work.com/mochifast/privacy-policy/",
       "termsVersion": "2026-10",
       "privacyVersion": "2026-10"
     },
-    "description": "Yasal metin adresleri ve sürümleri (URL'ler EKSİK)"
+    "description": "Yasal metin adresleri ve sürümleri"
   },
   {
     "key": "support",

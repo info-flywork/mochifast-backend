@@ -364,8 +364,10 @@ iki satır (watch + node) göstermeli.
   gelmediği için devreye girmez (bilinçli).
 - [x] Yasal bağlantılar: `url_launcher` + `UrlLauncherManager`; adresler `/app/config` (`AppLinksRepository`). Girişteki
       "Kullanım Koşulları / Gizlilik Politikası" tıklanır; Profil'de "Yasal ve destek" bölümü (destek e-postası — posta
-      uygulaması yoksa panoya kopyalanır —, koşullar, gizlilik). Adres boşsa satır gizli. **Kullanıcıda:**
-      `seeds/app_config.json` `legal.termsUrl` / `privacyUrl` doldurulup seed çalıştırılmalı (App Store şartı).
+      uygulaması yoksa panoya kopyalanır —, koşullar, gizlilik). Adres boşsa satır gizli. `seeds/app_config.json`
+      `legal.termsUrl` / `privacyUrl` → `https://fly-work.com/mochifast/{terms,privacy-policy}/` (2026-10-14). Sayfaların
+      HTML'i Flutter reposunda `legal_site/` (`python3 legal_site/build.py`; privacy-policy, terms, cookies, csae — TR+EN).
+      **Kullanıcıda:** sayfaları yayınlamak ve sunucuda seed'i çalıştırmak.
 - [x] Yerel metinler: Android `values/` İngilizce + `values-tr/de/es/fr/it/ru` (widget adları, bildirim kanalları);
       iOS widget galeri adları cihaz diline göre (`WidgetText`); iOS izin metinleri `xx.lproj/InfoPlist.strings`
       (Runner hedefine eklendi, `knownRegions` 7 dil).
