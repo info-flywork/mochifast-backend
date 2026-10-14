@@ -359,9 +359,11 @@ iki satır (watch + node) göstermeli.
       sabit Türkçe sohbet hataları kalktı.
 - [x] Sohbet: ücretsiz kullanıcıya "bugün N mesaj hakkın kaldı" (`/chat/quota`); geçmiş ekranındaki boş düğme yeni sohbet.
 - [x] Su widget'ı hafta çubukları `/water/week`'ten.
-- [ ] Kalanlar: kullanım koşulları / gizlilik URL'leri ve `url_launcher` (URL'ler bekleniyor); sağlık durumu
-      (`healthFlags`) onboarding adımı + Profil yaş / sağlık satırları; es / fr çevirileri; widget adları ve Android
-      bildirim kanalları, iOS izin metinleri yerelleştirme.
+- Kullanıcı kararı (2026-10-14): sağlık durumu (`healthFlags`: hamilelik, emzirme, yeme bozukluğu, diyabet…) **sorulmayacak**;
+  onboarding'e ekran, Profil'e yaş / sağlık satırı eklenmeyecek. Sunucudaki ilgili güvenlik kuralları istemciden bayrak
+  gelmediği için devreye girmez (bilinçli).
+- [ ] Kalanlar: kullanım koşulları / gizlilik URL'leri ve `url_launcher` (URL'ler bekleniyor); es / fr çevirileri;
+      widget adları ve Android bildirim kanalları, iOS izin metinleri yerelleştirme.
 
 ### 8.2 Yüksek
 
