@@ -362,8 +362,14 @@ iki satır (watch + node) göstermeli.
 - Kullanıcı kararı (2026-10-14): sağlık durumu (`healthFlags`: hamilelik, emzirme, yeme bozukluğu, diyabet…) **sorulmayacak**;
   onboarding'e ekran, Profil'e yaş / sağlık satırı eklenmeyecek. Sunucudaki ilgili güvenlik kuralları istemciden bayrak
   gelmediği için devreye girmez (bilinçli).
-- [ ] Kalanlar: kullanım koşulları / gizlilik URL'leri ve `url_launcher` (URL'ler bekleniyor); es / fr çevirileri;
-      widget adları ve Android bildirim kanalları, iOS izin metinleri yerelleştirme.
+- [x] Yasal bağlantılar: `url_launcher` + `UrlLauncherManager`; adresler `/app/config` (`AppLinksRepository`). Girişteki
+      "Kullanım Koşulları / Gizlilik Politikası" tıklanır; Profil'de "Yasal ve destek" bölümü (destek e-postası — posta
+      uygulaması yoksa panoya kopyalanır —, koşullar, gizlilik). Adres boşsa satır gizli. **Kullanıcıda:**
+      `seeds/app_config.json` `legal.termsUrl` / `privacyUrl` doldurulup seed çalıştırılmalı (App Store şartı).
+- [x] Yerel metinler: Android `values/` İngilizce + `values-tr/de/es/fr/it/ru` (widget adları, bildirim kanalları);
+      iOS widget galeri adları cihaz diline göre (`WidgetText`); iOS izin metinleri `xx.lproj/InfoPlist.strings`
+      (Runner hedefine eklendi, `knownRegions` 7 dil).
+- [ ] Kalan: es / fr uygulama çevirileri (kullanıcı ayrıca yaptıracak).
 
 ### 8.2 Yüksek
 
