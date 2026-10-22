@@ -119,9 +119,10 @@ export function createPlansService({ db, catalog, stats }) {
       };
     },
 
-    async current(userId, locale) {
+    async current(userId, locale, { profileRow } = {}) {
       const current = await repo.findCurrent(db, userId);
-      const profile = await userRepo.getProfile(db, userId);
+      // Ana sayfa özeti profili zaten yüklediyse ikinci RTT'yi atla.
+      const profile = profileRow ?? (await userRepo.getProfileCore(db, userId));
       return {
         plan: await toDto(current, locale),
         // Onboarding'de seçilip (premium olduğu için) henüz etkinleşmemiş plan.

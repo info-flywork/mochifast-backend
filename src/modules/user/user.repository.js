@@ -134,6 +134,22 @@ export async function markOnboarded(db, conn, userId) {
   );
 }
 
+/** Ana sayfa / kilo kartı: profil + son kilo; yiyecek/engel listeleri yok (ekstra 2 RTT). */
+export async function getProfileCore(db, userId, conn) {
+  return db.one(
+    `SELECT p.gender, p.birth_year, p.height_cm, p.start_weight_kg, p.goal_weight_kg, p.goal,
+            p.diet, p.weekly_loss_target_kg, p.plan_code, p.health_flags,
+            p.weight_unit, p.height_unit, p.water_unit,
+            (SELECT w.weight_kg FROM weight_entries w
+              WHERE w.user_id = p.user_id AND w.deleted_at IS NULL
+              ORDER BY w.recorded_at DESC, w.id DESC LIMIT 1) AS current_weight_kg
+       FROM user_profiles p
+      WHERE p.user_id = :id`,
+    { id: toBin(userId) },
+    conn,
+  );
+}
+
 /** Profil + son kilo (silinmemiş en yeni kayıt). `forUpdate` ile satır kilitlenir. */
 export async function getProfile(db, userId, conn, { forUpdate = false } = {}) {
   const row = await db.one(
@@ -147,16 +163,19 @@ export async function getProfile(db, userId, conn, { forUpdate = false } = {}) {
     conn,
   );
   if (!row) return null;
-  const prefs = await db.many(
-    'SELECT pref_type, food_code FROM user_food_preferences WHERE user_id = :id ORDER BY created_at, food_code',
-    { id: toBin(userId) },
-    conn,
-  );
-  const obstacles = await db.many(
-    'SELECT obstacle FROM user_obstacles WHERE user_id = :id ORDER BY obstacle',
-    { id: toBin(userId) },
-    conn,
-  );
+  // Tercih / engel listeleri birbirinden bağımsız — uzak DB'de sırayla gitmesin.
+  const [prefs, obstacles] = await Promise.all([
+    db.many(
+      'SELECT pref_type, food_code FROM user_food_preferences WHERE user_id = :id ORDER BY created_at, food_code',
+      { id: toBin(userId) },
+      conn,
+    ),
+    db.many(
+      'SELECT obstacle FROM user_obstacles WHERE user_id = :id ORDER BY obstacle',
+      { id: toBin(userId) },
+      conn,
+    ),
+  ]);
   return {
     ...row,
     food_loves: prefs.filter((p) => p.pref_type === 'love').map((p) => p.food_code),
@@ -255,14 +274,19 @@ export async function insertConsents(db, conn, userId, consents, { ip, source })
 
 /** Her rıza türü için en son kayıt (append-only tablodan geçerli durum). */
 export async function latestConsents(db, userId) {
+  // Window: alt sorgu + self-join yerine tek tarama (uzak DB round-trip / CPU).
   return db.many(
-    `SELECT c.consent_type, c.document_version, c.granted, c.created_at
-       FROM user_consents c
-       JOIN (SELECT consent_type, MAX(created_at) AS at FROM user_consents
-              WHERE user_id = :id GROUP BY consent_type) last
-         ON last.consent_type = c.consent_type AND last.at = c.created_at
-      WHERE c.user_id = :id
-      ORDER BY c.consent_type`,
+    `SELECT consent_type, document_version, granted, created_at
+       FROM (
+         SELECT consent_type, document_version, granted, created_at,
+                ROW_NUMBER() OVER (
+                  PARTITION BY consent_type ORDER BY created_at DESC
+                ) AS rn
+           FROM user_consents
+          WHERE user_id = :id
+       ) ranked
+      WHERE rn = 1
+      ORDER BY consent_type`,
     { id: toBin(userId) },
   );
 }

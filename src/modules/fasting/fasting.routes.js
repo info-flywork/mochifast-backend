@@ -5,10 +5,12 @@ import { statsServiceFor } from '../stats/stats.routes.js';
 import { createFastingService } from './fasting.service.js';
 import { createDailyTipService } from './daily-tip.js';
 import { createForecastService } from './forecast.js';
+import { createMochiPlanService } from './mochi-plan.js';
 import {
   activeSchema,
   cancelSchema,
   dailyTipSchema,
+  mochiPlanSchema,
   finishSchema,
   forecastSchema,
   getSchema,
@@ -37,6 +39,13 @@ export const forecastServiceFor = memoizeByDeps((app) =>
   createForecastService({ db: app.deps.db }),
 );
 const dailyTipFor = memoizeByDeps((app) => createDailyTipService({ db: app.deps.db }));
+const mochiPlanFor = memoizeByDeps((app) =>
+  createMochiPlanService({
+    db: app.deps.db,
+    chat: app.deps.chat,
+    cache: app.deps.cache,
+  }),
+);
 
 /**
  * `/v1/fasts` (docs/backend/04-api.md §6). Yazma uçları Idempotency-Key destekler.
@@ -70,6 +79,9 @@ export default async function fastingRoutes(app) {
   });
 
   // `/:id`'den önce: sabit yollar parametreli yolla karışmasın.
+  app.get('/mochi-plan', { ...read, schema: mochiPlanSchema }, (request) =>
+    mochiPlanFor(app).mochiPlan(request.user.id, request.ctx.locale),
+  );
   app.get('/daily-tip', { ...read, schema: dailyTipSchema }, (request) =>
     dailyTipFor(app).dailyTip(
       request.user.id,

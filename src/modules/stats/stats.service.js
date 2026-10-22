@@ -190,13 +190,24 @@ export function createStatsService({ db }) {
      * işi kaçsa da seri doğru görünür.
      */
     async fresh(userId, now = new Date()) {
+      const { stats } = await service.freshContext(userId, now);
+      return stats;
+    },
+
+    /**
+     * Seriyi tazeleyip saat dilimi / bugünü de döner — ana sayfa özeti tekrar
+     * timezone sorgusu atmasın diye.
+     */
+    async freshContext(userId, now = new Date()) {
       const tz = await zoneOf(userId);
       const today = localDate(now, tz);
-      const stats = await repo.getStats(db, userId);
+      let stats = await repo.getStats(db, userId);
       const last = stats?.streak_last_date ? isoDate(stats.streak_last_date) : null;
-      if (stats && last === today) return stats;
-      await service.recompute(userId, { from: today, now });
-      return repo.getStats(db, userId);
+      if (!stats || last !== today) {
+        await service.recompute(userId, { from: today, now });
+        stats = await repo.getStats(db, userId);
+      }
+      return { stats, tz, today };
     },
 
     /** Bitirme yanıtı için önce/sonra farkı (05 §3, §10). */
@@ -236,15 +247,19 @@ export function createStatsService({ db }) {
      * GET /v1/fasts/week — Pzt–Paz hafta şeridi (05 §1.4). Aktif oruç bugüne canlı eklenir;
      * değer DB'ye yazılmaz.
      */
-    async week(userId, { date, now = new Date() } = {}) {
-      const tz = await zoneOf(userId);
-      const today = localDate(now, tz);
+    async week(userId, { date, now = new Date(), tz: knownTz, today: knownToday } = {}) {
+      const tz = knownTz ?? (await zoneOf(userId));
+      const today = knownToday ?? localDate(now, tz);
       const weekStart = mondayOf(date ?? today);
       const weekEnd = addDays(weekStart, 6);
-      const resolveDay = dayResolver(await repo.planHistory(db, userId));
-      const fasted = await repo.fastedByDay(db, userId, { from: weekStart, to: weekEnd });
-      const checkins = await repo.checkinsByDay(db, userId, { from: weekStart, to: weekEnd });
-      const active = await fastingRepo.findActive(db, userId);
+      // Plan / özet / check-in / aktif oruç bağımsız — uzak DB'de sırayla gitmesin.
+      const [plans, fasted, checkins, active] = await Promise.all([
+        repo.planHistory(db, userId),
+        repo.fastedByDay(db, userId, { from: weekStart, to: weekEnd }),
+        repo.checkinsByDay(db, userId, { from: weekStart, to: weekEnd }),
+        fastingRepo.findActive(db, userId),
+      ]);
+      const resolveDay = dayResolver(plans);
       const live = active
         ? Math.max(0, Math.floor((now.getTime() - active.startedAt.getTime()) / 60_000))
         : 0;

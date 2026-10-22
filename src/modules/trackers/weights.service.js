@@ -22,7 +22,8 @@ const toDto = (e) => ({
 
 /**
  * Kilo kayıtları, grafik ve özet (docs/backend/04-api.md §7, 05 §9). Hedef kilo profildedir;
- * `PATCH /weights/goal` profil güncellemesine gider (aynı doğrulamalar).
+ * `PATCH /weights/goal` profil güncellemesine gider. Hedef, güncel kilonun
+ * üstüne de çekilebilir; onboarding hâlâ başlangıç kilosunun üstünü reddeder.
  */
 export function createWeightsService({ db, ctx, users }) {
   async function mustFind(userId, id, conn) {

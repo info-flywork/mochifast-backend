@@ -397,6 +397,35 @@ export const forecastSchema = {
   },
 };
 
+export const mochiPlanSchema = {
+  tags: ['fasts'],
+  summary: 'Mochi’nin bugünkü oruç önerisi (aktif oruçtan bağımsız)',
+  description:
+    'Hedef, uyku, adım, son oruçlar ve zorlanmalardan seçilir. `settled: false` ise metin henüz hazırdır; istemci kısa süre sonra yeniden sorar. Öneri gün boyunca önbellekte kalır.',
+  security: bearer,
+  response: {
+    200: envelope({
+      type: 'object',
+      required: ['plan'],
+      properties: {
+        plan: {
+          type: 'object',
+          required: ['fastHours', 'eatHours', 'startsAt', 'endsAt', 'reason', 'settled'],
+          properties: {
+            fastHours: { type: 'integer' },
+            eatHours: { type: 'integer' },
+            startsAt: { type: 'string', format: 'date-time' },
+            endsAt: { type: 'string', format: 'date-time' },
+            insight: { type: ['string', 'null'] },
+            reason: { type: 'string' },
+            settled: { type: 'boolean' },
+          },
+        },
+      },
+    }),
+  },
+};
+
 export const dailyTipSchema = {
   tags: ['fasts'],
   summary: 'Günün ipucu (oruç sürüyorsa oruç, değilse yeme penceresi ipucu; dile göre)',

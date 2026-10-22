@@ -75,15 +75,77 @@ export function createUserService({ db, cache, catalog, plans, stats, media, ent
     async getMe(userId) {
       const row = await requireUser(userId);
       const dto = toMeDto(row);
-      const isPremium = (await entitlements?.isPremium(userId)) ?? false;
+      // Avatar / premium / rıza birbirinden bağımsız — uzak DB'de paralel.
+      const [avatarUrl, isPremium, consents] = await Promise.all([
+        media?.avatarUrl(userId) ?? Promise.resolve(null),
+        entitlements?.isPremium(userId) ?? Promise.resolve(false),
+        row.onboarding_completed_at ? requiredConsents(userId) : Promise.resolve([]),
+      ]);
       return {
         ...dto,
-        avatarUrl: (await media?.avatarUrl(userId)) ?? null,
-        isPremium,
+        avatarUrl: avatarUrl ?? null,
+        isPremium: isPremium ?? false,
         // Ürün düzeyindeki ad (RevenueCat entitlement kimliğinden bağımsız; 04 §3).
         entitlements: isPremium ? ['premium'] : [],
-        requiredConsents: row.onboarding_completed_at ? await requiredConsents(userId) : [],
+        requiredConsents: consents,
       };
+    },
+
+    /**
+     * Ana sayfa özeti: /me ile aynı kimlik alanları, rıza sorgusu yok (summary için gereksiz
+     * ve yavaştı). Avatar + premium paralel.
+     */
+    async summaryHeader(userId) {
+      const row = await requireUser(userId);
+      const [avatarUrl, isPremium] = await Promise.all([
+        media?.avatarUrl(userId) ?? Promise.resolve(null),
+        entitlements?.isPremium(userId) ?? Promise.resolve(false),
+      ]);
+      return {
+        id: row.id,
+        name: row.display_name ?? null,
+        avatarUrl: avatarUrl ?? null,
+        isPremium: isPremium ?? false,
+        isGuest: Boolean(row.is_guest),
+        timezone: row.timezone,
+        units: {
+          weight: row.weight_unit,
+          height: toApiEnum(row.height_unit),
+          water: row.water_unit,
+        },
+      };
+    },
+
+    /**
+     * Ana sayfa hedefleri: adım okuma / ensureDefaults yok (onboarding sonrası satırlar var).
+     * `profileRow` ham profil (nutritionInputs snake_case).
+     */
+    async summaryGoals(userId, { profileRow, timezone }) {
+      let goals = await repo.getGoals(db, userId);
+      if (!goals) {
+        await ensureRows(userId);
+        goals = await repo.getGoals(db, userId);
+      }
+      const today = todayFor(timezone);
+      return toGoalsDto(goals ?? {}, computedGoals(profileRow, today, 0));
+    },
+
+    /** Ana sayfa kilo / kcal için hafif profil DTO (yiyecek/engel listeleri yok). */
+    async summaryProfile(userId, { timezone } = {}) {
+      const row = await repo.getProfileCore(db, userId);
+      if (!row) {
+        const user = await requireUser(userId);
+        return { dto: toProfileDto(null, user, todayFor(user.timezone)), row: null };
+      }
+      const tz = timezone ?? (await requireUser(userId)).timezone;
+      const today = todayFor(tz);
+      // toProfileDto birim için user ister; core satırında birimler var.
+      const userUnits = {
+        weight_unit: row.weight_unit,
+        height_unit: row.height_unit,
+        water_unit: row.water_unit,
+      };
+      return { dto: toProfileDto(row, userUnits, today), row };
     },
 
     async updateMe(userId, body) {
@@ -249,7 +311,6 @@ export function createUserService({ db, cache, catalog, plans, stats, media, ent
         const healthFlags = age !== null && age < 18 ? [...clientFlags, 'under_18'] : clientFlags;
         const goal = body.goal !== undefined ? toDbEnum(body.goal) : current?.goal;
         const goalWeightKg = body.goalWeightKg ?? current?.goal_weight_kg ?? null;
-        const weightKg = body.weightKg ?? current?.current_weight_kg ?? current?.start_weight_kg;
         const planCode = body.planCode ?? current?.plan_code ?? null;
         // Profildeki eski kod katalogdan kalkmış olabilir: yalnızca yeni gönderilen kod zorunlu.
         const plan = body.planCode
@@ -259,12 +320,8 @@ export function createUserService({ db, cache, catalog, plans, stats, media, ent
             : null;
         const heightCm = body.heightCm ?? current?.height_cm ?? null;
 
-        if (goal === 'lose_weight' && goalWeightKg && weightKg && goalWeightKg > weightKg) {
-          throw validation(
-            'goalWeightKg',
-            'must not exceed current weight when goal is loseWeight',
-          );
-        }
+        // Hedef, kayıtlı kilonun üstüne de çekilebilir (hedefe varınca yeni
+        // hedef). Onboarding hâlâ başlangıç kilosunun üstünü reddeder.
         if (body.mealWindow && body.mealWindow.start === body.mealWindow.end) {
           throw validation('mealWindow', 'end must differ from start');
         }
