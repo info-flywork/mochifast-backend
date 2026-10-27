@@ -14,6 +14,7 @@ export const worldSchema = {
         level: { type: 'integer' },
         xp: { type: 'integer' },
         sceneLevel: { type: 'integer' },
+        nextSceneLevelAt: { type: ['integer', 'null'] },
         health: { type: 'string', enum: ['thriving', 'wilting', 'drought'] },
         worldProgress: { type: 'number' },
         zones: {

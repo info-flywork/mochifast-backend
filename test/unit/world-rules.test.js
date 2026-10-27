@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { computeZones } from '../../src/modules/gamification/gamification.repository.js';
 import {
+  nextSceneUserLevel,
   sceneLevel,
   worldHealth,
   worldProgress,
@@ -51,7 +52,6 @@ describe('bölge durumu (05 §7.1)', () => {
       summit: [0, 0, 1],
       garden: [1, 3, 10],
     });
-    expect(sceneLevel(zones)).toBe(1);
     // forest 1/4, lake (0 + 2/3)/4, summit 0, garden 1/4 → ortalama
     expect(worldProgress(zones)).toBeCloseTo((0.25 + 0.1667 + 0 + 0.25) / 4, 2);
   });
@@ -122,5 +122,15 @@ describe('ada sağlığı (05 §7.2)', () => {
   it('yeni kullanıcı (ilk günden < 2 gün) ve hiç başlangıç yoksa thriving', () => {
     expect(health({ firstDay: back(1) })).toBe('thriving');
     expect(health({ firstDay: null })).toBe('thriving');
+  });
+});
+
+describe('sahne seviyesi (XP)', () => {
+  it('XP seviyesinden 0–4 aşama', () => {
+    expect([1, 2, 3, 4, 5, 6, 7, 12].map(sceneLevel)).toEqual([0, 1, 2, 2, 3, 3, 4, 4]);
+  });
+
+  it('sonraki aşamanın açıldığı seviye', () => {
+    expect([1, 2, 4, 6, 7].map(nextSceneUserLevel)).toEqual([2, 3, 5, 7, null]);
   });
 });

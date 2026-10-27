@@ -1,5 +1,5 @@
 import * as repo from './gamification.repository.js';
-import { sceneLevel, worldProgress } from './world.rules.js';
+import { nextSceneUserLevel, sceneLevel, worldProgress } from './world.rules.js';
 
 /**
  * GET /v1/world (docs/backend/04-api.md §13). İstemci seviyeyi kendisi hesaplamaz
@@ -27,7 +27,8 @@ export function createWorldService({ db, stats }) {
       return {
         level: progress.level,
         xp: progress.xp,
-        sceneLevel: sceneLevel(out),
+        sceneLevel: sceneLevel(progress.level),
+        nextSceneLevelAt: nextSceneUserLevel(progress.level),
         health,
         worldProgress: worldProgress(out),
         zones: out,

@@ -84,7 +84,12 @@ describe.skipIf(!mysqlUrl)("Mochi World ve challenge'lar (gerçek MySQL)", () =>
     await call('POST', '/water', { token, body: { amountMl: 2600 } });
 
     const world = await get(token, '/world');
-    expect(world).toMatchObject({ sceneLevel: 1, health: 'thriving' });
+    expect(world).toMatchObject({
+      level: 1,
+      sceneLevel: 0,
+      nextSceneLevelAt: 2,
+      health: 'thriving',
+    });
     expect(zone(world, 'forest')).toMatchObject({
       current: 3,
       level: 1,

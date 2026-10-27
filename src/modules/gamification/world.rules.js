@@ -39,8 +39,18 @@ export function worldProgress(zones) {
   return Math.round((sum / zones.length) * 1000) / 1000;
 }
 
-/** Görsel sahne seviyesi: en gelişmiş bölge. */
-export const sceneLevel = (zones) => zones.reduce((m, z) => Math.max(m, z.level), 0);
+/**
+ * Adanın görsel aşaması (0–4) kullanıcının XP seviyesinden: Lv1 boş ada, Lv2 → 1,
+ * Lv3–4 → 2, Lv5–6 → 3, Lv7+ → 4. XP azalmadığı için ada geri gitmez.
+ */
+export const SCENE_LEVEL_FROM = Object.freeze([2, 3, 5, 7]);
+
+export const sceneLevel = (userLevel) =>
+  SCENE_LEVEL_FROM.filter((l) => (Number(userLevel) || 1) >= l).length;
+
+/** Sonraki ada aşamasının açıldığı XP seviyesi; son aşamadaysa null. */
+export const nextSceneUserLevel = (userLevel) =>
+  SCENE_LEVEL_FROM.find((l) => (Number(userLevel) || 1) < l) ?? null;
 
 /**
  * Adanın sağlığı (05 §7.2): son tutulan günden bu yana kaçırılan ZORUNLU gün sayısı (bugün
