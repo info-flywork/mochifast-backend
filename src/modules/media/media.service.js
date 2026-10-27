@@ -171,6 +171,18 @@ export function createMediaService({ db, storage, config, logger }) {
     async avatarUrl(userId) {
       return present(await repo.avatarOf(db, userId))?.url ?? null;
     },
+
+    /** `Map<userId, url>`; avatarı olmayanlar haritada yer almaz. */
+    async avatarUrls(userIds) {
+      const media = await repo.avatarsOf(db, userIds);
+      const urls = new Map();
+      for (const [id, m] of media) {
+        const shown = present(m);
+        const url = shown?.thumbUrl ?? shown?.url;
+        if (url) urls.set(id, url);
+      }
+      return urls;
+    },
   };
   return service;
 }

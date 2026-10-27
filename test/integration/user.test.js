@@ -274,6 +274,7 @@ describe.skipIf(!mysqlUrl)('kullanıcı & onboarding (gerçek MySQL)', () => {
       waterReminderIntervalMin: 120,
       quietHours: { start: '22:30', end: '08:00' },
       healthSyncEnabled: false,
+      showInChallenges: false,
     });
     const res = await call('PATCH', '/user/settings', {
       token,

@@ -362,11 +362,21 @@ export const statsSchema = {
   },
 };
 
+const forecastDaySchema = {
+  type: 'object',
+  properties: {
+    curve: { type: 'array', items: { type: 'number' } },
+    toughestAt: { type: ['string', 'null'], format: 'date-time' },
+    riskStartsAt: { type: ['string', 'null'], format: 'date-time' },
+    riskEndsAt: { type: ['string', 'null'], format: 'date-time' },
+  },
+};
+
 export const forecastSchema = {
   tags: ['fasts'],
   summary: 'Fast Forecast: bugünkü oruç başarı tahmini, bitiş ve en zor saat',
   description:
-    'Son 14 günde en az 3 biten oruç yoksa `available: false` (istemci kartı gizler). `successChance` 0–1; `toughestElapsedHour` orucun kaçıncı saatinde en sık zorlanıldığı (son 30 gün, en az 3 olay), `toughestAt` bugünkü oruç için o saatin zamanı.',
+    'Son 14 günde en az 3 biten oruç yoksa `available: false` (istemci kartı gizler). `successChance` 0–1. `curve` bugünkü orucun saatlik zorluğu (0–1): son 30 günün zorlanma, fiziksel açlık ve erken bitiş kayıtları. Kayıt yoksa düz ve tepe yok. `toughestAt` eğrinin tepesi, `riskStartsAt`/`riskEndsAt` tepenin çevresindeki yüksek bölge.',
   security: bearer,
   response: {
     200: envelope({
@@ -382,6 +392,17 @@ export const forecastSchema = {
             basedOnFasts: { type: 'integer' },
             toughestElapsedHour: { type: ['integer', 'null'] },
             toughestAt: { type: ['string', 'null'], format: 'date-time' },
+            riskStartsAt: { type: ['string', 'null'], format: 'date-time' },
+            riskEndsAt: { type: ['string', 'null'], format: 'date-time' },
+            curve: { type: 'array', items: { type: 'number' } },
+            days: {
+              type: 'object',
+              properties: {
+                easy: forecastDaySchema,
+                moderate: forecastDaySchema,
+                hard: forecastDaySchema,
+              },
+            },
             fast: {
               type: ['object', 'null'],
               properties: {

@@ -1,4 +1,5 @@
 import { memoizeByDeps } from '../../shared/legacy.js';
+import { mediaServiceFor } from '../media/media.routes.js';
 import { statsServiceFor } from '../stats/stats.routes.js';
 import { createChallengesService } from './challenges.service.js';
 import * as s from './gamification.schemas.js';
@@ -7,7 +8,9 @@ import { createWorldService } from './world.service.js';
 export const challengesServiceFor = memoizeByDeps((app) =>
   createChallengesService({
     db: app.deps.db,
+    cache: app.deps.cache,
     hasPremium: (userId) => app.deps.entitlements.isPremium(userId),
+    avatarUrls: (userIds) => mediaServiceFor(app).avatarUrls(userIds),
   }),
 );
 const worldServiceFor = memoizeByDeps((app) =>
@@ -31,6 +34,12 @@ export async function challengesRoutes(app) {
   );
   app.get('/featured', { ...auth, schema: s.featuredSchema }, (request) =>
     challenges.featured(request.user.id, request.ctx.locale),
+  );
+  app.get('/:code', { ...auth, schema: s.getChallengeSchema }, (request) =>
+    challenges.get(request.user.id, request.params.code, request.ctx.locale),
+  );
+  app.get('/:code/participants', { ...auth, schema: s.participantsSchema }, (request) =>
+    challenges.participants(request.user.id, request.params.code, request.ctx.locale),
   );
   app.post('/:code/join', { ...auth, schema: s.joinSchema }, (request) =>
     challenges.join(request.user.id, request.params.code, request.ctx.locale),

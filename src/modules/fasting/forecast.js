@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { toBin } from '../../shared/ids.js';
+import { fromBin, toBin } from '../../shared/ids.js';
 import { isValidTimezone } from '../../shared/time.js';
 
 /**
@@ -52,6 +52,70 @@ export function forecastStats({ ended, reached, streak, struggleElapsed }) {
   };
 }
 
+/**
+ * Bugünkü orucun saat saat zorluk eğrisi. Yalnızca gerçek kayıtlar:
+ * zorlanma, fiziksel açlık check-in'i ve erken biten oruç.
+ * Kayıt yoksa eğri düz ve tepe yoktur.
+ * @returns curve  uzunluk = saat+1 (son nokta planın bitişi)
+ */
+export function forecastCurve({ fastMinutes, struggles = [], hungers = [], breaks = [] }) {
+  const spanMinutes = Math.max(60, fastMinutes ?? 16 * 60);
+  const hours = Math.max(1, Math.round(spanMinutes / 60));
+  const struggle = Array(hours).fill(0);
+  const hunger = Array(hours).fill(0);
+  const broke = Array(hours).fill(0);
+
+  const add = (bins, minutes, amount) => {
+    const value = Number(minutes);
+    if (!Number.isFinite(value) || amount <= 0) return;
+    const index = Math.min(hours - 1, Math.max(0, Math.floor((value / spanMinutes) * hours)));
+    bins[index] += amount;
+  };
+  for (const minutes of struggles) add(struggle, minutes, 1);
+  for (const row of hungers) {
+    add(hunger, row.fastedMinutes, Math.max(0, Number(row.physicalScore) || 0));
+  }
+  for (const minutes of breaks) add(broke, minutes, 1);
+
+  const scale = (bins) => {
+    const max = Math.max(0, ...bins);
+    return max > 0 ? bins.map((v) => v / max) : bins.map(() => 0);
+  };
+  const s = scale(struggle);
+  const g = scale(hunger);
+  const b = scale(broke);
+  const raw = s.map((v, i) => 0.45 * v + 0.35 * g[i] + 0.2 * b[i]);
+  const peak = Math.max(0, ...raw);
+  const values = peak > 0 ? raw.map((v) => Math.round((v / peak) * 100) / 100) : raw.map(() => 0);
+  const curve = [...values, values.at(-1) ?? 0];
+  const toughestElapsedHour = peak > 0 ? values.indexOf(Math.max(...values)) : null;
+
+  let riskStartHour = null;
+  let riskEndHour = null;
+  if (toughestElapsedHour !== null) {
+    const bar = Math.max(...values) * 0.7;
+    let start = toughestElapsedHour;
+    let end = toughestElapsedHour;
+    while (start > 0 && values[start - 1] >= bar) start -= 1;
+    while (end < values.length - 1 && values[end + 1] >= bar) end += 1;
+    riskStartHour = start;
+    riskEndHour = end + 1;
+  }
+  return { curve, toughestElapsedHour, riskStartHour, riskEndHour };
+}
+
+/**
+ * Geçmiş orucun gün sınıfı.
+ * Erken biten ya da aynı oruçta 2+ zorlanma: zor.
+ * Hedefe ulaşmış ve zorlanma yok: kolay.
+ * Kalanı orta.
+ */
+export function dayClass({ status, goalReached, struggles }) {
+  if (status === 'ended_early' || struggles >= 2) return 'hard';
+  if (goalReached && struggles === 0) return 'easy';
+  return 'moderate';
+}
+
 /** Aktif oruç ya da plana göre bugünün (sıradaki) orucu: başlangıç ve bitiş. */
 export function upcomingFast({ active, plan, timezone, now = new Date() }) {
   if (active) {
@@ -79,7 +143,7 @@ export function createForecastService({ db }) {
   return {
     async forecast(userId, now = new Date()) {
       const id = toBin(userId);
-      const [history, stats, struggles, active, plan, user] = await Promise.all([
+      const [history, stats, sessions, struggles, hungers, active, plan, user] = await Promise.all([
         db.one(
           `SELECT COUNT(*) AS ended, COALESCE(SUM(goal_reached), 0) AS reached
              FROM fasting_sessions
@@ -90,9 +154,25 @@ export function createForecastService({ db }) {
         ),
         db.one('SELECT current_streak FROM user_stats WHERE user_id = :id', { id }),
         db.many(
-          `SELECT elapsed_minutes FROM struggle_events
+          `SELECT id, status, goal_reached,
+                  TIMESTAMPDIFF(MINUTE, started_at, ended_at) AS elapsed_minutes
+             FROM fasting_sessions
+            WHERE user_id = :id AND deleted_at IS NULL
+              AND status IN ('completed', 'ended_early') AND ended_at IS NOT NULL
+              AND ended_at >= DATE_SUB(:now, INTERVAL :days DAY)`,
+          { id, now, days: FORECAST.struggleDays },
+        ),
+        db.many(
+          `SELECT fasting_session_id, elapsed_minutes FROM struggle_events
             WHERE user_id = :id AND elapsed_minutes IS NOT NULL
               AND created_at >= DATE_SUB(:now, INTERVAL :days DAY)`,
+          { id, now, days: FORECAST.struggleDays },
+        ),
+        db.many(
+          `SELECT fasting_session_id, fasted_minutes, physical_score FROM hunger_checkins
+            WHERE user_id = :id AND deleted_at IS NULL
+              AND fasted_minutes IS NOT NULL AND physical_score > 0
+              AND logged_at >= DATE_SUB(:now, INTERVAL :days DAY)`,
           { id, now, days: FORECAST.struggleDays },
         ),
         db.one(
@@ -122,19 +202,79 @@ export function createForecastService({ db }) {
         timezone: user?.timezone,
         now,
       });
-      const toughestAt =
-        fast && result.toughestElapsedHour !== null
-          ? new Date(fast.startsAt.getTime() + result.toughestElapsedHour * 3_600_000)
-          : null;
+      const fastMinutes = fast
+        ? Math.round((fast.endsAt.getTime() - fast.startsAt.getTime()) / 60_000)
+        : (plan?.fast_minutes ?? null);
+      const struggleCount = new Map();
+      for (const row of struggles) {
+        if (!row.fasting_session_id) continue;
+        const key = fromBin(row.fasting_session_id);
+        struggleCount.set(key, (struggleCount.get(key) ?? 0) + 1);
+      }
+      const classOf = new Map(
+        sessions.map((s) => [
+          fromBin(s.id),
+          dayClass({
+            status: s.status,
+            goalReached: Boolean(s.goal_reached),
+            struggles: struggleCount.get(fromBin(s.id)) ?? 0,
+          }),
+        ]),
+      );
+      const inputs = (name) => ({
+        fastMinutes,
+        struggles: struggles
+          .filter(
+            (r) =>
+              !name ||
+              (r.fasting_session_id && classOf.get(fromBin(r.fasting_session_id)) === name),
+          )
+          .map((r) => r.elapsed_minutes),
+        hungers: hungers
+          .filter(
+            (r) =>
+              !name ||
+              (r.fasting_session_id && classOf.get(fromBin(r.fasting_session_id)) === name),
+          )
+          .map((r) => ({ fastedMinutes: r.fasted_minutes, physicalScore: r.physical_score })),
+        breaks: sessions
+          .filter(
+            (s) => s.status === 'ended_early' && (!name || classOf.get(fromBin(s.id)) === name),
+          )
+          .map((s) => s.elapsed_minutes),
+      });
+      const shape = forecastCurve(inputs(null));
+      const spanMs = fast ? fast.endsAt.getTime() - fast.startsAt.getTime() : 0;
+      const clockOf = (curveShape, hour) => {
+        if (!fast || hour === null || curveShape.curve.length < 2) return null;
+        const fraction = hour / (curveShape.curve.length - 1);
+        return new Date(fast.startsAt.getTime() + fraction * spanMs).toISOString();
+      };
+      const pack = (curveShape) => ({
+        curve: curveShape.curve,
+        toughestAt: clockOf(curveShape, curveShape.toughestElapsedHour),
+        riskStartsAt: clockOf(curveShape, curveShape.riskStartHour),
+        riskEndsAt: clockOf(curveShape, curveShape.riskEndHour),
+      });
+      const days = {
+        easy: pack(forecastCurve(inputs('easy'))),
+        moderate: pack(forecastCurve(inputs('moderate'))),
+        hard: pack(forecastCurve(inputs('hard'))),
+      };
       return {
         forecast: {
           ...result,
+          toughestElapsedHour: shape.toughestElapsedHour,
+          curve: shape.curve,
           fast: fast && {
             active: fast.active,
             startsAt: fast.startsAt.toISOString(),
             endsAt: fast.endsAt.toISOString(),
           },
-          toughestAt: toughestAt?.toISOString() ?? null,
+          toughestAt: clockOf(shape, shape.toughestElapsedHour),
+          riskStartsAt: clockOf(shape, shape.riskStartHour),
+          riskEndsAt: clockOf(shape, shape.riskEndHour),
+          days,
         },
       };
     },

@@ -1,5 +1,5 @@
 import { toBin } from '../../shared/ids.js';
-import { isoDate } from '../../shared/time.js';
+import { isValidTimezone, isoDate, localDate } from '../../shared/time.js';
 import { toUserPlan } from '../plans/plans.repository.js';
 
 /** Sayaçlara giren seanslar: bitmiş, silinmemiş. */
@@ -410,11 +410,13 @@ export async function staleActiveFasts(db, hours, limit) {
 /**
  * Bir günün takipçi sütunlarını ham kayıtlardan yazar: su, adım, uyku, günün son kilosu,
  * öğün toplamları ve açlık check-in sayıları. Hedefler yazma anındaki kullanıcı hedefinden anlık
- * görüntü olarak saklanır: sonradan hedef değişse de geçmiş günün "hedef tuttu mu" sonucu
- * değişmez. Kalori/protein hedefi yalnızca kullanıcı elle girdiyse saklanır (öneri canlı
- * hesaplanır).
+ * görüntü olarak saklanır. Adım hedefi güne aittir: bugün canlı hedefe çekilir,
+ * geçmiş günün kayıtlı adım hedefi bir daha ezilmez. Kalori/protein hedefi yalnızca
+ * kullanıcı elle girdiyse saklanır (öneri canlı hesaplanır).
  */
 export async function upsertTrackerDay(db, conn, userId, date) {
+  const tz = await userTimezone(db, userId, conn);
+  const today = localDate(new Date(), isValidTimezone(tz) ? tz : 'UTC');
   const live = 'user_id = :userId AND local_date = :date AND deleted_at IS NULL';
   await db.run(
     `INSERT INTO daily_summaries
@@ -449,14 +451,16 @@ export async function upsertTrackerDay(db, conn, userId, date) {
      ) AS day
      -- SELECT türetilmiş tabloda: aksi hâlde JOIN'in ON'u ile ON DUPLICATE KEY karışır.
      ON DUPLICATE KEY UPDATE water_ml = VALUES(water_ml), water_goal_ml = VALUES(water_goal_ml),
-       steps = VALUES(steps), steps_goal = VALUES(steps_goal),
+       steps = VALUES(steps),
+       steps_goal = IF(:date < :today,
+         COALESCE(daily_summaries.steps_goal, VALUES(steps_goal)), VALUES(steps_goal)),
        sleep_minutes = VALUES(sleep_minutes), sleep_goal_min = VALUES(sleep_goal_min),
        weight_kg = VALUES(weight_kg), kcal = VALUES(kcal), kcal_goal = VALUES(kcal_goal),
        protein_g = VALUES(protein_g), protein_goal_g = VALUES(protein_goal_g),
        carbs_g = VALUES(carbs_g), fat_g = VALUES(fat_g), meals_count = VALUES(meals_count),
        snacks_count = VALUES(snacks_count), hunger_physical = VALUES(hunger_physical),
        hunger_emotional = VALUES(hunger_emotional)`,
-    { userId: toBin(userId), date },
+    { userId: toBin(userId), date, today },
     conn,
   );
 }

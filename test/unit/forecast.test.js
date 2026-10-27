@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { pickTip } from '../../src/modules/fasting/daily-tip.js';
-import { forecastStats, upcomingFast } from '../../src/modules/fasting/forecast.js';
+import {
+  dayClass,
+  forecastCurve,
+  forecastStats,
+  upcomingFast,
+} from '../../src/modules/fasting/forecast.js';
 
 describe('Fast Forecast', () => {
   it('az veride kapalı; Laplace + seri bonusu, sınırlar', () => {
@@ -47,6 +52,38 @@ describe('Fast Forecast', () => {
       forecastStats({ ended: 5, reached: 5, streak: 0, struggleElapsed: [at(9), at(9)] })
         .toughestElapsedHour,
     ).toBeNull();
+  });
+
+  it('gün sınıfı: erken bitiş ve sık zorlanma zor, temiz hedef kolay', () => {
+    expect(dayClass({ status: 'ended_early', goalReached: false, struggles: 0 })).toBe('hard');
+    expect(dayClass({ status: 'completed', goalReached: true, struggles: 2 })).toBe('hard');
+    expect(dayClass({ status: 'completed', goalReached: true, struggles: 0 })).toBe('easy');
+    expect(dayClass({ status: 'completed', goalReached: true, struggles: 1 })).toBe('moderate');
+  });
+
+  it('eğri kayıtların saatine oturur; kayıt yoksa düz ve tepesiz', () => {
+    const at = (h, m = 0) => h * 60 + m;
+    const shaped = forecastCurve({
+      fastMinutes: 16 * 60,
+      struggles: [at(10, 5), at(10, 40), at(4)],
+      hungers: [{ fastedMinutes: at(10, 20), physicalScore: 6 }],
+      breaks: [at(10, 15)],
+    });
+    expect(shaped.toughestElapsedHour).toBe(10);
+    expect(shaped.curve).toHaveLength(17);
+    expect(Math.max(...shaped.curve)).toBe(1);
+    expect(shaped.riskStartHour).toBeLessThanOrEqual(10);
+    expect(shaped.riskEndHour).toBeGreaterThan(10);
+
+    const empty = forecastCurve({
+      fastMinutes: 16 * 60,
+      struggles: [],
+      hungers: [],
+      breaks: [],
+    });
+    expect(empty.toughestElapsedHour).toBeNull();
+    expect(empty.curve.every((v) => v === 0)).toBe(true);
+    expect(empty.riskStartHour).toBeNull();
   });
 
   it('sıradaki oruç: aktif oruç; yoksa yeme penceresi sonundan (geçtiyse yarın, DST güvenli)', () => {

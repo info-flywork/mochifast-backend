@@ -59,6 +59,11 @@ Son backend commit'leri: `eb9f72b` (reasoning_effort yalnızca reasoning modelle
 `bf58398` (refresh aile limiti), `d99a0df` (Fast Forecast), `a14d31a` (bu dosya), `4d03412` (eski önek'siz yollar silindi),
 `df0d871` (F11 sertleştirme), `0ad5487`, `77748b7` (F10), `d85c836`, `3d1e84c` (F9).
 Testler: 43 dosya / 386 test geçiyor (2026-10-12). Uzak DB migration'ları 0021'e kadar uygulandı; seed güncel.
+**2026-10-27 — Challenge detay sayfası:** `0022_challenge_visibility` (yeni, uzak DB'ye **henüz uygulanmadı**) →
+`user_settings.show_in_challenges` (açık rıza, varsayılan 0; `PATCH /user/settings { showInChallenges }`). Yeni uçlar:
+`GET /v1/challenges/:code` ve `GET /v1/challenges/:code/participants` (ilerlemeye göre ilk 50; rızasızların ad/avatarı dönmez,
+kullanıcı kimliği hiç dönmez, ad "Ayşe Y." biçiminde kısaltılır). `participantAvatars` artık rızalı katılımcılardan dolar.
+Gizlilik/koşullar/CSAE metinleri (`../fastingapp/legal_site`) buna göre güncellendi.
 
 Modüller (`src/modules`): auth, user, account (silme/dışa aktarma/saklama), admin, devices, catalog, plans, fasting,
 stats, trackers (kilo/su/adım/uyku), meals, hunger, ai (fotoğraf analizi, OpenAI vision), chat (OpenAI, SSE), gamification

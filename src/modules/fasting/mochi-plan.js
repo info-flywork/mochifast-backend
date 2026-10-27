@@ -142,6 +142,13 @@ export function parseAiPlan(text) {
   }
 }
 
+function reachedGoal(value) {
+  if (typeof Buffer !== 'undefined' && Buffer.isBuffer(value)) {
+    return value.length > 0 && value[0] !== 0;
+  }
+  return Number(value) === 1 || value === true;
+}
+
 function windowOn(day, tz, startMinutes, fastHours) {
   const startsAt = DateTime.fromISO(day, { zone: tz }).plus({ minutes: startMinutes }).toJSDate();
   return {
@@ -249,9 +256,7 @@ export function createMochiPlanService({ db, chat = null, cache = null, now = ()
       stepsYesterday: yDay ? Number(yDay.steps) || 0 : null,
       stepsGoal: yDay ? Number(yDay.steps_goal) || null : null,
       fastsEnded: fasts.length,
-      fastsReached: fasts.filter(
-        (row) => Number(row.goal_reached) === 1 || row.goal_reached === true,
-      ).length,
+      fastsReached: fasts.filter((row) => reachedGoal(row.goal_reached)).length,
       struggles: Number(struggleRow?.n) || 0,
       typicalStartMinutes: median(starts),
     };
@@ -323,10 +328,15 @@ export function createMochiPlanService({ db, chat = null, cache = null, now = ()
       }
 
       const draft = await job.draftReady;
-      const quick = await Promise.race([
-        job.done.then((plan) => ({ plan, settled: true })),
-        sleep(AI_WAIT_MS).then(() => null),
-      ]);
+      let quick;
+      try {
+        quick = await Promise.race([
+          job.done.then((plan) => ({ plan, settled: true })),
+          sleep(AI_WAIT_MS).then(() => null),
+        ]);
+      } catch {
+        quick = null;
+      }
       if (quick?.plan) return { plan: { ...quick.plan, settled: true } };
       const cached = await cache?.get(key);
       if (cached) return { plan: { ...cached, settled: true } };

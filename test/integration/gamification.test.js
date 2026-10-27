@@ -208,4 +208,43 @@ describe.skipIf(!mysqlUrl)("Mochi World ve challenge'lar (gerçek MySQL)", () =>
     expect(mine.status).toBe('failed');
     expect((await call('POST', '/challenges/nope/join', { token: a.token })).statusCode).toBe(404);
   });
+
+  it('katılımcı listesi: rıza yoksa anonim, kişi kendini görür, kimlik dönmez', async () => {
+    const a = await newUser();
+    const b = await newUser();
+    await ctx.db.run("UPDATE users SET display_name = 'Ayşe Yılmaz' WHERE id = :id", {
+      id: toBin(a.userId),
+    });
+    await ctx.db.run("UPDATE users SET display_name = 'Mehmet Kaya' WHERE id = :id", {
+      id: toBin(b.userId),
+    });
+    await call('POST', '/challenges/water_week_5/join', { token: a.token });
+    await call('POST', '/challenges/water_week_5/join', { token: b.token });
+
+    const list = async (token) => get(token, '/challenges/water_week_5/participants');
+    const row = (data, pred) => data.items.find(pred);
+
+    // Varsayılan: rıza kapalı → b, a'yı anonim görür; a kendini adıyla görür.
+    let seenByB = await list(b.token);
+    expect(seenByB.total).toBeGreaterThanOrEqual(2);
+    expect(JSON.stringify(seenByB)).not.toContain('Ayşe');
+    expect(JSON.stringify(seenByB)).not.toContain(a.userId);
+    expect(row(seenByB, (r) => r.isMe).displayName).toBe('Mehmet K.');
+    expect(row(await list(a.token), (r) => r.isMe).displayName).toBe('Ayşe Y.');
+
+    // a rıza verir → b onu kısaltılmış adıyla görür.
+    const patched = await call('PATCH', '/user/settings', {
+      token: a.token,
+      body: { showInChallenges: true },
+    });
+    expect(patched.json().data.showInChallenges).toBe(true);
+    seenByB = await list(b.token);
+    expect(row(seenByB, (r) => r.displayName === 'Ayşe Y.')).toMatchObject({ isMe: false });
+
+    const detail = await get(b.token, '/challenges/water_week_5');
+    expect(detail.challenge.code).toBe('water_week_5');
+    expect(
+      (await call('GET', '/challenges/nope/participants', { token: a.token })).statusCode,
+    ).toBe(404);
+  });
 });

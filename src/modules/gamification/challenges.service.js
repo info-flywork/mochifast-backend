@@ -7,19 +7,35 @@ import { syncChallenges } from './gamification.repository.js';
 const ER_DUP_ENTRY = 1062;
 const DAY_MS = 86_400_000;
 
+const PARTICIPANTS_LIMIT = 50;
+const CATALOG_TTL_SEC = 60;
+const PREVIEW_AVATARS = 3;
+
+/** "Ayşe Yılmaz" → "Ayşe Y." — rızalı kullanıcıda bile soyadı tam gösterilmez. */
+export function shortName(displayName) {
+  const parts = (displayName ?? '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return null;
+  if (parts.length === 1) return parts[0];
+  return `${parts[0]} ${parts.at(-1)[0].toLocaleUpperCase()}.`;
+}
+
 /**
  * Challenge'lar (docs/backend/04-api.md §13, 05 §13). Katılımcı sayısı gerçektir (şişirilmez).
- * Katılımcı avatarı için açık izin ayarı henüz yok: liste boş döner, istemci jenerik maskot
- * avatarlarını gösterir (05 §13).
+ * Ad + avatar yalnızca `user_settings.show_in_challenges` açık olanlarda döner; diğerleri
+ * listede anonimdir (istemci maskot gösterir). Kullanıcı kendini her zaman görür.
  */
-export function createChallengesService({ db, hasPremium = async () => false }) {
-  async function catalog(locale) {
+export function createChallengesService({
+  db,
+  cache = null,
+  hasPremium = async () => false,
+  avatarUrls = async () => new Map(),
+}) {
+  /** Challenge tanımları + çeviriler (seed/admin ile değişir; 60 sn bellekte). */
+  async function loadCatalog(locale) {
     const rows = await db.many(
       `SELECT c.id, c.code, c.metric, c.target_count, c.duration_days, c.window_type, c.starts_at,
               c.ends_at, c.is_premium, c.is_featured, c.reward_xp, c.sort_order,
-              t.title, t.subtitle, t.badge_label, t.description, t.locale,
-              (SELECT COUNT(DISTINCT p.user_id) FROM challenge_participants p
-                WHERE p.challenge_id = c.id AND p.status IN ('active', 'completed')) AS participants
+              t.title, t.subtitle, t.badge_label, t.description, t.locale
          FROM challenges c
          JOIN challenge_translations t ON t.challenge_id = c.id AND t.locale IN (:locale, :fallback)
         WHERE c.is_active = 1
@@ -32,6 +48,29 @@ export function createChallengesService({ db, hasPremium = async () => false }) 
       if (!byId.has(r.id) || r.locale === locale) byId.set(r.id, r);
     }
     return [...byId.values()];
+  }
+  const catalog = (locale) =>
+    cache
+      ? cache.getOrSet(`challenges:catalog:${locale}`, CATALOG_TTL_SEC, () => loadCatalog(locale))
+      : loadCatalog(locale);
+
+  async function findChallenge(code, locale) {
+    const c = (await catalog(locale)).find((x) => x.code === code);
+    if (!c) throw new AppError('NOT_FOUND');
+    return c;
+  }
+
+  /** Gerçek katılımcı sayıları (aktif + tamamlayan, kişi başına bir): `Map<challengeId, n>`. */
+  async function counts(challengeId = null) {
+    const rows = await db.many(
+      `SELECT challenge_id, COUNT(DISTINCT user_id) AS n
+         FROM challenge_participants
+        WHERE status IN ('active', 'completed')
+          ${challengeId === null ? '' : 'AND challenge_id = :challengeId'}
+        GROUP BY challenge_id`,
+      challengeId === null ? {} : { challengeId },
+    );
+    return new Map(rows.map((r) => [r.challenge_id, Number(r.n)]));
   }
 
   async function mine(userId) {
@@ -52,7 +91,44 @@ export function createChallengesService({ db, hasPremium = async () => false }) 
     return latest;
   }
 
-  function toDto(c, my) {
+  /** Katılımcılar (aktif + tamamlayan), ilerlemeye göre sıralı; kişi başına en iyi katılım. */
+  async function participantRows(challengeId, { publicOnly = false, limit = PARTICIPANTS_LIMIT }) {
+    const rows = await db.many(
+      `SELECT p.user_id, p.status, p.progress_count, p.completed_at, p.created_at,
+              u.display_name, COALESCE(s.show_in_challenges, 0) AS is_public
+         FROM challenge_participants p
+         JOIN users u ON u.id = p.user_id AND u.status = 'active'
+         LEFT JOIN user_settings s ON s.user_id = p.user_id
+        WHERE p.challenge_id = :challengeId AND p.status IN ('active', 'completed')
+          ${publicOnly ? 'AND s.show_in_challenges = 1' : ''}
+        ORDER BY p.status = 'completed' DESC, p.progress_count DESC,
+                 COALESCE(p.completed_at, p.created_at) ASC
+        LIMIT :limit`,
+      { challengeId, limit: String(limit * 2) },
+    );
+    const seen = new Set();
+    const out = [];
+    for (const r of rows) {
+      const id = fromBin(r.user_id);
+      if (seen.has(id)) continue;
+      seen.add(id);
+      out.push({ ...r, userId: id, isPublic: Boolean(r.is_public) });
+      if (out.length === limit) break;
+    }
+    return out;
+  }
+
+  /** Ana sayfa kartı için rızalı ilk birkaç katılımcının avatarı. */
+  async function previewAvatars(challengeId) {
+    const rows = await participantRows(challengeId, { publicOnly: true, limit: 12 });
+    const urls = await avatarUrls(rows.map((r) => r.userId));
+    return rows
+      .map((r) => urls.get(r.userId))
+      .filter(Boolean)
+      .slice(0, PREVIEW_AVATARS);
+  }
+
+  function toDto(c, my, { count = 0, avatars = [] } = {}) {
     return {
       code: c.code,
       title: c.title,
@@ -68,8 +144,8 @@ export function createChallengesService({ db, hasPremium = async () => false }) 
       rewardXp: c.reward_xp,
       isPremium: Boolean(c.is_premium),
       isFeatured: Boolean(c.is_featured),
-      participantsCount: Number(c.participants),
-      participantAvatars: [],
+      participantsCount: count,
+      participantAvatars: avatars,
       my: my
         ? {
             id: fromBin(my.id),
@@ -85,27 +161,61 @@ export function createChallengesService({ db, hasPremium = async () => false }) 
   }
 
   async function one(userId, code, locale) {
-    const c = (await catalog(locale)).find((x) => x.code === code);
-    if (!c) throw new AppError('NOT_FOUND');
-    return toDto(c, (await mine(userId)).get(c.id));
+    const c = await findChallenge(code, locale);
+    const [my, n, avatars] = await Promise.all([mine(userId), counts(c.id), previewAvatars(c.id)]);
+    return toDto(c, my.get(c.id), { count: n.get(c.id) ?? 0, avatars });
   }
 
   const service = {
     async list(userId, locale) {
-      const [items, my] = await Promise.all([catalog(locale), mine(userId)]);
-      return { items: items.map((c) => toDto(c, my.get(c.id))) };
+      const [items, my, n] = await Promise.all([catalog(locale), mine(userId), counts()]);
+      return { items: items.map((c) => toDto(c, my.get(c.id), { count: n.get(c.id) ?? 0 })) };
     },
 
     /** Ana sayfa kartı: öne çıkan (yoksa ilk) challenge. */
     async featured(userId, locale) {
       const [items, my] = await Promise.all([catalog(locale), mine(userId)]);
       const c = items.find((x) => x.is_featured) ?? items[0];
-      return { challenge: c ? toDto(c, my.get(c.id)) : null };
+      if (!c) return { challenge: null };
+      const [n, avatars] = await Promise.all([counts(c.id), previewAvatars(c.id)]);
+      return { challenge: toDto(c, my.get(c.id), { count: n.get(c.id) ?? 0, avatars }) };
+    },
+
+    /** Challenge detayı (sayfa). */
+    async get(userId, code, locale) {
+      return { challenge: await one(userId, code, locale) };
+    },
+
+    /**
+     * Katılımcı listesi (en fazla 50, ilerlemeye göre). Rızası olmayanın adı/avatarı dönmez;
+     * kullanıcı kendi satırını her zaman ad + avatarla görür. Kullanıcı kimliği dönmez.
+     */
+    async participants(userId, code, locale) {
+      const c = await findChallenge(code, locale);
+      const [rows, n] = await Promise.all([participantRows(c.id, {}), counts(c.id)]);
+      const shown = rows.filter((r) => r.isPublic || r.userId === userId).map((r) => r.userId);
+      const urls = await avatarUrls(shown);
+      return {
+        total: n.get(c.id) ?? 0,
+        items: rows.map((r, i) => {
+          const isMe = r.userId === userId;
+          const visible = r.isPublic || isMe;
+          return {
+            rank: i + 1,
+            isMe,
+            displayName: visible ? shortName(r.display_name) : null,
+            avatarUrl: visible ? (urls.get(r.userId) ?? null) : null,
+            progress: r.progress_count,
+            target: c.target_count,
+            status: r.status,
+            completedAt: r.completed_at ? r.completed_at.toISOString() : null,
+          };
+        }),
+      };
     },
 
     async join(userId, code, locale) {
-      const c = (await catalog(locale)).find((x) => x.code === code);
-      if (!c) throw new AppError('NOT_FOUND');
+      const c = await findChallenge(code, locale);
       if (c.is_premium && !(await hasPremium(userId))) {
         throw new AppError('PREMIUM_REQUIRED', { details: { challenge: code } });
       }

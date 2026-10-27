@@ -121,3 +121,40 @@ export const leaveSchema = {
   params: codeParams,
   response: { 200: one },
 };
+export const getChallengeSchema = {
+  tags: ['challenges'],
+  summary: 'Challenge detayı',
+  security: bearer,
+  params: codeParams,
+  response: { 200: one },
+};
+export const participantsSchema = {
+  tags: ['challenges'],
+  summary: 'Katılımcılar (ilerlemeye göre; rızasızlar anonim, kimlik dönmez)',
+  security: bearer,
+  params: codeParams,
+  response: {
+    200: envelope({
+      type: 'object',
+      properties: {
+        total: { type: 'integer' },
+        items: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              rank: { type: 'integer' },
+              isMe: { type: 'boolean' },
+              displayName: nstr,
+              avatarUrl: nstr,
+              progress: { type: 'integer' },
+              target: { type: 'integer' },
+              status: { type: 'string' },
+              completedAt: nstr,
+            },
+          },
+        },
+      },
+    }),
+  },
+};

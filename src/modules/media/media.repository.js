@@ -83,6 +83,19 @@ export async function setStatus(db, id, status, conn) {
   );
 }
 
+/** Birden çok kullanıcının hazır avatarları: `Map<userId, media>` (tek sorgu). */
+export async function avatarsOf(db, userIds) {
+  if (userIds.length === 0) return new Map();
+  const params = Object.fromEntries(userIds.map((id, i) => [`u${i}`, toBin(id)]));
+  const rows = await db.many(
+    `SELECT u.id AS user_id, ${columns('m')}
+       FROM users u JOIN media m ON m.id = u.avatar_media_id
+      WHERE u.id IN (${userIds.map((_, i) => `:u${i}`).join(', ')}) AND m.status = 'ready'`,
+    params,
+  );
+  return new Map(rows.map((r) => [fromBin(r.user_id), toMedia(r)]));
+}
+
 /** Kullanıcının avatarı (hazır ise). */
 export async function avatarOf(db, userId, conn) {
   return toMedia(

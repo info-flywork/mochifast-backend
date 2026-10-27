@@ -387,8 +387,14 @@ export function createUserService({ db, cache, catalog, plans, stats, media, ent
     },
 
     async getSettings(userId) {
-      await ensureRows(userId);
-      return toSettingsDto(await repo.getSettings(db, userId));
+      // Önce oku; satır yoksa (eski hesap) bir kez oluştur. Her okumada transaction +
+      // 3 upsert atmak gereksiz gidiş-dönüştü (uzak DB'de ~250 ms).
+      let settings = await repo.getSettings(db, userId);
+      if (!settings) {
+        await ensureRows(userId);
+        settings = await repo.getSettings(db, userId);
+      }
+      return toSettingsDto(settings);
     },
 
     async updateSettings(userId, body) {
@@ -405,6 +411,7 @@ export function createUserService({ db, cache, catalog, plans, stats, media, ent
         fields.quiet_hours_end = body.quietHours.end;
       }
       if (body.healthSyncEnabled !== undefined) fields.health_sync_enabled = body.healthSyncEnabled;
+      if (body.showInChallenges !== undefined) fields.show_in_challenges = body.showInChallenges;
       await db.withTransaction((conn) => repo.upsertSettings(db, conn, userId, fields));
       return service.getSettings(userId);
     },
@@ -445,7 +452,20 @@ export function createUserService({ db, cache, catalog, plans, stats, media, ent
             ? null
             : JSON.stringify([...new Set(body.customGlassSizes)]);
       }
-      await db.withTransaction((conn) => repo.upsertGoals(db, conn, userId, fields));
+      await db.withTransaction(async (conn) => {
+        await repo.upsertGoals(db, conn, userId, fields);
+        // Adım hedefi bugüne yazılır. Yarın bu değerle açılır; dünün hedefi durur.
+        if (body.stepsGoal !== undefined) {
+          const user = await requireUser(userId, conn);
+          const today = todayFor(user.timezone);
+          await db.one(
+            'SELECT id FROM users WHERE id = :id FOR UPDATE',
+            { id: toBin(userId) },
+            conn,
+          );
+          await stats.applyDay(userId, today, conn);
+        }
+      });
       return service.getGoals(userId);
     },
 
@@ -607,6 +627,7 @@ function toSettingsDto(s) {
     waterReminderIntervalMin: s.water_reminder_interval_min,
     quietHours: { start: hhmm(s.quiet_hours_start), end: hhmm(s.quiet_hours_end) },
     healthSyncEnabled: s.health_sync_enabled,
+    showInChallenges: Boolean(s.show_in_challenges),
   };
 }
 

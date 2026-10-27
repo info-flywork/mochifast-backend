@@ -299,6 +299,8 @@ const settingsSchema = {
     waterReminderIntervalMin: { type: 'integer' },
     quietHours: timeWindow,
     healthSyncEnabled: { type: 'boolean' },
+    // Challenge katılımcı listesinde ad + avatar görünsün mü (açık rıza, varsayılan kapalı).
+    showInChallenges: { type: 'boolean' },
   },
 };
 
@@ -328,6 +330,7 @@ export const patchSettingsSchema = {
       waterReminderIntervalMin: { type: 'integer', minimum: 30, maximum: 480 },
       quietHours: timeWindow,
       healthSyncEnabled: { type: 'boolean' },
+      showInChallenges: { type: 'boolean' },
     },
   },
   response: { 200: envelope(settingsSchema) },

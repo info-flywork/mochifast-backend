@@ -40,6 +40,7 @@ const SETTINGS_COLUMNS = [
   'quiet_hours_start',
   'quiet_hours_end',
   'health_sync_enabled',
+  'show_in_challenges',
 ];
 
 const GOALS_COLUMNS = [

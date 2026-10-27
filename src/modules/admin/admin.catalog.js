@@ -76,6 +76,8 @@ export function createAdminCatalog({ db, cache, audit }) {
       });
     await cache.del(CONFIG_CACHE_KEY);
     if (section === 'notifications') resetTemplateCache();
+    // Challenge tanımları 60 sn bellekte (challenges.service.js); değişiklik hemen görünsün.
+    await cache.delPrefix('challenges:catalog:');
     await audit(meta, action, adminId, {
       entityType: 'catalog_section',
       entityId: section,
