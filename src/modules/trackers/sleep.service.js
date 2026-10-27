@@ -173,6 +173,8 @@ export function createSleepService({ db, ctx }) {
         goalMin,
         progress: Math.min(1, Math.round((totalMinutes / goalMin) * 1000) / 1000),
         schedule: { bedtime: hhmm(goals?.bedtime), wakeTime: hhmm(goals?.wake_time) },
+        // false: yatış / uyanış / hedef hiç ayarlanmadı; değerler varsayılandır (öneri).
+        scheduleSet: Boolean(goals?.sleep_schedule_set_at),
         week,
       };
     },

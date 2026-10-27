@@ -184,7 +184,8 @@ export async function summariesBetween(db, userId, { from, to }, conn) {
 
 export async function goals(db, userId, conn) {
   return db.one(
-    `SELECT water_goal_ml, glass_size_ml, steps_goal, sleep_goal_min, bedtime, wake_time
+    `SELECT water_goal_ml, glass_size_ml, steps_goal, sleep_goal_min, bedtime, wake_time,
+            sleep_schedule_set_at
        FROM user_goals WHERE user_id = :userId`,
     { userId: toBin(userId) },
     conn,

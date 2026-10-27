@@ -250,6 +250,11 @@ describe.skipIf(!mysqlUrl)('takipçiler: kilo, su, adım, uyku (gerçek MySQL)',
     expect(summary).toMatchObject({ goalMin: 450, progress: 1 });
     expect(summary.week.at(-1)).toEqual({ date: d, minutes: 510 });
 
+    // Program hiç ayarlanmadı: varsayılanlar öneri olarak gelir, kullanıcınınki sayılmaz.
+    expect(summary.scheduleSet).toBe(false);
+    await call('PATCH', '/user/goals', { token, body: { bedtime: '23:30' } });
+    expect((await get(token, `/sleep/summary?date=${d}`)).scheduleSet).toBe(true);
+
     const body = {
       source: 'googleFit',
       entries: [

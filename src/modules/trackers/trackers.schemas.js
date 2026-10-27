@@ -452,6 +452,7 @@ export const sleepSummarySchema = {
           type: 'object',
           properties: { bedtime: nstr, wakeTime: nstr },
         },
+        scheduleSet: { type: 'boolean' },
         week: {
           type: 'array',
           items: {

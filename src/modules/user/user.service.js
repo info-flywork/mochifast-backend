@@ -446,6 +446,10 @@ export function createUserService({ db, cache, catalog, plans, stats, media, ent
       for (const [key, column] of Object.entries(map)) {
         if (body[key] !== undefined) fields[column] = body[key];
       }
+      // Uyku programı ilk kez kullanıcı tarafından ayarlandı (varsayılanlardan ayırt etmek için).
+      if (['sleepGoalMin', 'bedtime', 'wakeTime'].some((k) => body[k] !== undefined)) {
+        fields.sleep_schedule_set_at = new Date();
+      }
       if (body.customGlassSizes !== undefined) {
         fields.custom_glass_sizes =
           body.customGlassSizes === null

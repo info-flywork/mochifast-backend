@@ -55,6 +55,7 @@ const GOALS_COLUMNS = [
   'sleep_goal_min',
   'bedtime',
   'wake_time',
+  'sleep_schedule_set_at',
 ];
 
 /** `fields` içindeki whitelist kolonlarıyla upsert SQL'i ve parametreleri üretir. */
