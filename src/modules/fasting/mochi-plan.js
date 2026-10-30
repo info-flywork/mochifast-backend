@@ -22,6 +22,11 @@ const LANGUAGE = {
   fr: 'French',
   it: 'Italian',
   ru: 'Russian',
+  pt: 'Portuguese',
+  ko: 'Korean',
+  hi: 'Hindi',
+  zh: 'Simplified Chinese',
+  ja: 'Japanese',
 };
 
 /** AI yanıtını beklerken ekranın kural planıyla açılması için üst süre. */

@@ -1,0 +1,35 @@
+{
+  "common": {
+    "ok": "好"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "有些内容无效。请检查后再试。",
+    "INVALID_JSON": "无法读取请求内容。",
+    "BAD_REQUEST": "无法处理这个请求。",
+    "UNAUTHENTICATED": "请登录后继续。",
+    "TOKEN_EXPIRED": "登录已过期。",
+    "REFRESH_REUSED": "为了你的安全，请重新登录。",
+    "PREMIUM_REQUIRED": "此功能需要 Premium。",
+    "FORBIDDEN": "你没有权限这样做。",
+    "CONSENT_REQUIRED": "请先查看并接受必要的同意。",
+    "NOT_FOUND": "没有找到你要的内容。",
+    "METHOD_NOT_ALLOWED": "不支持这个操作。",
+    "CONFLICT": "这与已有数据冲突。",
+    "ACTIVE_FAST_EXISTS": "你已经有一个进行中的断食。",
+    "FAST_OVERLAP": "这次断食与另一次重叠了。",
+    "IDEMPOTENCY_KEY_REUSED": "这个请求已经用不同的数据发送过。",
+    "ACCOUNT_PENDING_DELETION": "此账号已安排删除。要恢复吗？",
+    "REPLY_IN_PROGRESS": "Mochi 还在回复。请稍等。",
+    "GONE": "此账号已不可用。",
+    "PAYLOAD_TOO_LARGE": "文件或请求太大。",
+    "UNSUPPORTED_MEDIA_TYPE": "不支持这种文件类型。",
+    "NOT_FOOD": "这看起来不像一餐。换一张照片试试。",
+    "UNSAFE_REQUEST": "为了你的安全，这个选项不可用。",
+    "SAFETY_ACK_REQUIRED": "请先阅读并确认安全提示。",
+    "APP_UPDATE_REQUIRED": "请更新 MochiFast 后继续。",
+    "QUOTA_EXCEEDED": "今天这个功能已达到上限。",
+    "RATE_LIMITED": "请求太多。请稍后再试。",
+    "INTERNAL": "我们这边出了问题。请再试一次。",
+    "UNAVAILABLE": "MochiFast 暂时不可用。请稍后再试。"
+  }
+}

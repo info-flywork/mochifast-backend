@@ -1,0 +1,35 @@
+{
+  "common": {
+    "ok": "OK"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "一部の項目が正しくありません。確認してもう一度お試しください。",
+    "INVALID_JSON": "リクエストの内容を読み取れませんでした。",
+    "BAD_REQUEST": "リクエストを処理できませんでした。",
+    "UNAUTHENTICATED": "続けるにはログインしてください。",
+    "TOKEN_EXPIRED": "セッションの有効期限が切れました。",
+    "REFRESH_REUSED": "安全のため、もう一度ログインしてください。",
+    "PREMIUM_REQUIRED": "この機能にはPremiumが必要です。",
+    "FORBIDDEN": "この操作を行う権限がありません。",
+    "CONSENT_REQUIRED": "先に必要な同意を確認して受け入れてください。",
+    "NOT_FOUND": "お探しのものは見つかりませんでした。",
+    "METHOD_NOT_ALLOWED": "この操作には対応していません。",
+    "CONFLICT": "既存のデータと衝突しています。",
+    "ACTIVE_FAST_EXISTS": "すでに進行中の断食があります。",
+    "FAST_OVERLAP": "この断食は別の断食と重なっています。",
+    "IDEMPOTENCY_KEY_REUSED": "このリクエストは別のデータですでに送信されています。",
+    "ACCOUNT_PENDING_DELETION": "このアカウントは削除予定です。復元しますか？",
+    "REPLY_IN_PROGRESS": "Mochiがまだ返信中です。少々お待ちください。",
+    "GONE": "このアカウントは利用できなくなりました。",
+    "PAYLOAD_TOO_LARGE": "ファイルまたはリクエストが大きすぎます。",
+    "UNSUPPORTED_MEDIA_TYPE": "このファイル形式には対応していません。",
+    "NOT_FOOD": "食事のようには見えません。別の写真をお試しください。",
+    "UNSAFE_REQUEST": "安全のため、この選択肢は使えません。",
+    "SAFETY_ACK_REQUIRED": "先に安全に関する注意を読み、確認してください。",
+    "APP_UPDATE_REQUIRED": "続けるにはMochiFastを更新してください。",
+    "QUOTA_EXCEEDED": "今日のこの機能の上限に達しました。",
+    "RATE_LIMITED": "リクエストが多すぎます。しばらくしてからもう一度お試しください。",
+    "INTERNAL": "こちらで問題が起きました。もう一度お試しください。",
+    "UNAVAILABLE": "MochiFastは一時的に利用できません。しばらくしてからもう一度お試しください。"
+  }
+}

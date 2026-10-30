@@ -58,6 +58,31 @@
         "displayName": "12:12",
         "cardLabel": "Лёгкий старт",
         "shortDescription": "Самый простой способ начать голодание"
+      },
+      "pt": {
+        "displayName": "12:12",
+        "cardLabel": "Início fácil",
+        "shortDescription": "A forma mais fácil de começar a jejuar"
+      },
+      "ko": {
+        "displayName": "12:12",
+        "cardLabel": "쉬운 시작",
+        "shortDescription": "단식을 시작하는 가장 쉬운 방법"
+      },
+      "hi": {
+        "displayName": "12:12",
+        "cardLabel": "आसान शुरुआत",
+        "shortDescription": "उपवास शुरू करने का सबसे आसान तरीका"
+      },
+      "zh": {
+        "displayName": "12:12",
+        "cardLabel": "轻松起步",
+        "shortDescription": "开始断食最简单的方式"
+      },
+      "ja": {
+        "displayName": "12:12",
+        "cardLabel": "かんたんスタート",
+        "shortDescription": "断食を始めるいちばん簡単な方法"
       }
     }
   },
@@ -120,6 +145,31 @@
         "displayName": "13:11",
         "cardLabel": "Мягкий старт",
         "shortDescription": "Плавно переходи к более длинному окну голодания"
+      },
+      "pt": {
+        "displayName": "13:11",
+        "cardLabel": "Começo suave",
+        "shortDescription": "Entra aos poucos numa janela de jejum mais longa"
+      },
+      "ko": {
+        "displayName": "13:11",
+        "cardLabel": "부드러운 시작",
+        "shortDescription": "더 긴 단식 시간에 천천히 적응해요"
+      },
+      "hi": {
+        "displayName": "13:11",
+        "cardLabel": "हल्की शुरुआत",
+        "shortDescription": "लंबे उपवास की खिड़की में धीरे-धीरे आएँ"
+      },
+      "zh": {
+        "displayName": "13:11",
+        "cardLabel": "温和起步",
+        "shortDescription": "慢慢适应更长的断食时间"
+      },
+      "ja": {
+        "displayName": "13:11",
+        "cardLabel": "ゆるやかスタート",
+        "shortDescription": "長めの断食時間に少しずつ慣れます"
       }
     }
   },
@@ -182,6 +232,31 @@
         "displayName": "14:10",
         "cardLabel": "Формируем привычку",
         "shortDescription": "Сформируй простую ежедневную привычку голодания"
+      },
+      "pt": {
+        "displayName": "14:10",
+        "cardLabel": "Criar hábito",
+        "shortDescription": "Constrói um hábito diário simples de jejum"
+      },
+      "ko": {
+        "displayName": "14:10",
+        "cardLabel": "습관 만들기",
+        "shortDescription": "매일 하는 간단한 단식 습관을 만들어요"
+      },
+      "hi": {
+        "displayName": "14:10",
+        "cardLabel": "आदत बनाना",
+        "shortDescription": "रोज़ का सरल उपवास की आदत बनाएँ"
+      },
+      "zh": {
+        "displayName": "14:10",
+        "cardLabel": "养成习惯",
+        "shortDescription": "建立简单的每日断食习惯"
+      },
+      "ja": {
+        "displayName": "14:10",
+        "cardLabel": "習慣づくり",
+        "shortDescription": "毎日のシンプルな断食習慣を作ります"
       }
     }
   },
@@ -244,6 +319,31 @@
         "displayName": "15:9",
         "cardLabel": "Сбалансированный старт",
         "shortDescription": "Мягкий шаг к классическому голоданию"
+      },
+      "pt": {
+        "displayName": "15:9",
+        "cardLabel": "Início equilibrado",
+        "shortDescription": "Um passo suave em direção ao jejum clássico"
+      },
+      "ko": {
+        "displayName": "15:9",
+        "cardLabel": "균형 잡힌 시작",
+        "shortDescription": "기본 단식으로 가는 부드러운 한 걸음"
+      },
+      "hi": {
+        "displayName": "15:9",
+        "cardLabel": "संतुलित शुरुआत",
+        "shortDescription": "क्लासिक उपवास की ओर एक हल्का कदम"
+      },
+      "zh": {
+        "displayName": "15:9",
+        "cardLabel": "均衡起步",
+        "shortDescription": "迈向经典断食的温和一步"
+      },
+      "ja": {
+        "displayName": "15:9",
+        "cardLabel": "バランススタート",
+        "shortDescription": "定番の断食へ向かうゆるやかな一歩"
       }
     }
   },
@@ -306,6 +406,31 @@
         "displayName": "16:8",
         "cardLabel": "Самый популярный",
         "shortDescription": "Классический режим интервального голодания"
+      },
+      "pt": {
+        "displayName": "16:8",
+        "cardLabel": "O mais popular",
+        "shortDescription": "O horário clássico de jejum intermitente"
+      },
+      "ko": {
+        "displayName": "16:8",
+        "cardLabel": "가장 인기",
+        "shortDescription": "가장 익숙한 간헐적 단식 일정"
+      },
+      "hi": {
+        "displayName": "16:8",
+        "cardLabel": "सबसे लोकप्रिय",
+        "shortDescription": "क्लासिक इंटरमिटेंट फास्टिंग शेड्यूल"
+      },
+      "zh": {
+        "displayName": "16:8",
+        "cardLabel": "最受欢迎",
+        "shortDescription": "经典的间歇性断食安排"
+      },
+      "ja": {
+        "displayName": "16:8",
+        "cardLabel": "いちばん人気",
+        "shortDescription": "定番の断続的断食スケジュール"
       }
     }
   },
@@ -368,6 +493,31 @@
         "displayName": "17:7",
         "cardLabel": "Шаг вперёд",
         "shortDescription": "Постепенно увеличивай окно голодания"
+      },
+      "pt": {
+        "displayName": "17:7",
+        "cardLabel": "Um passo acima",
+        "shortDescription": "Alarga a janela de jejum aos poucos"
+      },
+      "ko": {
+        "displayName": "17:7",
+        "cardLabel": "한 단계 업",
+        "shortDescription": "단식 시간을 조금씩 늘려요"
+      },
+      "hi": {
+        "displayName": "17:7",
+        "cardLabel": "एक कदम आगे",
+        "shortDescription": "उपवास की खिड़की धीरे-धीरे बढ़ाएँ"
+      },
+      "zh": {
+        "displayName": "17:7",
+        "cardLabel": "再进一步",
+        "shortDescription": "逐步拉长断食时间"
+      },
+      "ja": {
+        "displayName": "17:7",
+        "cardLabel": "ステップアップ",
+        "shortDescription": "断食時間を少しずつ延ばします"
       }
     }
   },
@@ -431,6 +581,31 @@
         "displayName": "18:6",
         "cardLabel": "Ежедневный вызов",
         "shortDescription": "Более длинный ежедневный режим голодания"
+      },
+      "pt": {
+        "displayName": "18:6",
+        "cardLabel": "Desafio diário",
+        "shortDescription": "Uma rotina diária de jejum mais longa"
+      },
+      "ko": {
+        "displayName": "18:6",
+        "cardLabel": "매일 도전",
+        "shortDescription": "더 긴 하루 단식 루틴"
+      },
+      "hi": {
+        "displayName": "18:6",
+        "cardLabel": "रोज़ की चुनौती",
+        "shortDescription": "रोज़ का लंबा उपवास रूटीन"
+      },
+      "zh": {
+        "displayName": "18:6",
+        "cardLabel": "每日挑战",
+        "shortDescription": "更长的每日断食安排"
+      },
+      "ja": {
+        "displayName": "18:6",
+        "cardLabel": "毎日チャレンジ",
+        "shortDescription": "長めの毎日の断食ルーティン"
       }
     }
   },
@@ -493,6 +668,31 @@
         "displayName": "19:5",
         "cardLabel": "Узкое окно",
         "shortDescription": "Более сжатое окно приёма пищи"
+      },
+      "pt": {
+        "displayName": "19:5",
+        "cardLabel": "Janela curta",
+        "shortDescription": "Uma janela de refeições mais concentrada"
+      },
+      "ko": {
+        "displayName": "19:5",
+        "cardLabel": "좁은 식사 시간",
+        "shortDescription": "더 집중된 식사 시간"
+      },
+      "hi": {
+        "displayName": "19:5",
+        "cardLabel": "संकरी खिड़की",
+        "shortDescription": "ज़्यादा केंद्रित खाने का समय"
+      },
+      "zh": {
+        "displayName": "19:5",
+        "cardLabel": "窄窗口",
+        "shortDescription": "更集中的进食时间"
+      },
+      "ja": {
+        "displayName": "19:5",
+        "cardLabel": "短い食事時間",
+        "shortDescription": "より集中した食事の時間"
       }
     }
   },
@@ -562,6 +762,36 @@
         "cardLabel": "Стиль воина",
         "shortDescription": "Короткое ежедневное окно приёма пищи",
         "safetyNote": "Это строгий режим. Он не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете, болезнях сердца или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      },
+      "pt": {
+        "displayName": "20:4",
+        "cardLabel": "Estilo guerreiro",
+        "shortDescription": "Uma janela diária de refeições curta",
+        "safetyNote": "Este é um horário restritivo. Não é recomendado se estiveres grávida ou a amamentar, tiveres histórico de perturbações alimentares, diabetes, uma condição cardíaca ou tomares medicação regular. Fala com o teu médico antes de começar."
+      },
+      "ko": {
+        "displayName": "20:4",
+        "cardLabel": "전사 스타일",
+        "shortDescription": "짧은 하루 식사 시간",
+        "safetyNote": "제한이 큰 일정이에요. 임신 중이거나 수유 중이거나, 섭식 장애 이력이 있거나, 당뇨·심장 질환이 있거나, 정기적으로 약을 복용한다면 권하지 않아요. 시작하기 전에 의사와 상담하세요."
+      },
+      "hi": {
+        "displayName": "20:4",
+        "cardLabel": "वॉरियर स्टाइल",
+        "shortDescription": "रोज़ की छोटी खाने की खिड़की",
+        "safetyNote": "यह एक सख्त शेड्यूल है। अगर आप गर्भवती हैं या स्तनपान करा रही हैं, खाने से जुड़ी समस्या का इतिहास है, डायबिटीज़ या दिल की बीमारी है, या नियमित दवा लेते हैं, तो यह सुझाव नहीं दिया जाता। शुरू करने से पहले डॉक्टर से बात करें।"
+      },
+      "zh": {
+        "displayName": "20:4",
+        "cardLabel": "战士式",
+        "shortDescription": "很短的每日进食时间",
+        "safetyNote": "这是比较严格的安排。如果你正在怀孕或哺乳、有进食障碍史、有糖尿病或心脏病，或长期服药，不建议使用。开始前请先咨询医生。"
+      },
+      "ja": {
+        "displayName": "20:4",
+        "cardLabel": "ウォリアースタイル",
+        "shortDescription": "短い毎日の食事時間",
+        "safetyNote": "制限の強いスケジュールです。妊娠中・授乳中、摂食障害の経験がある、糖尿病や心臓の病気がある、定期的に薬を飲んでいる場合はおすすめしません。始める前に医師に相談してください。"
       }
     }
   },
@@ -631,6 +861,36 @@
         "cardLabel": "Продвинутое голодание",
         "shortDescription": "Очень узкое ежедневное окно приёма пищи",
         "safetyNote": "Это строгий режим. Он не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете, болезнях сердца или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      },
+      "pt": {
+        "displayName": "21:3",
+        "cardLabel": "Jejum avançado",
+        "shortDescription": "Uma janela diária de refeições muito curta",
+        "safetyNote": "Este é um horário restritivo. Não é recomendado se estiveres grávida ou a amamentar, tiveres histórico de perturbações alimentares, diabetes, uma condição cardíaca ou tomares medicação regular. Fala com o teu médico antes de começar."
+      },
+      "ko": {
+        "displayName": "21:3",
+        "cardLabel": "고급 단식",
+        "shortDescription": "아주 좁은 하루 식사 시간",
+        "safetyNote": "제한이 큰 일정이에요. 임신 중이거나 수유 중이거나, 섭식 장애 이력이 있거나, 당뇨·심장 질환이 있거나, 정기적으로 약을 복용한다면 권하지 않아요. 시작하기 전에 의사와 상담하세요."
+      },
+      "hi": {
+        "displayName": "21:3",
+        "cardLabel": "उन्नत उपवास",
+        "shortDescription": "बहुत संकरी रोज़ की खाने की खिड़की",
+        "safetyNote": "यह एक सख्त शेड्यूल है। अगर आप गर्भवती हैं या स्तनपान करा रही हैं, खाने से जुड़ी समस्या का इतिहास है, डायबिटीज़ या दिल की बीमारी है, या नियमित दवा लेते हैं, तो यह सुझाव नहीं दिया जाता। शुरू करने से पहले डॉक्टर से बात करें।"
+      },
+      "zh": {
+        "displayName": "21:3",
+        "cardLabel": "进阶断食",
+        "shortDescription": "非常窄的每日进食时间",
+        "safetyNote": "这是比较严格的安排。如果你正在怀孕或哺乳、有进食障碍史、有糖尿病或心脏病，或长期服药，不建议使用。开始前请先咨询医生。"
+      },
+      "ja": {
+        "displayName": "21:3",
+        "cardLabel": "上級断食",
+        "shortDescription": "とても短い毎日の食事時間",
+        "safetyNote": "制限の強いスケジュールです。妊娠中・授乳中、摂食障害の経験がある、糖尿病や心臓の病気がある、定期的に薬を飲んでいる場合はおすすめしません。始める前に医師に相談してください。"
       }
     }
   },
@@ -700,6 +960,36 @@
         "cardLabel": "Окно эксперта",
         "shortDescription": "Для опытных в голодании",
         "safetyNote": "Это строгий режим. Он не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете, болезнях сердца или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      },
+      "pt": {
+        "displayName": "22:2",
+        "cardLabel": "Janela de especialista",
+        "shortDescription": "Feito para quem já jejua com experiência",
+        "safetyNote": "Este é um horário restritivo. Não é recomendado se estiveres grávida ou a amamentar, tiveres histórico de perturbações alimentares, diabetes, uma condição cardíaca ou tomares medicação regular. Fala com o teu médico antes de começar."
+      },
+      "ko": {
+        "displayName": "22:2",
+        "cardLabel": "전문가 시간",
+        "shortDescription": "경험이 많은 사람을 위한 일정",
+        "safetyNote": "제한이 큰 일정이에요. 임신 중이거나 수유 중이거나, 섭식 장애 이력이 있거나, 당뇨·심장 질환이 있거나, 정기적으로 약을 복용한다면 권하지 않아요. 시작하기 전에 의사와 상담하세요."
+      },
+      "hi": {
+        "displayName": "22:2",
+        "cardLabel": "एक्सपर्ट विंडो",
+        "shortDescription": "अनुभवी उपवास करने वालों के लिए",
+        "safetyNote": "यह एक सख्त शेड्यूल है। अगर आप गर्भवती हैं या स्तनपान करा रही हैं, खाने से जुड़ी समस्या का इतिहास है, डायबिटीज़ या दिल की बीमारी है, या नियमित दवा लेते हैं, तो यह सुझाव नहीं दिया जाता। शुरू करने से पहले डॉक्टर से बात करें।"
+      },
+      "zh": {
+        "displayName": "22:2",
+        "cardLabel": "专家窗口",
+        "shortDescription": "为有经验的断食者设计",
+        "safetyNote": "这是比较严格的安排。如果你正在怀孕或哺乳、有进食障碍史、有糖尿病或心脏病，或长期服药，不建议使用。开始前请先咨询医生。"
+      },
+      "ja": {
+        "displayName": "22:2",
+        "cardLabel": "エキスパート時間",
+        "shortDescription": "経験のある人向けです",
+        "safetyNote": "制限の強いスケジュールです。妊娠中・授乳中、摂食障害の経験がある、糖尿病や心臓の病気がある、定期的に薬を飲んでいる場合はおすすめしません。始める前に医師に相談してください。"
       }
     }
   },
@@ -769,6 +1059,36 @@
         "cardLabel": "Окно в один час",
         "shortDescription": "Очень строгий ежедневный режим",
         "safetyNote": "Это строгий режим. Он не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете, болезнях сердца или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      },
+      "pt": {
+        "displayName": "23:1",
+        "cardLabel": "Janela de uma hora",
+        "shortDescription": "Um horário diário muito restritivo",
+        "safetyNote": "Este é um horário restritivo. Não é recomendado se estiveres grávida ou a amamentar, tiveres histórico de perturbações alimentares, diabetes, uma condição cardíaca ou tomares medicação regular. Fala com o teu médico antes de começar."
+      },
+      "ko": {
+        "displayName": "23:1",
+        "cardLabel": "한 시간 식사",
+        "shortDescription": "제한이 아주 큰 하루 일정",
+        "safetyNote": "제한이 큰 일정이에요. 임신 중이거나 수유 중이거나, 섭식 장애 이력이 있거나, 당뇨·심장 질환이 있거나, 정기적으로 약을 복용한다면 권하지 않아요. 시작하기 전에 의사와 상담하세요."
+      },
+      "hi": {
+        "displayName": "23:1",
+        "cardLabel": "एक घंटे की खिड़की",
+        "shortDescription": "बहुत सख्त रोज़ का शेड्यूल",
+        "safetyNote": "यह एक सख्त शेड्यूल है। अगर आप गर्भवती हैं या स्तनपान करा रही हैं, खाने से जुड़ी समस्या का इतिहास है, डायबिटीज़ या दिल की बीमारी है, या नियमित दवा लेते हैं, तो यह सुझाव नहीं दिया जाता। शुरू करने से पहले डॉक्टर से बात करें।"
+      },
+      "zh": {
+        "displayName": "23:1",
+        "cardLabel": "一小时窗口",
+        "shortDescription": "限制很强的每日安排",
+        "safetyNote": "这是比较严格的安排。如果你正在怀孕或哺乳、有进食障碍史、有糖尿病或心脏病，或长期服药，不建议使用。开始前请先咨询医生。"
+      },
+      "ja": {
+        "displayName": "23:1",
+        "cardLabel": "1時間ウィンドウ",
+        "shortDescription": "制限のとても強い毎日のスケジュール",
+        "safetyNote": "制限の強いスケジュールです。妊娠中・授乳中、摂食障害の経験がある、糖尿病や心臓の病気がある、定期的に薬を飲んでいる場合はおすすめしません。始める前に医師に相談してください。"
       }
     }
   },
@@ -836,6 +1156,36 @@
         "cardLabel": "Один приём пищи в день",
         "shortDescription": "Один основной приём пищи за день",
         "safetyNote": "Это строгий режим. Он не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете, болезнях сердца или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      },
+      "pt": {
+        "displayName": "OMAD",
+        "cardLabel": "Uma refeição por dia",
+        "shortDescription": "Uma refeição principal durante o dia",
+        "safetyNote": "Este é um horário restritivo. Não é recomendado se estiveres grávida ou a amamentar, tiveres histórico de perturbações alimentares, diabetes, uma condição cardíaca ou tomares medicação regular. Fala com o teu médico antes de começar."
+      },
+      "ko": {
+        "displayName": "OMAD",
+        "cardLabel": "하루 한 끼",
+        "shortDescription": "하루 동안 메인 식사 하나",
+        "safetyNote": "제한이 큰 일정이에요. 임신 중이거나 수유 중이거나, 섭식 장애 이력이 있거나, 당뇨·심장 질환이 있거나, 정기적으로 약을 복용한다면 권하지 않아요. 시작하기 전에 의사와 상담하세요."
+      },
+      "hi": {
+        "displayName": "OMAD",
+        "cardLabel": "दिन में एक भोजन",
+        "shortDescription": "दिन में एक मुख्य भोजन",
+        "safetyNote": "यह एक सख्त शेड्यूल है। अगर आप गर्भवती हैं या स्तनपान करा रही हैं, खाने से जुड़ी समस्या का इतिहास है, डायबिटीज़ या दिल की बीमारी है, या नियमित दवा लेते हैं, तो यह सुझाव नहीं दिया जाता। शुरू करने से पहले डॉक्टर से बात करें।"
+      },
+      "zh": {
+        "displayName": "OMAD",
+        "cardLabel": "一天一餐",
+        "shortDescription": "一天里的一顿主餐",
+        "safetyNote": "这是比较严格的安排。如果你正在怀孕或哺乳、有进食障碍史、有糖尿病或心脏病，或长期服药，不建议使用。开始前请先咨询医生。"
+      },
+      "ja": {
+        "displayName": "OMAD",
+        "cardLabel": "1日1食",
+        "shortDescription": "1日のうちメインの食事は1回",
+        "safetyNote": "制限の強いスケジュールです。妊娠中・授乳中、摂食障害の経験がある、糖尿病や心臓の病気がある、定期的に薬を飲んでいる場合はおすすめしません。始める前に医師に相談してください。"
       }
     }
   },
@@ -901,6 +1251,36 @@
         "cardLabel": "Неделя 5:2",
         "shortDescription": "Недельный подход вместо ежедневного таймера",
         "safetyNote": "В дни сниженного питания ты съедаешь около 500 ккал. Не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      },
+      "pt": {
+        "displayName": "5:2",
+        "cardLabel": "Semanal 5:2",
+        "shortDescription": "Uma abordagem semanal em vez de um temporizador diário",
+        "safetyNote": "Nos dias de ingestão reduzida comes cerca de 500 kcal. Não é recomendado se estiveres grávida ou a amamentar, tiveres histórico de perturbações alimentares, diabetes ou tomares medicação regular. Fala com o teu médico antes de começar."
+      },
+      "ko": {
+        "displayName": "5:2",
+        "cardLabel": "주간 5:2",
+        "shortDescription": "매일 타이머 대신 주 단위로 하는 방법",
+        "safetyNote": "섭취를 줄이는 날에는 약 500kcal를 먹어요. 임신 중이거나 수유 중이거나, 섭식 장애 이력이 있거나, 당뇨가 있거나, 정기적으로 약을 복용한다면 권하지 않아요. 시작하기 전에 의사와 상담하세요."
+      },
+      "hi": {
+        "displayName": "5:2",
+        "cardLabel": "साप्ताहिक 5:2",
+        "shortDescription": "रोज़ के टाइमर की जगह हफ़्ते वाला तरीका",
+        "safetyNote": "कम खाने वाले दिनों में आप लगभग 500 kcal खाते हैं। अगर आप गर्भवती हैं या स्तनपान करा रही हैं, खाने से जुड़ी समस्या का इतिहास है, डायबिटीज़ है या नियमित दवा लेते हैं, तो यह सुझाव नहीं दिया जाता। शुरू करने से पहले डॉक्टर से बात करें।"
+      },
+      "zh": {
+        "displayName": "5:2",
+        "cardLabel": "每周 5:2",
+        "shortDescription": "用一周节奏代替每天计时",
+        "safetyNote": "在减少摄入的日子里，大约吃 500 千卡。如果你正在怀孕或哺乳、有进食障碍史、有糖尿病或长期服药，不建议使用。开始前请先咨询医生。"
+      },
+      "ja": {
+        "displayName": "5:2",
+        "cardLabel": "ウィークリー 5:2",
+        "shortDescription": "毎日のタイマーではなく週単位のやり方",
+        "safetyNote": "摂取を減らす日は約500kcalです。妊娠中・授乳中、摂食障害の経験がある、糖尿病がある、定期的に薬を飲んでいる場合はおすすめしません。始める前に医師に相談してください。"
       }
     }
   },
@@ -966,6 +1346,36 @@
         "cardLabel": "Неделя 6:1",
         "shortDescription": "Один день голодания каждую неделю",
         "safetyNote": "В дни сниженного питания ты съедаешь около 500 ккал. Не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      },
+      "pt": {
+        "displayName": "6:1",
+        "cardLabel": "Semanal 6:1",
+        "shortDescription": "Um dia focado no jejum por semana",
+        "safetyNote": "Nos dias de ingestão reduzida comes cerca de 500 kcal. Não é recomendado se estiveres grávida ou a amamentar, tiveres histórico de perturbações alimentares, diabetes ou tomares medicação regular. Fala com o teu médico antes de começar."
+      },
+      "ko": {
+        "displayName": "6:1",
+        "cardLabel": "주간 6:1",
+        "shortDescription": "매주 단식에 집중하는 하루",
+        "safetyNote": "섭취를 줄이는 날에는 약 500kcal를 먹어요. 임신 중이거나 수유 중이거나, 섭식 장애 이력이 있거나, 당뇨가 있거나, 정기적으로 약을 복용한다면 권하지 않아요. 시작하기 전에 의사와 상담하세요."
+      },
+      "hi": {
+        "displayName": "6:1",
+        "cardLabel": "साप्ताहिक 6:1",
+        "shortDescription": "हर हफ़्ते उपवास वाला एक दिन",
+        "safetyNote": "कम खाने वाले दिनों में आप लगभग 500 kcal खाते हैं। अगर आप गर्भवती हैं या स्तनपान करा रही हैं, खाने से जुड़ी समस्या का इतिहास है, डायबिटीज़ है या नियमित दवा लेते हैं, तो यह सुझाव नहीं दिया जाता। शुरू करने से पहले डॉक्टर से बात करें।"
+      },
+      "zh": {
+        "displayName": "6:1",
+        "cardLabel": "每周 6:1",
+        "shortDescription": "每周一天专注断食",
+        "safetyNote": "在减少摄入的日子里，大约吃 500 千卡。如果你正在怀孕或哺乳、有进食障碍史、有糖尿病或长期服药，不建议使用。开始前请先咨询医生。"
+      },
+      "ja": {
+        "displayName": "6:1",
+        "cardLabel": "ウィークリー 6:1",
+        "shortDescription": "毎週、断食に集中する1日",
+        "safetyNote": "摂取を減らす日は約500kcalです。妊娠中・授乳中、摂食障害の経験がある、糖尿病がある、定期的に薬を飲んでいる場合はおすすめしません。始める前に医師に相談してください。"
       }
     }
   },
@@ -1030,6 +1440,36 @@
         "cardLabel": "Голодание через день",
         "shortDescription": "Чередуй дни голодания и обычного питания",
         "safetyNote": "В дни сниженного питания ты съедаешь около 500 ккал. Не рекомендуется при беременности и грудном вскармливании, расстройствах пищевого поведения в прошлом, диабете или регулярном приёме лекарств. Перед началом посоветуйся с врачом."
+      },
+      "pt": {
+        "displayName": "Dias alternados",
+        "cardLabel": "Jejum em dias alternados",
+        "shortDescription": "Alterna dias de jejum e dias de alimentação normal",
+        "safetyNote": "Nos dias de ingestão reduzida comes cerca de 500 kcal. Não é recomendado se estiveres grávida ou a amamentar, tiveres histórico de perturbações alimentares, diabetes ou tomares medicação regular. Fala com o teu médico antes de começar."
+      },
+      "ko": {
+        "displayName": "격일 단식",
+        "cardLabel": "격일 단식",
+        "shortDescription": "단식하는 날과 평소처럼 먹는 날을 번갈아 해요",
+        "safetyNote": "섭취를 줄이는 날에는 약 500kcal를 먹어요. 임신 중이거나 수유 중이거나, 섭식 장애 이력이 있거나, 당뇨가 있거나, 정기적으로 약을 복용한다면 권하지 않아요. 시작하기 전에 의사와 상담하세요."
+      },
+      "hi": {
+        "displayName": "एक दिन छोड़कर",
+        "cardLabel": "एक दिन छोड़कर उपवास",
+        "shortDescription": "उपवास और सामान्य खाने के दिन बारी-बारी",
+        "safetyNote": "कम खाने वाले दिनों में आप लगभग 500 kcal खाते हैं। अगर आप गर्भवती हैं या स्तनपान करा रही हैं, खाने से जुड़ी समस्या का इतिहास है, डायबिटीज़ है या नियमित दवा लेते हैं, तो यह सुझाव नहीं दिया जाता। शुरू करने से पहले डॉक्टर से बात करें।"
+      },
+      "zh": {
+        "displayName": "隔日断食",
+        "cardLabel": "隔日断食",
+        "shortDescription": "断食日和正常进食日交替",
+        "safetyNote": "在减少摄入的日子里，大约吃 500 千卡。如果你正在怀孕或哺乳、有进食障碍史、有糖尿病或长期服药，不建议使用。开始前请先咨询医生。"
+      },
+      "ja": {
+        "displayName": "隔日断食",
+        "cardLabel": "隔日断食",
+        "shortDescription": "断食する日とふだん通り食べる日を交互にします",
+        "safetyNote": "摂取を減らす日は約500kcalです。妊娠中・授乳中、摂食障害の経験がある、糖尿病がある、定期的に薬を飲んでいる場合はおすすめしません。始める前に医師に相談してください。"
       }
     }
   },
@@ -1092,6 +1532,31 @@
         "displayName": "Крещендо",
         "cardLabel": "Голодание крещендо",
         "shortDescription": "Голодай в выбранные дни не подряд"
+      },
+      "pt": {
+        "displayName": "Crescendo",
+        "cardLabel": "Jejum Crescendo",
+        "shortDescription": "Jejua em dias escolhidos, não seguidos"
+      },
+      "ko": {
+        "displayName": "Crescendo",
+        "cardLabel": "크레센도 단식",
+        "shortDescription": "연속되지 않은 선택한 날에 단식해요"
+      },
+      "hi": {
+        "displayName": "Crescendo",
+        "cardLabel": "क्रेसेंडो उपवास",
+        "shortDescription": "चुने हुए, लगातार नहीं आने वाले दिनों में उपवास"
+      },
+      "zh": {
+        "displayName": "Crescendo",
+        "cardLabel": "渐强断食",
+        "shortDescription": "在不相连的选定日子断食"
+      },
+      "ja": {
+        "displayName": "Crescendo",
+        "cardLabel": "クレッシェンド断食",
+        "shortDescription": "連続しない選んだ日に断食します"
       }
     }
   },
@@ -1150,6 +1615,31 @@
         "displayName": "Раннее окно",
         "cardLabel": "Ранний приём пищи",
         "shortDescription": "Заканчивай окно приёма пищи раньше днём"
+      },
+      "pt": {
+        "displayName": "Restrição matinal",
+        "cardLabel": "Comer cedo",
+        "shortDescription": "Termina a janela de refeições mais cedo no dia"
+      },
+      "ko": {
+        "displayName": "이른 시간 제한",
+        "cardLabel": "일찍 먹기",
+        "shortDescription": "식사 시간을 하루 중 더 일찍 끝내요"
+      },
+      "hi": {
+        "displayName": "जल्दी समय-सीमित",
+        "cardLabel": "जल्दी खाना",
+        "shortDescription": "खाने की खिड़की दिन में जल्दी खत्म करें"
+      },
+      "zh": {
+        "displayName": "早间限时进食",
+        "cardLabel": "早吃",
+        "shortDescription": "把进食时间提前到一天里更早结束"
+      },
+      "ja": {
+        "displayName": "早い時間制限",
+        "cardLabel": "早い食事",
+        "shortDescription": "食事の時間を一日の早い時間に終えます"
       }
     }
   },
@@ -1208,6 +1698,31 @@
         "displayName": "Позднее окно",
         "cardLabel": "Поздний приём пищи",
         "shortDescription": "Более позднее окно приёма пищи под твой режим"
+      },
+      "pt": {
+        "displayName": "Restrição tardia",
+        "cardLabel": "Comer tarde",
+        "shortDescription": "Usa uma janela de refeições mais tarde, que encaixe na tua rotina"
+      },
+      "ko": {
+        "displayName": "늦은 시간 제한",
+        "cardLabel": "늦게 먹기",
+        "shortDescription": "루틴에 맞는 늦은 식사 시간을 써요"
+      },
+      "hi": {
+        "displayName": "देर से समय-सीमित",
+        "cardLabel": "देर से खाना",
+        "shortDescription": "अपनी दिनचर्या के हिसाब से बाद की खाने की खिड़की इस्तेमाल करें"
+      },
+      "zh": {
+        "displayName": "晚间限时进食",
+        "cardLabel": "晚吃",
+        "shortDescription": "用更晚、适合你作息的进食时间"
+      },
+      "ja": {
+        "displayName": "遅い時間制限",
+        "cardLabel": "遅い食事",
+        "shortDescription": "生活に合う遅めの食事時間を使います"
       }
     }
   },
@@ -1270,6 +1785,31 @@
         "displayName": "Свой ежедневный",
         "cardLabel": "Создай свой план",
         "shortDescription": "Выбери свои часы голодания и приёма пищи"
+      },
+      "pt": {
+        "displayName": "Diário personalizado",
+        "cardLabel": "Cria o teu plano",
+        "shortDescription": "Escolhe as tuas horas de jejum e de refeições"
+      },
+      "ko": {
+        "displayName": "맞춤 매일",
+        "cardLabel": "내 플랜 만들기",
+        "shortDescription": "단식과 식사 시간을 직접 골라요"
+      },
+      "hi": {
+        "displayName": "कस्टम दैनिक",
+        "cardLabel": "अपना प्लान बनाएँ",
+        "shortDescription": "अपने उपवास और खाने के घंटे चुनें"
+      },
+      "zh": {
+        "displayName": "自定义每日",
+        "cardLabel": "创建你的计划",
+        "shortDescription": "自己选择断食和进食时间"
+      },
+      "ja": {
+        "displayName": "カスタム毎日",
+        "cardLabel": "自分のプランを作る",
+        "shortDescription": "断食と食事の時間を自分で選びます"
       }
     }
   },
@@ -1326,6 +1866,31 @@
         "displayName": "Своя неделя",
         "cardLabel": "Собери свою неделю",
         "shortDescription": "Выбирай разный режим голодания по дням"
+      },
+      "pt": {
+        "displayName": "Semanal personalizado",
+        "cardLabel": "Monta a tua semana",
+        "shortDescription": "Escolhe horários de jejum diferentes por dia"
+      },
+      "ko": {
+        "displayName": "맞춤 매주",
+        "cardLabel": "한 주 짜기",
+        "shortDescription": "요일마다 다른 단식 일정을 골라요"
+      },
+      "hi": {
+        "displayName": "कस्टम साप्ताहिक",
+        "cardLabel": "अपना हफ़्ता बनाएँ",
+        "shortDescription": "दिन के हिसाब से अलग उपवास शेड्यूल चुनें"
+      },
+      "zh": {
+        "displayName": "自定义每周",
+        "cardLabel": "安排你的一周",
+        "shortDescription": "按天选择不同的断食安排"
+      },
+      "ja": {
+        "displayName": "カスタム毎週",
+        "cardLabel": "週を組み立てる",
+        "shortDescription": "曜日ごとに違う断食スケジュールを選びます"
       }
     }
   }

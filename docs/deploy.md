@@ -1,12 +1,12 @@
 # Yayına alma (VPS · Nginx · PM2)
 
-Sunucu düzeni: Nginx önde (TLS, certbot), uygulama `127.0.0.1:3070`'te PM2 ile çalışır, MySQL aynı sunucudadır.
+Sunucu düzeni: Nginx önde (TLS, certbot), uygulama `127.0.0.1:3066` portunda PM2 ile çalışır, MySQL aynı sunucudadır.
 Redis ya da Docker **gerekmez**.
 
 | Ne             | Değer                                                                        |
 | -------------- | ---------------------------------------------------------------------------- |
-| Alan adı       | `mochifast-api.fly-work.com`                                                 |
-| Uygulama portu | `3070` (yalnızca 127.0.0.1)                                                  |
+| Alan adı       | `mochifast.fly-work.com`                                                     |
+| Uygulama portu | `3066` (yalnızca 127.0.0.1)                                                  |
 | Metrik portu   | `9470` (yalnızca 127.0.0.1)                                                  |
 | PM2 süreçleri  | `mochifast-api`, `mochifast-worker`                                          |
 | Sunucu klasörü | `deploy/deploy.env` → `DEPLOY_DIR` (varsayılan `/var/www/mochifast-backend`) |
@@ -17,7 +17,7 @@ Alan adı ya da port değişirse üç yeri birlikte güncelle: sunucudaki `.env`
 
 ### 1. DNS
 
-`mochifast-api.fly-work.com` için sunucu IP'sine giden bir **A kaydı** ekle.
+`mochifast.fly-work.com` için sunucu IP'sine giden bir **A kaydı** ekle.
 
 ### 2. Bilgisayarında deploy ayarı
 
@@ -38,7 +38,7 @@ Bakılacaklar:
 - **node v24+** olmalı. Eskiyse sunucuda: `nvm install 24`. Diğer uygulamalar eski Node'da kalacaksa `ecosystem.config.cjs` içindeki iki uygulamaya `interpreter: '/root/.nvm/versions/node/v24.x.x/bin/node'` ekle.
 - **mysql:** MySQL 8.0+ ya da MariaDB 10.6+ olmalı. Kuyruk `SKIP LOCKED` kullanıyor.
 - **rsync** olmalı. Yoksa: `apt install rsync` / `dnf install rsync`.
-- **3070** ve **9470** portları boş olmalı.
+- **3066** ve **9470** portları boş olmalı.
 
 ### 4. Kodu gönder, sunucuda `.env`'i oluştur, yayına al
 
@@ -66,15 +66,15 @@ npm run deploy -- release   # npm ci → migrate → pm2 → /health/ready kontr
 
 ```bash
 cd /var/www/mochifast-backend
-cp deploy/nginx/mochifast-api.conf /etc/nginx/conf.d/mochifast-api.fly-work.com.conf
+cp deploy/nginx/mochifast-api.conf /etc/nginx/conf.d/mochifast.fly-work.com.conf
 nginx -t && systemctl reload nginx
-certbot --nginx -d mochifast-api.fly-work.com -m info@fly-work.com --agree-tos --no-eff-email
+certbot --nginx -d mochifast.fly-work.com -m info@fly-work.com --agree-tos --no-eff-email
 ```
 
 Kontrol (bilgisayarından):
 
 ```bash
-curl https://mochifast-api.fly-work.com/health/ready
+curl https://mochifast.fly-work.com/health/ready
 ```
 
 ### 6. PM2 kalıcılığı ve log döndürme (sunucuda; daha önce yaptıysan atla)
@@ -108,7 +108,7 @@ npm run deploy -- release
 ```bash
 npm run deploy -- logs                                   # canlı PM2 logları
 ssh root@SUNUCU_IP 'pm2 ls'
-curl -s http://127.0.0.1:3070/health/ready               # sunucuda: hangi kontrol düşük?
+curl -s http://127.0.0.1:3066/health/ready               # sunucuda: hangi kontrol düşük?
 ```
 
 Kuyruğun durumu (sunucuda `mysql` ile):

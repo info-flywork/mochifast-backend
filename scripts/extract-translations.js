@@ -13,7 +13,7 @@ import path from 'node:path';
  * sabittir; görseller AppImages adıyla verilir, mantıksal yola (assets/images/…png) çevrilir.
  */
 
-const LOCALES = ['en', 'tr', 'de', 'es', 'fr', 'it', 'ru'];
+const LOCALES = ['en', 'tr', 'de', 'es', 'fr', 'it', 'ru', 'pt', 'ko', 'hi', 'zh', 'ja'];
 const argApp = process.argv.indexOf('--app');
 const APP = path.resolve(argApp > -1 ? process.argv[argApp + 1] : '../fastingapp');
 const OUT = new URL('../seeds/', import.meta.url);
@@ -449,6 +449,11 @@ labels.hunger_rec.safety_end_fast = {
   fr: "Si tu ne te sens pas bien, c'est tout à fait normal d'arrêter ton jeûne maintenant.",
   it: 'Se non ti senti bene, va benissimo interrompere il digiuno adesso.',
   ru: 'Если ты плохо себя чувствуешь, совершенно нормально прервать голодание сейчас.',
+  pt: 'Se não te sentires bem, é completamente normal terminares o jejum agora.',
+  ko: '몸이 좋지 않으면 지금 단식을 끝내도 전혀 괜찮아요.',
+  hi: 'अगर आप ठीक महसूस नहीं कर रहे, तो उपवास अभी खत्म करना बिल्कुल ठीक है।',
+  zh: '如果感觉不舒服，现在结束断食完全没问题。',
+  ja: '体調がよくないときは、今すぐ断食を終えて大丈夫です。',
 };
 
 const write = (name, data) => writeFile(new URL(name, OUT), `${JSON.stringify(data, null, 2)}\n`);

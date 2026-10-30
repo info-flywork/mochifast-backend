@@ -7,7 +7,12 @@
       "es": "Nivel principiante",
       "fr": "Niveau débutant",
       "it": "Livello principiante",
-      "ru": "Начальный уровень"
+      "ru": "Начальный уровень",
+      "pt": "Nível iniciante",
+      "ko": "초급",
+      "hi": "शुरुआती स्तर",
+      "zh": "入门",
+      "ja": "初級"
     },
     "popular": {
       "en": "Popular Plans",
@@ -16,7 +21,12 @@
       "es": "Planes populares",
       "fr": "Plans populaires",
       "it": "Piani popolari",
-      "ru": "Популярные планы"
+      "ru": "Популярные планы",
+      "pt": "Planos populares",
+      "ko": "인기 플랜",
+      "hi": "लोकप्रिय प्लान",
+      "zh": "热门计划",
+      "ja": "人気のプラン"
     },
     "intermediate": {
       "en": "Intermediate Level",
@@ -25,7 +35,12 @@
       "es": "Nivel intermedio",
       "fr": "Niveau intermédiaire",
       "it": "Livello intermedio",
-      "ru": "Средний уровень"
+      "ru": "Средний уровень",
+      "pt": "Nível intermédio",
+      "ko": "중급",
+      "hi": "मध्यम स्तर",
+      "zh": "进阶中",
+      "ja": "中級"
     },
     "advanced": {
       "en": "Advanced Level",
@@ -34,7 +49,12 @@
       "es": "Nivel avanzado",
       "fr": "Niveau avancé",
       "it": "Livello avanzato",
-      "ru": "Продвинутый уровень"
+      "ru": "Продвинутый уровень",
+      "pt": "Nível avançado",
+      "ko": "고급",
+      "hi": "उन्नत स्तर",
+      "zh": "进阶",
+      "ja": "上級"
     },
     "weekly": {
       "en": "Weekly Plans",
@@ -43,7 +63,12 @@
       "es": "Planes semanales",
       "fr": "Plans hebdomadaires",
       "it": "Piani settimanali",
-      "ru": "Недельные планы"
+      "ru": "Недельные планы",
+      "pt": "Planos semanais",
+      "ko": "주간 플랜",
+      "hi": "साप्ताहिक प्लान",
+      "zh": "每周计划",
+      "ja": "週間プラン"
     },
     "flexible": {
       "en": "Flexible Plans",
@@ -52,7 +77,12 @@
       "es": "Planes flexibles",
       "fr": "Plans flexibles",
       "it": "Piani flessibili",
-      "ru": "Гибкие планы"
+      "ru": "Гибкие планы",
+      "pt": "Planos flexíveis",
+      "ko": "유연한 플랜",
+      "hi": "लचीले प्लान",
+      "zh": "灵活计划",
+      "ja": "柔軟なプラン"
     }
   },
   "plan_timing": {
@@ -63,7 +93,12 @@
       "es": "Sáltate el desayuno",
       "fr": "Sauter le petit-déjeuner",
       "it": "Salta la colazione",
-      "ru": "Пропустить завтрак"
+      "ru": "Пропустить завтрак",
+      "pt": "Saltar o pequeno-almoço",
+      "ko": "아침 거르기",
+      "hi": "नाश्ता छोड़ें",
+      "zh": "不吃早餐",
+      "ja": "朝食を抜く"
     },
     "skip_dinner": {
       "en": "Skip Dinner",
@@ -72,7 +107,12 @@
       "es": "Sáltate la cena",
       "fr": "Sauter le dîner",
       "it": "Salta la cena",
-      "ru": "Пропустить ужин"
+      "ru": "Пропустить ужин",
+      "pt": "Saltar o jantar",
+      "ko": "저녁 거르기",
+      "hi": "रात का खाना छोड़ें",
+      "zh": "不吃晚餐",
+      "ja": "夕食を抜く"
     },
     "early_window": {
       "en": "Early Eating Window",
@@ -81,7 +121,12 @@
       "es": "Ventana temprana",
       "fr": "Fenêtre matinale",
       "it": "Finestra anticipata",
-      "ru": "Раннее окно"
+      "ru": "Раннее окно",
+      "pt": "Janela de refeições cedo",
+      "ko": "이른 식사 시간",
+      "hi": "जल्दी खाने की खिड़की",
+      "zh": "早间进食时间",
+      "ja": "早い食事の時間"
     },
     "late_window": {
       "en": "Late Eating Window",
@@ -90,7 +135,12 @@
       "es": "Ventana tardía",
       "fr": "Fenêtre tardive",
       "it": "Finestra posticipata",
-      "ru": "Позднее окно"
+      "ru": "Позднее окно",
+      "pt": "Janela de refeições tarde",
+      "ko": "늦은 식사 시간",
+      "hi": "देर की खाने की खिड़की",
+      "zh": "晚间进食时间",
+      "ja": "遅い食事の時間"
     },
     "custom": {
       "en": "Choose My Hours",
@@ -99,7 +149,12 @@
       "es": "Elegir mis horas",
       "fr": "Choisir mes heures",
       "it": "Scegli i miei orari",
-      "ru": "Выбрать своё время"
+      "ru": "Выбрать своё время",
+      "pt": "Escolher as minhas horas",
+      "ko": "내 시간 고르기",
+      "hi": "अपने घंटे चुनें",
+      "zh": "选择我的时间",
+      "ja": "自分の時間を選ぶ"
     }
   },
   "daily_tip": {
@@ -110,7 +165,12 @@
       "es": "Bebe agua con frecuencia: la sed a menudo se siente como hambre.",
       "fr": "Bois de l’eau régulièrement : la soif ressemble souvent à la faim.",
       "it": "Bevi acqua regolarmente: la sete spesso sembra fame.",
-      "ru": "Пейте воду регулярно — жажду часто принимают за голод."
+      "ru": "Пейте воду регулярно — жажду часто принимают за голод.",
+      "pt": "Bebe água com regularidade — a sede parece muitas vezes fome.",
+      "ko": "물을 자주 마시세요. 갈증은 자주 배고픔처럼 느껴져요.",
+      "hi": "नियमित पानी पिएँ — प्यास अक्सर भूख जैसी लगती है।",
+      "zh": "经常喝水——口渴常常像饥饿。",
+      "ja": "こまめに水を飲みましょう。喉の渇きは空腹に感じることが多いです。"
     },
     "fast_wave": {
       "en": "Hunger comes in waves. Give it 15 minutes and it usually passes.",
@@ -119,7 +179,12 @@
       "es": "El hambre llega en oleadas. Dale 15 minutos y suele pasar.",
       "fr": "La faim vient par vagues. Laisse passer 15 minutes, elle s’en va souvent.",
       "it": "La fame arriva a ondate. Concedile 15 minuti e di solito passa.",
-      "ru": "Голод приходит волнами. Подождите 15 минут — обычно он проходит."
+      "ru": "Голод приходит волнами. Подождите 15 минут — обычно он проходит.",
+      "pt": "A fome vem em ondas. Dá-lhe 15 minutos e normalmente passa.",
+      "ko": "배고픔은 파도처럼 와요. 15분만 주면 대개 지나가요.",
+      "hi": "भूख लहरों में आती है। 15 मिनट दें, आमतौर पर निकल जाती है।",
+      "zh": "饥饿一阵一阵来。给它 15 分钟，通常就会过去。",
+      "ja": "空腹は波のように来ます。15分おくと、たいてい過ぎます。"
     },
     "fast_walk": {
       "en": "A short walk can take the edge off cravings and lift your energy.",
@@ -128,7 +193,12 @@
       "es": "Un paseo corto calma los antojos y te da energía.",
       "fr": "Une courte marche apaise les envies et redonne de l’énergie.",
       "it": "Una breve camminata calma le voglie e alza l’energia.",
-      "ru": "Короткая прогулка снимает тягу к еде и добавляет энергии."
+      "ru": "Короткая прогулка снимает тягу к еде и добавляет энергии.",
+      "pt": "Uma caminhada curta acalma a vontade de comer e sobe a energia.",
+      "ko": "짧은 산책이 식욕을 누그러뜨리고 기운을 올려요.",
+      "hi": "थोड़ी सी सैर लालच को हल्का करती है और ऊर्जा बढ़ाती है।",
+      "zh": "走一小段路能压住想吃的感觉，也提提精神。",
+      "ja": "短い散歩が食欲をやわらげ、元気を上げます。"
     },
     "fast_tea": {
       "en": "Plain tea or black coffee won't break your fast.",
@@ -137,7 +207,12 @@
       "es": "El té solo o el café negro no rompen tu ayuno.",
       "fr": "Le thé nature ou le café noir ne rompent pas ton jeûne.",
       "it": "Tè semplice o caffè nero non interrompono il digiuno.",
-      "ru": "Чай без добавок или чёрный кофе не прерывают голодание."
+      "ru": "Чай без добавок или чёрный кофе не прерывают голодание.",
+      "pt": "Chá simples ou café preto não quebram o jejum.",
+      "ko": "아무것도 넣지 않은 차나 블랙 커피는 단식을 깨지 않아요.",
+      "hi": "सादी चाय या ब्लैक कॉफ़ी उपवास नहीं तोड़ती।",
+      "zh": "清茶或黑咖啡不会打断断食。",
+      "ja": "何も入れないお茶やブラックコーヒーは断食を破りません。"
     },
     "fast_busy": {
       "en": "Keep your hands and mind busy during your toughest hour.",
@@ -146,7 +221,12 @@
       "es": "Mantén las manos y la mente ocupadas en tu hora más difícil.",
       "fr": "Occupe tes mains et ton esprit pendant ton heure la plus difficile.",
       "it": "Tieni occupate mani e mente nella tua ora più difficile.",
-      "ru": "В самый трудный час займите руки и голову."
+      "ru": "В самый трудный час займите руки и голову.",
+      "pt": "Mantém as mãos e a mente ocupadas na tua hora mais difícil.",
+      "ko": "가장 힘든 시간에는 손과 머리를 바쁘게 두세요.",
+      "hi": "सबसे कठिन घंटे में हाथ और दिमाग व्यस्त रखें।",
+      "zh": "最难熬的那一小时，让手和脑子都忙起来。",
+      "ja": "いちばんつらい時間は、手と頭を動かしていましょう。"
     },
     "fast_sleep": {
       "en": "Good sleep makes fasting easier — the hours you sleep count too.",
@@ -155,7 +235,12 @@
       "es": "Dormir bien facilita el ayuno: las horas de sueño también cuentan.",
       "fr": "Bien dormir facilite le jeûne : les heures de sommeil comptent aussi.",
       "it": "Dormire bene rende il digiuno più facile: anche le ore di sonno contano.",
-      "ru": "Хороший сон облегчает голодание — часы сна тоже считаются."
+      "ru": "Хороший сон облегчает голодание — часы сна тоже считаются.",
+      "pt": "Dormir bem facilita o jejum — as horas de sono também contam.",
+      "ko": "잘 자면 단식이 쉬워져요. 잠든 시간도 포함돼요.",
+      "hi": "अच्छी नींद उपवास आसान बनाती है — सोने के घंटे भी गिने जाते हैं।",
+      "zh": "睡得好，断食会更轻松——睡觉的时间也算。",
+      "ja": "よく眠ると断食が楽になります。眠っている時間もカウントされます。"
     },
     "eat_protein": {
       "en": "Break your fast with protein and vegetables to stay full longer.",
@@ -164,7 +249,12 @@
       "es": "Rompe el ayuno con proteína y verduras para saciarte más tiempo.",
       "fr": "Romps ton jeûne avec des protéines et des légumes pour rester rassasié·e plus longtemps.",
       "it": "Interrompi il digiuno con proteine e verdure per restare sazio più a lungo.",
-      "ru": "Выходите из голодания с белком и овощами — сытость продержится дольше."
+      "ru": "Выходите из голодания с белком и овощами — сытость продержится дольше.",
+      "pt": "Abre o jejum com proteína e legumes para ficares cheio mais tempo.",
+      "ko": "단백질과 채소로 단식을 열면 더 오래 배불러요.",
+      "hi": "प्रोटीन और सब्ज़ियों से उपवास खोलें, तो देर तक पेट भरा रहता है।",
+      "zh": "用蛋白质和蔬菜开食，饱腹感会更久。",
+      "ja": "たんぱく質と野菜で断食を終えると、満腹感が長く続きます。"
     },
     "eat_slow": {
       "en": "Eat slowly. It takes about 20 minutes to feel full.",
@@ -173,7 +263,12 @@
       "es": "Come despacio: sentirte lleno tarda unos 20 minutos.",
       "fr": "Mange lentement : il faut environ 20 minutes pour se sentir rassasié·e.",
       "it": "Mangia lentamente: servono circa 20 minuti per sentirsi sazi.",
-      "ru": "Ешьте медленно: чувство сытости приходит примерно через 20 минут."
+      "ru": "Ешьте медленно: чувство сытости приходит примерно через 20 минут.",
+      "pt": "Come devagar. Demora cerca de 20 minutos a sentires-te cheio.",
+      "ko": "천천히 드세요. 배부름을 느끼기까지 약 20분이 걸려요.",
+      "hi": "धीरे खाएँ। पेट भरने में लगभग 20 मिनट लगते हैं।",
+      "zh": "慢慢吃。大约 20 分钟才会感觉饱。",
+      "ja": "ゆっくり食べましょう。満腹を感じるまで約20分かかります。"
     },
     "eat_plan": {
       "en": "Plan your last meal so your next fast starts on time.",
@@ -182,7 +277,12 @@
       "es": "Planifica tu última comida para empezar el próximo ayuno a tiempo.",
       "fr": "Planifie ton dernier repas pour commencer le prochain jeûne à l’heure.",
       "it": "Pianifica l’ultimo pasto così il prossimo digiuno inizia in orario.",
-      "ru": "Спланируйте последний приём пищи, чтобы следующее голодание началось вовремя."
+      "ru": "Спланируйте последний приём пищи, чтобы следующее голодание началось вовремя.",
+      "pt": "Planeia a última refeição para o próximo jejum começar a horas.",
+      "ko": "다음 단식이 제시간에 시작되도록 마지막 식사를 계획하세요.",
+      "hi": "आखिरी भोजन इस तरह प्लान करें कि अगला उपवास समय पर शुरू हो।",
+      "zh": "安排好最后一餐，让下一次断食准时开始。",
+      "ja": "次の断食が時間どおり始まるように、最後の食事を決めておきましょう。"
     },
     "eat_fiber": {
       "en": "Fiber-rich foods like oats and legumes make the next fast easier.",
@@ -191,7 +291,12 @@
       "es": "Los alimentos ricos en fibra, como la avena y las legumbres, facilitan el próximo ayuno.",
       "fr": "Les aliments riches en fibres comme l’avoine et les légumineuses facilitent le prochain jeûne.",
       "it": "Cibi ricchi di fibre come avena e legumi rendono più facile il prossimo digiuno.",
-      "ru": "Продукты с клетчаткой, например овёс и бобовые, облегчают следующее голодание."
+      "ru": "Продукты с клетчаткой, например овёс и бобовые, облегчают следующее голодание.",
+      "pt": "Alimentos ricos em fibra, como aveia e leguminosas, facilitam o próximo jejum.",
+      "ko": "귀리와 콩처럼 섬유질이 많은 음식이 다음 단식을 쉽게 해줘요.",
+      "hi": "जई और दाल जैसी रेशेदार चीज़ें अगला उपवास आसान बनाती हैं।",
+      "zh": "燕麦和豆类这类高纤维食物，会让下一次断食更轻松。",
+      "ja": "オート麦や豆類のような食物繊維の多い食べ物は、次の断食を楽にします。"
     }
   }
 }

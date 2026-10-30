@@ -8,7 +8,7 @@ Nginx önde, ayrıntı `docs/deploy.md`. Komutların çoğu sunucuda uygulama kl
 ```bash
 npm run deploy -- check          # bilgisayardan: sunucu, süreçler, sağlık
 pm2 ls && pm2 logs --lines 200   # sunucuda
-curl -s localhost:3070/health/ready
+curl -s localhost:3066/health/ready
 ```
 
 ---

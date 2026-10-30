@@ -1,0 +1,35 @@
+{
+  "common": {
+    "ok": "OK"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Alguns campos são inválidos. Verifica e tenta outra vez.",
+    "INVALID_JSON": "Não foi possível ler o corpo do pedido.",
+    "BAD_REQUEST": "Não foi possível processar o pedido.",
+    "UNAUTHENTICATED": "Inicia sessão para continuar.",
+    "TOKEN_EXPIRED": "A tua sessão expirou.",
+    "REFRESH_REUSED": "Por segurança, inicia sessão outra vez.",
+    "PREMIUM_REQUIRED": "Esta funcionalidade requer Premium.",
+    "FORBIDDEN": "Não tens permissão para fazer isto.",
+    "CONSENT_REQUIRED": "Revê e aceita o consentimento necessário primeiro.",
+    "NOT_FOUND": "Não encontrámos o que procuravas.",
+    "METHOD_NOT_ALLOWED": "Esta ação não é suportada.",
+    "CONFLICT": "Isto entra em conflito com dados existentes.",
+    "ACTIVE_FAST_EXISTS": "Já tens um jejum ativo.",
+    "FAST_OVERLAP": "Este jejum sobrepõe-se a outro.",
+    "IDEMPOTENCY_KEY_REUSED": "Este pedido já foi enviado com dados diferentes.",
+    "ACCOUNT_PENDING_DELETION": "Esta conta está marcada para eliminação. Queres restaurá-la?",
+    "REPLY_IN_PROGRESS": "O Mochi ainda está a responder. Espera um momento.",
+    "GONE": "Esta conta já não está disponível.",
+    "PAYLOAD_TOO_LARGE": "O ficheiro ou pedido é demasiado grande.",
+    "UNSUPPORTED_MEDIA_TYPE": "Este tipo de ficheiro não é suportado.",
+    "NOT_FOOD": "Isto não parece uma refeição. Tenta outra foto.",
+    "UNSAFE_REQUEST": "Por segurança, esta opção não está disponível para ti.",
+    "SAFETY_ACK_REQUIRED": "Lê e confirma a nota de segurança primeiro.",
+    "APP_UPDATE_REQUIRED": "Atualiza o MochiFast para continuar.",
+    "QUOTA_EXCEEDED": "Atingiste o limite de hoje para esta funcionalidade.",
+    "RATE_LIMITED": "Demasiados pedidos. Tenta outra vez daqui a pouco.",
+    "INTERNAL": "Algo correu mal do nosso lado. Tenta outra vez.",
+    "UNAVAILABLE": "O MochiFast está temporariamente indisponível. Tenta outra vez em breve."
+  }
+}

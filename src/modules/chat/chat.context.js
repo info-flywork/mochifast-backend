@@ -26,6 +26,11 @@ const LANGUAGE = {
   fr: 'French',
   it: 'Italian',
   ru: 'Russian',
+  pt: 'Portuguese',
+  ko: 'Korean',
+  hi: 'Hindi',
+  zh: 'Simplified Chinese',
+  ja: 'Japanese',
 };
 
 const hm = (minutes) => {

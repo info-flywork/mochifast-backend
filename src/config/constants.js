@@ -1,5 +1,18 @@
 /** Uygulamanın desteklediği diller (Flutter `assets/translations` ile aynı). */
-export const SUPPORTED_LOCALES = ['en', 'tr', 'de', 'es', 'fr', 'it', 'ru'];
+export const SUPPORTED_LOCALES = [
+  'en',
+  'tr',
+  'de',
+  'es',
+  'fr',
+  'it',
+  'ru',
+  'pt',
+  'ko',
+  'hi',
+  'zh',
+  'ja',
+];
 
 export const DEFAULT_LOCALE = 'en';
 

@@ -41,6 +41,36 @@
       "lake": "Озеро",
       "summit": "Вершина",
       "garden": "Сад"
+    },
+    "pt": {
+      "forest": "Floresta",
+      "lake": "Lago",
+      "summit": "Cume",
+      "garden": "Jardim"
+    },
+    "ko": {
+      "forest": "숲",
+      "lake": "호수",
+      "summit": "정상",
+      "garden": "정원"
+    },
+    "hi": {
+      "forest": "जंगल",
+      "lake": "झील",
+      "summit": "चोटी",
+      "garden": "बगीचा"
+    },
+    "zh": {
+      "forest": "森林",
+      "lake": "湖",
+      "summit": "山顶",
+      "garden": "花园"
+    },
+    "ja": {
+      "forest": "森",
+      "lake": "湖",
+      "summit": "山頂",
+      "garden": "庭"
     }
   },
   "templates": [
@@ -84,6 +114,26 @@
         "ru": {
           "title": "Получилось! 🎉",
           "body": "Ты достиг цели голодания. Заверши его, когда будешь готов."
+        },
+        "pt": {
+          "title": "Conseguiste! 🎉",
+          "body": "Atingiste a meta de jejum. Termina o jejum quando estiveres pronto."
+        },
+        "ko": {
+          "title": "해냈어요! 🎉",
+          "body": "단식 목표에 도달했어요. 준비되면 단식을 끝내세요."
+        },
+        "hi": {
+          "title": "आपने कर दिखाया! 🎉",
+          "body": "आप उपवास के लक्ष्य तक पहुँच गए। तैयार हों तो उपवास खत्म करें।"
+        },
+        "zh": {
+          "title": "你做到了！🎉",
+          "body": "你达到了断食目标。准备好了就可以结束。"
+        },
+        "ja": {
+          "title": "やりました！🎉",
+          "body": "断食の目標に到達しました。準備ができたら終了してください。"
         }
       }
     },
@@ -126,6 +176,26 @@
         "ru": {
           "title": "Половина пути 💪",
           "body": "Ты прошёл половину голодания. Так держать!"
+        },
+        "pt": {
+          "title": "A meio caminho 💪",
+          "body": "Estás a meio do jejum. Continua, squish!"
+        },
+        "ko": {
+          "title": "절반 왔어요 💪",
+          "body": "단식의 절반을 왔어요. 계속해요, squish!"
+        },
+        "hi": {
+          "title": "आधा रास्ता पूरा 💪",
+          "body": "आप उपवास के आधे तक पहुँच गए। जारी रखें, squish!"
+        },
+        "zh": {
+          "title": "已经一半了 💪",
+          "body": "断食已经过半。继续，squish！"
+        },
+        "ja": {
+          "title": "半分まできました 💪",
+          "body": "断食の半分まできました。その調子、スクイッシュ！"
         }
       }
     },
@@ -168,6 +238,26 @@
         "ru": {
           "title": "Новый этап ✨",
           "body": "Твоё тело перешло на новый этап голодания. Нажми, чтобы узнать подробнее."
+        },
+        "pt": {
+          "title": "Nova fase do corpo ✨",
+          "body": "O teu corpo entrou numa nova fase de jejum. Toca para ver o que está a acontecer."
+        },
+        "ko": {
+          "title": "새로운 몸 단계 ✨",
+          "body": "몸이 새로운 단식 단계에 들어갔어요. 눌러서 무슨 일인지 보세요."
+        },
+        "hi": {
+          "title": "शरीर का नया चरण ✨",
+          "body": "आपका शरीर उपवास के नए चरण में आ गया। क्या हो रहा है, देखने के लिए टैप करें।"
+        },
+        "zh": {
+          "title": "身体进入新阶段 ✨",
+          "body": "身体刚进入一个新的断食阶段。点开看看发生了什么。"
+        },
+        "ja": {
+          "title": "新しい体の段階 ✨",
+          "body": "体が新しい断食の段階に入りました。タップして様子を見てください。"
         }
       }
     },
@@ -210,6 +300,26 @@
         "ru": {
           "title": "Пора начать голодание ⏱️",
           "body": "Твоё окно питания закрылось. Начни голодание {planName} сейчас."
+        },
+        "pt": {
+          "title": "Hora de começar o jejum ⏱️",
+          "body": "A tua janela de refeições fechou. Começa agora o jejum {planName}."
+        },
+        "ko": {
+          "title": "단식을 시작할 시간 ⏱️",
+          "body": "식사 시간이 끝났어요. 지금 {planName} 단식을 시작하세요."
+        },
+        "hi": {
+          "title": "उपवास शुरू करने का समय ⏱️",
+          "body": "खाने की खिड़की बंद हो गई। अभी अपना {planName} उपवास शुरू करें।"
+        },
+        "zh": {
+          "title": "该开始断食了 ⏱️",
+          "body": "进食时间已结束。现在开始你的 {planName} 断食。"
+        },
+        "ja": {
+          "title": "断食を始める時間 ⏱️",
+          "body": "食事の時間が終わりました。今すぐ{planName}の断食を始めましょう。"
         }
       }
     },
@@ -252,6 +362,26 @@
         "ru": {
           "title": "Осталось 30 минут 🍽️",
           "body": "Окно питания скоро закроется. Заверши чем-нибудь сытным."
+        },
+        "pt": {
+          "title": "Faltam 30 minutos 🍽️",
+          "body": "A tua janela de refeições fecha em breve. Termina com algo que te deixe cheio."
+        },
+        "ko": {
+          "title": "30분 남았어요 🍽️",
+          "body": "식사 시간이 곧 끝나요. 배부르게 마무리하세요."
+        },
+        "hi": {
+          "title": "30 मिनट बचे हैं 🍽️",
+          "body": "खाने की खिड़की जल्दी बंद होगी। कुछ पेट भरने वाला खाकर खत्म करें।"
+        },
+        "zh": {
+          "title": "还剩 30 分钟 🍽️",
+          "body": "进食时间快结束了。用能吃饱的东西收尾。"
+        },
+        "ja": {
+          "title": "あと30分 🍽️",
+          "body": "食事の時間がもうすぐ終わります。満足できるもので締めくくりましょう。"
         }
       }
     },
@@ -295,6 +425,26 @@
         "ru": {
           "title": "Время приёма пищи закончилось",
           "body": "Приготовься, скоро начинается голодание!"
+        },
+        "pt": {
+          "title": "A hora das refeições terminou",
+          "body": "Prepara-te, o jejum começa em breve!"
+        },
+        "ko": {
+          "title": "식사 시간이 끝났어요",
+          "body": "준비하세요. 단식 시간이 곧 시작돼요!"
+        },
+        "hi": {
+          "title": "खाने का समय खत्म हो गया",
+          "body": "तैयार हो जाएँ, उपवास का समय जल्दी शुरू होगा!"
+        },
+        "zh": {
+          "title": "进食时间结束了",
+          "body": "准备好，断食马上开始！"
+        },
+        "ja": {
+          "title": "食事の時間は終わりました",
+          "body": "準備して。断食の時間がもうすぐ始まります！"
         }
       }
     },
@@ -337,6 +487,26 @@
         "ru": {
           "title": "Забыл завершить голодание?",
           "body": "Голодание всё ещё идёт, хотя цель давно достигнута. Нажми, чтобы завершить или исправить время."
+        },
+        "pt": {
+          "title": "Esqueceste-te de terminar o jejum?",
+          "body": "O teu jejum continua muito depois da meta. Toca para o terminar ou corrigir a hora."
+        },
+        "ko": {
+          "title": "단식 종료를 잊으셨나요?",
+          "body": "목표가 지난 뒤에도 단식이 계속되고 있어요. 눌러서 끝내거나 시간을 고치세요."
+        },
+        "hi": {
+          "title": "क्या उपवास खत्म करना भूल गए?",
+          "body": "लक्ष्य के काफी बाद भी उपवास चल रहा है। खत्म करने या समय ठीक करने के लिए टैप करें।"
+        },
+        "zh": {
+          "title": "是不是忘了结束断食？",
+          "body": "断食在目标之后还在继续。点按结束，或改一下时间。"
+        },
+        "ja": {
+          "title": "断食を終えるのを忘れていませんか？",
+          "body": "目標をかなり過ぎても断食が続いています。タップして終了するか、時間を直してください。"
         }
       }
     },
@@ -379,6 +549,26 @@
         "ru": {
           "title": "Обновления веса",
           "body": "Твой новый записанный вес: {weightKg} кг"
+        },
+        "pt": {
+          "title": "Atualização de peso",
+          "body": "O teu novo peso registado é {weightKg} kg"
+        },
+        "ko": {
+          "title": "몸무게 업데이트",
+          "body": "새로 기록한 몸무게는 {weightKg} kg예요"
+        },
+        "hi": {
+          "title": "वज़न अपडेट",
+          "body": "आपका नया दर्ज वज़न {weightKg} kg है"
+        },
+        "zh": {
+          "title": "体重更新",
+          "body": "你新记录的体重是 {weightKg} 公斤"
+        },
+        "ja": {
+          "title": "体重の更新",
+          "body": "新しく記録した体重は{weightKg} kgです"
         }
       }
     },
@@ -421,6 +611,26 @@
         "ru": {
           "title": "Пора взвеситься ⚖️",
           "body": "Прошла неделя. Быстрое взвешивание поможет следить за прогрессом."
+        },
+        "pt": {
+          "title": "Hora de te pesares ⚖️",
+          "body": "Já passou uma semana. Uma pesagem rápida mantém o progresso no rumo."
+        },
+        "ko": {
+          "title": "몸무게 잴 시간 ⚖️",
+          "body": "일주일이 지났어요. 짧게 몸무게를 재면 진행이 흔들리지 않아요."
+        },
+        "hi": {
+          "title": "वज़न लेने का समय ⚖️",
+          "body": "एक हफ़्ता हो गया। जल्दी वजन लेने से प्रगति सही रहती है।"
+        },
+        "zh": {
+          "title": "该称体重了 ⚖️",
+          "body": "已经一周了。快速称一次，进度就不会跑偏。"
+        },
+        "ja": {
+          "title": "体重を測る時間 ⚖️",
+          "body": "1週間たちました。さっと体重を測ると進み具合がそろいます。"
         }
       }
     },
@@ -463,6 +673,26 @@
         "ru": {
           "title": "Время попить 💧",
           "body": "Стакан воды сейчас приглушит голод и поддержит энергию."
+        },
+        "pt": {
+          "title": "Hora de beber 💧",
+          "body": "Um copo de água agora acalma a fome e sobe a energia."
+        },
+        "ko": {
+          "title": "물 마실 시간 💧",
+          "body": "지금 물 한 잔이 배고픔을 잠재우고 기운을 올려요."
+        },
+        "hi": {
+          "title": "पानी पीने का समय 💧",
+          "body": "अभी एक गिलास पानी भूख को शांत रखता है और ऊर्जा बढ़ाता है।"
+        },
+        "zh": {
+          "title": "喝水时间 💧",
+          "body": "现在喝一杯水，饥饿会安静些，精力也会上来。"
+        },
+        "ja": {
+          "title": "ひとくち水の時間 💧",
+          "body": "今一杯の水が空腹を落ち着かせ、元気を上げます。"
         }
       }
     },
@@ -505,6 +735,26 @@
         "ru": {
           "title": "Сохрани серию из {streak} дн. 🔥",
           "body": "Сегодня ты ещё не голодал. Время ещё есть!"
+        },
+        "pt": {
+          "title": "Mantém a tua sequência de {streak} dias 🔥",
+          "body": "Ainda não jejuaste hoje. Ainda há tempo!"
+        },
+        "ko": {
+          "title": "{streak}일 연속을 이어가요 🔥",
+          "body": "오늘은 아직 단식을 시작하지 않았어요. 아직 시간이 있어요!"
+        },
+        "hi": {
+          "title": "अपनी {streak} दिन की स्ट्रीक बनाए रखें 🔥",
+          "body": "आज अभी उपवास शुरू नहीं किया। अभी भी समय है!"
+        },
+        "zh": {
+          "title": "保住你的 {streak} 天连续记录 🔥",
+          "body": "今天还没开始断食。还来得及！"
+        },
+        "ja": {
+          "title": "{streak}日連続を守ろう 🔥",
+          "body": "今日はまだ断食していません。まだ間に合います！"
         }
       }
     },
@@ -548,6 +798,26 @@
         "ru": {
           "title": "Серия {streak} дн.! 🏆",
           "body": "Отличная стабильность! Твоя серия достигла {streak} дн."
+        },
+        "pt": {
+          "title": "Sequência de {streak} dias! 🏆",
+          "body": "Que consistência, squish. A tua sequência chegou a {streak} dias."
+        },
+        "ko": {
+          "title": "{streak}일 연속! 🏆",
+          "body": "정말 꾸준해요, squish. 연속 기록이 {streak}일이 됐어요."
+        },
+        "hi": {
+          "title": "{streak} दिन की स्ट्रीक! 🏆",
+          "body": "क्या निरंतरता है, squish. आपकी स्ट्रीक {streak} दिन हो गई।"
+        },
+        "zh": {
+          "title": "{streak} 天连续！🏆",
+          "body": "太稳了，squish。你的连续记录到了 {streak} 天。"
+        },
+        "ja": {
+          "title": "{streak}日連続！🏆",
+          "body": "すごい継続です、スクイッシュ。連続記録が{streak}日になりました。"
         }
       }
     },
@@ -590,6 +860,26 @@
         "ru": {
           "title": "Серия сброшена",
           "body": "Не переживай, каждый день — новое начало. Твоя лучшая серия сохранена."
+        },
+        "pt": {
+          "title": "A tua sequência foi reposta",
+          "body": "Sem stress, cada dia é um recomeço. A tua melhor sequência continua guardada."
+        },
+        "ko": {
+          "title": "연속 기록이 초기화됐어요",
+          "body": "괜찮아요. 매일은 새로운 시작이에요. 최고 기록은 그대로 저장돼 있어요."
+        },
+        "hi": {
+          "title": "आपकी स्ट्रीक रीसेट हो गई",
+          "body": "कोई बात नहीं, हर दिन नई शुरुआत है। आपकी सबसे अच्छी स्ट्रीक सुरक्षित है।"
+        },
+        "zh": {
+          "title": "连续记录已重置",
+          "body": "没关系，每一天都是新的开始。你的最佳连续记录还在。"
+        },
+        "ja": {
+          "title": "連続記録がリセットされました",
+          "body": "大丈夫。毎日が新しいスタートです。自己ベストの連続記録は残っています。"
         }
       }
     },
@@ -633,6 +923,26 @@
         "ru": {
           "title": "Новый уровень: {zone} 🌱",
           "body": "{zone} на острове Мочи: уровень {level}."
+        },
+        "pt": {
+          "title": "A tua zona {zone} cresceu! 🌱",
+          "body": "A tua zona {zone} chegou ao nível {level} na ilha do Mochi."
+        },
+        "ko": {
+          "title": "{zone}이 자랐어요! 🌱",
+          "body": "Mochi의 섬에서 {zone}이 레벨 {level}에 도달했어요."
+        },
+        "hi": {
+          "title": "आपका {zone} बढ़ गया! 🌱",
+          "body": "Mochi के द्वीप पर आपका {zone} स्तर {level} पर पहुँच गया।"
+        },
+        "zh": {
+          "title": "你的{zone}长大了！🌱",
+          "body": "在 Mochi 的小岛上，你的{zone}达到了 {level} 级。"
+        },
+        "ja": {
+          "title": "{zone}が育ちました！🌱",
+          "body": "Mochiの島で{zone}がレベル{level}になりました。"
         }
       }
     },
@@ -676,6 +986,26 @@
         "ru": {
           "title": "Острову Мочи нужен ты 🥀",
           "body": "Твой остров начинает увядать. Один день голодания вернёт его к жизни."
+        },
+        "pt": {
+          "title": "A ilha do Mochi precisa de ti 🥀",
+          "body": "A tua ilha está a murchar. Um dia de jejum volta a dar-lhe vida."
+        },
+        "ko": {
+          "title": "Mochi의 섬이 당신을 기다려요 🥀",
+          "body": "섬이 시들기 시작했어요. 단식 하루면 다시 살아나요."
+        },
+        "hi": {
+          "title": "Mochi के द्वीप को आप चाहिए 🥀",
+          "body": "आपका द्वीप मुरझाने लगा है। उपवास का एक दिन उसे फिर जिला देता है।"
+        },
+        "zh": {
+          "title": "Mochi 的小岛需要你 🥀",
+          "body": "你的小岛开始枯萎了。一天断食就能让它恢复生机。"
+        },
+        "ja": {
+          "title": "Mochiの島があなたを待っています 🥀",
+          "body": "島がしおれ始めています。断食を1日すると、また元気になります。"
         }
       }
     },
@@ -718,6 +1048,26 @@
         "ru": {
           "title": "Половина челленджа",
           "body": "Ты на полпути в челлендже «{challenge}». Так держать!"
+        },
+        "pt": {
+          "title": "A meio de um desafio",
+          "body": "Estás a meio de \"{challenge}\". Continua!"
+        },
+        "ko": {
+          "title": "도전의 절반",
+          "body": "\"{challenge}\"의 절반을 왔어요. 계속해요!"
+        },
+        "hi": {
+          "title": "चुनौती का आधा हिस्सा",
+          "body": "आप \"{challenge}\" के आधे तक पहुँच गए। ऐसे ही जारी रखें!"
+        },
+        "zh": {
+          "title": "挑战过半",
+          "body": "你已经完成“{challenge}”的一半。继续保持！"
+        },
+        "ja": {
+          "title": "チャレンジの半分",
+          "body": "「{challenge}」の半分まで来ました。この調子で！"
         }
       }
     },
@@ -761,6 +1111,26 @@
         "ru": {
           "title": "Челлендж пройден! 🏅",
           "body": "Ты завершил «{challenge}» и получил XP. Отлично!"
+        },
+        "pt": {
+          "title": "Desafio concluído! 🏅",
+          "body": "Concluíste \"{challenge}\" e ganhaste XP. Muito bem!"
+        },
+        "ko": {
+          "title": "도전 완료! 🏅",
+          "body": "\"{challenge}\"을 완료하고 XP를 받았어요. 잘했어요!"
+        },
+        "hi": {
+          "title": "चुनौती पूरी! 🏅",
+          "body": "आपने \"{challenge}\" पूरा किया और XP पाया। बहुत बढ़िया!"
+        },
+        "zh": {
+          "title": "挑战完成！🏅",
+          "body": "你完成了“{challenge}”并获得了经验值。做得好！"
+        },
+        "ja": {
+          "title": "チャレンジ達成！🏅",
+          "body": "「{challenge}」を達成してXPを獲得しました。よくできました！"
         }
       }
     },
@@ -803,6 +1173,26 @@
         "ru": {
           "title": "Твой Premium закончился",
           "body": "Твой план изменён на {planName}. Данные в сохранности, продлить можно в любой момент."
+        },
+        "pt": {
+          "title": "O teu Premium terminou",
+          "body": "O teu plano passou para {planName}. Os teus dados estão seguros; podes renovar quando quiseres."
+        },
+        "ko": {
+          "title": "Premium이 종료됐어요",
+          "body": "플랜이 {planName}(으)로 바뀌었어요. 데이터는 안전하고, 언제든 다시 구독할 수 있어요."
+        },
+        "hi": {
+          "title": "आपका Premium खत्म हो गया",
+          "body": "आपका प्लान {planName} पर बदल गया। आपका डेटा सुरक्षित है; कभी भी नवीनीकरण कर सकते हैं।"
+        },
+        "zh": {
+          "title": "你的 Premium 已结束",
+          "body": "你的计划已切换为 {planName}。数据是安全的，随时可以续订。"
+        },
+        "ja": {
+          "title": "Premiumが終了しました",
+          "body": "プランが{planName}に切り替わりました。データは安全です。いつでも再開できます。"
         }
       }
     },
@@ -846,6 +1236,26 @@
         "ru": {
           "title": "Экспорт данных готов",
           "body": "Файл доступен для скачивания в профиле в течение 7 дней."
+        },
+        "pt": {
+          "title": "A exportação dos teus dados está pronta",
+          "body": "A transferência está pronta no teu perfil durante 7 dias."
+        },
+        "ko": {
+          "title": "데이터 보내기가 준비됐어요",
+          "body": "다운로드가 프로필에서 7일 동안 준비돼 있어요."
+        },
+        "hi": {
+          "title": "आपका डेटा एक्सपोर्ट तैयार है",
+          "body": "डाउनलोड आपकी प्रोफ़ाइल में 7 दिन के लिए तैयार है।"
+        },
+        "zh": {
+          "title": "你的数据导出已准备好",
+          "body": "下载已在个人资料里准备好，可保留 7 天。"
+        },
+        "ja": {
+          "title": "データの書き出しが準備できました",
+          "body": "ダウンロードはプロフィールで7日間受け取れます。"
         }
       }
     }
