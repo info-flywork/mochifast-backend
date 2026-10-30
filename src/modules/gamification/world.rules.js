@@ -1,5 +1,5 @@
 import { addDays } from '../../shared/time.js';
-import { dayKept } from '../stats/stats.rules.js';
+import { dayKept, xpForLevel } from '../stats/stats.rules.js';
 
 /**
  * Mochi World (docs/backend/05-is-kurallari.md §7). Saf fonksiyonlar.
@@ -51,6 +51,12 @@ export const sceneLevel = (userLevel) =>
 /** Sonraki ada aşamasının açıldığı XP seviyesi; son aşamadaysa null. */
 export const nextSceneUserLevel = (userLevel) =>
   SCENE_LEVEL_FROM.find((l) => (Number(userLevel) || 1) < l) ?? null;
+
+/** Tam adaya (son aşama) ilerleme, 0–1: toplam XP / son aşamanın XP'si. */
+export function islandProgress(xp) {
+  const full = xpForLevel(SCENE_LEVEL_FROM.at(-1));
+  return Math.round(Math.min(1, Math.max(0, (Number(xp) || 0) / full)) * 1000) / 1000;
+}
 
 /**
  * Adanın sağlığı (05 §7.2): son tutulan günden bu yana kaçırılan ZORUNLU gün sayısı (bugün

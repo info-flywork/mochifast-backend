@@ -270,8 +270,10 @@ export function loadConfig(env = process.env) {
 const DEV_MEDIA_PATH_SECRET = 'dev-only-media-path-secret-not-for-production!';
 
 /**
- * Medya ayarları. Öğün fotoğrafları token korumalı private zone'da; avatar public zone'da.
- * private pull zone public olanla aynıysa (öğün fotoğrafları token'sız yayınlanır) process başlamaz.
+ * Medya ayarları. Tek Bunny zone'u (mochifast): uygulama görselleri, avatar ve kullanıcı
+ * fotoğrafları aynı zone'da, token'sız. `BUNNY_PRIVATE_*` verilmezse "private" dosyalar
+ * (`u/<ownerKey>/…`) de bu zone'a yazılır; yolları MEDIA_PATH_SECRET'tan türetilir, tahmin
+ * edilemez. Ayrı bir token korumalı zone istenirse `BUNNY_PRIVATE_*` ile verilebilir.
  */
 function mediaConfig(e) {
   const prod = e.NODE_ENV === 'production';
@@ -280,28 +282,14 @@ function mediaConfig(e) {
     throw new Error('Üretimde en az 32 karakterlik MEDIA_PATH_SECRET zorunlu.');
   }
   if (e.MEDIA_DRIVER === 'bunny') {
-    // Private: öğün fotoğrafları. Public: avatar + uygulama görselleri (zorunlu).
-    const missing = [
-      'BUNNY_STORAGE_ZONE',
-      'BUNNY_STORAGE_PASSWORD',
-      'BUNNY_PULL_ZONE_HOST',
-      'BUNNY_PRIVATE_STORAGE_ZONE',
-      'BUNNY_PRIVATE_STORAGE_PASSWORD',
-      'BUNNY_PRIVATE_PULL_ZONE_HOST',
-      'BUNNY_TOKEN_AUTH_KEY',
-    ].filter((k) => !e[k]);
+    const missing = ['BUNNY_STORAGE_ZONE', 'BUNNY_STORAGE_PASSWORD', 'BUNNY_PULL_ZONE_HOST'].filter(
+      (k) => !e[k],
+    );
     if (missing.length > 0) {
       throw new Error(`MEDIA_DRIVER=bunny için eksik: ${missing.join(', ')}`);
     }
-    if (
-      e.BUNNY_PRIVATE_PULL_ZONE_HOST === e.BUNNY_PULL_ZONE_HOST ||
-      e.BUNNY_PRIVATE_STORAGE_ZONE === e.BUNNY_STORAGE_ZONE
-    ) {
-      throw new Error(
-        "Private medya zone'u public zone ile aynı olamaz (kullanıcı fotoğrafları token'sız yayınlanır).",
-      );
-    }
   }
+  const separatePrivate = Boolean(e.BUNNY_PRIVATE_STORAGE_ZONE);
   return {
     driver: e.MEDIA_DRIVER,
     localDir: e.MEDIA_LOCAL_DIR,
@@ -315,10 +303,10 @@ function mediaConfig(e) {
       pullHost: e.BUNNY_PULL_ZONE_HOST,
     },
     privateZone: {
-      zone: e.BUNNY_PRIVATE_STORAGE_ZONE,
-      password: e.BUNNY_PRIVATE_STORAGE_PASSWORD,
-      storageHost: e.BUNNY_PRIVATE_STORAGE_HOST,
-      pullHost: e.BUNNY_PRIVATE_PULL_ZONE_HOST,
+      zone: separatePrivate ? e.BUNNY_PRIVATE_STORAGE_ZONE : e.BUNNY_STORAGE_ZONE,
+      password: separatePrivate ? e.BUNNY_PRIVATE_STORAGE_PASSWORD : e.BUNNY_STORAGE_PASSWORD,
+      storageHost: separatePrivate ? e.BUNNY_PRIVATE_STORAGE_HOST : e.BUNNY_STORAGE_HOST,
+      pullHost: separatePrivate ? e.BUNNY_PRIVATE_PULL_ZONE_HOST : e.BUNNY_PULL_ZONE_HOST,
       // local sürücüde de imza aynı algoritmayla atılır (anahtar yoksa yol sırrından).
       tokenKey: e.BUNNY_TOKEN_AUTH_KEY || e.MEDIA_PATH_SECRET || DEV_MEDIA_PATH_SECRET,
     },

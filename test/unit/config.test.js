@@ -11,17 +11,13 @@ const base = {
   FIELD_ENCRYPTION_ACTIVE_KID: '1',
 };
 
-/** Üretimde zorunlu medya ayarları (private zone token korumalı, public'ten ayrı). */
+/** Üretimde zorunlu medya ayarları: tek Bunny zone'u (mochifast). */
 const prodMedia = {
   MEDIA_DRIVER: 'bunny',
   MEDIA_PATH_SECRET: 'x'.repeat(32),
   BUNNY_STORAGE_ZONE: 'mochifast',
   BUNNY_STORAGE_PASSWORD: 'public-secret',
   BUNNY_PULL_ZONE_HOST: 'mochifast.b-cdn.net',
-  BUNNY_PRIVATE_STORAGE_ZONE: 'mochifast-private',
-  BUNNY_PRIVATE_STORAGE_PASSWORD: 'secret',
-  BUNNY_PRIVATE_PULL_ZONE_HOST: 'mochifast-private.b-cdn.net',
-  BUNNY_TOKEN_AUTH_KEY: 'token-key',
 };
 
 describe('loadConfig', () => {
@@ -70,20 +66,32 @@ describe('loadConfig', () => {
     );
   });
 
-  it('medya: üretimde bunny + güçlü yol sırrı; private zone public ile aynı olamaz', () => {
+  it('medya: üretimde bunny + güçlü yol sırrı; tek zone varsayılan', () => {
     const prod = { ...base, NODE_ENV: 'production' };
     expect(() => loadConfig(prod)).toThrow(/MEDIA_DRIVER=bunny/);
     expect(() => loadConfig({ ...prod, ...prodMedia, MEDIA_PATH_SECRET: 'short' })).toThrow(
       /MEDIA_PATH_SECRET/,
     );
-    const { BUNNY_TOKEN_AUTH_KEY: _k, ...noToken } = prodMedia;
-    expect(() => loadConfig({ ...prod, ...noToken })).toThrow(/BUNNY_TOKEN_AUTH_KEY/);
     const { BUNNY_STORAGE_PASSWORD: _p, ...noPublic } = prodMedia;
     expect(() => loadConfig({ ...prod, ...noPublic })).toThrow(/BUNNY_STORAGE_PASSWORD/);
-    // Token'sız public CDN'e kullanıcı fotoğrafı yazılmasın.
-    expect(() =>
-      loadConfig({ ...prod, ...prodMedia, BUNNY_PRIVATE_PULL_ZONE_HOST: 'mochifast.b-cdn.net' }),
-    ).toThrow(/public zone/);
+    // Ayrı private zone verilmezse kullanıcı dosyaları da aynı zone'a gider.
+    const single = loadConfig({ ...prod, ...prodMedia }).media;
+    expect(single.privateZone).toMatchObject({
+      zone: 'mochifast',
+      password: 'public-secret',
+      pullHost: 'mochifast.b-cdn.net',
+    });
+    const split = loadConfig({
+      ...prod,
+      ...prodMedia,
+      BUNNY_PRIVATE_STORAGE_ZONE: 'mochifast-private',
+      BUNNY_PRIVATE_STORAGE_PASSWORD: 'secret',
+      BUNNY_PRIVATE_PULL_ZONE_HOST: 'mochifast-private.b-cdn.net',
+    }).media;
+    expect(split.privateZone).toMatchObject({
+      zone: 'mochifast-private',
+      pullHost: 'mochifast-private.b-cdn.net',
+    });
     const c = loadConfig({ ...base });
     expect(c.media).toMatchObject({ driver: 'local', uploadMaxBytes: 10 * 1024 * 1024 });
     expect(c.media.pathSecret.length).toBeGreaterThanOrEqual(32);

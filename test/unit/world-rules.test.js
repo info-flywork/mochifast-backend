@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { computeZones } from '../../src/modules/gamification/gamification.repository.js';
 import {
+  islandProgress,
   nextSceneUserLevel,
   sceneLevel,
   worldHealth,
@@ -132,5 +133,9 @@ describe('sahne seviyesi (XP)', () => {
 
   it('sonraki aşamanın açıldığı seviye', () => {
     expect([1, 2, 4, 6, 7].map(nextSceneUserLevel)).toEqual([2, 3, 5, 7, null]);
+  });
+
+  it('tam adaya ilerleme: Lv7 (2100 XP) = 1', () => {
+    expect([0, 1050, 2100, 5000].map(islandProgress)).toEqual([0, 0.5, 1, 1]);
   });
 });

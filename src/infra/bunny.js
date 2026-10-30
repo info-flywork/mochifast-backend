@@ -4,9 +4,10 @@ import { dirname, join, normalize, resolve, sep } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 
 /**
- * Medya depolaması (docs/backend/08-medya-bunny.md). İki zone:
- * - private: kullanıcı fotoğrafları; yalnızca imzalı (Token Authentication) URL ile okunur.
- * - public : yönetim içeriği; kalıcı, token'sız URL.
+ * Medya depolaması (docs/backend/08-medya-bunny.md). İki mantıksal alan:
+ * - private: kullanıcı fotoğrafları (`u/<ownerKey>/…`); imzalı URL ile verilir.
+ * - public : avatar ve yönetim içeriği; kalıcı, token'sız URL.
+ * Varsayılanda ikisi de aynı Bunny zone'unda (token kapalı; imza parametreleri yok sayılır).
  * `driver: 'local'` geliştirme/testte dosyaları diske yazar; imzalı URL'ler API'nin
  * `/media-files/*` ucuna gider ve aynı algoritmayla doğrulanır.
  */
