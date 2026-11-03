@@ -1,4 +1,3 @@
-import { AppError } from '../../shared/errors.js';
 import { toDbEnum, toApiEnum } from '../../shared/enums.js';
 import { addDays, mondayOf } from '../../shared/time.js';
 import * as userRepo from '../user/user.repository.js';
@@ -11,8 +10,8 @@ const STEPS_PAST_DAYS = 31;
 const DEFAULT_STEPS_GOAL = 8000;
 
 /**
- * Adım (docs/backend/04-api.md §9, 05 §8). Kaynak önceliği: sağlık senkronu manuelin üzerine
- * yazar; manuel giriş senkronlanmış günü ezemez (409).
+ * Adım (docs/backend/04-api.md §9, 05 §8).
+ * Manuel PUT her zaman yazar; sağlık senkronu manuel düzeltilmiş günü ezmez.
  */
 export function createStepsService({ db, ctx }) {
   async function write(userId, days, source) {
@@ -25,11 +24,6 @@ export function createStepsService({ db, ctx }) {
       for (const d of days) {
         const existing = await repo.findSteps(db, userId, d.date, conn, { forUpdate: true });
         if (!stepOverwriteAllowed(existing?.source, source)) {
-          if (source === 'manual') {
-            throw new AppError('CONFLICT', {
-              details: { reason: 'synced_day', date: d.date, source: toApiEnum(existing.source) },
-            });
-          }
           skipped += 1;
           continue;
         }

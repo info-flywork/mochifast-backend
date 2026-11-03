@@ -179,23 +179,23 @@
         },
         "pt": {
           "title": "A meio caminho 💪",
-          "body": "Estás a meio do jejum. Continua, squish!"
+          "body": "Estás a meio do jejum. Continua, fofinho!"
         },
         "ko": {
           "title": "절반 왔어요 💪",
-          "body": "단식의 절반을 왔어요. 계속해요, squish!"
+          "body": "단식의 절반을 왔어요. 계속해요, 말랑이!"
         },
         "hi": {
           "title": "आधा रास्ता पूरा 💪",
-          "body": "आप उपवास के आधे तक पहुँच गए। जारी रखें, squish!"
+          "body": "आप उपवास के आधे तक पहुँच गए। जारी रखें, मिट्ठू!"
         },
         "zh": {
           "title": "已经一半了 💪",
-          "body": "断食已经过半。继续，squish！"
+          "body": "断食已经过半。继续，软软！"
         },
         "ja": {
           "title": "半分まできました 💪",
-          "body": "断食の半分まできました。その調子、スクイッシュ！"
+          "body": "断食の半分まできました。その調子、もちもち！"
         }
       }
     },
@@ -801,23 +801,23 @@
         },
         "pt": {
           "title": "Sequência de {streak} dias! 🏆",
-          "body": "Que consistência, squish. A tua sequência chegou a {streak} dias."
+          "body": "Que consistência, fofinho. A tua sequência chegou a {streak} dias."
         },
         "ko": {
           "title": "{streak}일 연속! 🏆",
-          "body": "정말 꾸준해요, squish. 연속 기록이 {streak}일이 됐어요."
+          "body": "정말 꾸준해요, 말랑이. 연속 기록이 {streak}일이 됐어요."
         },
         "hi": {
           "title": "{streak} दिन की स्ट्रीक! 🏆",
-          "body": "क्या निरंतरता है, squish. आपकी स्ट्रीक {streak} दिन हो गई।"
+          "body": "क्या निरंतरता है, मिट्ठू. आपकी स्ट्रीक {streak} दिन हो गई।"
         },
         "zh": {
           "title": "{streak} 天连续！🏆",
-          "body": "太稳了，squish。你的连续记录到了 {streak} 天。"
+          "body": "太稳了，软软。你的连续记录到了 {streak} 天。"
         },
         "ja": {
           "title": "{streak}日連続！🏆",
-          "body": "すごい継続です、スクイッシュ。連続記録が{streak}日になりました。"
+          "body": "すごい継続です、もちもち。連続記録が{streak}日になりました。"
         }
       }
     },

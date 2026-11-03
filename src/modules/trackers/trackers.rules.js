@@ -105,14 +105,19 @@ export function stepKcal(row, body) {
   return row.active_kcal ?? stepMetrics(row.steps, body).kcal;
 }
 
-/** Sağlık uygulaması kaynakları manuelden önceliklidir. */
+/** Sağlık uygulaması kaynakları birbirini güncelleyebilir. */
 export const STEP_SOURCE_RANK = Object.freeze({ manual: 0, apple_health: 1, google_fit: 1 });
 
 /**
- * Yeni değer mevcut günün üzerine yazılabilir mi? Manuel, senkronlanmış günü ezemez.
+ * Yeni değer mevcut günün üzerine yazılabilir mi?
+ * - Manuel PUT her zaman yazabilir (kullanıcı düzeltmesi).
+ * - Sağlık senkronu manuel günü ezemez (düzeltme kaybolmasın).
+ * - Sağlık, boş veya başka sağlık kaydının üzerine yazabilir.
  */
 export function stepOverwriteAllowed(existingSource, incomingSource) {
   if (!existingSource) return true;
+  if (incomingSource === 'manual') return true;
+  if (existingSource === 'manual') return false;
   return STEP_SOURCE_RANK[incomingSource] >= STEP_SOURCE_RANK[existingSource];
 }
 

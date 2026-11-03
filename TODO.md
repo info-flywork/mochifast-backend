@@ -75,7 +75,7 @@ Tek ortam dosyası `.env` (şablon `.env.example`). Sunucunun `.env`'i sunucuda 
 
 ### Google Play Console
 
-- [ ] **Veri güvenliği → Hesap silme URL'si:** `https://mochifast-api.fly-work.com/account/delete`
+- [ ] **Veri güvenliği → Hesap silme URL'si:** `https://mochifast.fly-work.com/account/delete`
       (bilgi sayfası: uygulamadan silme adımları + destek e-postası). E-postayla gelen talebi panelden
       `POST /v1/admin/users/:id/deletion` ile işle.
 
@@ -85,7 +85,7 @@ Tek ortam dosyası `.env` (şablon `.env.example`). Sunucunun `.env`'i sunucuda 
 - [ ] Entitlement: `premium` (farklı isim verirsen `REVENUECAT_ENTITLEMENT`'i değiştir).
 - [ ] Ürünler (öneri): `mochifast_premium_monthly`, `mochifast_premium_yearly` (deneme süreli) → offering `default`.
 - [ ] **Paywall:** RevenueCat Paywalls ile tasarla (uygulama `purchases_ui_flutter` ile gösterir; sunucuda paywall yok).
-- [ ] Webhook: `https://mochifast-api.fly-work.com/v1/webhooks/revenuecat` + Authorization header (`REVENUECAT_WEBHOOK_AUTH`).
+- [ ] Webhook: `https://mochifast.fly-work.com/v1/webhooks/revenuecat` + Authorization header (`REVENUECAT_WEBHOOK_AUTH`).
 - [ ] Sandbox satın alma testi: satın al → uygulama `POST /v1/subscription/sync` → `isPremium: true`.
 
 ### Firebase Cloud Messaging

@@ -83,10 +83,11 @@ describe('adım (05 §8)', () => {
     expect(stepMetrics(10_000, { weightKg: 105 }).kcal).toBe(600);
   });
 
-  it('kaynak önceliği: sağlık manueli ezer, manuel senkronu ezemez', () => {
+  it('kaynak önceliği: manuel her zaman yazar; sağlık manueli ezmez', () => {
     expect(stepOverwriteAllowed(undefined, 'manual')).toBe(true);
-    expect(stepOverwriteAllowed('manual', 'apple_health')).toBe(true);
-    expect(stepOverwriteAllowed('google_fit', 'manual')).toBe(false);
+    expect(stepOverwriteAllowed('google_fit', 'manual')).toBe(true);
+    expect(stepOverwriteAllowed('apple_health', 'manual')).toBe(true);
+    expect(stepOverwriteAllowed('manual', 'apple_health')).toBe(false);
     expect(stepOverwriteAllowed('apple_health', 'apple_health')).toBe(true);
   });
 });

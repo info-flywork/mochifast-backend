@@ -177,12 +177,9 @@ describe.skipIf(!mysqlUrl)('takipçiler: kilo, su, adım, uyku (gerçek MySQL)',
   });
 
   // ── Adım ────────────────────────────────────────────────────────────
-  it('kabul kriteri: sağlık senkronu manueli ezer, manuel senkronu ezemez (409)', async () => {
+  it('kabul kriteri: manuel sağlık gününü düzeltebilir; sağlık manueli ezmez', async () => {
     const { token } = await newUser();
     const t = today();
-    const manual = await call('PUT', `/steps/${t}`, { token, body: { steps: 5000 } });
-    expect(manual.statusCode).toBe(200);
-    expect(manual.json().data.days[0]).toMatchObject({ steps: 5000, source: 'manual' });
 
     const sync = await call('POST', '/steps/sync', {
       token,
@@ -196,23 +193,32 @@ describe.skipIf(!mysqlUrl)('takipçiler: kilo, su, adım, uyku (gerçek MySQL)',
     });
     expect(sync.json().data).toEqual({ updated: 2, skipped: 0 });
 
-    const blocked = await call('PUT', `/steps/${t}`, { token, body: { steps: 100 } });
-    expect(blocked.statusCode).toBe(409);
-    expect(blocked.json().error.details).toMatchObject({
-      reason: 'synced_day',
-      source: 'appleHealth',
+    // Kullanıcı sağlık gününü elle düzeltir.
+    const manual = await call('PUT', `/steps/${t}`, { token, body: { steps: 5000 } });
+    expect(manual.statusCode).toBe(200);
+    expect(manual.json().data.days[0]).toMatchObject({ steps: 5000, source: 'manual' });
+
+    // Sonraki senkron manuel düzeltilmiş günü ezmez.
+    const syncAgain = await call('POST', '/steps/sync', {
+      token,
+      body: {
+        source: 'appleHealth',
+        days: [
+          { date: t, steps: 9900 },
+          { date: addDays(t, -1), steps: 9100 },
+        ],
+      },
     });
+    expect(syncAgain.json().data).toEqual({ updated: 1, skipped: 1 });
 
     const week = await get(token, `/steps?range=week&date=${t}`);
     const day = week.days.find((d) => d.date === t);
     expect(day).toMatchObject({
-      steps: 7200,
-      distanceKm: 5.1,
-      durationMin: 72,
-      source: 'appleHealth',
+      steps: 5000,
+      source: 'manual',
     });
     expect(week.goal).toBe(8000);
-    expect((await get(token, '/user/summary')).today.steps).toEqual({ count: 7200, goal: 8000 });
+    expect((await get(token, '/user/summary')).today.steps).toEqual({ count: 5000, goal: 8000 });
 
     expect(
       (await call('PUT', `/steps/${addDays(t, 1)}`, { token, body: { steps: 1 } })).statusCode,

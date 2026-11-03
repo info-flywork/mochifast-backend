@@ -96,6 +96,6 @@ export async function deletePageRoutes(app) {
         'content-security-policy',
         "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
       );
-    return page(TEXT[lang], lang, config.support?.email ?? 'info@fly-work.com');
+    return page(TEXT[lang], lang, config.support?.email ?? 'support@fly-work.com');
   });
 }

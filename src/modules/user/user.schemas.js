@@ -105,7 +105,7 @@ export const patchMeSchema = {
     additionalProperties: false,
     minProperties: 1,
     properties: {
-      name: { type: 'string', minLength: 1, maxLength: 60, pattern: '\\S' },
+      name: { type: 'string', minLength: 1, maxLength: 25, pattern: '\\S' },
       locale: enumOf(SUPPORTED_LOCALES),
       timezone: { type: 'string', minLength: 1, maxLength: 64 },
       units: { ...unitsSchema, minProperties: 1 },
