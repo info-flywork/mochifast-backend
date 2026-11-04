@@ -19,6 +19,16 @@ export function shortName(displayName) {
   return `${parts[0]} ${parts.at(-1)[0].toLocaleUpperCase()}.`;
 }
 
+/** "Ayşe Yılmaz" → "AY"; ad yoksa null (profil / detay ile aynı kural). */
+export function initialsOf(displayName) {
+  const parts = (displayName ?? '').trim().split(/\s+/).filter(Boolean).slice(0, 2);
+  if (parts.length === 0) return null;
+  return parts
+    .map((p) => [...p][0])
+    .join('')
+    .toLocaleUpperCase();
+}
+
 /**
  * Challenge'lar (docs/backend/04-api.md §13, 05 §13). Katılımcı sayısı gerçektir (şişirilmez).
  * Detay listesinde ad + avatar yalnızca `show_in_challenges` açık olanlarda (kullanıcı
@@ -119,25 +129,30 @@ export function createChallengesService({
   }
 
   /**
-   * Ana sayfa yüzüğü: fotoğrafı olan katılımcılardan en fazla 3 URL.
-   * Rıza (`show_in_challenges`) yalnızca detay listesinde ad+avatar için gerekir;
-   * kartta isim/id yok — sadece anonim yüzler.
+   * Ana sayfa yüzüğü: en fazla 3 katılımcı. Önce fotoğrafı olanlar, sonra
+   * baş harf; kartta isim/id yok. Detay listesindeki rıza kuralı ayrı.
    */
   async function previewAvatars(challengeId, viewerId = null) {
     const rows = await participantRows(challengeId, { publicOnly: false, limit: 24 });
     const urls = await avatarUrls(rows.map((r) => r.userId));
-    const withPhoto = rows.filter((r) => urls.has(r.userId));
-    const ordered = [
-      ...withPhoto.filter((r) => r.isPublic),
-      ...withPhoto.filter((r) => r.userId === viewerId && !r.isPublic),
-      ...withPhoto.filter((r) => r.userId !== viewerId && !r.isPublic),
-    ];
+    const mapped = rows.map((r) => ({
+      userId: r.userId,
+      isPublic: r.isPublic,
+      url: urls.get(r.userId) ?? null,
+      initials: initialsOf(r.display_name),
+    }));
+    const rank = (r) => {
+      const photo = r.url ? 0 : 1;
+      const pub = r.isPublic ? 0 : r.userId === viewerId ? 1 : 2;
+      return photo * 10 + pub;
+    };
+    mapped.sort((a, b) => rank(a) - rank(b));
     const seen = new Set();
     const out = [];
-    for (const r of ordered) {
+    for (const r of mapped) {
       if (seen.has(r.userId)) continue;
       seen.add(r.userId);
-      out.push(urls.get(r.userId));
+      out.push({ url: r.url, initials: r.initials });
       if (out.length === PREVIEW_AVATARS) break;
     }
     return out;

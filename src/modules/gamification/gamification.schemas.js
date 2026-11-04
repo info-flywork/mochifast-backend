@@ -67,7 +67,17 @@ export const challengeSchema = {
     isPremium: { type: 'boolean' },
     isFeatured: { type: 'boolean' },
     participantsCount: { type: 'integer' },
-    participantAvatars: { type: 'array', items: { type: 'string' } },
+    participantAvatars: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          url: { type: ['string', 'null'] },
+          initials: { type: ['string', 'null'] },
+        },
+      },
+    },
     my: {
       type: ['object', 'null'],
       properties: {
