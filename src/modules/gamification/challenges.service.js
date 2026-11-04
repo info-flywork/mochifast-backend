@@ -21,8 +21,8 @@ export function shortName(displayName) {
 
 /**
  * Challenge'lar (docs/backend/04-api.md §13, 05 §13). Katılımcı sayısı gerçektir (şişirilmez).
- * Ad + avatar yalnızca `user_settings.show_in_challenges` açık olanlarda döner; diğerleri
- * listede anonimdir (istemci maskot gösterir). Kullanıcı kendini her zaman görür.
+ * Detay listesinde ad + avatar yalnızca `show_in_challenges` açık olanlarda (kullanıcı
+ * kendini her zaman görür). Ana sayfa yüzüğü fotoğrafı olan katılımcılardan en fazla 3 URL.
  */
 export function createChallengesService({
   db,
@@ -118,14 +118,29 @@ export function createChallengesService({
     return out;
   }
 
-  /** Ana sayfa kartı için rızalı ilk birkaç katılımcının avatarı. */
-  async function previewAvatars(challengeId) {
-    const rows = await participantRows(challengeId, { publicOnly: true, limit: 12 });
+  /**
+   * Ana sayfa yüzüğü: fotoğrafı olan katılımcılardan en fazla 3 URL.
+   * Rıza (`show_in_challenges`) yalnızca detay listesinde ad+avatar için gerekir;
+   * kartta isim/id yok — sadece anonim yüzler.
+   */
+  async function previewAvatars(challengeId, viewerId = null) {
+    const rows = await participantRows(challengeId, { publicOnly: false, limit: 24 });
     const urls = await avatarUrls(rows.map((r) => r.userId));
-    return rows
-      .map((r) => urls.get(r.userId))
-      .filter(Boolean)
-      .slice(0, PREVIEW_AVATARS);
+    const withPhoto = rows.filter((r) => urls.has(r.userId));
+    const ordered = [
+      ...withPhoto.filter((r) => r.isPublic),
+      ...withPhoto.filter((r) => r.userId === viewerId && !r.isPublic),
+      ...withPhoto.filter((r) => r.userId !== viewerId && !r.isPublic),
+    ];
+    const seen = new Set();
+    const out = [];
+    for (const r of ordered) {
+      if (seen.has(r.userId)) continue;
+      seen.add(r.userId);
+      out.push(urls.get(r.userId));
+      if (out.length === PREVIEW_AVATARS) break;
+    }
+    return out;
   }
 
   function toDto(c, my, { count = 0, avatars = [] } = {}) {
@@ -162,7 +177,11 @@ export function createChallengesService({
 
   async function one(userId, code, locale) {
     const c = await findChallenge(code, locale);
-    const [my, n, avatars] = await Promise.all([mine(userId), counts(c.id), previewAvatars(c.id)]);
+    const [my, n, avatars] = await Promise.all([
+      mine(userId),
+      counts(c.id),
+      previewAvatars(c.id, userId),
+    ]);
     return toDto(c, my.get(c.id), { count: n.get(c.id) ?? 0, avatars });
   }
 
@@ -177,7 +196,7 @@ export function createChallengesService({
       const [items, my] = await Promise.all([catalog(locale), mine(userId)]);
       const c = items.find((x) => x.is_featured) ?? items[0];
       if (!c) return { challenge: null };
-      const [n, avatars] = await Promise.all([counts(c.id), previewAvatars(c.id)]);
+      const [n, avatars] = await Promise.all([counts(c.id), previewAvatars(c.id, userId)]);
       return { challenge: toDto(c, my.get(c.id), { count: n.get(c.id) ?? 0, avatars }) };
     },
 
